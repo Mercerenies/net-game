@@ -1,0 +1,4 @@
+*~
+*.fasl
+*.png
+__pycache__/

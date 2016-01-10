@@ -1,0 +1,98 @@
+patriot                soldier
+innkeeper              merchant
+king                   leader
+monarch                leader
+queen                  leader
+writer                 writer
+journalist             journalist
+historian              historian
+biographer             historian
+composer               musician
+serial killer          villain
+prince                 leader
+singer                 musician
+songwriter             musician
+producer               writer
+actor                  actor
+psychopath             villain
+jurist                 scholar
+scholar                scholar
+artist                 artist
+musician               musician
+guitarist              musician
+table tennis player    athlete
+athlete                athlete
+tennis player          athlete
+coach                  athlete
+baseman                athlete
+president              leader
+politician             leader
+senator                leader
+bookseller             merchant
+publisher              merchant
+dramatist              actor
+poet                   writer
+monk                   clergy
+director               writer
+mystic                 clergy
+saint                  clergy
+nun                    clergy
+theologian             scholar
+officer                soldier
+chief                  soldier
+commander              leader
+naturalist             scientist
+anthropologist         scientist
+businessman            scholar
+author                 writer
+astrophysicist         scientist
+physicist              scientist
+intelligence analyst   scholar
+sailor                 soldier
+calligrapher           writer
+lawyer                 scholar
+columnist              journalist
+actress                actor
+illustrator            artist
+broadcaster            journalist
+disc jockey            musician
+photographer           artist
+filmmaker              artist
+philosopher            scholar
+physician              doctor
+doctor                 doctor
+nurse                  doctor
+medic                  doctor
+sculptor               artist
+midwife                doctor
+revolutionary          soldier
+prophet                clergy
+ceo                    leader
+psychologist           scientist
+criminal               villain
+boxer                  soldier
+emperor                leader
+murderer               villain
+sound engineer         musician
+pitcher                athlete
+medium                 clergy
+violinist              musician
+bandleader             musician
+alien                  villain
+railroader             merchant
+missionary             clergy
+archaeologist          scientist
+critic                 journalist
+race car driver        driver
+racecar driver         driver
+farmer                 farmer
+scenographer           artist
+librettist             writer
+architect              engineer
+martial artist         fighter
+wrestler               fighter
+designer               artist
+entrepreneur           scholar
+music conductor        musician
+musical conductor      musician
+radio dj               musician

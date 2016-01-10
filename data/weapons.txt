@@ -1,0 +1,28 @@
+sword              sword
+polearm            polearm
+shortsword         shortsword
+pole weapon        polearm
+swords             sword
+club               club
+backsword          longsword
+longsword          longsword
+missile            missile
+blade              sword
+blades             sword
+sling              missile
+javelin            spear
+spear              spear
+dagger             knife
+dao                knife
+trident            spear
+tool               hammer
+halberd            hammer
+throwing weapon    missile
+whip               whip
+infantry weapon    spear
+knives             knife
+knife              knife
+weapon             sword
+mace               club
+weapons            sword
+hammer             hammer

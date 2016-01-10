@@ -1,0 +1,41 @@
+:: people
+living people
+births
+character
+:: places
+countries
+city
+cities
+monument
+place
+building
+area
+island
+landform
+lake
+mountain
+ruin
+museum
+neighborhood
+neighbourhood
+township
+river
+monastery
+monasteries
+crater
+bank
+province
+territories
+territory
+:: weapons
+sword
+knife
+knives
+dagger
+hammer
+pole weapon
+spear
+hunting equipment
+clubs (weapon)
+throwing weapon
+melee weapon

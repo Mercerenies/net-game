@@ -1,3 +1,4 @@
+(in-package #:net-game)
 
 ; DEBUG CODE The couple of (format t) directives here
 

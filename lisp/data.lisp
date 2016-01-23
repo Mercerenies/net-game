@@ -1,3 +1,4 @@
+(in-package #:net-game)
 
 (defclass named ()
   ((name :accessor get-name

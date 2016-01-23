@@ -1,3 +1,4 @@
+(in-package #:net-game)
 
 (defparameter *world-info*
   nil)
@@ -94,7 +95,9 @@
 
 (defmethod expand-node ((node city-node))
   (unless (node-interior node)
-    (let* ((node-count (+ 3 (round (/ (log (random 1.0)) -0.9))))
+    (let* ((node-count (min (+ 3 (round (/ (log (random 1.0)) -0.85)))
+                            (loop for value in *name-affixes*
+                                  maximize (length value))))
            (node-affixes (remove-if (lambda (x)
                                       (/= (length x) node-count))
                                     *name-affixes*))
@@ -113,7 +116,9 @@
 
 (defmethod expand-node ((node district-node))
   (unless (node-interior node)
-    (let* ((node-count (+ 3 (round (/ (log (random 1.0)) -0.85))))
+    (let* ((node-count (min (+ 3 (round (/ (log (random 1.0)) -0.85)))
+                            (loop for value in *name-affixes*
+                                  maximize (length value))))
            (node-affixes (remove-if (lambda (x)
                                       (/= (length x) node-count))
                                     *name-affixes*))
@@ -159,7 +164,7 @@
                                 (country 'country-node)
                                 ; TODO Make this a different idea
                                 ; (states could contain small numbers of cities)
-                                (state 'district-node)
+                                (state 'country-node)
                                 (t (warn "Invalid node type ~S"
                                          (place-info pl))
                                    'city-node))

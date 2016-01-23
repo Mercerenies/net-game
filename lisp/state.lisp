@@ -1,3 +1,4 @@
+(in-package #:net-game)
 
 (defgeneric do-command (state arg))
 
@@ -36,10 +37,13 @@
         (format t "Can't go that way.~%"))))
 
 (defun user-help ()
-  (format t "Valid Player Actions:~%")
-  (format t "\"go <place>\" - Go to the area listed~%")
-  (format t "\"<verb> <object>\" - Attempt to perform the action on the object~%")
-  (format t "\"help\" - Display this message~%"))
+  (format t "Valid Player Actions:~@
+             \"go <place>\" - Go to the area listed~@
+             \"examine <object>\" - Take a closer look at the object~@
+             \"use <object>\" - Interact with a tool or object~@
+             \"activate <object>\" - Turn the object on if it is currently inactive~@
+             \"<verb> <object>\" - Attempt to perform the action on the object~@
+             \"help\" - Display this message~%"))
 
 (defmethod mode-text ((state (eql 'warp)))
   (let ((nums (loop for e in *warps*

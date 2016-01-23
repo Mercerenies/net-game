@@ -1,3 +1,4 @@
+(in-package #:net-game)
 
 ; TODO Random seed
 ; TODO Put states in for interactive objects (something like the state design pattern)
@@ -26,7 +27,7 @@
         collect (subseq string start finish)
         until (null finish)))
 
-(defun run-game (&optional (filename "./data/world.txt"))
+(defun run-game (&optional (filename "./temp/world.txt"))
   (load-world-info filename t)
   (load-probabilities)
   (load-affixes)

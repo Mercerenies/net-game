@@ -1,3 +1,4 @@
+(in-package #:net-game)
 
 (defun choose (args)
   "Chooses a random element from the proper sequence provided. Returns nil if the sequence is empty."

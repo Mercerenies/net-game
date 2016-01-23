@@ -1,3 +1,4 @@
+(in-package #:net-game)
 
 (defgeneric do-action (act obj))
 

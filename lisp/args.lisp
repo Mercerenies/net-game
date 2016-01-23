@@ -1,3 +1,4 @@
+(in-package #:net-game)
 ; This is a temporary solution. I'm hoping to find a library (asdf or something) that
 ; does this for me.
 

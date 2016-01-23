@@ -1,3 +1,4 @@
+(in-package #:net-game)
 
 (defstruct (fraction (:conc-name frac-))
   (numer 0 :type number)

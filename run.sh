@@ -61,9 +61,9 @@ plcommand="./perl/parse.pl"
 
 if [ -n "$intermediate" ]; then
     if [ -z "$nopy" ]; then
-        $pycommand >"./data/$intermediate"
+        $pycommand >"./temp/$intermediate"
     fi
-    $plcommand <"./data/$intermediate" >"./data/$output"
+    $plcommand <"./temp/$intermediate" >"./temp/$output"
 else
-    $pycommand | $plcommand >"./data/$output"
+    $pycommand | $plcommand >"./temp/$output"
 fi

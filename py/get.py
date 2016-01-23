@@ -28,6 +28,7 @@ def recurse(base, match_function, depth = 5, max_tries = 3, debug = False):
             print("Trying", escape(page.title), "at", depth_, file=stderr)
         sys.stderr.flush()
         if match_function(page):
+            print("Taking", escape(page.title), file=stderr)
             return page
         elif depth_ >= depth:
             return None

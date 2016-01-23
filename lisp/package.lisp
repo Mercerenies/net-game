@@ -4,7 +4,7 @@
   (:use :common-lisp :ql))
 (in-package #:net-game)
 
-(ql:quickload 'cl-json)
+; (ql:quickload 'cl-json)
 
 (load "./lisp/util.lisp")
 (load "./lisp/data.lisp")

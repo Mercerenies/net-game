@@ -29,7 +29,7 @@ close $fh;
 open $fh, '<', './data/placenames.txt' or die("$!");
 while (<$fh>) {
     chomp;
-    /^((?:\w+ )+) +([\w ]+)$/ or die("Illegal line in placenames.txt at line $.");
+    /^((?:[\w\-]+ )+) +([\w ]+)$/ or die("Illegal line in placenames.txt at line $.");
     my $key = $1;
     chop $key;
     $placenames{$key} = $2;
@@ -39,7 +39,7 @@ close $fh;
 open $fh, '<', './data/weapons.txt' or die("$!");
 while (<$fh>) {
     chomp;
-    /^((?:\w+ )+) +([\w ]+)$/ or die("Illegal line in weapons.txt at line $.");
+    /^((?:[\w\-]+ )+) +([\w ]+)$/ or die("Illegal line in weapons.txt at line $.");
     my $key = $1;
     chop $key;
     $weapons{$key} = $2;

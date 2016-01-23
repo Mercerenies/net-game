@@ -52,7 +52,7 @@ sub find_place_information {
     my $shortsumm = $summary;
     my $matches = 1;
     $matches = $shortsumm =~ s/\([^()]*\)//g while $matches > 0;
-    $shortsumm =~ s/,[A-Za-z0-9 _]*,//g;
+    $shortsumm =~ s/,[A-Za-z0-9:\-' _]*,//g;
     $shortsumm =~ s|/[^ /]+/||g;
     $shortsumm =~ s/ {2,}/ /g;
     my $ptn;
@@ -63,7 +63,7 @@ sub find_place_information {
     foreach $ptn (keys %placenames) {
         foreach my $titlevar (@titles) {
             if ($shortsumm =~
-                  /$titlevar (?:(or|in) (?:\w+ ){1,3})?$LINKVERB (?:\w+ )?$ARTICLE?(?:[^ ]+ ){0,4}\b$ptn\b/i) {
+                  /$titlevar (?:(or|in) (?:[\w-]+ ){1,3})?$LINKVERB (?:[\w-]+ )?$ARTICLE?(?:[^ ]+ ){0,4}\b$ptn\b/i) {
                 return $ptn;
             }
         }
@@ -79,7 +79,7 @@ sub find_weapon_information {
     my $shortsumm = $summary;
     my $matches = 1;
     $matches = $shortsumm =~ s/\([^()]*\)//g while $matches > 0;
-    $shortsumm =~ s/,[A-Za-z0-9 _]*,//g;
+    $shortsumm =~ s/,[A-Za-z0-9:\-' _]*,//g;
     $shortsumm =~ s|/[^ /]+/||g;
     $shortsumm =~ s/"//g;
     $shortsumm =~ s/ {2,}/ /g;
@@ -94,7 +94,7 @@ sub find_weapon_information {
     foreach $ptn (keys %weapons) {
         foreach my $titlevar (@titles) {
             if ($shortsumm =~
-                  /$titlevar (?:or (?:\w+ ){1,3})?$LINKVERB (?:\w+ )?$ARTICLE?(?:[^ ]+ ){0,9}\b$ptn\b/i) {
+                  /$titlevar (?:or (?:[\w-]+ ){1,3})?$LINKVERB (?:[\w-]+ )?$ARTICLE?(?:[^ ]+ ){0,9}\b$ptn\b/i) {
                 return $ptn;
             }
         }

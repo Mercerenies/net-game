@@ -2,6 +2,7 @@ capital city            city
 capital                 city
 city                    city
 state                   state
+sovereign state         state
 country house           estate
 house                   estate
 country                 country
@@ -37,3 +38,8 @@ museum                  museum
 canal                   river
 enclave                 state
 exclave                 state
+plain                   plain
+impact crater           landform
+moon                    moon
+high-rise               tower
+high rise               tower

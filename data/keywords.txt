@@ -4,6 +4,8 @@ births
 character
 :: places
 countries
+nations
+nation
 city
 cities
 monument
@@ -27,6 +29,14 @@ bank
 province
 territories
 territory
+plain
+plains
+moon
+moons
+environment
+cantref
+cantrefi
+cantrefs
 :: weapons
 sword
 knife

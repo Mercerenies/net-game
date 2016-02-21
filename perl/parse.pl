@@ -7,12 +7,15 @@ use 5.010;
 use warnings;
 
 use Data::Dumper;
+use JSON::PP;
 
 local $_;
 
 my %data = do './perl/load.pl';
 
 my ($name, $summary, @occs, $gender, $info, @args);
+
+my @result = ();
 
 # Celebs / People
 my $second = 0;
@@ -32,15 +35,18 @@ PEOPLE: while (<>) {
     $name =~ s-"-\"-;
     $name =~ s/\\x..//g;
     $gender = compute_gender($summary, \@{$data{'mwords'}}, \@{$data{'fwords'}});
-    $gender = (defined $gender ? ":gender $gender " : "");
-    print qq[(person "$name" $gender:occupations (];
+    my %curr = (
+        nature => 'person',
+        name => $name,
+        gender => $gender,
+        occupations => []
+        );
     foreach (@occs) {
         my @arr = @{$_};
-        $arr[0] =~ s-"-\"-;
-        print qq[($arr[1] . "$arr[0]")];
-        print ' ' unless \$_ == \$occs[-1];
+        my @new = ($arr[1], $arr[0]);
+        push @{$curr{'occupations'}}, \@new;
     }
-    print qq[))\n];
+    push @result, \%curr;
 }
 
 # Places
@@ -55,8 +61,12 @@ while (<>) {
     $name =~ s/\\x..//g;
     $summary =~ s/\\x..//g;
     $info = find_place_information($name, $summary, \%{$data{'placenames'}});
-    $info = $info ? qq[ :info ($data{'placenames'}->{$info} . "$info")] : '';
-    print qq[(place "$name"$info)\n];
+    my %curr = (
+        nature => 'place',
+        name => $name,
+        info => ($info ? [$data{'placenames'}->{$info}, $info] : undef)
+        );
+    push @result, \%curr;
 }
 
 # Weapons
@@ -71,6 +81,12 @@ while (<>) {
     $name =~ s/\\x..//g;
     $summary =~ s/\\x..//g;
     $info = find_weapon_information($name, $summary, \%{$data{'weapons'}});
-    $info = $info ? qq[ :type ($data{'weapons'}->{$info} . "$info")] : '';
-    print qq[(weapon "$name"$info)\n];
+    my %curr = (
+        nature => 'weapon',
+        name => $name,
+        info => ($info ? [$data{'weapons'}->{$info}, $info] : undef)
+        );
+    push @result, \%curr;
 }
+
+print encode_json \@result;

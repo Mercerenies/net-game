@@ -12,3 +12,23 @@ Currently, commands in the game must be entered in quotes. In the long run, the 
 This game (specifically, the Python part) accesses the Internet. Your antivirus software may not like that. This game ONLY accesses Wikipedia and pages on the Wikipedia domain; feel free to check the Python code to verify that this is the case. It also depends on the Wikipedia package for Python, which is available online and through `pip` for free and is usable under the MIT license.
 
 Currently, I am in the process of adding a Ruby layer between the CLisp and Perl layers to do much of the world generation. The Ruby layer will use the Ruby Gem sxp, which is available through `gem` and is public domain.
+
+#Dependencies
+
+Note that Python, Perl, and Ruby are expected to be in /usr/bin. The Lisp implementation must be on the path.
+
+##Python
+* Python 3
+* Wikipedia module (`pip install wikipedia`)
+
+##Perl
+* Perl 5.10 or newer (untested with Perl 6)
+* JSON::PP (usually comes with Perl implementations)
+
+##Ruby
+* Ruby 1.9 or newer
+* SXP gem (`gem install sxp`)
+
+##Common Lisp
+* Any conforming Common Lisp implementation (with CLOS)
+(NOTE: The system defaults to assuming GNU CLISP is on the path. If you wish to use another implementation, you may have to pass its name as a command line argument to some scripts.)

@@ -56,7 +56,7 @@ while getopts 'c:p:P:w:di:Io:n' opt; do
     esac
 done
 
-pycommand="./py/get.py $celebs $people $places $weapons $debug"
+pycommand="./python/get.py $celebs $people $places $weapons $debug"
 plcommand="./perl/parse.pl"
 
 if [ -n "$intermediate" ]; then

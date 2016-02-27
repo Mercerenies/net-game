@@ -1,4 +1,3 @@
-#!/usr/bin/ruby
 
 =begin
 require 'singleton'
@@ -23,6 +22,11 @@ end
 =end
 
 class Namer
+
+  # Not a singleton; I'm just providing a utility instance
+  def self.instance
+    @@instance ||= Namer.new
+  end
 
   def initialize(fname: "./data/naming.txt", order: 2)
     @order = order

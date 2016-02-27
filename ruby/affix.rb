@@ -15,6 +15,10 @@ end
 
 class AffixSet
 
+  def self.instance
+    @@instance ||= AffixSet.new
+  end
+
   def initialize(filename = "./data/naming_inner.txt")
     @data = File.open filename do |f|
       f.each.collect do |line|
@@ -52,8 +56,8 @@ class AffixSet
     collate(number.times.collect { |i| name })
   end
 
-  # ///// Converting the generator to Ruby and having the runner stay in Lisp
-  #       Remember that we're in a branch in Git right now, so don't treat it
-  #       like master.
+  def sampler(name, number)
+    SamplerArray.new apply(name, number)
+  end
 
 end

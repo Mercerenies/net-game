@@ -15,6 +15,8 @@
 (defparameter *player*
   (make-instance 'player))
 
+(defparameter *world* nil)
+
 (defparameter *state*
   (list 'global))
 
@@ -27,17 +29,10 @@
         collect (subseq string start finish)
         until (null finish)))
 
-(defun run-game (&optional (filename "./temp/world.txt"))
-  (load-world-info filename t)
-  (load-probabilities)
-  (load-affixes)
-  (let* ((top (let ((temp (make-instance 'top-node))
-                    (bld (create-buildings)))
-                (expand-node temp)
-                (integrate-buildings temp bld)
-                temp))
-         (world (car (compile-node top))))
-    (move-object *player* (nth (random (length world)) world))
+(defun run-game (&optional (filename "./temp/system.txt"))
+  (let ((*world* (with-open-file (file filename)
+                   (load-data :file file))))
+    (move-object *player* (nth (random (length *world*)) *world*))
     (loop named game-loop
           with *read-eval* = nil
           with *do-exit* = (lambda () (return-from game-loop nil))
@@ -50,7 +45,9 @@
                             Mode: ~A~%~
                             ~A"
                        (get-name (get-loc *player*))
-                       (mapcar #'get-name (location-exits (get-loc *player*)))
+                       (mapcar (lambda (x)
+                                 (location-short-name (find x *world* :key #'get-id)))
+                               (location-exits (get-loc *player*)))
                        (mapcar #'get-name (location-contents (get-loc *player*)))
                        (mode-name (first *state*))
                        (mode-text (first *state*)))

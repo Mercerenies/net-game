@@ -28,12 +28,14 @@
 
 (defun user-go (exit-name)
   (let ((match (find exit-name (location-exits (get-loc *player*))
-                     :key #'get-name
-                     :test #'string-equal)))
+                     :key #'(lambda (x) (let ((temp (find x *world*
+                                                          :key #'get-id)))
+                                          (and temp (location-short-name temp))))
+                     :test #'string-equal))) ; ///// Not working
     (if match
-        (progn
+        (let ((match1 (find match *world* :key #'get-id)))
           (format t "Going...~%")
-          (move-object *player* (exit-dest match)))
+          (move-object *player* match1))
         (format t "Can't go that way.~%"))))
 
 (defun user-help ()

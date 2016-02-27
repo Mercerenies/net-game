@@ -36,7 +36,7 @@ PEOPLE: while (<>) {
     $name =~ s/\\x..//g;
     $gender = compute_gender($summary, \@{$data{'mwords'}}, \@{$data{'fwords'}});
     my %curr = (
-        nature => 'person',
+        nature => 'Person',
         name => $name,
         gender => $gender,
         occupations => []
@@ -62,7 +62,7 @@ while (<>) {
     $summary =~ s/\\x..//g;
     $info = find_place_information($name, $summary, \%{$data{'placenames'}});
     my %curr = (
-        nature => 'place',
+        nature => 'Place',
         name => $name,
         info => ($info ? [$data{'placenames'}->{$info}, $info] : undef)
         );
@@ -82,7 +82,7 @@ while (<>) {
     $summary =~ s/\\x..//g;
     $info = find_weapon_information($name, $summary, \%{$data{'weapons'}});
     my %curr = (
-        nature => 'weapon',
+        nature => 'Weapon',
         name => $name,
         info => ($info ? [$data{'weapons'}->{$info}, $info] : undef)
         );

@@ -9,4 +9,6 @@ There are a few shell scripts in the top-level directory that hold the system to
 
 Currently, commands in the game must be entered in quotes. In the long run, the game will have another layer on top that ties all of the components together, and the quotes are future-proofing for this. To quit the game, type 'quit' in parentheses WITHOUT quotes.
 
-This game (specifically, the Python part) accesses the Internet. Your antivirus software may not like that. This game ONLY accesses Wikipedia and pages on the Wikipedia domain; feel free to check the Python code to verify that this is the case. It also depends on the Wikipedia package for Python, which is available online and through `pip` for free.
+This game (specifically, the Python part) accesses the Internet. Your antivirus software may not like that. This game ONLY accesses Wikipedia and pages on the Wikipedia domain; feel free to check the Python code to verify that this is the case. It also depends on the Wikipedia package for Python, which is available online and through `pip` for free and is usable under the MIT license.
+
+Currently, I am in the process of adding a Ruby layer between the CLisp and Perl layers to do much of the world generation. The Ruby layer will use the Ruby Gem sxp, which is available through `gem` and is public domain.

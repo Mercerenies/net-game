@@ -17,18 +17,18 @@ Currently, I am in the process of adding a Ruby layer between the CLisp and Perl
 
 Note that Python, Perl, and Ruby are expected to be in /usr/bin. The Lisp implementation must be on the path.
 
-##Python
+######Python
 * Python 3
 * Wikipedia module (`pip install wikipedia`)
 
-##Perl
+######Perl
 * Perl 5.10 or newer (untested with Perl 6)
 * JSON::PP (usually comes with Perl implementations)
 
-##Ruby
+######Ruby
 * Ruby 1.9 or newer
 * SXP gem (`gem install sxp`)
 
-##Common Lisp
+######Common Lisp
 * Any conforming Common Lisp implementation (with CLOS)
 (NOTE: The system defaults to assuming GNU CLISP is on the path. If you wish to use another implementation, you may have to pass its name as a command line argument to some scripts.)

@@ -4,8 +4,6 @@
 ; TODO Put states in for interactive objects (something like the state design pattern)
 ; TODO People in the world
 
-; ///// Everything so far works. Add people, I guess.
-
 (defclass player (named located)
   ()
   (:default-initargs :name "Sandy"))
@@ -53,28 +51,9 @@
                        (mapcar #'get-name (location-contents (get-loc *player*)))
                        (mode-name (first *state*))
                        (mode-text (first *state*)))
-               (setf cmd (read))
-               ; DEBUG CODE
-               (when (stringp cmd)
-                 (setf cmd (list 'user cmd))))
-          when (listp cmd)
-              do (setf acmd (assoc (car cmd) *commands*)) and
-              if acmd
-                  do (apply (cdr acmd) (cdr cmd))
-              else
-                  do (format t "Invalid command!~%"))))
+               (setf cmd (read-line)))
+          if (string-equal cmd "quit")
+              do (funcall *do-exit*)
+          else
+              do (do-command (first *state*) cmd))))
 
-(defun do-quit ()
-  (funcall *do-exit*))
-
-(defun do-system (arg)
-  (declare (ignore arg))
-  (error "TBA")) ; TODO This
-
-(defun do-user (arg)
-  (do-command (first *state*) arg))
-
-(defparameter *commands*
-  (list (cons 'quit #'do-quit)
-        (cons 'system #'do-system)
-        (cons 'user #'do-user)))

@@ -45,7 +45,8 @@
              \"use <object>\" - Interact with a tool or object~@
              \"activate <object>\" - Turn the object on if it is currently inactive~@
              \"<verb> <object>\" - Attempt to perform the action on the object~@
-             \"help\" - Display this message~%"))
+             \"help\" - Display this message~@
+             \"quit\" - Exit the game~%"))
 
 (defmethod mode-text ((state (eql 'warp)))
   (let ((nums (loop for e in *warps*

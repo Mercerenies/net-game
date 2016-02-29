@@ -1,5 +1,9 @@
 #!/usr/bin/python
 
+# ///// This needs to be modified; it mucks up the Perl side of things
+#       by printing wrong if there's an apostrophe in the title.
+#       We need to migrate this to some sort of markup (XML?) anyway.
+
 import wikipedia
 import sys
 from sys import stderr
@@ -28,7 +32,8 @@ def recurse(base, match_function, depth = 5, max_tries = 3, debug = False):
             print("Trying", escape(page.title), "at", depth_, file=stderr)
         sys.stderr.flush()
         if match_function(page):
-            print("Taking", escape(page.title), file=stderr)
+            if debug:
+                print("Taking", escape(page.title), file=stderr)
             return page
         elif depth_ >= depth:
             return None

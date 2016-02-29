@@ -43,3 +43,4 @@ impact crater           landform
 moon                    moon
 high-rise               tower
 high rise               tower
+suburb                  district

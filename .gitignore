@@ -1,6 +1,5 @@
 *~
 *.fasl
-*.png
 __pycache__/
 etc/
 temp/

@@ -43,7 +43,8 @@
                             Exits: ~S~%~
                             Objects: ~:[(None)~;~:*~{~A~^, ~}~]~%~
                             Mode: ~A~%~
-                            ~A"
+                            ~A~
+                            > "
                        (get-name (get-loc *player*))
                        (mapcar (lambda (x)
                                  (location-short-name (find x *world* :key #'get-id)))

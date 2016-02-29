@@ -11,9 +11,13 @@ class Node
 
   @@curr_id = 1
 
-  def initialize(name, level)
-    @id = @@curr_id
+  def self.get_id
     @@curr_id += 1
+    @@curr_id
+  end
+
+  def initialize(name, level)
+    @id = Node.get_id
     @name = name.to_s
     @level = level
     @contents = []
@@ -80,7 +84,13 @@ class Node
           node1.add_link node0.id
         end
       end
-      nodes.flatten
+      nodes = nodes.flatten
+      if @level.kind_of? LevelTwo
+        # Put a warp point somewhere on the map, about once per country
+        somewhere = nodes.sample
+        somewhere.push WarpPoint.new
+      end
+      nodes
     end
   end
 

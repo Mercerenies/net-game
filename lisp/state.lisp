@@ -31,7 +31,7 @@
                      :key #'(lambda (x) (let ((temp (find x *world*
                                                           :key #'get-id)))
                                           (and temp (location-short-name temp))))
-                     :test #'string-equal))) ; ///// Not working
+                     :test #'string-equal)))
     (if match
         (let ((match1 (find match *world* :key #'get-id)))
           (format t "Going...~%")

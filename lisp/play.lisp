@@ -2,7 +2,9 @@
 
 ; TODO Random seed
 ; TODO Put states in for interactive objects (something like the state design pattern)
-; ///// People in the world
+; TODO People in the world
+
+; ///// Everything so far works. Add people, I guess.
 
 (defclass player (named located)
   ()

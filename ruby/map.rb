@@ -1,4 +1,4 @@
-
+#///// Test the tower, then probably do parks again
 require 'forwardable'
 require 'sxp'
 
@@ -6,7 +6,7 @@ class Map
   extend Forwardable
   include Enumerable
 
-  def_delegators :@ary, :each, :[], :[]=, :push
+  def_delegators :@ary, :each, :push
 
   def initialize(ary = [])
     @ary = ary
@@ -24,15 +24,26 @@ class Map
     ([:map] + @ary).to_sxp
   end
 
+  def [](val)
+    @ary.find { |x| x.id == val }
+  end
+
 end
 
 class Location
+  extend Forwardable
+  include Enumerable
+
   attr_reader :id, :name, :country_name
+
+  def_delegators :@contents, :each, :[], :[]=, :push, :delete, :pop
+  def_delegator :@links, :each, :each_link
 
   def initialize(id, name, country_name)
     @id = id
     @name = name
     @country_name = country_name
+    @contents = []
     @links = []
   end
 
@@ -52,7 +63,8 @@ class Location
     prefix = [:location, @id, @name]
     country = @country_name ? [:':country', @country_name] : []
     links = [:':links', @links.dup]
-    (prefix + country + links).to_sxp
+    contents = [:':contents', @contents.dup]
+    (prefix + country + links + contents).to_sxp
   end
 
 end

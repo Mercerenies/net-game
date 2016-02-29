@@ -60,7 +60,7 @@ class Namer
       rnd = rand (distr.values.reduce(0, &:+))
       curr += distr.detect { |k, v| (rnd -= v) <= 0 }[0]
     end
-    curr
+    curr.strip
   end
 
 end

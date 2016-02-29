@@ -55,14 +55,36 @@ class Genner
     @map = Map.new temp.expand_to_map
   end
 
+  def generate_buildings
+    buildings = []
+    @arr = @arr.reject do |elem|
+      if elem.kind_of? Place
+        building = Building.load_building elem
+        buildings << building if building
+      end
+    end
+    buildings.each do |building|
+      curr = @map.to_ary.sample
+      building.each_exit do |exit|
+        curr = @map[ curr.each_link.to_a.sample ]
+        exit.add_link curr.id
+        curr.add_link exit.id
+      end
+      building.each_node { |x| @map.push x }
+    end
+  end
+
   def generate
     # Stage 1 - Generate the main nodal structures
     generate_nodes
     # Stage 2 - Convert the nodes into a map
     generate_map
-    nil
+    # Stage 3 - Add buildings to the map
+    generate_buildings
+    # Return result
+    @map
   end
 
-  private :generate_nodes, :generate_node, :generate_map
+  private :generate_nodes, :generate_node, :generate_map, :generate_buildings
 
 end

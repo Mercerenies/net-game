@@ -44,7 +44,7 @@
       (setf (location-contents old-loc)
             (remove obj (location-contents old-loc))))
     (setf (get-loc obj) new-loc)
-    (push *player* (location-contents new-loc))))
+    (push obj (location-contents new-loc))))
 
 (defun load-data (&key (file *standard-input*))
   (destructuring-bind (map-sym . locs) (read file)
@@ -59,5 +59,16 @@
                         (:country (setf (get-name inst) (format nil "~A, ~A"
                                                                 (get-name inst)
                                                                 value)))
-                        (:links (setf (location-exits inst) value))))
+                        (:links (setf (location-exits inst) value))
+                        (:contents (mapc #'(lambda (x) (load-object inst x)) value))))
           collect inst)))
+
+(defun load-object (node obj)
+  (apply #'load-object-with-type node (car obj) (cdr obj)))
+
+(defgeneric load-object-with-type (node type &rest args))
+
+(defmethod load-object-with-type (node (type (eql 'warp-point)) &rest args)
+  (declare (ignore args))
+  (let ((obj (make-instance 'warp-point)))
+    (move-object obj node)))

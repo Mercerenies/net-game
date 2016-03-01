@@ -1,9 +1,5 @@
 #!/usr/bin/python
 
-# ///// This needs to be modified; it mucks up the Perl side of things
-#       by printing wrong if there's an apostrophe in the title.
-#       We need to migrate this to some sort of markup (XML?) anyway.
-
 import wikipedia
 import sys
 from sys import stderr
@@ -11,6 +7,8 @@ from random import *
 import math
 import time
 from getopt import getopt
+import xml.etree.ElementTree as ET
+import re
 
 DELAY = 0.5
 
@@ -62,6 +60,7 @@ def is_person_page(page):
     return len([c for c in page.categories
                 if Keywords.check_match("people", c)
                 and "list" not in c.lower()
+                and "errors" not in c.lower()
                 and "wikipedia" not in c.lower()]) > 0
 
 def find_a_person(depth = 5, max_tries = 3, debug = False):
@@ -78,6 +77,7 @@ def is_place_page(page):
     return len([c for c in page.categories
                 if Keywords.check_match("places", c)
                 and "list" not in c.lower()
+                and "errors" not in c.lower()
                 and "wikipedia" not in c.lower()]) > 0
 
 def find_a_place(**key):
@@ -91,6 +91,7 @@ def is_weapon_page(page):
     return len([c for c in page.categories
                 if Keywords.check_match("weapons", c)
                 and "list" not in c.lower()
+                and "errors" not in c.lower()
                 and "wikipedia" not in c.lower()]) > 0
 
 def find_a_weapon(**key):
@@ -110,12 +111,43 @@ def escape(str_):
     return repr(str_.encode('utf-8'))
 
 def do_search(script, number, **key):
+    arr = []
     for i in range(0, number):
         curr = script(**key)
         if curr:
-            print(escape(curr.title),
-                  escape(curr.summary),
-                  sep='  ')
+            arr.append(curr)
+    return arr
+
+def xmlify_once(page):
+    stack = [ET.Element("page", name = page.title)]
+    re_titles = re.compile(r'^(=+) (.*) \1$')
+    for line in page.content.splitlines():
+        match = re.match(re_titles, line)
+        if match:
+            n = max(len(match.group(1)), 2)
+            if len(stack) > n:
+                while len(stack) > n - 1:
+                    elem = stack.pop();
+                    stack[-1].append(elem)
+            else:
+                stack.append(ET.Element("section", name = match.group(2), depth = str(n)))
+        else:
+            if stack[-1].text is None:
+                stack[-1].text = ''
+            stack[-1].text += "\n" + line
+    while len(stack) > 1:
+        elem = stack.pop();
+        stack[-1].append(elem)
+    return stack[0]
+
+def xmlify(pages): # Pages should be a dict with key strings and value lists of pages
+    root = ET.Element("data")
+    for key, value in pages.items():
+        curr = ET.Element("pages", type = key)
+        for page in value:
+            curr.append(xmlify_once(page))
+        root.append(curr);
+    return root
 
 class Keywords:
     _key = None
@@ -148,11 +180,10 @@ if __name__ == '__main__':
     places = int(args.get("-P", "0"))
     weapons = int(args.get("-w", "0"))
     debug = "-d" in args
-    do_search(find_a_celebrity, celebs, debug = debug)
-    print("BREAK")
-    do_search(find_a_person, people, debug = debug)
-    print("BREAK")
-    do_search(find_a_place, places, debug = debug)
-    print("BREAK")
-    do_search(find_a_weapon, weapons, debug = debug)
-    print("BREAK")
+    parts = {
+        'celebs':  do_search(find_a_celebrity, celebs, debug = debug),
+        'people':  do_search(find_a_person, people, debug = debug),
+        'places':  do_search(find_a_place, places, debug = debug),
+        'weapons': do_search(find_a_weapon, weapons, debug = debug),
+    }
+    print(ET.tostring(xmlify(parts)).decode())

@@ -21,7 +21,7 @@ colony                  district
 town                    city
 park                    park
 neighborhood            district
-island                  landform
+island                  island
 hamlet                  district
 local government area   district
 local area              district
@@ -44,3 +44,7 @@ moon                    moon
 high-rise               tower
 high rise               tower
 suburb                  district
+satellite               moon
+satellites              moon
+volcano                 volcano
+constituent unit        state

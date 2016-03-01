@@ -21,6 +21,7 @@ museum
 neighborhood
 neighbourhood
 township
+towns
 river
 monastery
 monasteries

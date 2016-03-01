@@ -63,7 +63,7 @@ sub find_place_information {
     foreach $ptn (keys %placenames) {
         foreach my $titlevar (@titles) {
             if ($shortsumm =~
-                  /$titlevar (?:(or|in) (?:[\w-]+ ){1,3})?$LINKVERB (?:[\w-]+ )?$ARTICLE?(?:[^ ]+ ){0,4}\b$ptn\b/i) {
+                  /$titlevar (?:(or|in) (?:[\w-]+ ){1,3})?$LINKVERB (?:[\w-]+ )?$ARTICLE?(?:[^ ]+ ){0,9}\b$ptn\b/i) {
                 return $ptn;
             }
         }

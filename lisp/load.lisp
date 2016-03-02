@@ -72,3 +72,13 @@
   (declare (ignore args))
   (let ((obj (make-instance 'warp-point)))
     (move-object obj node)))
+
+(defmethod load-object-with-type (node (type (eql 'weapon)) &rest args)
+  (loop with wpn = (make-instance 'weapon :name (first args))
+        for rest = (cdr args) then (cddr rest)
+        for key = (first rest)
+        for value = (second rest)
+        while (not (null rest))
+        do (case key
+             (:type (setf (weapon-type wpn) value)))
+        finally (move-object wpn node)))

@@ -19,7 +19,7 @@ class Building
   end
 
   def self.load_building(data)
-    if data.kind_of? Place
+    if data.kind_of? PlacePage
       case data.type
       when :tower
         Tower.load data

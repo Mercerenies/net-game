@@ -28,6 +28,22 @@ class Map
     @ary.find { |x| x.id == val }
   end
 
+  def put_somewhere(obj)
+    weight = Proc.new { |x| 1 / (x.count_items + 1) }
+    total = @ary.map( &weight ).reduce(:+)
+    num = rand total
+    result = @ary.detect do |x|
+      num -= weight.(x)
+      num <= 0
+    end
+    if result
+      result.push obj
+      true
+    else
+      false
+    end
+  end
+
 end
 
 class Location
@@ -65,6 +81,10 @@ class Location
     links = [:':links', @links.dup]
     contents = [:':contents', @contents.dup]
     (prefix + country + links + contents).to_sxp
+  end
+
+  def count_items
+    self.count { |x| x.kind_of? Item }
   end
 
 end

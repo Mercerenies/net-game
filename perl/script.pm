@@ -56,10 +56,11 @@ sub find_place_information {
     $shortsumm =~ s|/[^ /]+/||g;
     $shortsumm =~ s/ {2,}/ /g;
     my $ptn;
-    my @titles = ("$title", "$title", "$title");
+    my @titles = ("$title", "$title", "$title", "$title");
     $titles[1] =~ s/,.*$//;
     $matches = 1;
     $matches = $titles[2] =~ s/ ?\([^()]*\) ?//g while $matches > 0;
+    $titles[3] =~ s/(Greater|Lesser) +//;
     foreach $ptn (keys %placenames) {
         foreach my $titlevar (@titles) {
             if ($shortsumm =~

@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 
-class Person
+class PersonPage
   attr_reader :name, :gender, :occupations
 
   def initialize(json)
@@ -11,7 +11,7 @@ class Person
 
 end
 
-class Place
+class PlacePage
   attr_reader :name, :type, :keyword
 
   def initialize(json)
@@ -27,7 +27,7 @@ class Place
 
 end
 
-class Weapon
+class WeaponPage
   attr_reader :name, :type, :keyword
 
   def initialize(json)
@@ -46,13 +46,13 @@ end
 module Loader
 
   def self.whitelist
-    [Person, Place, Weapon]
+    [PersonPage, PlacePage, WeaponPage]
   end
 
   def self.load(json)
     arr = json.collect do |expr|
       begin
-        name = Object.const_get expr['nature']
+        name = Object.const_get "#{expr['nature']}Page"
         name.new expr if whitelist.include? name
       rescue NameError
         nil

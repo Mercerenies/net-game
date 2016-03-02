@@ -50,3 +50,4 @@ hunting equipment
 clubs (weapon)
 throwing weapon
 melee weapon
+mortar

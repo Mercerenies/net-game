@@ -11,7 +11,7 @@ class Genner
   def generate_nodes
     @nodes = []
     @arr = @arr.reject do |elem|
-      if elem.is_a? Place
+      if elem.kind_of? PlacePage
         case elem.type
         when :city then @nodes << generate_node(elem, Level.city)
         when :state then @nodes << generate_node(elem, Level.state)
@@ -58,7 +58,7 @@ class Genner
   def generate_buildings
     buildings = []
     @arr = @arr.reject do |elem|
-      if elem.kind_of? Place
+      if elem.kind_of? PlacePage
         building = Building.load_building elem
         buildings << building if building
       end
@@ -74,6 +74,15 @@ class Genner
     end
   end
 
+  def generate_items
+    @arr = @arr.reject do |elem|
+      case elem
+      when WeaponPage
+        @map.put_somewhere(Weapon.new elem.name, elem.type) if elem.type
+      end
+    end
+  end
+
   def generate
     # Stage 1 - Generate the main nodal structures
     generate_nodes
@@ -81,10 +90,13 @@ class Genner
     generate_map
     # Stage 3 - Add buildings to the map
     generate_buildings
+    # Stage 4 - Put items into the map
+    generate_items
     # Return result
     @map
   end
 
-  private :generate_nodes, :generate_node, :generate_map, :generate_buildings
+  private :generate_nodes, :generate_node, :generate_map, :generate_buildings,
+          :generate_items
 
 end

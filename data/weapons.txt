@@ -26,3 +26,4 @@ weapon             sword
 mace               club
 weapons            sword
 hammer             hammer
+quarterstaff       polearm

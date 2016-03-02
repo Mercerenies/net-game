@@ -44,7 +44,7 @@
              \"examine <object>\" - Take a closer look at the object~@
              \"use <object>\" - Interact with a tool or object~@
              \"activate <object>\" - Turn the object on if it is currently inactive~@
-             \"<verb> <object>\" - Attempt to perform the action on the object~@
+             \"collect <object>\" - Pick up the object in question~@
              \"help\" - Display this message~@
              \"quit\" - Exit the game~%"))
 

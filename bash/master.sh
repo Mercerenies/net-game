@@ -5,11 +5,11 @@ people=""
 places=""
 weapons=""
 debug=""
-stage1="./bash/stage1.sh"
-stage2="./bash/stage2.sh"
-stage3="./bash/stage3.sh"
-stage4="./bash/stage4.sh"
-prefix="net_"
+stage1=""
+stage2=""
+stage3=""
+stage4=""
+prefix="net"
 clisp="clisp"
 
 if [ $# -eq 0 ]; then
@@ -52,16 +52,16 @@ while getopts 'c:p:P:w:d1234fF:l:' opt; do
             debug="-d"
             ;;
         1) # Stage 1
-            stage1=""
+            stage1="./bash/stage1.sh"
             ;;
         2) # Stage 2
-            stage2=""
+            stage2="./bash/stage2.sh"
             ;;
         3) # Stage 3
-            stage3=""
+            stage3="./bash/stage3.sh"
             ;;
         4) # Stage 4
-            stage4=""
+            stage4="./bash/stage4.sh"
             ;;
         F) # Intermediates with Filename
             prefix="$OPTARG"

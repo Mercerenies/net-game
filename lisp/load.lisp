@@ -68,6 +68,11 @@
 
 (defgeneric load-object-with-type (node type &rest args))
 
+(defmethod load-object-with-type (node (type (eql 'player)) &rest args)
+  (declare (ignore args))
+  (let ((obj (make-instance 'player)))
+    (move-object obj node)))
+
 (defmethod load-object-with-type (node (type (eql 'warp-point)) &rest args)
   (declare (ignore args))
   (let ((obj (make-instance 'warp-point)))

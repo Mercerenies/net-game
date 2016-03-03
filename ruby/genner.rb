@@ -92,6 +92,8 @@ class Genner
     generate_buildings
     # Stage 4 - Put items into the map
     generate_items
+    # Stage 5 - Position the player
+    @map.put_somewhere Player.new
     # Return result
     @map
   end

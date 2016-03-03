@@ -1,4 +1,12 @@
 
+class Player
+
+  def to_sxp
+    [:'player'].to_sxp
+  end
+
+end
+
 class WarpPoint
 
   def to_sxp

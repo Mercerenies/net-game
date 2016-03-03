@@ -1,6 +1,5 @@
 (in-package #:net-game)
 
-; TODO Random seed
 ; TODO Put states in for interactive objects (something like the state design pattern)
 ; TODO People in the world
 
@@ -11,9 +10,7 @@
 (defparameter *do-exit*
   (lambda () (error "Nothing to exit!")))
 
-; TODO Put player in the location contents
-(defparameter *player*
-  (make-instance 'player))
+(defparameter *player* nil)
 
 (defparameter *world* nil)
 
@@ -30,9 +27,16 @@
         until (null finish)))
 
 (defun run-game (&optional (filename "./temp/system.txt"))
-  (let ((*world* (with-open-file (file filename)
-                   (load-data :file file))))
-    (move-object *player* (nth (random (length *world*)) *world*))
+  (let* ((*world* (with-open-file (file filename)
+                    (load-data :file file)))
+         (*player* (some (lambda (x)
+                           (find-if (lambda (y) (typep y 'player))
+                                    (location-contents x)))
+                         *world*)))
+    (unless *world*
+      (error "The world is empty."))
+    (unless *player*
+      (error "The player object does not exist."))
     (loop named game-loop
           with *read-eval* = nil
           with *do-exit* = (lambda () (return-from game-loop nil))

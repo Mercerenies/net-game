@@ -67,4 +67,14 @@ sub read_weapon {
     return \%curr;
 }
 
+# Monsters
+sub read_monster {
+    # TODO This
+}
+
+# Animals
+sub read_animal {
+    # TODO This
+}
+
 1;

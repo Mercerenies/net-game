@@ -16,10 +16,12 @@ local $_;
 my %data = do './perl/load.pl';
 
 my %table = (
-    'places'  => \&read_place ,
-    'people'  => \&read_person,
-    'celebs'  => \&read_person,
-    'weapons' => \&read_weapon
+    'places'   => \&read_place  ,
+    'people'   => \&read_person ,
+    'celebs'   => \&read_person ,
+    'weapons'  => \&read_weapon ,
+    'monsters' => \&read_monster,
+    'animals'  => \&read_animal
     );
 
 my @result = ();

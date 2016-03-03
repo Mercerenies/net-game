@@ -55,3 +55,32 @@ artillery
 siege weapon
 siege engine
 musket
+:: monsters
+legendary creature
+legendary mammal
+fictional creature
+dragon
+serpent
+ghost
+demon
+vampire
+undead
+mythic animal
+deities
+deity
+:: animals
+rodent
+mollusc
+garden pest
+chicken
+beast
+reptile
+mammal
+bird
+frog
+saltwater fish
+freshwater fish
+fish of
+amphibian
+venemous fish
+cattle

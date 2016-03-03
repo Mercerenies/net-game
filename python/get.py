@@ -6,6 +6,7 @@ from sys import stderr
 from random import *
 import math
 import time
+import string
 from getopt import getopt
 import xml.etree.ElementTree as ET
 import re
@@ -98,6 +99,36 @@ def find_a_weapon(**key):
     basis = rnd(["List of premodern combat weapons", "List of medieval weapons"])
     return recurse(basis, is_weapon_page, **key)
 
+def is_monster_page(page):
+    if "list" in page.title.lower():
+        return False
+    if is_person_page(page):
+        return False
+    return len([c for c in page.categories
+                if Keywords.check_match("monsters", c)
+                and "list" not in c.lower()
+                and "errors" not in c.lower()
+                and "wikipedia" not in c.lower()]) > 0
+
+def find_a_monster(**key):
+    letter = choice(string.ascii_uppercase)
+    pagename = "List of legendary creatures ({})".format(letter)
+    return recurse(pagename, is_monster_page, **key)
+
+def is_animal_page(page):
+    if "list" in page.title.lower():
+        return False
+    if is_person_page(page):
+        return False
+    return len([c for c in page.categories
+                if Keywords.check_match("animals", c)
+                and "list" not in c.lower()
+                and "errors" not in c.lower()
+                and "wikipedia" not in c.lower()]) > 0
+
+def find_a_animal(**key):
+    return recurse("List of animals by common name", is_animal_page, **key)
+
 def nearby(x):
     try:
         (lat, lon) = x.coordinates
@@ -174,16 +205,20 @@ class Keywords:
         return False
 
 if __name__ == '__main__':
-    args = dict(getopt(sys.argv[1:], "c:p:P:w:d")[0])
+    args = dict(getopt(sys.argv[1:], "c:p:P:w:m:a:d")[0])
     celebs = int(args.get("-c", "0"))
     people = int(args.get("-p", "0"))
     places = int(args.get("-P", "0"))
     weapons = int(args.get("-w", "0"))
+    monsters = int(args.get("-m", "0"))
+    animals = int(args.get("-a", "0"))
     debug = "-d" in args
     parts = {
         'celebs':  do_search(find_a_celebrity, celebs, debug = debug),
         'people':  do_search(find_a_person, people, debug = debug),
         'places':  do_search(find_a_place, places, debug = debug),
         'weapons': do_search(find_a_weapon, weapons, debug = debug),
+        'monsters': do_search(find_a_monster, monsters, debug = debug),
+        'animals': do_search(find_a_animal, animals, debug = debug),
     }
     print(ET.tostring(xmlify(parts)).decode())

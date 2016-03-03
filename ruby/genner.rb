@@ -64,13 +64,8 @@ class Genner
       end
     end
     buildings.each do |building|
-      curr = @map.to_ary.sample
-      building.each_exit do |exit|
-        curr = @map[ curr.each_link.to_a.sample ]
-        exit.add_link curr.id
-        curr.add_link exit.id
-      end
       building.each_node { |x| @map.push x }
+      building.integrate_with @map
     end
   end
 

@@ -75,6 +75,10 @@ class Location
     @links.push x unless @links.include? x
   end
 
+  def remove_link(x)
+    @links.delete x
+  end
+
   def to_sxp
     prefix = [:location, @id, @name]
     country = @country_name ? [:':country', @country_name] : []

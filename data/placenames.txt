@@ -31,15 +31,15 @@ empire                  country
 territory               state
 maison                  estate
 metropolitan area       city
-crater                  landform
-impact structure        landform
+crater                  crater
+impact structure        crater
 bank                    bank
 museum                  museum
 canal                   river
 enclave                 state
 exclave                 state
 plain                   plain
-impact crater           landform
+impact crater           crater
 moon                    moon
 high-rise               tower
 high rise               tower

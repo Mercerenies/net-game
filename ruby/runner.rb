@@ -1,5 +1,6 @@
 #!/usr/bin/ruby
 
+load './ruby/util.rb'
 load './ruby/numeral.rb'
 load './ruby/sampler.rb'
 

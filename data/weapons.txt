@@ -22,8 +22,8 @@ whip               whip
 infantry weapon    spear
 knives             knife
 knife              knife
-weapon             sword
 mace               club
 weapons            sword
 hammer             hammer
 quarterstaff       polearm
+bokken             shortsword

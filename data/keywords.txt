@@ -51,3 +51,7 @@ clubs (weapon)
 throwing weapon
 melee weapon
 mortar
+artillery
+siege weapon
+siege engine
+musket

@@ -57,6 +57,8 @@ sub read_weapon {
     crop $name;
     crop $summary;
     my $info = find_weapon_information($name, $summary, $data->{'weapons'});
+    $name =~ s/swords/sword/g;
+    $name =~ s/blades/blade/g;
     my %curr = (
         nature => 'Weapon',
         name => unparen($name),

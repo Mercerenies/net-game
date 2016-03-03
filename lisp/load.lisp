@@ -44,7 +44,8 @@
       (setf (location-contents old-loc)
             (remove obj (location-contents old-loc))))
     (setf (get-loc obj) new-loc)
-    (push obj (location-contents new-loc))))
+    (when new-loc
+      (push obj (location-contents new-loc)))))
 
 (defun load-data (&key (file *standard-input*))
   (destructuring-bind (map-sym . locs) (read file)
@@ -79,11 +80,15 @@
     (move-object obj node)))
 
 (defmethod load-object-with-type (node (type (eql 'weapon)) &rest args)
-  (loop with wpn = (make-instance 'weapon :name (first args))
+  (loop with name = (first args)
+        with type = nil
+        with mod = nil
         for rest = (cdr args) then (cddr rest)
         for key = (first rest)
         for value = (second rest)
         while (not (null rest))
         do (case key
-             (:type (setf (weapon-type wpn) value)))
-        finally (move-object wpn node)))
+             (:type (setf type value))
+             (:mod (setf mod value)))
+        finally (let ((wpn (make-weapon name type mod)))
+                  (move-object wpn node))))

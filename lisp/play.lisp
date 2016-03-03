@@ -4,7 +4,10 @@
 ; TODO People in the world
 
 (defclass player (named located)
-  ()
+  ((inventory :accessor inventory
+              :initarg :inventory
+              :initform nil
+              :type list))
   (:default-initargs :name "Sandy"))
 
 (defparameter *do-exit*
@@ -46,6 +49,7 @@
                (format t "~%=== ~A ===~%~
                             Exits: ~S~%~
                             Objects: ~:[(None)~;~:*~{~A~^, ~}~]~%~
+                            Inventory: ~:[(None)~;~:*~{~A~^, ~}~]~%~
                             Mode: ~A~%~
                             ~A~
                             > "
@@ -54,6 +58,7 @@
                                  (location-short-name (find x *world* :key #'get-id)))
                                (location-exits (get-loc *player*)))
                        (mapcar #'get-name (location-contents (get-loc *player*)))
+                       (mapcar #'get-name (inventory *player*))
                        (mode-name (first *state*))
                        (mode-text (first *state*)))
                (setf cmd (read-line)))

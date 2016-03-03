@@ -3,6 +3,7 @@
 (defgeneric do-action (act obj))
 
 (defmethod do-action (act (obj t))
+  (declare (ignore act))
   (format t "Nothing happened...~%"))
 
 (defmethod do-action ((act (eql 'examine)) (obj warp-point))
@@ -22,3 +23,27 @@
     (do-action 'activate obj))
   (when (warp-active obj)
     (push 'warp *state*)))
+
+(defmethod do-action ((act (eql 'collect)) (obj item))
+  (if (find obj (inventory *player*))
+      (format t "You're already holding the ~A...~%" (get-name obj))
+      (progn
+        (format t "You pick up the ~A.~%" (get-name obj))
+        (move-object obj nil)
+        (push obj (inventory *player*)))))
+
+(defmethod do-action ((act (eql 'drop)) (obj item))
+  (if (find obj (inventory *player*))
+      (progn
+        (format t "You drop the ~A.~%" (get-name obj))
+        (setf (inventory *player*) (remove obj (inventory *player*)))
+        (move-object obj (get-loc *player*)))
+      (format t "But you're not holding the ~A...~%" (get-name obj))))
+
+(defmethod do-action ((act (eql 'examine)) (obj weapon))
+  (format t "~A~@
+             * Usability: ~D%~@
+             * Damage: ~D%~%"
+          (get-name obj)
+          (floor (* (weapon-wieldy obj) 100))
+          (floor (* (weapon-damage obj) 100))))

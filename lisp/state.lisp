@@ -22,8 +22,11 @@
     (case (read-from-string (first args))
       (go (user-go args-str))
       (help (user-help))
-      (t (let ((obj (find args-str (location-contents (get-loc *player*))
-                          :key #'get-name :test #'string-equal)))
+      (t (let ((obj (or
+                     (find args-str (location-contents (get-loc *player*))
+                           :key #'get-name :test #'string-equal)
+                     (find args-str (inventory *player*)
+                           :key #'get-name :test #'string-equal))))
            (do-action (read-from-string (first args)) (or obj args-str)))))))
 
 (defun user-go (exit-name)
@@ -45,6 +48,7 @@
              \"use <object>\" - Interact with a tool or object~@
              \"activate <object>\" - Turn the object on if it is currently inactive~@
              \"collect <object>\" - Pick up the object in question~@
+             \"drop <object>\" - Drop the object from your inventory~@
              \"help\" - Display this message~@
              \"quit\" - Exit the game~%"))
 

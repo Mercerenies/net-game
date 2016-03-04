@@ -1,6 +1,6 @@
 local $_;
 
-my(%occu, @mwords, @fwords, %placenames, %weapons);
+my(%occu, @mwords, @fwords, %placenames, %weapons, %animals);
 my $fh;
 
 open $fh, '<', './data/occupations.txt' or die("$!");
@@ -46,10 +46,25 @@ while (<$fh>) {
 }
 close $fh;
 
+open $fh, '<', './data/animals.txt' or die("$!");
+while (<$fh>) {
+    chomp;
+    /^([\w\- ]+)+: (.*)$/ or die("Illegal line in animals.txt at line $.");
+    my $key = $1;
+    my @rest = split(/,/, $2);
+    my %stats;
+    foreach my $token (@rest) {
+        $token =~ /\b(\w+) *([-+]\d+)/ or die("Illegal line in animals.txt at line $.");
+        $stats{$1} = 0+ $2;
+    }
+    $animals{$key} = \%stats;
+}
+
 (
-    'occu' => \%occu,
-    'mwords' => \@mwords,
-    'fwords' => \@fwords,
-    'placenames' => \%placenames,
-    'weapons' => \%weapons
+ 'occu' => \%occu,
+ 'mwords' => \@mwords,
+ 'fwords' => \@fwords,
+ 'placenames' => \%placenames,
+ 'weapons' => \%weapons,
+ 'animals' => \%animals
 );

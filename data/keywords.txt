@@ -84,3 +84,5 @@ fish of
 amphibian
 venemous fish
 cattle
+venemous spider
+edible fish

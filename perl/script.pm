@@ -1,3 +1,4 @@
+# ///// Do the Ruby layer now for animals (which involves making a combat system in Lisp)
 
 use Data::Dumper;
 
@@ -101,6 +102,27 @@ sub find_weapon_information {
         }
     }
     return undef;
+}
+
+# deduce_animal_stats($title, $summary, $data)
+sub deduce_animal_stats {
+    my $title = $_[0];
+    my $summary = $_[1];
+    my $data = $_[2];
+    my %stats;
+    foreach my $keyword (keys %{$data->{'animals'}}) {
+        my $constant;
+        if ($title =~ /\b$keyword\b/i) {
+            $constant = 1;
+        } else {
+            $constant = @{[ $summary =~ /\b$keyword\b/gi ]};
+        }
+        foreach my $stat (keys %{$data->{'animals'}->{$keyword}}) {
+            my $coef = $data->{'animals'}->{$keyword}->{$stat};
+            $stats{$stat} += $coef * $constant;
+        }
+   }
+    return \%stats;
 }
 
 1;

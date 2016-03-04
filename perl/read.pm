@@ -74,34 +74,41 @@ sub read_monster {
 
 # Animals
 sub read_animal {
+    local $_;
     my $xml = $_[0];
     my $data = $_[1];
     my $name = $xml->{'name'};
     my $summary = $xml->{'content'};
-    my $threat = 0; # How threatening?
-    my $size = 0; # How big?
-    my $pack = 0; # Likelihood of being in a pack?
-    my $sea = 0; # Is it a sea creature?
-    my $air = 0; # Is it a flying creature?
-    foreach my $keyword (keys %{$data->{'animals'}}) {
-        my $constant = @{[ $summary =~ /\b$keyword\b/gi ]};
-        foreach my $stat (keys %{$data->{'animals'}->{$keyword}}) {
-            my $coef = $data->{'animals'}->{$keyword}->{$stat};
-            if ($stat eq 'threat') {
-                $threat += $constant * $coef;
-            } elsif ($stat eq 'size') {
-                $size += $constant * $coef;
-            } elsif ($stat eq 'pack') {
-                $pack += $constant * $coef;
-            } elsif ($stat eq 'sea') {
-                $sea += $constant * $coef;
-            } elsif ($stat eq 'air') {
-                $air += $constant * $coef;
-            }
-        }
-    }
-    # ///// Do a find_animal_information and put the above in it, then summarize it here
-#    print STDERR "$name threat=$threat size=$size pack=$pack sea=$sea air=$air\n";
+    my %stats = %{deduce_animal_stats($name, $summary, $data)};
+    # $threat, $size, $pack are on a scale of 1 to 5
+    # $air, $sea are booleans
+    my($threat, $size, $pack, $air, $sea);
+    $threat = 5;
+    $threat -=!! ($stats{'threat'} <=  4);
+    $threat -=!! ($stats{'threat'} <=  2);
+    $threat -=!! ($stats{'threat'} <=  1);
+    $threat -=!! ($stats{'threat'} <= -1);
+    $size = 5;
+    $size -=!! ($stats{'size'} <= 25);
+    $size -=!! ($stats{'size'} <= 10);
+    $size -=!! ($stats{'size'} <=  0);
+    $size -=!! ($stats{'size'} <= -4);
+    $pack = 5;
+    $pack -=!! ($stats{'pack'} <= 3);
+    $pack -=!! ($stats{'pack'} <= 2);
+    $pack -=!! ($stats{'pack'} <= 1);
+    $pack -=!! ($stats{'pack'} <= 0);
+    $sea = 0+!! ($stats{'sea'} > 1);
+    $air = 0+!! ($stats{'air'} > 1);
+    my %curr = (
+        name => unparen($name),
+        threat => $threat,
+        size => $size,
+        pack => $pack,
+        sea => \$sea,
+        air => \$air
+        );
+    return \%curr;
 }
 
 1;

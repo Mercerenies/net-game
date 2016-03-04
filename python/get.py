@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+# TODO Consider making a reinforcement learning engine to improve the crawling
+
 import wikipedia
 import sys
 from sys import stderr

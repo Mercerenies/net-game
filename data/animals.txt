@@ -1,52 +1,51 @@
-predator: threat +2
-vermin: threat -1, size -1, sea -1
-small: size -1
-slender: size -1
+vermin: threat -1, size -1, sea -1, speed +1
+small: size -1, speed +1
+slender: size -1, speed +1
 long: size +1
 short: size -1
 smallest: size -2
-squirrel: size -1, threat -1, sea -1
-squirrels: size -1, threat -1, sea -1
+squirrel: size -1, threat -1, sea -1, speed +1
+squirrels: size -1, threat -1, sea -1, speed +1
 prairie dog: size -1, sea -1, air -1
-canid: threat +1, size +1, sea -1, air -1
-wolf: threat +1, size +1, sea -1, air -1
+canid: threat +1, size +1, sea -1, air -1, speed +1
+canids: threat +1, size +1, sea -1, air -1, speed +1
+wolf: threat +1, size +1, sea -1, air -1, speed +1
 predatory: threat +2
-wolves: threat +1, size +1, sea -1, air -1
+wolves: threat +1, size +1, sea -1, air -1, speed +1
 baby: size -1
 social: threat -1, pack +1
 herd: pack +2
 pack: pack +2
 packs: pack +2
-domesticated: threat -1
+domesticated: threat -1, speed -1
 height: size +1
 bird: size -1, sea -1, air +2
 birds: size -1, sea -1, air +2
-large: size +1
+large: size +1, speed -1
 hawks: threat +1, sea -1, air +1
 hawk: threat +1, sea -1, air +1
 gecko: size -1, sea -1, air -1
-lizard: size -1
-big: size +2
+lizard: size -1, speed +1
+big: size +2, speed -1
 claw: threat +1, sea -1
 claws: threat +1, sea -1
-hunting: threat +1
-predators: threat +1
+hunting: threat +2
 wild: threat +1
 carnivore: threat +1
 carnivores: threat +1
 fish: size -1, sea +2, air -1
-cat: size +1, sea -1, air -1
-mouse: size -1, threat -1, sea -1
+cat: size +1, sea -1, air -1, speed +1
+mouse: size -1, threat -1, sea -1, speed +1
 mole: size -1
 primate: pack +1, sea -1, air -1
 omnivorous: threat -1
 largest: size +2
-whale: size +1
+whale: size +1, speed -2
 attack: threat +1
 threat: threat +1
 killing: threat +1
-domestic: threat -1
-raised: threat -1
+domestic: threat -1, speed -1
+raised: threat -1, speed -1
 draft animal: size +1
 draft animals: size +1
 livestock: threat -1, pack +1
@@ -59,7 +58,16 @@ omnivores: threat -1
 medium-sized: size -1
 terrestrial: air -2, sea -2
 group: pack +1
-giant: size +1
+giant: size +1, speed -1
 aggressive: threat +1
 aggression: threat +1
-bear: sea -1, air -2
+bear: threat +1, size +1, sea -1, air -2, speed -1
+snake: threat +2, speed +1, size -1
+heavy: size +1
+kill: threat +1
+fighting: threat +1
+run: speed +1
+kills: threat +2
+dangerous: threat +2
+predators: threat +1
+feral: threat +2

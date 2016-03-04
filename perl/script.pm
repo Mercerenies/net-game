@@ -1,4 +1,3 @@
-# ///// Do the Ruby layer now for animals (which involves making a combat system in Lisp)
 
 use Data::Dumper;
 

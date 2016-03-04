@@ -153,17 +153,18 @@ def do_search(script, number, **key):
 
 def xmlify_once(page):
     stack = [ET.Element("page", name = page.title)]
-    re_titles = re.compile(r'^(=+) (.*) \1$')
+    re_titles = re.compile(r'^(=+) *(.*) *\1$')
     for line in page.content.splitlines():
         match = re.match(re_titles, line)
         if match:
             n = max(len(match.group(1)), 2)
-            if len(stack) > n:
+            if len(stack) >= n:
                 while len(stack) > n - 1:
-                    elem = stack.pop();
+                    elem = stack.pop()
                     stack[-1].append(elem)
-            else:
-                stack.append(ET.Element("section", name = match.group(2), depth = str(n)))
+            stack.append(ET.Element("section",
+                                    name = match.group(2).strip(),
+                                    depth = str(n)))
         else:
             if stack[-1].text is None:
                 stack[-1].text = ''

@@ -82,11 +82,11 @@ sub read_animal {
     my %stats = %{deduce_animal_stats($name, $summary, $data)};
     # $threat, $size, $pack are on a scale of 1 to 5
     # $air, $sea are booleans
-    my($threat, $size, $pack, $air, $sea);
+    my($threat, $size, $pack, $speed, $air, $sea);
     $threat = 5;
+    $threat -=!! ($stats{'threat'} <=  9);
     $threat -=!! ($stats{'threat'} <=  4);
     $threat -=!! ($stats{'threat'} <=  2);
-    $threat -=!! ($stats{'threat'} <=  1);
     $threat -=!! ($stats{'threat'} <= -1);
     $size = 5;
     $size -=!! ($stats{'size'} <= 25);
@@ -98,13 +98,22 @@ sub read_animal {
     $pack -=!! ($stats{'pack'} <= 2);
     $pack -=!! ($stats{'pack'} <= 1);
     $pack -=!! ($stats{'pack'} <= 0);
+    # TODO Speed
+    $speed = 5;
+    $speed -=!! ($stats{'speed'} <= 10);
+    $speed -=!! ($stats{'speed'} <=  6);
+    $speed -=!! ($stats{'speed'} <=  0);
+    $speed -=!! ($stats{'speed'} <= -2);
     $sea = 0+!! ($stats{'sea'} > 1);
     $air = 0+!! ($stats{'air'} > 1);
+#    print STDERR $name;
+#    print STDERR Dumper \%stats;
     my %curr = (
         name => unparen($name),
         threat => $threat,
         size => $size,
         pack => $pack,
+        speed => $speed,
         sea => \$sea,
         air => \$air
         );

@@ -1,3 +1,4 @@
+# ///// Analyze the animals.txt keywords a little more in depth
 
 use Data::Dumper;
 
@@ -112,10 +113,12 @@ sub deduce_animal_stats {
     foreach my $keyword (keys %{$data->{'animals'}}) {
         my $constant;
         if ($title =~ /\b$keyword\b/i) {
-            $constant = 1;
+            $constant = 4;
         } else {
             $constant = @{[ $summary =~ /\b$keyword\b/gi ]};
         }
+        $stats{'matches'} += $constant;
+        #print STDERR "$title has $keyword match $constant times\n" if $constant > 0;
         foreach my $stat (keys %{$data->{'animals'}->{$keyword}}) {
             my $coef = $data->{'animals'}->{$keyword}->{$stat};
             $stats{$stat} += $coef * $constant;

@@ -40,7 +40,7 @@ mole: size -1
 primate: pack +1, sea -1, air -1
 omnivorous: threat -1
 largest: size +2
-whale: size +1, speed -2
+whale: size +3, speed -2, threat +1, sea +1, air -1
 attack: threat +1
 threat: threat +1
 killing: threat +1
@@ -71,3 +71,18 @@ kills: threat +2
 dangerous: threat +2
 predators: threat +1
 feral: threat +2
+shark: threat +3, sea +1, air -1
+killer: threat +1
+death: threat +1
+macropredatory: size +1, threat +1, speed -1
+macropredator: size +1, threat +1, speed -1
+attacks: threat +1
+dolphin: size +1, sea +1, air -1
+injuring: threat +1
+sheep: threat -1, speed -1
+venomous: threat +2
+carnivorans: threat +1
+carnivoran: threat +1
+meerkat: size -1, speed +1, sea -1, air -1
+flounder: sea +1, size -1
+flounders: sea +1, size -1

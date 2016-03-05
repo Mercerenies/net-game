@@ -89,9 +89,9 @@ sub read_animal {
     $threat -=!! ($stats{'threat'} <=  2);
     $threat -=!! ($stats{'threat'} <= -1);
     $size = 5;
-    $size -=!! ($stats{'size'} <= 25);
     $size -=!! ($stats{'size'} <= 10);
-    $size -=!! ($stats{'size'} <=  0);
+    $size -=!! ($stats{'size'} <=  8);
+    $size -=!! ($stats{'size'} <=  4);
     $size -=!! ($stats{'size'} <= -4);
     $pack = 5;
     $pack -=!! ($stats{'pack'} <= 3);
@@ -115,7 +115,8 @@ sub read_animal {
         pack => $pack,
         speed => $speed,
         sea => \$sea,
-        air => \$air
+        air => \$air,
+        matches => $stats{'matches'}
         );
     return \%curr;
 }

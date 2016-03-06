@@ -48,3 +48,4 @@ satellite               moon
 satellites              moon
 volcano                 volcano
 constituent unit        state
+mountain range          mountain

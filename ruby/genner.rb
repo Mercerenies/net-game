@@ -9,6 +9,18 @@ class Genner
     @map = nil
   end
 
+  def has_bridge?
+    not @bridges.empty?
+  end
+
+  def get_a_bridge
+    if has_bridge?
+      result = @bridges.sample
+      @bridges = @bridges.remove result
+      result
+    end
+  end
+
   def generate_nodes
     @nodes = []
     @arr = @arr.reject do |elem|
@@ -63,7 +75,7 @@ class Genner
   def generate_map
     temp = Node.new '', Level.individual
     @nodes.each { |obj| temp << obj }
-    @map = Map.new temp.expand_to_map
+    @map = Map.new temp.expand_to_map genner: self
   end
 
   def generate_buildings

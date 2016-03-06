@@ -25,7 +25,7 @@ Note that Python, Perl, and Ruby are expected to be in /usr/bin. The Lisp implem
 * XML::Simple (some people have a problem loading this; make sure libxml is on your path, especially on Windows)
 
 ######Ruby
-* Ruby 1.9 or newer
+* Ruby 2.1 or newer
 * SXP gem (`gem install sxp`)
 
 ######Common Lisp

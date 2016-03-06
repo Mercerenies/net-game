@@ -50,7 +50,7 @@ class Node
     @contents.each &:waterfall
   end
 
-  def expand_to_map(country = nil)
+  def expand_to_map(country: nil, genner:)
     if @contents.empty?
       Array[Location.new id, name, country]
     else
@@ -74,14 +74,23 @@ class Node
         end
       end
       country ||= self.name unless self.name.empty?
-      nodes = @contents.map { |obj| obj.expand_to_map country }
-      nodes.zip(links).map do |arg|
+      nodes = @contents.map { |obj| obj.expand_to_map(country: country, genner: genner) }
+      use_real_bridge = (nodes.min_by(&:size).size > 3)
+      bridge_nodes = []
+      nodes.zip(links).map.with_index do |arg, n0|
         node, lnks = arg
         lnks.each do |n1|
-          node0 = node.sample
-          node1 = nodes[n1].sample
-          node0.add_link node1.id
-          node1.add_link node0.id
+          if n0 < n1
+            if not use_real_bridge
+              bridge = TrivialBridge.new
+            elsif genner.has_bridge?
+              bridge = genner.get_a_bridge
+            else
+              bridge = Bridge.create_random
+            end
+            bridge.each_node { |bridge_node| bridge_nodes << bridge_node }
+            bridge.bridge_on node, nodes[n1]
+          end
         end
       end
       nodes = nodes.flatten
@@ -90,7 +99,7 @@ class Node
         somewhere = nodes.sample
         somewhere.push WarpPoint.new
       end
-      nodes
+      nodes + bridge_nodes
     end
   end
 

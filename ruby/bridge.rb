@@ -10,10 +10,34 @@ class Bridge < Feature
     end
   end
 
+  def self.create_random
+    Forest.new.tap { |o| o.establish_nodes "#{Natural.namer.sample} Forest" }
+  end
+
+  # Each node in (*nodes) is a list of Node instances as obtained in Node#expand_to_map
   def bridge_on(*nodes)
-    nodes.zip(each_exit.cycle) do |node, exit|
+    nodes.zip(each_exit.cycle) do |curr, exit|
+      node = curr.sample
       node.add_link exit.id
       exit.add_link node.id
+    end
+  end
+
+end
+
+class TrivialBridge < Bridge
+
+  def load(data)
+  end
+
+  def bridge_on(*nodes)
+    (0 ... nodes.size).each do |i|
+      (i + 1 ... nodes.size).each do |j|
+        n0 = nodes[i].sample
+        n1 = nodes[j].sample
+        n0.add_link n1.id
+        n1.add_link n0.id
+      end
     end
   end
 
@@ -36,10 +60,10 @@ class Forest < Bridge
              "#{name} Wall", "#{name} Center", "Inner #{name} Region",
              "Outer #{name} Region"]
     points = (3..6).to_a.sample
-    @nodes = points.times.collect do
+    nodes = points.times.collect do
       id = Node.get_id
       name = names.sample
-      names = names.delete name
+      names.delete name
       Location.new id, name, nil
     end
 
@@ -61,11 +85,11 @@ class Forest < Bridge
         nodes[i + 3].add_link nodes[i + 2].id
         i += 3
       end
-      break if i >= nodes.length
+      break if i >= nodes.length - 1
     end
 
     # Loop Edges
-    (2..4).times do
+    (2..4).to_a.sample.times do
       n0 = nodes.sample
       n1 = nodes.sample
       unless n0 == n1

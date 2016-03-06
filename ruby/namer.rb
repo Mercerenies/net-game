@@ -60,7 +60,15 @@ class Namer
       rnd = rand (distr.values.reduce(0, &:+))
       curr += distr.detect { |k, v| (rnd -= v) <= 0 }[0]
     end
-    curr.strip
+    curr = curr.strip
+    curr = curr[0 .. -3] if curr =~ / [^ ]$/ # Remove single-letter word endings
+    curr
   end
 
+end
+
+module Natural
+  def self.namer
+    @@namer ||= Namer.new(fname: './data/naming_natural.txt')
+  end
 end

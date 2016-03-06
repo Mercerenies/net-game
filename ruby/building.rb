@@ -1,44 +1,15 @@
 
-class Building
-
-  def initialize
-    @nodes = []
-    @exits = []
-  end
-
-  def push(*xs)
-    xs.each { |x| @nodes.push x }
-  end
-
-  def entry_point(x)
-    @exits.push x
-  end
-
-  def load(node)
-    Building.new
-  end
+class Building < Feature
 
   def self.load_building(data)
     if data.kind_of? PlacePage
       case data.type
       when :tower
-        Tower.load data
+        Tower.new.tap { |o| o.load data }
       when :crater
-        Crater.load data
+        Crater.new.tap { |o| o.load data }
       end
     end
-  end
-
-  def [](n)
-    @nodes[n]
-  end
-
-  def each_node(&block)
-    @nodes.each &block
-  end
-
-  def each_exit(&block)
-    @exits.each &block
   end
 
   def integrate_with(map)
@@ -53,12 +24,6 @@ class Building
 end
 
 class Tower < Building
-
-  def self.load(data)
-    tower = Tower.new
-    tower.load data
-    tower
-  end
 
   def load(data)
     floors = (4..8).to_a.sample
@@ -80,12 +45,6 @@ class Tower < Building
 end
 
 class Crater < Building
-
-  def self.load(data)
-    crater = Crater.new
-    crater.load data
-    crater
-  end
 
   def load(data)
     crater_name = data.name

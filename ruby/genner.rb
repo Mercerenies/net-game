@@ -5,6 +5,7 @@ class Genner
     @arr = everything.clone
     @nodes = []
     @options = {}
+    @bridges = []
     @map = nil
   end
 
@@ -49,6 +50,16 @@ class Genner
     node
   end
 
+  def generate_bridges
+    @bridges = []
+    @arr = @arr.reject do |elem|
+      if elem.kind_of? PlacePage
+        bridge = Bridge.load_bridge elem
+        @bridges << bridge if bridge
+      end
+    end
+  end
+
   def generate_map
     temp = Node.new '', Level.individual
     @nodes.each { |obj| temp << obj }
@@ -81,19 +92,21 @@ class Genner
   def generate
     # Stage 1 - Generate the main nodal structures
     generate_nodes
-    # Stage 2 - Convert the nodes into a map
+    # Stage 2 - Pre-generate any bridges that can be made
+    generate_bridges
+    # Stage 3 - Convert the nodes into a map
     generate_map
-    # Stage 3 - Add buildings to the map
+    # Stage 4 - Add buildings to the map
     generate_buildings
-    # Stage 4 - Put items into the map
+    # Stage 5 - Put items into the map
     generate_items
-    # Stage 5 - Position the player
+    # Stage 6 - Position the player
     @map.put_somewhere Player.new
     # Return result
     @map
   end
 
   private :generate_nodes, :generate_node, :generate_map, :generate_buildings,
-          :generate_items
+          :generate_items, :generate_bridges
 
 end

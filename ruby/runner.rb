@@ -11,7 +11,10 @@ load './ruby/level.rb'
 load './ruby/node.rb'
 load './ruby/map.rb'
 
+load './ruby/feature.rb'
+load './ruby/bridge.rb'
 load './ruby/building.rb'
+
 load './ruby/objs.rb'
 load './ruby/weapon.rb'
 

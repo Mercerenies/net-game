@@ -1,4 +1,4 @@
-# ///// Analyze the animals.txt keywords a little more in depth
+# ///// Examine the forest spawner a bit more
 
 use Data::Dumper;
 

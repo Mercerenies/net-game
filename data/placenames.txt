@@ -49,3 +49,5 @@ satellites              moon
 volcano                 volcano
 constituent unit        state
 mountain range          mountain
+tributary               river
+tributaries             river

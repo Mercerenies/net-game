@@ -10,8 +10,12 @@ class Bridge < Feature
     end
   end
 
-  def self.create_random
-    Forest.new.tap { |o| o.establish_nodes "#{Natural.namer.sample} Forest" }
+  def self.create_random(nodal_size = nil)
+    nodal_size ||= (2..6).to_a.sample
+    Forest.new.tap do |o|
+      points = [(nodal_size * 3 / 4).round, 2].max
+      o.establish_nodes "#{Natural.namer.sample} Forest", points
+    end
   end
 
   # Each node in (*nodes) is a list of Node instances as obtained in Node#expand_to_map
@@ -50,21 +54,21 @@ class Forest < Bridge
     unless name =~ /forest$/i
       name = "#{name} #{Util.titlecase data.keyword}"
     end
-    establish_nodes name
+    points = (3..6).to_a.sample
+    establish_nodes name, points
   end
 
-  def establish_nodes(name)
+  def establish_nodes(name, points)
 
     names = ["#{name} Edge", "#{name} Depths", "Deep #{name}",
              "#{name} Treeline", "#{name} Loop", "#{name} Branch",
              "#{name} Wall", "#{name} Center", "Inner #{name} Region",
              "Outer #{name} Region"]
-    points = (3..6).to_a.sample
     nodes = points.times.collect do
       id = Node.get_id
       name = names.sample
       names.delete name
-      Location.new id, name, nil
+      Location.new id, name, nil, Animal
     end
 
     # Standard Path

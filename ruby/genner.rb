@@ -7,6 +7,7 @@ class Genner
     @options = {}
     @bridges = []
     @map = nil
+    @creatures = CreatureSet.new
   end
 
   def has_bridge?
@@ -72,6 +73,20 @@ class Genner
     end
   end
 
+  def generate_creatures
+    @arr = @arr.reject { |elem| @creatures.load_from_page elem }
+    creatures = @creatures.to_a.shuffle.cycle
+    @map.each do |node|
+      next unless node.can_have_creatures?
+      curr = nil
+      loop do
+        curr = creatures.next
+        break if node.can_have? curr
+      end
+      node.push_creature curr
+    end
+  end
+
   def generate_map
     temp = Node.new '', Level.individual
     @nodes.each { |obj| temp << obj }
@@ -110,15 +125,17 @@ class Genner
     generate_map
     # Stage 4 - Add buildings to the map
     generate_buildings
-    # Stage 5 - Put items into the map
+    # Stage 5 - Make a list of creatures and put them places
+    generate_creatures
+    # Stage 6 - Put items into the map
     generate_items
-    # Stage 6 - Position the player
+    # Stage 7 - Position the player
     @map.put_somewhere Player.new
     # Return result
-    @map
+    [@map, @creatures]
   end
 
   private :generate_nodes, :generate_node, :generate_map, :generate_buildings,
-          :generate_items, :generate_bridges
+          :generate_items, :generate_bridges, :generate_creatures
 
 end

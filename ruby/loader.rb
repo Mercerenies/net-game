@@ -43,10 +43,26 @@ class WeaponPage
 
 end
 
+class AnimalPage
+  attr_reader :name, :pack, :speed, :sea, :air, :threat, :size
+
+  def initialize(json)
+    @name = json['name']
+    @pack = json['pack']
+    @speed = json['speed']
+    @sea = json['sea']
+    @air = json['air']
+    @threat = json['threat']
+    @size = json['size']
+    @matches = json['matches'] # TODO Reject on low match count
+  end
+
+end
+
 module Loader
 
   def self.whitelist
-    [PersonPage, PlacePage, WeaponPage]
+    [PersonPage, PlacePage, WeaponPage, AnimalPage]
   end
 
   def self.load(json)

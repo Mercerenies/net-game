@@ -55,12 +55,30 @@ class Location
   def_delegators :@contents, :each, :[], :[]=, :push, :delete, :pop
   def_delegator :@links, :each, :each_link
 
-  def initialize(id, name, country_name)
+  def initialize(id, name, country_name, valid_creatures = nil)
     @id = id
     @name = name
     @country_name = country_name
     @contents = []
     @links = []
+    @valid_creatures = valid_creatures
+    @creatures = []
+  end
+
+  def has_creatures?
+    not @creatures.empty?
+  end
+
+  def can_have_creatures?
+    not @valid_creatures.nil?
+  end
+
+  def can_have?(x)
+    @valid_creatures === x
+  end
+
+  def push_creature(x)
+    @creatures.push x.id if can_have? x
   end
 
   def long_name
@@ -84,7 +102,8 @@ class Location
     country = @country_name ? [:':country', @country_name] : []
     links = [:':links', @links.dup]
     contents = [:':contents', @contents.dup]
-    (prefix + country + links + contents).to_sxp
+    creatures = [:':creatures', @creatures.dup]
+    (prefix + country + links + contents + creatures).to_sxp
   end
 
   def count_items

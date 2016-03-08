@@ -1,5 +1,7 @@
 (in-package #:net-game)
 
+; ///// Animals should spawn in-universe (and then do combat stuff)
+
 ; TODO Put states in for interactive objects (something like the state design pattern)
 ; TODO People in the world
 
@@ -17,6 +19,8 @@
 
 (defparameter *world* nil)
 
+(defparameter *creatures* nil)
+
 (defparameter *state*
   (list 'global))
 
@@ -30,40 +34,40 @@
         until (null finish)))
 
 (defun run-game (&optional (filename "./temp/system.txt"))
-  (let* ((*world* (with-open-file (file filename)
-                    (load-data :file file)))
-         (*player* (some (lambda (x)
-                           (find-if (lambda (y) (typep y 'player))
-                                    (location-contents x)))
-                         *world*)))
-    (unless *world*
-      (error "The world is empty."))
-    (unless *player*
-      (error "The player object does not exist."))
-    (loop named game-loop
-          with *read-eval* = nil
-          with *do-exit* = (lambda () (return-from game-loop nil))
-          with cmd = nil
-          with acmd = nil
-          do (progn
-               (format t "~%=== ~A ===~%~
-                            Exits: ~S~%~
-                            Objects: ~:[(None)~;~:*~{~A~^, ~}~]~%~
-                            Inventory: ~:[(None)~;~:*~{~A~^, ~}~]~%~
-                            Mode: ~A~%~
-                            ~A~
-                            > "
-                       (get-name (get-loc *player*))
-                       (mapcar (lambda (x)
-                                 (location-short-name (find x *world* :key #'get-id)))
-                               (location-exits (get-loc *player*)))
-                       (mapcar #'get-name (location-contents (get-loc *player*)))
-                       (mapcar #'get-name (inventory *player*))
-                       (mode-name (first *state*))
-                       (mode-text (first *state*)))
-               (setf cmd (read-line)))
-          if (string-equal cmd "quit")
-              do (funcall *do-exit*)
-          else
-              do (do-command (first *state*) cmd))))
+  (multiple-value-bind (*world* *creatures*) (with-open-file (file filename)
+                                               (load-data :file file))
+    (let ((*player* (some (lambda (x)
+                            (find-if (lambda (y) (typep y 'player))
+                                     (location-contents x)))
+                          *world*)))
+      (unless *world*
+        (error "The world is empty."))
+      (unless *player*
+        (error "The player object does not exist."))
+      (loop named game-loop
+            with *read-eval* = nil
+            with *do-exit* = (lambda () (return-from game-loop nil))
+            with cmd = nil
+            with acmd = nil
+            do (progn
+                 (format t "~%=== ~A ===~%~
+                              Exits: ~S~%~
+                              Objects: ~:[(None)~;~:*~{~A~^, ~}~]~%~
+                              Inventory: ~:[(None)~;~:*~{~A~^, ~}~]~%~
+                              Mode: ~A~%~
+                              ~A~
+                              > "
+                         (get-name (get-loc *player*))
+                         (mapcar (lambda (x)
+                                   (location-short-name (find x *world* :key #'get-id)))
+                                 (location-exits (get-loc *player*)))
+                         (mapcar #'get-name (location-contents (get-loc *player*)))
+                         (mapcar #'get-name (inventory *player*))
+                         (mode-name (first *state*))
+                         (mode-text (first *state*)))
+                 (setf cmd (read-line)))
+            if (string-equal cmd "quit")
+                do (funcall *do-exit*)
+            else
+                do (do-command (first *state*) cmd)))))
 

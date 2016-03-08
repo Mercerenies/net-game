@@ -109,6 +109,7 @@ sub read_animal {
 #    print STDERR $name;
 #    print STDERR Dumper \%stats;
     my %curr = (
+        nature => 'Animal',
         name => unparen($name),
         threat => $threat,
         size => $size,

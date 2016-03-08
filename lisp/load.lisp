@@ -27,6 +27,9 @@
    (contents :accessor location-contents
              :initform nil
              :type list)
+   (creatures :accessor location-creatures
+              :initform nil
+              :type list)
    (short-name :accessor location-short-name
                :initarg :short-name
                :initform ""
@@ -48,21 +51,30 @@
       (push obj (location-contents new-loc)))))
 
 (defun load-data (&key (file *standard-input*))
-  (destructuring-bind (map-sym . locs) (read file)
-    (unless (eq map-sym 'map) (error "Flawed data"))
-    (loop for (loc id name . rst) in locs
-          for inst = (make-instance 'location :name name :short-name name :id id)
-          do (loop for elems = rst then (cdr (cdr elems))
-                   for key = (first elems)
-                   for value = (second elems)
-                   while elems
-                   do (case key
-                        (:country (setf (get-name inst) (format nil "~A, ~A"
-                                                                (get-name inst)
-                                                                value)))
-                        (:links (setf (location-exits inst) value))
-                        (:contents (mapc #'(lambda (x) (load-object inst x)) value))))
-          collect inst)))
+  (let ((data (read file)))
+    (values
+     (destructuring-bind (map-sym . locs) (first data)
+       (unless (eq map-sym 'map) (error "Flawed data"))
+       (loop for (loc id name . rst) in locs
+             for inst = (make-instance 'location :name name :short-name name :id id)
+             do (loop for elems = rst then (cdr (cdr elems))
+                      for key = (first elems)
+                      for value = (second elems)
+                      while elems
+                      do (case key
+                           (:country (setf (get-name inst) (format nil "~A, ~A"
+                                                                   (get-name inst)
+                                                                   value)))
+                           (:links (setf (location-exits inst) value))
+                           (:contents (mapc #'(lambda (x) (load-object inst x)) value))
+                           (:creatures (mapc #'(lambda (x)
+                                                 (push (location-creatures inst) x))
+                                             value))))
+             collect inst))
+     (destructuring-bind (anim-sym . anims) (second data)
+       (unless (eq anim-sym 'creature-set) (error "Flawed data"))
+       (loop for data in anims
+             collect (apply #'load-creature (first data) (rest data)))))))
 
 (defun load-object (node obj)
   (apply #'load-object-with-type node (car obj) (cdr obj)))

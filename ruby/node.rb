@@ -75,7 +75,7 @@ class Node
       end
       country ||= self.name unless self.name.empty?
       nodes = @contents.map { |obj| obj.expand_to_map(country: country, genner: genner) }
-      use_real_bridge = (nodes.min_by(&:size).size > 3)
+      use_real_bridge = (Util.median(nodes.map &:size) > 3)
       bridge_nodes = []
       nodes.zip(links).map.with_index do |arg, n0|
         node, lnks = arg

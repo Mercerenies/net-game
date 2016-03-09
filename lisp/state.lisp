@@ -1,5 +1,8 @@
 (in-package #:net-game)
 
+(defconstant +active-radius+
+  5)
+
 (defgeneric do-command (state arg))
 
 (defgeneric mode-name (state))
@@ -18,8 +21,9 @@
     (when (or (not (listp args))
               (< (length args) 1))
       (format t "Invalid user command!~%")
-      (return-from do-user nil))
-    (case (read-from-string (first args))
+      (return-from do-command nil))
+    (case (read-from-string (first args)) ; TODO This should be `intern` but need to
+                                          ;      convert to uppercase first
       (go (user-go args-str))
       (help (user-help))
       (t (let ((obj (or
@@ -27,7 +31,12 @@
                            :key #'get-name :test #'string-equal)
                      (find args-str (inventory *player*)
                            :key #'get-name :test #'string-equal))))
-           (do-action (read-from-string (first args)) (or obj args-str)))))))
+           (do-action (read-from-string (first args)) (or obj args-str)))))
+    (unless (is-trivial (read-from-string (first args)))
+      (loop for node in (halo (get-loc *player*) +active-radius+)
+            do (loop for obj in (location-contents node)
+                     do (entity-turn obj))
+            do (do-spawn node)))))
 
 (defun user-go (exit-name)
   (let ((match (find exit-name (location-exits (get-loc *player*))

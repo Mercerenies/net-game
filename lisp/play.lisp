@@ -6,7 +6,10 @@
 ; TODO People in the world
 
 (defclass player (named located)
-  ((inventory :accessor inventory
+  ((hp :accessor hp
+       :initarg :hp
+       :initform 1.00)
+   (inventory :accessor inventory
               :initarg :inventory
               :initform nil
               :type list))
@@ -51,6 +54,7 @@
             with acmd = nil
             do (progn
                  (format t "~%=== ~A ===~%~
+                              Stats: ~,1F HP~%~
                               Exits: ~S~%~
                               Objects: ~:[(None)~;~:*~{~A~^, ~}~]~%~
                               Inventory: ~:[(None)~;~:*~{~A~^, ~}~]~%~
@@ -58,6 +62,7 @@
                               ~A~
                               > "
                          (get-name (get-loc *player*))
+                         (* 100 (hp *player*))
                          (mapcar (lambda (x)
                                    (location-short-name (find x *world* :key #'get-id)))
                                  (location-exits (get-loc *player*)))

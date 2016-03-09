@@ -68,7 +68,7 @@
                            (:links (setf (location-exits inst) value))
                            (:contents (mapc #'(lambda (x) (load-object inst x)) value))
                            (:creatures (mapc #'(lambda (x)
-                                                 (push (location-creatures inst) x))
+                                                 (push x (location-creatures inst)))
                                              value))))
              collect inst))
      (destructuring-bind (anim-sym . anims) (second data)
@@ -78,6 +78,12 @@
 
 (defun load-object (node obj)
   (apply #'load-object-with-type node (car obj) (cdr obj)))
+
+(defgeneric entity-turn (obj))
+
+(defmethod entity-turn ((obj t))
+  ; By default, do nothing
+  nil)
 
 (defgeneric load-object-with-type (node type &rest args))
 
@@ -104,3 +110,24 @@
              (:mod (setf mod value)))
         finally (let ((wpn (make-weapon name type mod)))
                   (move-object wpn node))))
+
+; Uses *world*
+(defun halo (node &optional (n 1) &key (self t))
+  (if (not (plusp n))
+      (list node)
+      (loop for exit in (location-exits node)
+            append (halo (find exit *world* :key #'get-id) (1- n)) into result
+            finally (if self
+                        (return (cons node (remove-duplicates result)))
+                        (return (remove-duplicates result))))))
+
+; Uses *creatures*
+(defmethod do-spawn (node)
+  (unless (some (lambda (node0)
+                  (member-if (lambda (obj) (typep obj 'creature))
+                             (location-contents node0)))
+                (halo node 2))
+    (let* ((id (choose (location-creatures node)))
+           (animal (and id (make-animal (find id *creatures* :key #'get-id)))))
+      (when animal
+        (move-object animal node)))))

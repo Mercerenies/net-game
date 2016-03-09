@@ -24,26 +24,31 @@
   (when (warp-active obj)
     (push 'warp *state*)))
 
-(defmethod do-action ((act (eql 'collect)) (obj item))
-  (if (find obj (inventory *player*))
-      (format t "You're already holding the ~A...~%" (get-name obj))
-      (progn
-        (format t "You pick up the ~A.~%" (get-name obj))
-        (move-object obj nil)
-        (push obj (inventory *player*)))))
+(defgeneric is-trivial (act))
 
-(defmethod do-action ((act (eql 'drop)) (obj item))
-  (if (find obj (inventory *player*))
-      (progn
-        (format t "You drop the ~A.~%" (get-name obj))
-        (setf (inventory *player*) (remove obj (inventory *player*)))
-        (move-object obj (get-loc *player*)))
-      (format t "But you're not holding the ~A...~%" (get-name obj))))
+(defmethod is-trivial ((act symbol))
+  t)
 
-(defmethod do-action ((act (eql 'examine)) (obj weapon))
-  (format t "~A~@
-             * Usability: ~D%~@
-             * Damage: ~D%~%"
-          (get-name obj)
-          (floor (* (weapon-wieldy obj) 100))
-          (floor (* (weapon-damage obj) 100))))
+(defmethod is-trivial ((act (eql 'examine)))
+  t)
+
+(defmethod is-trivial ((act (eql 'drop)))
+  nil)
+
+(defmethod is-trivial ((act (eql 'collect)))
+  nil)
+
+(defmethod is-trivial ((act (eql 'help)))
+  t)
+
+(defmethod is-trivial ((act (eql 'activate)))
+  nil)
+
+(defmethod is-trivial ((act (eql 'go)))
+  nil)
+
+(defmethod is-trivial ((act (eql 'use)))
+  nil)
+
+(defmethod is-trivial ((act (eql 'quit)))
+  t)

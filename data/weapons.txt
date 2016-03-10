@@ -23,7 +23,7 @@ infantry weapon    spear
 knives             knife
 knife              knife
 mace               club
-weapons            sword
 hammer             hammer
 quarterstaff       polearm
 bokken             shortsword
+pole-arm           polearm

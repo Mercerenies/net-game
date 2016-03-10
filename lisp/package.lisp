@@ -10,6 +10,7 @@
 
 (load "./lisp/util.lisp")
 (load "./lisp/load.lisp")
+(load "./lisp/parser.lisp")
 
 (load "./lisp/action.lisp")
 (load "./lisp/state.lisp")

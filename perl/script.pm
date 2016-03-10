@@ -1,5 +1,3 @@
-# ///// Examine the forest spawner a bit more
-
 use Data::Dumper;
 
 my $LINKVERB = "(?:is|was|are|were)";

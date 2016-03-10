@@ -1,7 +1,5 @@
 (in-package #:net-game)
 
-; ///// Animals should spawn in-universe (and then do combat stuff)
-
 ; TODO Put states in for interactive objects (something like the state design pattern)
 ; TODO People in the world
 

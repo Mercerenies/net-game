@@ -51,3 +51,4 @@ constituent unit        state
 mountain range          mountain
 tributary               river
 tributaries             river
+monastery               church

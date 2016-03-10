@@ -1,9 +1,7 @@
 (in-package #:net-game)
 
-; LR(1)
-; <command> ::= <verb> [ <noun-phrase> ]
-; <verb>
-; <noun-phrase> ::= [ <noun> ] { <prep-phrase> }
+; <command> ::= <verb> [ <noun-phrase> ] { <prep-phrase> }
+; <noun-phrase> ::= [ <noun> ]
 ; <prep-phrase> ::= <prep> <noun>
 
 (defstruct (sentence :named (:type vector))
@@ -78,7 +76,7 @@
 (defun parse-default (sentence)
   (let ((nouns (append (mapcar #'get-name (location-contents (get-loc *player*)))
                        (mapcar #'get-name (inventory *player*))
-                       (mapcar #'get-name (halo (get-loc *player*) 1)))))
+                       (mapcar #'location-short-name (halo (get-loc *player*) 1)))))
     (parse-with-words sentence
                       :nouns nouns
                       :verbs '("go" "examine" "use" "activate" "collect"
@@ -94,14 +92,19 @@
                                    (inventory *player*)
                                    (halo (get-loc *player*) 1))
                       :test #'string-equal
-                      :key #'get-name))))
+                      :key #'(lambda (x)
+                               (if (typep x 'location)
+                                   (location-short-name x)
+                                   (get-name x)))))))
     (let ((parse (parse-default sentence)))
-      (setf (sentence-verb parse) (intern-upcase (sentence-verb parse)))
-      (setf (sentence-noun parse) (translate-noun (sentence-noun parse)))
-      (setf (sentence-preps parse) (loop for curr = (sentence-preps parse) then (cddr curr)
-                                         for key = (first curr)
-                                         for value = (second curr)
-                                         while (not (null curr))
-                                         append (list (intern-upcase key)
-                                                      (translate-noun value))))
+      (when parse
+        (setf (sentence-verb parse) (intern-upcase (sentence-verb parse)))
+        (setf (sentence-noun parse) (translate-noun (sentence-noun parse)))
+        (setf (sentence-preps parse)
+              (loop for curr = (sentence-preps parse) then (cddr curr)
+                    for key = (first curr)
+                    for value = (second curr)
+                    while (not (null curr))
+                    append (list (intern-upcase key)
+                                 (translate-noun value)))))
       parse)))

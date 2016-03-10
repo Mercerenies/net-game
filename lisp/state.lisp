@@ -16,41 +16,21 @@
   "")
 
 (defmethod do-command ((state (eql 'global)) arg)
-  (let* ((args (word-split arg))
-         (args-str (format nil "~{~A~^ ~}" (rest args))))
-    (when (or (not (listp args))
-              (< (length args) 1))
-      (format t "Invalid user command!~%")
-      (return-from do-command nil))
-    (case (read-from-string (first args)) ; TODO This should be `intern` but need to
-                                          ;      convert to uppercase first
-      (go (user-go args-str))
-      (help (user-help))
-      (t (let ((obj (or
-                     (find args-str (location-contents (get-loc *player*))
-                           :key #'get-name :test #'string-equal)
-                     (find args-str (inventory *player*)
-                           :key #'get-name :test #'string-equal))))
-           (do-action (read-from-string (first args)) (or obj args-str)))))
-    (unless (is-trivial (read-from-string (first args)))
-      (loop for node in (halo (get-loc *player*) +active-radius+)
-            do (loop for obj in (location-contents node)
-                     do (entity-turn obj))
-            do (do-spawn node)))))
+  (let ((parse (enhanced-parse arg)))
+    (if parse
+        (do-action (sentence-verb parse) (sentence-noun parse) (sentence-preps parse))
+        (do-action nil nil nil))))
 
-(defun user-go (exit-name)
-  (let ((match (find exit-name (location-exits (get-loc *player*))
-                     :key #'(lambda (x) (let ((temp (find x *world*
-                                                          :key #'get-id)))
-                                          (and temp (location-short-name temp))))
-                     :test #'string-equal)))
-    (if match
-        (let ((match1 (find match *world* :key #'get-id)))
-          (format t "Going...~%")
-          (move-object *player* match1))
-        (format t "Can't go that way.~%"))))
+(defmethod do-action ((act (eql 'go)) (obj location) preps)
+  (declare (ignore preps))
+  (if (eq obj (get-loc *player*))
+      (format t "You're already there...")
+      (progn
+        (format t "Going...~%")
+        (move-object *player* obj))))
 
-(defun user-help ()
+(defmethod do-action ((act (eql 'help)) obj preps)
+  (declare (ignore obj preps))
   (format t "Valid Player Actions:~@
              \"go <place>\" - Go to the area listed~@
              \"examine <object>\" - Take a closer look at the object~@

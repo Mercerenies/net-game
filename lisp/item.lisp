@@ -56,7 +56,8 @@
     (setf (weapon-damage wpn) (second stats))
     wpn))
 
-(defmethod do-action ((act (eql 'collect)) (obj item))
+(defmethod do-action ((act (eql 'collect)) (obj item) preps)
+  (declare (ignore preps))
   (if (find obj (inventory *player*))
       (format t "You're already holding the ~A...~%" (get-name obj))
       (progn
@@ -64,7 +65,8 @@
         (move-object obj nil)
         (push obj (inventory *player*)))))
 
-(defmethod do-action ((act (eql 'drop)) (obj item))
+(defmethod do-action ((act (eql 'drop)) (obj item) preps)
+  (declare (ignore preps))
   (if (find obj (inventory *player*))
       (progn
         (format t "You drop the ~A.~%" (get-name obj))
@@ -72,7 +74,8 @@
         (move-object obj (get-loc *player*)))
       (format t "But you're not holding the ~A...~%" (get-name obj))))
 
-(defmethod do-action ((act (eql 'examine)) (obj weapon))
+(defmethod do-action ((act (eql 'examine)) (obj weapon) preps)
+  (declare (ignore preps))
   (format t "~A~@
              * Usability: ~D%~@
              * Damage: ~D%~%"

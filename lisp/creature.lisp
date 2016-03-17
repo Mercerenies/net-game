@@ -134,7 +134,7 @@
   (when (<= (hp target) 0)
     (move-object target nil))) ; TODO Make sure death of *player* won't crash everything
 
-#|
+#| TODO This
 (defmethod do-action ((act (eql 'examine)) (obj animal) preps)
   (declare (ignore preps))
   (format t "Just testing this: ~S ~S ~S"

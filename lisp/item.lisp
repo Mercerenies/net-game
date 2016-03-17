@@ -33,6 +33,7 @@
     (shortsword '(0.60 0.49))
     (sword '(0.58 0.50))
     (knife '(0.77 0.41))
+    (sickle '(0.70 0.10)) ; TODO Sickles need something special too
     (t '(0.00 0.00))))
 
 (defun thrown-weapon-p (weapon)

@@ -19,12 +19,15 @@
   (let ((parse (enhanced-parse arg)))
     (if parse
         (do-action (sentence-verb parse) (sentence-noun parse) (sentence-preps parse))
-        (do-action nil nil nil))))
+        (do-action nil nil nil))
+    (unless (is-trivial (sentence-verb parse))
+      (let ((halo (halo (get-loc *player*) +active-radius+)))
+        nil)))) ; TODO This
 
 (defmethod do-action ((act (eql 'go)) (obj location) preps)
   (declare (ignore preps))
   (if (eq obj (get-loc *player*))
-      (format t "You're already there...")
+      (format t "You're already there...~%")
       (progn
         (format t "Going...~%")
         (move-object *player* obj))))

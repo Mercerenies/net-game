@@ -27,3 +27,9 @@ hammer             hammer
 quarterstaff       polearm
 bokken             shortsword
 pole-arm           polearm
+saber              shortsword
+sabre              shortsword
+siege engine       club
+siege weapon       club
+sickle             sickle
+musket             missile

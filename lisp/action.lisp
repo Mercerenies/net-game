@@ -55,5 +55,3 @@
 
 (defmethod is-trivial ((act (eql 'quit)))
   t)
-
-; ///// Implement an attack action, then test

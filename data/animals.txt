@@ -61,7 +61,7 @@ group: pack +1
 giant: size +1, speed -1
 aggressive: threat +1
 aggression: threat +1
-bear: threat +1, size +1, sea -1, air -2, speed -1
+bear: threat +3, size +1, sea -1, air -2, speed -1
 snake: threat +2, speed +1, size -1
 heavy: size +1
 kill: threat +1

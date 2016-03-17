@@ -80,7 +80,7 @@ sub read_animal {
     my $name = $xml->{'name'};
     my $summary = $xml->{'content'};
     my %stats = %{deduce_animal_stats($name, $summary, $data)};
-    # $threat, $size, $pack are on a scale of 1 to 5
+    # $threat, $size, $pack, $speed are on a scale of 1 to 5
     # $air, $sea are booleans
     my($threat, $size, $pack, $speed, $air, $sea);
     $threat = 5;
@@ -98,7 +98,6 @@ sub read_animal {
     $pack -=!! ($stats{'pack'} <= 2);
     $pack -=!! ($stats{'pack'} <= 1);
     $pack -=!! ($stats{'pack'} <= 0);
-    # TODO Speed
     $speed = 5;
     $speed -=!! ($stats{'speed'} <= 10);
     $speed -=!! ($stats{'speed'} <=  6);

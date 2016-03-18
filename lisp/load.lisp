@@ -122,11 +122,11 @@
                         (return (remove-duplicates result))))))
 
 ; Uses *creatures*
-(defmethod do-spawn (node)
+(defun do-spawn (node)
   (unless (some (lambda (node0)
                   (member-if (lambda (obj) (typep obj 'creature))
                              (location-contents node0)))
-                (halo node 2))
+                (halo node 1))
     (let* ((id (choose (location-creatures node)))
            (animal (and id (make-animal (find id *creatures* :key #'get-id)))))
       (when animal

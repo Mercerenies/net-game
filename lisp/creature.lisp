@@ -84,6 +84,8 @@
                         (5 (+ 0.29 (random 0.30))))))
 
 (defmethod entity-turn ((obj animal))
+;  (format t "The ~A (~A / ~A) at ~A is going to go now.~%"
+;          (get-name obj) (anim-mood obj) (anim-attitude obj) (get-name (get-loc obj)))
   (case (anim-mood obj)
     (passive (cond
                ((member *player* (location-contents (get-loc obj)))
@@ -113,7 +115,8 @@
                 (do-attack obj :target *player*))
                ((some (lambda (x) (member *player* (location-contents x)))
                       (halo (get-loc obj) 1))
-                (move-object obj (get-loc *player*)))
+                (move-object obj (get-loc *player*))
+                (entity-turn obj))
                (t nil))) ; TODO Should we have him passively move here?
     (stalking (cond
                 ((member *player* (location-contents (get-loc obj)))
@@ -122,10 +125,9 @@
                 ((some (lambda (x) (member *player* (location-contents x)))
                        (halo (get-loc obj) 1))
                  nil)
-                (t (let ((inter (not (null
-                                      (intersection (halo (get-loc *player*) 1 :self nil)
-                                                    (halo (get-loc obj) 1 :self nil))))))
-                     (if inter
+                (t (let ((inter (intersection (halo (get-loc *player*) 1 :self nil)
+                                              (halo (get-loc obj) 1 :self nil))))
+                     (if (not (null inter))
                          (move-object obj (first inter))
                          (setf (anim-mood obj) 'passive))))))))
 
@@ -134,12 +136,12 @@
   (when (<= (hp target) 0)
     (move-object target nil))) ; TODO Make sure death of *player* won't crash everything
 
-#| TODO This
+; TODO This
 (defmethod do-action ((act (eql 'examine)) (obj animal) preps)
   (declare (ignore preps))
-  (format t "Just testing this: ~S ~S ~S"
+  (format t "Just testing this: ~S ~S ~S~%"
           (get-name obj)
           (anim-mood obj)
           (anim-attitude obj)))
-|#
+
 ; ///// Test the creature AI code and then give the player a verb to fight back

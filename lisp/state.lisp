@@ -20,9 +20,11 @@
     (if parse
         (do-action (sentence-verb parse) (sentence-noun parse) (sentence-preps parse))
         (do-action nil nil nil))
-    (unless (is-trivial (sentence-verb parse))
-      (let ((halo (halo (get-loc *player*) +active-radius+)))
-        nil)))) ; TODO This
+    (unless (or (null parse) (is-trivial (sentence-verb parse)))
+      (loop with halo = (halo (get-loc *player*) +active-radius+)
+            for loc in halo
+            do (mapc #'entity-turn (location-contents loc))
+            do (do-spawn loc)))))
 
 (defmethod do-action ((act (eql 'go)) (obj location) preps)
   (declare (ignore preps))

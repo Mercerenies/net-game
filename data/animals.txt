@@ -97,3 +97,6 @@ passerine: air +1, sea -1
 nightingale: air +1, size -1, sea -1
 cagebird: air +2, threat -1
 cagebirds: air +2, threat -1
+kingfisher: air +1, size -1
+kingfishers: air +1, size -1
+plumage: air +1

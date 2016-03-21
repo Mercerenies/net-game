@@ -52,3 +52,5 @@ mountain range          mountain
 tributary               river
 tributaries             river
 monastery               church
+dam                     dam
+peninsula               island

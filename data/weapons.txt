@@ -33,3 +33,4 @@ siege engine       club
 siege weapon       club
 sickle             sickle
 musket             missile
+cannon             missile

@@ -32,7 +32,7 @@
   (loop with state = 'verb
         with verb = nil
         with noun = nil
-        with preps = nil
+        with prepos = nil
         with curr-prep = nil
         for curr in phrase
         for part = (cond
@@ -49,19 +49,19 @@
                            (return nil)))
                  (ready (case part
                           (noun (if (and (null noun)
-                                         (null preps))
+                                         (null prepos))
                                     (setf noun curr)
                                     (return nil)))
                           (prep (setf curr-prep curr)
                                 (setf state 'prep))
                           (t (return nil))))
                  (prep (if (eq part 'noun)
-                         (progn (setf (getf preps curr-prep) curr)
+                         (progn (setf (getf prepos curr-prep) curr)
                                 (setf curr-prep nil)
                                 (setf state 'ready))
                          (return nil))))
         finally (return (if (eq state 'ready)
-                            (make-sentence :verb verb :noun noun :preps preps)
+                            (make-sentence :verb verb :noun noun :preps prepos)
                             nil))))
 
 (defun scan-then-parse (words sentence &rest keys &key &allow-other-keys)
@@ -76,26 +76,28 @@
 (defun parse-default (sentence)
   (let ((nouns (append (mapcar #'get-name (location-contents (get-loc *player*)))
                        (mapcar #'get-name (inventory *player*))
-                       (mapcar #'location-short-name (halo (get-loc *player*) 1)))))
+                       (mapcar #'location-short-name (halo (get-loc *player*) 1))
+                       '("fists"))))
     (parse-with-words sentence
                       :nouns nouns
                       :verbs '("go" "examine" "use" "activate" "collect"
-                               "drop" "help" "quit")
-                      :preps '()
+                               "drop" "help" "quit" "attack")
+                      :preps '("with")
                       :arts '("the" "a" "an"))))
 
 ; Uses *player*, *world*
 (defun enhanced-parse (sentence)
   (flet ((translate-noun (noun)
            (and noun
-                (find noun (append (location-contents (get-loc *player*))
-                                   (inventory *player*)
-                                   (halo (get-loc *player*) 1))
-                      :test #'string-equal
-                      :key #'(lambda (x)
-                               (if (typep x 'location)
-                                   (location-short-name x)
-                                   (get-name x)))))))
+                (or (find noun (append (location-contents (get-loc *player*))
+                                       (inventory *player*)
+                                       (halo (get-loc *player*) 1))
+                          :test #'string-equal
+                          :key #'(lambda (x)
+                                   (if (typep x 'location)
+                                       (location-short-name x)
+                                       (get-name x))))
+                    (intern-upcase noun)))))
     (let ((parse (parse-default sentence)))
       (when parse
         (setf (sentence-verb parse) (intern-upcase (sentence-verb parse)))

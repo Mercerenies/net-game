@@ -118,7 +118,7 @@
       (loop for exit in (location-exits node)
             append (halo (find exit *world* :key #'get-id) (1- n)) into result
             finally (if self
-                        (return (cons node (remove-duplicates result)))
+                        (return (remove-duplicates (cons node result)))
                         (return (remove-duplicates result))))))
 
 ; Uses *creatures*

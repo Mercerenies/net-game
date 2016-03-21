@@ -27,31 +27,40 @@
   (when (warp-active obj)
     (push 'warp *state*)))
 
-(defgeneric is-trivial (act))
+(defgeneric is-trivial (act obj preps))
 
-(defmethod is-trivial ((act symbol))
+(defmethod is-trivial ((act symbol) obj preps)
+  (declare (ignore obj preps))
   t)
 
-(defmethod is-trivial ((act (eql 'examine)))
+(defmethod is-trivial ((act (eql 'examine)) obj preps)
+  (declare (ignore obj preps))
   t)
 
-(defmethod is-trivial ((act (eql 'drop)))
+(defmethod is-trivial ((act (eql 'drop)) obj preps)
+  (declare (ignore obj preps))
   nil)
 
-(defmethod is-trivial ((act (eql 'collect)))
+(defmethod is-trivial ((act (eql 'collect)) obj preps)
+  (declare (ignore obj preps))
   nil)
 
-(defmethod is-trivial ((act (eql 'help)))
+(defmethod is-trivial ((act (eql 'help)) obj preps)
+  (declare (ignore obj preps))
   t)
 
-(defmethod is-trivial ((act (eql 'activate)))
+(defmethod is-trivial ((act (eql 'activate)) obj preps)
+  (declare (ignore obj preps))
   nil)
 
-(defmethod is-trivial ((act (eql 'go)))
+(defmethod is-trivial ((act (eql 'go)) obj preps)
+  (declare (ignore obj preps))
   nil)
 
-(defmethod is-trivial ((act (eql 'use)))
+(defmethod is-trivial ((act (eql 'use)) obj preps)
+  (declare (ignore obj preps))
   nil)
 
-(defmethod is-trivial ((act (eql 'quit)))
+(defmethod is-trivial ((act (eql 'quit)) obj preps)
+  (declare (ignore obj preps))
   t)

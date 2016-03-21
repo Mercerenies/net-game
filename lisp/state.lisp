@@ -20,7 +20,9 @@
     (if parse
         (do-action (sentence-verb parse) (sentence-noun parse) (sentence-preps parse))
         (do-action nil nil nil))
-    (unless (or (null parse) (is-trivial (sentence-verb parse)))
+    (unless (or (null parse) (is-trivial (sentence-verb parse)
+                                         (sentence-noun parse)
+                                         (sentence-preps parse)))
       (loop with halo = (halo (get-loc *player*) +active-radius+)
             for loc in halo
             do (mapc #'entity-turn (location-contents loc))
@@ -43,6 +45,8 @@
              \"activate <object>\" - Turn the object on if it is currently inactive~@
              \"collect <object>\" - Pick up the object in question~@
              \"drop <object>\" - Drop the object from your inventory~@
+             \"attack <object> with <object>\" - Attack the entity with a weapon~@
+             \"attack <object> with fists\" - Attack the entity unarmed~@
              \"help\" - Display this message~@
              \"quit\" - Exit the game~%"))
 

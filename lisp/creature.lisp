@@ -131,11 +131,6 @@
                          (move-object obj (first inter))
                          (setf (anim-mood obj) 'passive))))))))
 
-(defun do-attack (obj &key (target *player*))
-  (setf (hp target) (- (hp target) (atk obj)))
-  (when (<= (hp target) 0)
-    (move-object target nil))) ; TODO Make sure death of *player* won't crash everything
-
 ; TODO This
 (defmethod do-action ((act (eql 'examine)) (obj animal) preps)
   (declare (ignore preps))
@@ -143,5 +138,3 @@
           (get-name obj)
           (anim-mood obj)
           (anim-attitude obj)))
-
-; ///// Test the creature AI code and then give the player a verb to fight back

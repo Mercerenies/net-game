@@ -83,6 +83,8 @@
                         (4 (+ 0.19 (random 0.15)))
                         (5 (+ 0.29 (random 0.30))))))
 
+; TODO Passive entities can move to squares on which passive birds can spawn
+;      which should still be "civilized"
 (defmethod entity-turn ((obj animal))
 ;  (format t "The ~A (~A / ~A) at ~A is going to go now.~%"
 ;          (get-name obj) (anim-mood obj) (anim-attitude obj) (get-name (get-loc obj)))
@@ -134,7 +136,8 @@
 ; TODO This
 (defmethod do-action ((act (eql 'examine)) (obj animal) preps)
   (declare (ignore preps))
-  (format t "Just testing this: ~S ~S ~S~%"
+  (format t "Just testing this: ~S ~S ~S ~S~%"
           (get-name obj)
           (anim-mood obj)
-          (anim-attitude obj)))
+          (anim-attitude obj)
+          (hp obj)))

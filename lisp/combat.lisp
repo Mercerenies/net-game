@@ -16,7 +16,7 @@
   (typecase (getf preps 'with)
     (null (format t "Attack with what?~%"))
     ((eql fists)
-     (do-attack *player* :target obj :atk 0.02)
+     (do-attack *player* :target obj :atk 0.12)
      (when (eq (anim-mood obj) 'passive)
        (setf (anim-mood obj) 'hunting))
      (format t "You punch the ~A.~%" (get-name obj)))

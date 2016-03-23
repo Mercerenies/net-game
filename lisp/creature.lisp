@@ -1,5 +1,8 @@
 (in-package #:net-game)
 
+; ///// Animals are auto-spawning at a set position allowing you to infinitely kill the
+;       enemy over and over again.
+
 (defclass animal-data (named)
   ((pack :accessor anim-pack
          :initform 1

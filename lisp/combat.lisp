@@ -22,7 +22,7 @@
      (format t "You punch the ~A.~%" (get-name obj)))
     (weapon
      ; TODO Weapon wieldiness
-     (do-attack *player* :target obj :atk (weapon-damage (cdr (assoc 'with preps))))
+     (do-attack *player* :target obj :atk (weapon-damage (getf preps 'with)))
      (when (eq (anim-mood obj) 'passive)
        (setf (anim-mood obj) 'hunting))
      (format t "You attack the ~A.~%" (get-name obj)))

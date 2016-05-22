@@ -11,18 +11,18 @@ echo 'Checking whether your system is set up correctly to handle the game...'
 echo
 echo 'Checking Python...'
 echo -n 'Does Python exist?'
-if [ ! -x '/usr/bin/python' ]; then
+if [ ! -x '/usr/bin/python3' ]; then
     echo
     echo 'error: Cannot find Python.'
-    if onpath python; then
-        echo '  * Python is on your system but not in /usr/bin/python.'
-        echo '  * Please place a link or copy of Python in /usr/bin/.'
+    if onpath python3; then
+        echo '  * Python is on your system but not in /usr/bin/python3.'
+        echo '  * Please place a link or copy of Python at /usr/bin/python3.'
     fi
     exit 1
 fi
 echo ' Yes'
 echo -n 'Is the version correct?'
-pyversion=`/usr/bin/python --version | sed 's/^[^0-9]*\([0-9]\+\).*/\1/'`
+pyversion=`/usr/bin/python3 --version 2>&1 | sed 's/^[^0-9]*\([0-9]\+\).*/\1/'`
 if [ "$pyversion" -lt 3 ]; then
     echo
     echo "error: Python version is $pyversion, need at least Python 3"
@@ -30,7 +30,7 @@ if [ "$pyversion" -lt 3 ]; then
 fi
 echo ' Yes'
 echo -n 'Does the Wikipedia module exist?'
-if ! python -c 'import wikipedia' >/dev/null 2>/dev/null; then
+if ! python3 -c 'import wikipedia' >/dev/null 2>/dev/null; then
     echo
     echo 'error: Please install the Wikipedia module using `pip install wikipedia`.'
     exit 1

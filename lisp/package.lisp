@@ -1,7 +1,7 @@
-(load (merge-pathnames "quicklisp\\setup.lisp" (user-homedir-pathname)))
+;(load (merge-pathnames "quicklisp/setup.lisp" (user-homedir-pathname)))
 
 (defpackage #:net-game
-  (:use :common-lisp :ql))
+  (:use :common-lisp)) ; :ql
 (in-package #:net-game)
 
 ; (ql:quickload 'cl-json)

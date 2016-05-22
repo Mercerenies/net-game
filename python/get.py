@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # TODO Consider making a reinforcement learning engine to improve the crawling
 

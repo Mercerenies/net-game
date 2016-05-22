@@ -13,14 +13,14 @@ This game (specifically, the Python part) accesses the Internet. Your antivirus 
 
 #Dependencies
 
-Note that Python, Perl, and Ruby are expected to be in /usr/bin. The Lisp implementation must be on the path.
+Note that Python, Perl, and Ruby are expected to be in /usr/bin. The Lisp implementation must be on the path. Windows users are strongly urged to run this game in Cygwin or some other Unix-like shell. The game is being developed using Cygwin on Windows 7, so I can vouch for the fact that it should work like that. Note that the script `./bash/check.sh` will check for the necessary languages and modules and report what is missing.
 
 ######Python
 * Python 3
 * Wikipedia module (`pip install wikipedia`)
 
 ######Perl
-* Perl 5.10 or newer (untested with Perl 6)
+* Perl 5 (tested using Perl 5.10)
 * JSON::PP (usually comes with Perl implementations)
 * XML::Simple (some people have a problem loading this; make sure libxml is on your path, especially on Windows)
 

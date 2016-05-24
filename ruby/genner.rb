@@ -8,6 +8,7 @@ class Genner
     @bridges = []
     @map = nil
     @creatures = CreatureSet.new
+    @spawners = SpawnerSet.new
   end
 
   def has_bridge?
@@ -74,16 +75,18 @@ class Genner
   end
 
   def generate_creatures
+    # Identify and set up valid creatures
     @arr = @arr.reject { |elem| @creatures.load_from_page elem }
     creatures = @creatures.to_a.shuffle.cycle
-    @map.each do |node|
-      next unless node.can_have_creatures?
-      curr = nil
-      loop do
-        curr = creatures.next
-        break if node.can_have? curr
-      end
-      node.push_creature curr
+    # Now identify all of the "dangerous" nodes, that is
+    # anywhere that should have a creature in it
+    needed = @map.select(&:can_have_creatures?).to_a
+    # Now put animals / creatures in those spots
+    until needed.empty?
+      spawner = Spawner.new creatures.next, @map, needed.first, [1, 2, 2, 2, 2, 3].sample
+      area = spawner.area_covered.to_a
+      needed = needed.reject { |loc| area.include? loc }
+      @spawners.push spawner
     end
   end
 
@@ -132,7 +135,7 @@ class Genner
     # Stage 7 - Position the player
     @map.put_somewhere Player.new
     # Return result
-    [@map, @creatures]
+    [@map, @creatures, @spawners]
   end
 
   private :generate_nodes, :generate_node, :generate_map, :generate_buildings,

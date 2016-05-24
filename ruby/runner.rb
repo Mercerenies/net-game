@@ -18,6 +18,7 @@ load './ruby/building.rb'
 load './ruby/objs.rb'
 load './ruby/weapon.rb'
 
+load './ruby/spawner.rb'
 load './ruby/creatures.rb'
 
 load './ruby/loader.rb'

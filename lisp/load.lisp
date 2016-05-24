@@ -27,9 +27,6 @@
    (contents :accessor location-contents
              :initform nil
              :type list)
-   (creatures :accessor location-creatures
-              :initform nil
-              :type list)
    (short-name :accessor location-short-name
                :initarg :short-name
                :initform ""
@@ -66,15 +63,16 @@
                                                                    (get-name inst)
                                                                    value)))
                            (:links (setf (location-exits inst) value))
-                           (:contents (mapc #'(lambda (x) (load-object inst x)) value))
-                           (:creatures (mapc #'(lambda (x)
-                                                 (push x (location-creatures inst)))
-                                             value))))
+                           (:contents (mapc #'(lambda (x) (load-object inst x)) value))))
              collect inst))
      (destructuring-bind (anim-sym . anims) (second data)
        (unless (eq anim-sym 'creature-set) (error "Flawed data"))
        (loop for data in anims
-             collect (apply #'load-creature (first data) (rest data)))))))
+             collect (apply #'load-creature (first data) (rest data))))
+     (destructuring-bind (spawner-sym . spawners) (third data)
+       (unless (eq spawner-sym 'spawner-set) (error "Flawed data"))
+       (loop for data in spawners
+             collect (apply #'load-spawner (first data) (rest data)))))))
 
 (defun load-object (node obj)
   (apply #'load-object-with-type node (car obj) (cdr obj)))
@@ -120,14 +118,3 @@
             finally (if self
                         (return (remove-duplicates (cons node result)))
                         (return (remove-duplicates result))))))
-
-; Uses *creatures*
-(defun do-spawn (node)
-  (unless (some (lambda (node0)
-                  (member-if (lambda (obj) (typep obj 'creature))
-                             (location-contents node0)))
-                (halo node 1))
-    (let* ((id (choose (location-creatures node)))
-           (animal (and id (make-animal (find id *creatures* :key #'get-id)))))
-      (when animal
-        (move-object animal node)))))

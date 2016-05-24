@@ -22,6 +22,8 @@
 
 (defparameter *creatures* nil)
 
+(defparameter *spawners* nil)
+
 (defparameter *state*
   (list 'global))
 
@@ -35,8 +37,8 @@
         until (null finish)))
 
 (defun run-game (&optional (filename "./temp/system.txt"))
-  (multiple-value-bind (*world* *creatures*) (with-open-file (file filename)
-                                               (load-data :file file))
+  (multiple-value-bind (*world* *creatures* *spawners*) (with-open-file (file filename)
+                                                                        (load-data :file file))
     (let ((*player* (some (lambda (x)
                             (find-if (lambda (y) (typep y 'player))
                                      (location-contents x)))

@@ -62,7 +62,6 @@ class Location
     @contents = []
     @links = []
     @valid_creatures = valid_creatures
-    @creatures = []
   end
 
   def has_creatures?
@@ -75,10 +74,6 @@ class Location
 
   def can_have?(x)
     @valid_creatures === x
-  end
-
-  def push_creature(x)
-    @creatures.push x.id if can_have? x
   end
 
   def long_name
@@ -102,8 +97,7 @@ class Location
     country = @country_name ? [:':country', @country_name] : []
     links = [:':links', @links.dup]
     contents = [:':contents', @contents.dup]
-    creatures = [:':creatures', @creatures.dup]
-    (prefix + country + links + contents + creatures).to_sxp
+    (prefix + country + links + contents).to_sxp
   end
 
   def count_items

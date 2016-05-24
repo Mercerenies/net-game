@@ -1,9 +1,12 @@
 (in-package #:net-game)
 
+(defun check-for-death (obj)
+  (when (<= (hp obj) 0)
+    (move-object obj nil)))
+
 (defun do-attack (obj &key (target *player*) (atk (atk obj)))
   (setf (hp target) (- (hp target) atk))
-  (when (<= (hp target) 0)
-    (move-object target nil)))
+  (check-for-death target))
 ; TODO Proper death sequence; game crashes on player death, currently
 
 (defmethod is-trivial ((act (eql 'attack)) (obj animal) preps)

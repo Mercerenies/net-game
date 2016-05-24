@@ -17,6 +17,7 @@
 
 (load "./lisp/item.lisp")
 (load "./lisp/creature.lisp")
+(load "./lisp/spawner.lisp")
 (load "./lisp/combat.lisp")
 
 (load "./lisp/play.lisp")

@@ -25,8 +25,9 @@
                                          (sentence-preps parse)))
       (loop with halo = (halo (get-loc *player*) +active-radius+)
             for loc in halo
-            do (mapc #'entity-turn (location-contents loc))
-            do (do-spawn loc)))))
+            do (mapc #'entity-turn (location-contents loc)))
+      (loop for spawner in *spawners*
+            do (do-spawn spawner)))))
 
 (defmethod do-action ((act (eql 'go)) (obj location) preps)
   (declare (ignore preps))

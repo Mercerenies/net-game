@@ -1,8 +1,5 @@
 (in-package #:net-game)
 
-; ///// Animals are auto-spawning at a set position allowing you to infinitely kill the
-;       enemy over and over again.
-
 (defclass animal-data (named)
   ((pack :accessor anim-pack
          :initform 1
@@ -28,6 +25,11 @@
 (defmethod load-creature ((type (eql 'animal)) &rest data)
   (destructuring-bind (id name . rest) data
     (apply #'make-instance 'animal-data :id id :name name rest)))
+
+(defgeneric make-creature (data))
+
+(defmethod make-creature ((data animal-data))
+  (make-animal data))
 
 (defclass creature (named located)
   ())
@@ -100,11 +102,12 @@
                            (entity-turn obj))
                   (stalking (setf (anim-mood obj) 'sneaky))))
                ((<= (random 6) (anim-speed obj))
-                (let ((new-loc (choose (remove-if (lambda (x)
-                                                    (if (eq (anim-attitude obj) 'passive)
-                                                        nil
-                                                        (null (location-creatures x))))
-                                                  (halo (get-loc obj))))))
+                (let* ((local-halo (halo (get-loc obj)))
+                       (valid-locs (if (eq (anim-attitude obj) 'passive)
+                                       local-halo
+                                     (remove-if (lambda (x) nil) ; ///// The idea of a "civilized" area
+                                                local-halo)))
+                       (new-loc (choose valid-locs)))
                   (when new-loc
                     (move-object obj new-loc))))
                (t nil)))

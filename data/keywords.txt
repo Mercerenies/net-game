@@ -38,6 +38,7 @@ environment
 cantref
 cantrefi
 cantrefs
+parks
 :: weapons
 sword
 knife
@@ -88,3 +89,4 @@ venemous spider
 edible fish
 lizard
 dinosaur
+rabbit

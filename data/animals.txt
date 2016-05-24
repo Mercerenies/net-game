@@ -100,3 +100,8 @@ cagebirds: air +2, threat -1
 kingfisher: air +1, size -1
 kingfishers: air +1, size -1
 plumage: air +1
+winged: air +1
+wing: air +1
+bat: air +2, sea -1, size -1, speed +1
+blood: threat +1
+vampire: threat +1

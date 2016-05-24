@@ -83,7 +83,7 @@ class Genner
     needed = @map.select(&:can_have_creatures?).to_a
     # Now put animals / creatures in those spots
     until needed.empty?
-      spawner = Spawner.new creatures.next, @map, needed.first, [1, 2, 2, 2, 2, 3].sample
+      spawner = Spawner.new creatures.next, @map, needed.first, [2, 2, 2, 3].sample
       area = spawner.area_covered.to_a
       needed = needed.reject { |loc| area.include? loc }
       @spawners.push spawner

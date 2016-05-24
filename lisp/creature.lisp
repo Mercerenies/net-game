@@ -105,7 +105,7 @@
                 (let* ((local-halo (halo (get-loc obj)))
                        (valid-locs (if (eq (anim-attitude obj) 'passive)
                                        local-halo
-                                     (remove-if (lambda (x) nil) ; ///// The idea of a "civilized" area
+                                     (remove-if (lambda (x) (location-civilized x))
                                                 local-halo)))
                        (new-loc (choose valid-locs)))
                   (when new-loc

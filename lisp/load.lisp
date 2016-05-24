@@ -30,7 +30,11 @@
    (short-name :accessor location-short-name
                :initarg :short-name
                :initform ""
-               :type string)))
+               :type string)
+   (civilized :accessor location-civilized
+              :initarg :civilized
+              :initform nil
+              :type boolean)))
 
 (defclass warp-point (named located)
   ((active :accessor warp-active
@@ -63,7 +67,8 @@
                                                                    (get-name inst)
                                                                    value)))
                            (:links (setf (location-exits inst) value))
-                           (:contents (mapc #'(lambda (x) (load-object inst x)) value))))
+                           (:contents (mapc #'(lambda (x) (load-object inst x)) value))
+                           (:civilized (setf (location-civilized inst) value))))
              collect inst))
      (destructuring-bind (anim-sym . anims) (second data)
        (unless (eq anim-sym 'creature-set) (error "Flawed data"))

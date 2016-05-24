@@ -97,7 +97,8 @@ class Location
     country = @country_name ? [:':country', @country_name] : []
     links = [:':links', @links.dup]
     contents = [:':contents', @contents.dup]
-    (prefix + country + links + contents).to_sxp
+    civilized = [:':civilized', (not can_have_creatures?)]
+    (prefix + country + links + contents + civilized).to_sxp
   end
 
   def count_items

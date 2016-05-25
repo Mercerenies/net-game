@@ -52,7 +52,7 @@
       (push obj (location-contents new-loc)))))
 
 (defun load-data (&key (file *standard-input*))
-  (let ((data (read file)))
+  (let ((data (with-scheme-notation (read file))))
     (values
      (destructuring-bind (map-sym . locs) (first data)
        (unless (eq map-sym 'map) (error "Flawed data"))

@@ -31,7 +31,8 @@ my @pages = @{$xml->{'pages'}};
 for my $pageset (@pages) {
     my $call = $table{ $pageset->{'type'} };
     next unless defined $call;
-    for my $page (@{$pageset->{'page'}}) {
+    my $set = $pageset->{'page'};
+    for my $page (ref($set) eq 'ARRAY' ? @$set : ($set//())) {
         push @result, $call->($page, \%data);
     }
 }

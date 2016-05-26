@@ -78,6 +78,7 @@ class Genner
     # Identify and set up valid creatures
     @arr = @arr.reject { |elem| @creatures.load_from_page elem }
     creatures = @creatures.to_a.shuffle.cycle
+    return if @creatures.to_a.empty?
     # Now identify all of the "dangerous" nodes, that is
     # anywhere that should have a creature in it
     needed = @map.select(&:can_have_creatures?).to_a
@@ -119,6 +120,17 @@ class Genner
     end
   end
 
+  def generate_people
+    @arr = @arr.reject do |elem|
+      case elem
+      when PersonPage
+        if elem.gender and not elem.occupations.empty?
+          @map.put_somewhere(NPC.new elem) { |loc| loc.civilized? }
+        end
+      end
+    end
+  end
+
   def generate
     # Stage 1 - Generate the main nodal structures
     generate_nodes
@@ -132,13 +144,16 @@ class Genner
     generate_creatures
     # Stage 6 - Put items into the map
     generate_items
-    # Stage 7 - Position the player
+    # Stage 7 - Make people and put them somewhere
+    generate_people
+    # Stage 8 - Position the player
     @map.put_somewhere Player.new
     # Return result
     [@map, @creatures, @spawners]
   end
 
   private :generate_nodes, :generate_node, :generate_map, :generate_buildings,
-          :generate_items, :generate_bridges, :generate_creatures
+          :generate_items, :generate_bridges, :generate_creatures,
+          :generate_people
 
 end

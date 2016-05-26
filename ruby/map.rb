@@ -28,11 +28,13 @@ class Map
     @ary.find { |x| x.id == val }
   end
 
-  def put_somewhere(obj)
-    weight = Proc.new { |x| 1 / (x.count_items + 1) }
+  def put_somewhere(obj, type = Object, &block)
+    block = proc { true } unless block
+    weight = Proc.new { |x| 1 / (x.count_items(type) + 1) }
     total = @ary.map( &weight ).reduce(:+)
     num = rand total
     result = @ary.detect do |x|
+      next unless block.call x
       num -= weight.(x)
       num <= 0
     end
@@ -92,17 +94,21 @@ class Location
     @links.delete x
   end
 
+  def civilized?
+    not can_have_creatures?
+  end
+
   def to_sxp
     prefix = [:location, @id, @name]
     country = @country_name ? [:':country', @country_name] : []
     links = [:':links', @links.dup]
     contents = [:':contents', @contents.dup]
-    civilized = [:':civilized', (not can_have_creatures?)]
+    civilized = [:':civilized', civilized?]
     (prefix + country + links + contents + civilized).to_sxp
   end
 
-  def count_items
-    self.count { |x| x.kind_of? Item }
+  def count_items(type = Item)
+    self.count { |x| x.kind_of? type }
   end
 
 end

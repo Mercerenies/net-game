@@ -75,6 +75,7 @@
         (move-object obj (get-loc *player*)))
       (format t "But you're not holding the ~A...~%" (get-name obj))))
 
+; TODO More user-friendly text
 (defmethod do-action ((act (eql 'examine)) (obj weapon) preps)
   (declare (ignore preps))
   (format t "~A~@

@@ -29,6 +29,9 @@
       (loop for spawner in *spawners*
             do (do-spawn spawner)))))
 
+;(defmethod do-action :before (act obj preps)
+;  (format t " >>> ~A ~A ~A <<< " act obj preps))
+
 (defmethod do-action ((act (eql 'go)) (obj location) preps)
   (declare (ignore preps))
   (if (eq obj (get-loc *player*))

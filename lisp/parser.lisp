@@ -9,6 +9,7 @@
   (noun nil)
   (preps nil))
 
+; TODO If a noun is a prefix of another noun, the longer one is inaccessible
 (defun scan-sentence (words sentence)
   (loop with vec = (make-array 15
                                :fill-pointer 0
@@ -81,7 +82,7 @@
     (parse-with-words sentence
                       :nouns nouns
                       :verbs '("go" "examine" "use" "activate" "collect"
-                               "drop" "help" "quit" "attack")
+                               "drop" "help" "quit" "attack" "talk")
                       :preps '("with")
                       :arts '("the" "a" "an"))))
 

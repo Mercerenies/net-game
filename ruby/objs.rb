@@ -1,5 +1,8 @@
 
-class Player
+class Person
+end
+
+class Player < Person
 
   def to_sxp
     [:'player'].to_sxp

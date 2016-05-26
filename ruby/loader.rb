@@ -5,8 +5,9 @@ class PersonPage
 
   def initialize(json)
     @name = json['name']
-    @gender = json['gender'].intern
-    @occupations = json['occupations'].to_h
+    @gender = json['gender']
+    @gender = @gender.intern if @gender
+    @occupations = json['occupations'].map { |xx| [xx[1], xx[0].intern] }.to_h
   end
 
 end

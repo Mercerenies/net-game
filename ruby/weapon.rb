@@ -11,7 +11,7 @@ module WeaponMod
     if rand < 0.85
       self.sample
     else
-      []
+      nil
     end
   end
 

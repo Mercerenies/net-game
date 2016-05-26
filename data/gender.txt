@@ -19,3 +19,5 @@ male         male
 female       female
 son          male
 daughter     female
+brother      male
+sister       female

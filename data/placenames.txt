@@ -54,3 +54,4 @@ tributaries             river
 monastery               church
 dam                     dam
 peninsula               island
+province                state

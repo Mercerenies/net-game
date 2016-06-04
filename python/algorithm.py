@@ -114,6 +114,21 @@ def is_animal_page(page):
 def find_a_animal(**key):
     return recurse("List of animals by common name", is_animal_page, **key)
 
+def is_food_page(page):
+    if "list" in page.title.lower():
+        return False
+    if is_person_page(page):
+        return False
+    return len([c for c in page.categories
+                if Keywords.check_match("foods", c)
+                and "list" not in c.lower()
+                and "errors" not in c.lower()
+                and "wikipedia" not in c.lower()]) > 0
+
+def find_a_food(**key):
+    basis = rnd(["List of culinary fruits", "List of vegetables"])
+    return recurse(basis, is_food_page, **key)
+
 def nearby(x):
     try:
         (lat, lon) = x.coordinates

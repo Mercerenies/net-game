@@ -21,7 +21,8 @@ my %table = (
     'celebs'   => \&read_person ,
     'weapons'  => \&read_weapon ,
     'monsters' => \&read_monster,
-    'animals'  => \&read_animal
+    'animals'  => \&read_animal ,
+    'foods'    => \&read_food
     );
 
 my @result = ();

@@ -6,6 +6,7 @@ places=""
 weapons=""
 monsters=""
 animals=""
+foods=""
 debug=""
 
 if [ $# -eq 0 ] || [ "$1" == "--help" ]; then
@@ -16,11 +17,12 @@ if [ $# -eq 0 ] || [ "$1" == "--help" ]; then
     echo " -w Number of weapons"
     echo " -m Number of monsters"
     echo " -a Number of animals"
+    echo " -f Number of foods"
     echo " -d Debug mode"
     exit
 fi
 
-while getopts 'c:p:P:w:m:a:d' opt; do
+while getopts 'c:p:P:w:m:a:f:d' opt; do
     case "$opt" in
         c) # Celebrities
             celebs="-c $OPTARG"
@@ -40,10 +42,13 @@ while getopts 'c:p:P:w:m:a:d' opt; do
         a) # Animals
             animals="-a $OPTARG"
             ;;
+        f) # Foods
+            foods="-f $OPTARG"
+            ;;
         d) # Debug Mode
             debug="-d"
             ;;
     esac
 done
 
-./python/get.py $celebs $people $places $weapons $monsters $animals $debug
+./python/get.py $celebs $people $places $weapons $monsters $animals $foods $debug

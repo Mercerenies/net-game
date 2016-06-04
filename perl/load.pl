@@ -1,6 +1,6 @@
 local $_;
 
-my(%occu, @mwords, @fwords, %placenames, %weapons, %animals);
+my(%occu, @mwords, @fwords, %placenames, %weapons, %animals, @foodprefixes, @foodblacklist, @foodsuffixes);
 my $fh;
 
 open $fh, '<', './data/occupations.txt' or die("$!");
@@ -60,11 +60,27 @@ while (<$fh>) {
     $animals{$key} = \%stats;
 }
 
+open $fh, '<', './data/foodnames.txt' or die("$!");
+while (<$fh>) {
+    chomp;
+    if (s/^\^//) {
+        push @foodblacklist, $_;
+    } elsif (s/^\>//) {
+        push @foodsuffixes, $_;
+    } else {
+        push @foodprefixes, $_;
+    }
+}
+close $fh;
+
 (
  'occu' => \%occu,
  'mwords' => \@mwords,
  'fwords' => \@fwords,
  'placenames' => \%placenames,
  'weapons' => \%weapons,
- 'animals' => \%animals
+ 'animals' => \%animals,
+ 'foodprefixes' => \@foodprefixes,
+ 'foodblacklist' => \@foodblacklist,
+ 'foodsuffixes' => \@foodsuffixes
 );

@@ -121,4 +121,21 @@ sub read_animal {
     return \%curr;
 }
 
+# Foods
+sub read_food {
+    local $_;
+    my $xml = $_[0];
+    my $data = $_[1];
+    my $name = unparen($xml->{'name'});
+    my $summary = $xml->{'content'};
+    my $nickname = shortest_food_synonym($name, $summary, $data);
+    print STDERR "$name has $nickname!\n";
+    my %curr = (
+        nature => 'Food',
+        name => $name,
+        nickname => $nickname
+        );
+    return \%curr;
+}
+
 1;

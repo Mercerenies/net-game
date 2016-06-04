@@ -6,6 +6,7 @@ places=""
 weapons=""
 monsters=""
 animals=""
+foods=""
 debug=""
 stage1=""
 stage2=""
@@ -28,6 +29,7 @@ if [ $1 == "--help" ]; then
     echo " -w Number of weapons"
     echo " -m Number of monsters"
     echo " -a Number of animals"
+    echo " -f Number of foods"
     echo " -d Debug mode"
     echo " -1 Run Stage 1 (Python / Site Crawling)"
     echo " -2 Run Stage 2 (Perl / Page Parsing)"
@@ -38,7 +40,7 @@ if [ $1 == "--help" ]; then
     exit
 fi
 
-while getopts 'c:p:P:w:m:a:d1234fF:l:' opt; do
+while getopts 'c:p:P:w:m:a:f:d1234F:l:' opt; do
     case "$opt" in
         c) # Celebrities
             celebs="-c $OPTARG"
@@ -57,6 +59,9 @@ while getopts 'c:p:P:w:m:a:d1234fF:l:' opt; do
             ;;
         a) # Animals
             animals="-a $OPTARG"
+            ;;
+        f) # Foods
+            foods="-f $OPTARG"
             ;;
         d) # Debug Mode
             debug="-d"
@@ -83,7 +88,7 @@ while getopts 'c:p:P:w:m:a:d1234fF:l:' opt; do
 done
 
 if [ -n "$stage1" ]; then
-    stage1="$stage1 $celebs $people $places $weapons $monsters $animals $debug"
+    stage1="$stage1 $celebs $people $places $weapons $monsters $animals $foods $debug"
 fi
 
 if [ -n "$stage4" ]; then

@@ -129,4 +129,45 @@ sub deduce_animal_stats {
     return \%stats;
 }
 
+# shortest_food_synonym($title, $summary, $data)
+sub shortest_food_synonym {
+    my $title = $_[0];
+    my $summary = $_[1];
+    my $data = $_[2];
+    my $shortsumm = $summary;
+    my $matches = 1;
+    $matches = $shortsumm =~ s/\([^()]*\)//g while $matches > 0;
+    $matches = 1;
+    $matches = $title =~ s/\([^()]*\)//g while $matches > 0;
+    $shortsumm =~ s|/[^ /]+/||g;
+    $shortsumm =~ s/"//g;
+    my $longsumm = $shortsumm;
+    #$shortsumm =~ s/,[A-Za-z0-9:\-' _]*,//g;
+    $shortsumm =~ s/ {2,}/ /g;
+    $longsumm =~ s/ {2,}/ /g;
+    $title =~ s/-/ /;
+    $shortsumm =~ s/-/ /;
+    my @candidates;
+    push @candidates, $title;
+    foreach my $prefix_loop (@{$data->{'foodprefixes'}}) {
+        my $prefix = $prefix_loop;
+        $prefix =~ s/\$title/$title/g;
+        foreach my $suffix_loop (@{$data->{'foodsuffixes'}}) {
+            my $suffix = $suffix_loop;
+            $suffix =~ s/\$title/$title/g;
+            push @candidates, $1 if $shortsumm =~ /\b$prefix ([\w ]+)$suffix\W/;
+        }
+    }
+    my $shortest = $title;
+  EXCLUDE: foreach my $candidate (@candidates) {
+      foreach my $word (@{$data->{'foodblacklist'}}) {
+          next EXCLUDE if $candidate =~ /\b$word\b/;
+      }
+      $shortest = $candidate if length $candidate < length $shortest;
+  }
+    $shortest =~ s/^\s+|\s+$//g;
+    # ///// Get some more info from the foods (how healthy, whether poisonous, what it grows on, etc.)
+    return $shortest;
+}
+
 1;

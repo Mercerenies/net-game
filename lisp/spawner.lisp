@@ -24,7 +24,7 @@
   (find (choose (spawner-area spawner)) *world* :key #'get-id))
 
 ; Uses *creatures*
-(defun do-spawn (spawner)
+(defun do-spawn (spawner) ; TODO Not all spawners should spawn; only the ones near the player
   (unless (and (spawner-creature-instance spawner)
                (get-loc (spawner-creature-instance spawner)))
     (let ((loc (choose-spawn-point spawner))

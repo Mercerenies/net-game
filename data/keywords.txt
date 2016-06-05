@@ -96,3 +96,6 @@ fruit
 citrus
 legume
 vegetable
+edible nut
+edible fungus
+edible fungi

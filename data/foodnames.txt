@@ -4,16 +4,31 @@
 <names variously including
 <names include
 <names variously include
+<or simply
 <the names
 <$title or
+<name for $title is
+<common names
+<also known as
 ^as
 ^or
+^and
+^the
 >is
 >;
 >,
+>\.
 >or
+>and
 *palm palms
 *tree trees
 *bush bushes
-*plant plants
-*flower flowers
+*plant plants legume legumes
+*flower flowers rose
+*root roots legume legumes
+*cactus cacti
+!red
+!blue
+!purple
+!green
+!yellow

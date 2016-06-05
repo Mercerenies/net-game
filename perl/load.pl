@@ -1,7 +1,7 @@
 local $_;
 
 my(%occu, @mwords, @fwords, %placenames, %weapons, %animals, @foodprefixes, @foodblacklist, @foodsuffixes,
-   %foodtrees);
+   %foodtrees, @foodnegatives);
 my $fh;
 
 open $fh, '<', './data/occupations.txt' or die("$!");
@@ -70,6 +70,8 @@ while (<$fh>) {
         push @foodsuffixes, $_;
     } elsif (s/^\<//) {
         push @foodprefixes, $_;
+    } elsif (s/^\!//) {
+        push @foodnegatives, $_;
     } elsif (s/^\*//) {
         /^(\w+)/ or die("Illegal line in foodnames.txt at line $.");
         $foodtrees{$1} = [split / /];
@@ -87,6 +89,7 @@ close $fh;
  'weapons' => \%weapons,
  'animals' => \%animals,
  'foodprefixes' => \@foodprefixes,
+ 'foodnegatives' => \@foodnegatives,
  'foodblacklist' => \@foodblacklist,
  'foodsuffixes' => \@foodsuffixes,
  'foodtrees' => \%foodtrees

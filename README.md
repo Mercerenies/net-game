@@ -15,7 +15,7 @@ This game (specifically, the Python part) accesses the Internet. Your antivirus 
 
 Once you've cloned this repository, you'll want to run `./bash/check.sh` to determine any dependencies you're missing. Note that all scripts should be run with the top-level project directory as the current directory. The script will not attempt to install any missing dependencies but will simply report them; see the Dependencies section below for details. Once the check script passes, you're ready to play. You can use `./bash/master.sh --help` to get a full set of commands, but a good initial gameplay session can be obtained through the following command:
 
-    $ ./bash/master.sh -P 3 -w 4 -a 4 -1 -2 -3 -4 -l *<name-of-common-lisp-implementation>*
+    $ ./bash/master.sh -P 3 -w 4 -a 4 -1 -2 -3 -4 -l <name-of-common-lisp-implementation>
 
 The `-P`, `-w`, and `-a` arguments tell the system to find places, weapons, and animals (the numbers correspond to the number of attempts). The `-1 -2 -3 -4` specifies that all four stages of the pipeline should be run, and the `-l ...` specifies the name of your Common Lisp implementation (since many such implementations install themselves in non-standard locations).
 

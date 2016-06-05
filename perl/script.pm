@@ -170,4 +170,25 @@ sub shortest_food_synonym {
     return $shortest;
 }
 
+# get_plant_type($title, $summary, $data)
+sub get_plant_type {
+    my $title = $_[0];
+    my $summary = $_[1];
+    my $data = $_[2];
+    my $max = undef;
+    my $max_num = 0; # Set a threshold so that if nothing matches, we don't falsely identify as something
+    foreach my $curr (keys %{$data->{'foodtrees'}}) {
+        my $constant = 0;
+        foreach my $key (@{$data->{'foodtrees'}->{$curr}}) {
+            $constant += 8 if ($title =~ /\b$key\b/i);
+            $constant += @{[ $summary =~ /\b$key\b/gi ]};
+        }
+        if ($constant > $max_num) {
+            $max = $curr;
+            $max_num = $constant;
+        }
+    }
+    return $max;
+}
+
 1;

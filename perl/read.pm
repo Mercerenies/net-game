@@ -2,8 +2,9 @@
 use Data::Dumper;
 
 sub unparen {
-    $_[0] =~ s/ *\(.*\) *$//;
-    return $_[0];
+    my $value = $_[0];
+    $value =~ s/ *\(.*\) *$//;
+    return $value;
 }
 
 # Celebs / People
@@ -126,14 +127,17 @@ sub read_food {
     local $_;
     my $xml = $_[0];
     my $data = $_[1];
-    my $name = unparen($xml->{'name'});
+    my $name = $xml->{'name'};
+    my $title = unparen($name);
     my $summary = $xml->{'content'};
-    my $nickname = shortest_food_synonym($name, $summary, $data);
-    print STDERR "$name has $nickname!\n";
+    my $nickname = shortest_food_synonym($title, $summary, $data);
+    my $plant = get_plant_type($name, $summary, $data);
+    print STDERR "${\lc $title} has ${\lc $nickname} and grows on $plant!\n";
     my %curr = (
         nature => 'Food',
-        name => $name,
-        nickname => $nickname
+        name => $title,
+        nickname => $nickname,
+        plant => $plant
         );
     return \%curr;
 }

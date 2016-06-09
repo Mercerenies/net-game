@@ -25,9 +25,15 @@
   (let ((person (apply #'make-instance 'person :name args)))
     (move-object person node)))
 
+; TODO This
 (defmethod do-action ((type (eql 'examine)) (obj person) preps)
   (declare (ignore preps))
   (format t "An ordinary guy."))
+
+(defmethod do-action ((type (eql 'probe)) (obj person) preps)
+  (declare (ignore preps))
+  (format t "Person: ~S~%"
+          obj))
 
 (defmethod do-action ((type (eql 'talk)) (obj person) preps)
   (declare (ignore pres))

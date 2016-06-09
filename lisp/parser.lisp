@@ -82,7 +82,7 @@
     (parse-with-words sentence
                       :nouns nouns
                       :verbs '("go" "examine" "use" "activate" "collect"
-                               "drop" "help" "quit" "attack" "talk")
+                               "drop" "help" "quit" "attack" "talk" "probe")
                       :preps '("with")
                       :arts '("the" "a" "an"))))
 

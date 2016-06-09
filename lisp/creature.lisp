@@ -140,7 +140,11 @@
 ; TODO This
 (defmethod do-action ((act (eql 'examine)) (obj animal) preps)
   (declare (ignore preps))
-  (format t "Just testing this: ~S ~S ~S ~S~%"
+  (format t "An animal~%"))
+
+(defmethod do-action ((act (eql 'probe)) (obj animal) preps)
+  (declare (ignore preps))
+  (format t "Animal: ~S ~S ~S ~S~%"
           (get-name obj)
           (anim-mood obj)
           (anim-attitude obj)

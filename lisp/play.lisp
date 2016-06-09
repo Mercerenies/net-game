@@ -16,6 +16,8 @@
 (defparameter *do-exit*
   (lambda () (error "Nothing to exit!")))
 
+(defparameter *god-mode* nil)
+
 (defparameter *player* nil)
 
 (defparameter *world* nil)
@@ -50,6 +52,7 @@
       (loop named game-loop
             with *read-eval* = nil
             with *do-exit* = (lambda () (return-from game-loop nil))
+            with *god-mode* = t ; TODO Remove this; it's for debugging purposes only
             with cmd = nil
             with acmd = nil
             do (progn

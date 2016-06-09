@@ -78,6 +78,10 @@
 ; TODO More user-friendly text
 (defmethod do-action ((act (eql 'examine)) (obj weapon) preps)
   (declare (ignore preps))
+  (format t "A weapon~%"))
+
+(defmethod do-action ((act (eql 'probe)) (obj weapon) preps)
+  (declare (ignore preps))
   (format t "~A~@
              * Usability: ~D%~@
              * Damage: ~D%~%"

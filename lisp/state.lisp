@@ -18,8 +18,8 @@
 (defmethod do-command ((state (eql 'global)) arg)
   (let ((parse (enhanced-parse arg)))
     (if parse
-        (do-action (sentence-verb parse) (sentence-noun parse) (sentence-preps parse))
-        (do-action nil nil nil))
+        (do-action-safely (sentence-verb parse) (sentence-noun parse) (sentence-preps parse))
+        (do-action-safely nil nil nil))
     (unless (or (null parse) (is-trivial (sentence-verb parse)
                                          (sentence-noun parse)
                                          (sentence-preps parse)))
@@ -51,8 +51,12 @@
              \"drop <object>\" - Drop the object from your inventory~@
              \"attack <object> with <object>\" - Attack the entity with a weapon~@
              \"attack <object> with fists\" - Attack the entity unarmed~@
+             ~:[~;~:@
+             \"probe\" - Get developer specs on an entity or object~@
+             ~]~:@
              \"help\" - Display this message~@
-             \"quit\" - Exit the game~%"))
+             \"quit\" - Exit the game~%"
+          *god-mode*))
 
 (defmethod mode-text ((state (eql 'warp)))
   (let ((nums (loop for e in *warps*

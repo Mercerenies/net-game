@@ -24,7 +24,7 @@
 *tree trees
 *bush bushes
 *plant plants legume legumes
-*flower flowers rose
+*flower flowers flowering rose rubus dandelion
 *root roots legume legumes
 *cactus cacti
 !red

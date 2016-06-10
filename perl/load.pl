@@ -1,7 +1,7 @@
 local $_;
 
 my(%occu, @mwords, @fwords, %placenames, %weapons, %animals, @foodprefixes, @foodblacklist, @foodsuffixes,
-   %foodtrees, @foodnegatives, @foodnutrition, @foodpoison);
+   %foodtrees, @foodnegatives, @foodnutrition, @foodpoison, @foodsections);
 my $fh;
 
 open $fh, '<', './data/occupations.txt' or die("$!");
@@ -62,23 +62,38 @@ while (<$fh>) {
 }
 
 open $fh, '<', './data/foodnames.txt' or die("$!");
+my $foodmode = 'prefix';
+# TODO Look into CPAN Set modules for this, rather than using a hash
+my %foodmodes = ( 'prefix' => 1,
+                  'suffix' => 1,
+                  'blacklist' => 1,
+                  'negative' => 1,
+                  'plant' => 1,
+                  'nutrition' => 1,
+                  'poison' => 1,
+                  'sections' => 1 );
 while (<$fh>) {
     chomp;
-    if (s/^\^//) {
+    if (s/^://) {
+        $foodmode = $_;
+        die("Illegal line in foodnames.txt at line $.") unless defined $foodmodes{$foodmode};
+    } elsif ($foodmode eq 'blacklist') {
         push @foodblacklist, $_;
-    } elsif (s/^\>//) {
+    } elsif ($foodmode eq 'suffix') {
         push @foodsuffixes, $_;
-    } elsif (s/^\<//) {
+    } elsif ($foodmode eq 'prefix') {
         push @foodprefixes, $_;
-    } elsif (s/^\!//) {
+    } elsif ($foodmode eq 'negative') {
         push @foodnegatives, $_;
-    } elsif (s/^\*//) {
+    } elsif ($foodmode eq 'plant') {
         /^(\w+)/ or die("Illegal line in foodnames.txt at line $.");
         $foodtrees{$1} = [split / /];
-    } elsif (s/^\@//) {
+    } elsif ($foodmode eq 'nutrition') {
         push @foodnutrition, split / /;
-    } elsif (s/^\&//) {
+    } elsif ($foodmode eq 'poison') {
         push @foodpoison, split / /;
+    } elsif ($foodmode eq 'sections') {
+        push @foodsections, $_;
     } else {
         die("Illegal line in foodnames.txt at line $.");
     }
@@ -98,5 +113,6 @@ close $fh;
  'foodsuffixes' => \@foodsuffixes,
  'foodtrees' => \%foodtrees,
  'foodnutrition' => \@foodnutrition,
- 'foodpoison' => \@foodpoison
+ 'foodpoison' => \@foodpoison,
+ 'foodsections' => \@foodsections
 );

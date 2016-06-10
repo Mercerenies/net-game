@@ -2,6 +2,7 @@
 
 use perl::script;
 use perl::read;
+use perl::navigation;
 
 use strict;
 use 5.010;
@@ -14,6 +15,7 @@ use XML::Simple qw(:strict);
 local $_;
 
 my %data = do './perl/load.pl';
+die("$@") if $@;
 
 my %table = (
     'places'   => \&read_place  ,
@@ -26,14 +28,13 @@ my %table = (
     );
 
 my @result = ();
-my $xml = XMLin(\*STDIN, ForceArray => [], KeyAttr => {});
+my $xml = XMLin(\*STDIN, ForceArray => 1, KeyAttr => {});
 my @pages = @{$xml->{'pages'}};
 
 for my $pageset (@pages) {
     my $call = $table{ $pageset->{'type'} };
     next unless defined $call;
-    my $set = $pageset->{'page'};
-    for my $page (ref($set) eq 'ARRAY' ? @$set : ($set//())) {
+    for my $page (@{$pageset->{'page'}}) {
         push @result, $call->($page, \%data);
     }
 }

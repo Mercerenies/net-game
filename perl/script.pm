@@ -1,3 +1,4 @@
+
 use Data::Dumper;
 
 my $LINKVERB = "(?:is|was|are|were)";
@@ -196,25 +197,34 @@ sub get_plant_type {
     return $max;
 }
 
-# get_nutrition_information($title, $summary, $data)
+# get_nutrition_information($title, %page, $data)
 sub get_nutrition_information {
-    # ///// Upgrade this to check more than just the summary. Lots of food pages
-    #       seem to have a "nutrition" section
     my $title = $_[0];
-    my $summary = $_[1];
+    my %page = %{$_[1]};
     my $data = $_[2];
     my %result = ( 'nutrition' => 0, 'poison' => 0 );
-    foreach my $curr (@{$data->{'foodnutrition'}}) {
-        my $constant = 0;
-        $constant += 4 if ($title =~ /\b$curr\b/i);
-        $constant += @{[ $summary =~ /\b$curr\b/gi ]};
-        $result{'nutrition'} += $constant;
-    }
-    foreach my $curr (@{$data->{'foodpoison'}}) {
-        my $constant = 0;
-        $constant += 4 if ($title =~ /\b$curr\b/i);
-        $constant += @{[ $summary =~ /\b$curr\b/gi ]};
-        $result{'poison'} += $constant;
+    my %sections = %{flatten_sections(\%page)};
+    foreach my $section (keys %sections) {
+        my $okay = 0;
+        foreach my $keyword (@{$data->{'foodsections'}}) {
+            $keyword =~ s/\$title/$title/g;
+            if ($section =~ /\b$keyword\b/i) {
+                $okay = 1;
+                last;
+            }
+        }
+        next unless $okay;
+        my $summary = $sections{$section};
+        foreach my $curr (@{$data->{'foodnutrition'}}) {
+            my $constant = 0;
+            $constant += @{[ $summary =~ /\b$curr\b/gi ]};
+            $result{'nutrition'} += $constant;
+        }
+        foreach my $curr (@{$data->{'foodpoison'}}) {
+            my $constant = 0;
+            $constant += @{[ $summary =~ /\b$curr\b/gi ]};
+            $result{'poison'} += $constant;
+        }
     }
     return \%result;
 }

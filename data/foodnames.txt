@@ -1,37 +1,63 @@
-<known as
-<called
-<names including
-<names variously including
-<names include
-<names variously include
-<or simply
-<the names
-<$title or
-<name for $title is
-<common names
-<also known as
-^as
-^or
-^and
-^the
->is
->;
->,
->\.
->or
->and
-*palm palms
-*tree trees
-*bush bushes
-*plant plants legume legumes perennial perennials bean beans
-*flower flowers flowering rose rubus dandelion
-*root roots legume legumes
-*cactus cacti
-*grass grasses onion onions
-!red
-!blue
-!purple
-!green
-!yellow
-@protein proteins
-&poison toxic venom venomous
+:prefix
+known as
+called
+names including
+names variously including
+names include
+names variously include
+or simply
+the names
+$title or
+name for $title is
+common names
+also known as
+:blacklist
+as
+or
+and
+the
+:suffix
+is
+;
+,
+\.
+or
+and
+:plant
+palm palms
+tree trees
+bush bushes
+plant plants legume legumes perennial perennials bean beans
+flower flowers flowering rose rubus dandelion
+root roots legume legumes
+cactus cacti
+grass grasses onion onions
+:negative
+red
+blue
+purple
+green
+yellow
+:nutrition
+iron calcium
+protein proteins
+vitamin vitamins
+nutrient nutrients
+medicine medicinal
+pharmaceutical pharmaceutically
+salad salads
+:poison
+poison poisonous poisoning
+toxic
+venom venomous
+danger dangerous
+cyanide
+:sections
+$title
+Nutrition
+Nutritional
+Culinary
+Edible
+Chemistry
+Consumption
+Uses

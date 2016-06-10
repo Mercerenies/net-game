@@ -132,12 +132,15 @@ sub read_food {
     my $summary = $xml->{'content'};
     my $nickname = shortest_food_synonym($title, $summary, $data);
     my $plant = get_plant_type($name, $summary, $data);
-    print STDERR "${\lc $title} has ${\lc $nickname} and grows on $plant!\n";
+    my %nutrition = %{get_nutrition_information($name, $summary, $data)};
+    print STDERR "${\lc $title} has ${\lc $nickname} and grows on $plant with nutrition $nutrition{'nutrition'} and poison $nutrition{'poison'}!\n";
     my %curr = (
         nature => 'Food',
         name => $title,
         nickname => $nickname,
-        plant => $plant
+        plant => $plant,
+        nutrition => $nutrition{'nutrition'},
+        poison => $poison{'poison'}
         );
     return \%curr;
 }

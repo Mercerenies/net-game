@@ -23,12 +23,15 @@
 *palm palms
 *tree trees
 *bush bushes
-*plant plants legume legumes
+*plant plants legume legumes perennial perennials bean beans
 *flower flowers flowering rose rubus dandelion
 *root roots legume legumes
 *cactus cacti
+*grass grasses onion onions
 !red
 !blue
 !purple
 !green
 !yellow
+@protein proteins
+&poison toxic venom venomous

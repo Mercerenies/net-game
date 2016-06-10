@@ -196,4 +196,27 @@ sub get_plant_type {
     return $max;
 }
 
+# get_nutrition_information($title, $summary, $data)
+sub get_nutrition_information {
+    # ///// Upgrade this to check more than just the summary. Lots of food pages
+    #       seem to have a "nutrition" section
+    my $title = $_[0];
+    my $summary = $_[1];
+    my $data = $_[2];
+    my %result = ( 'nutrition' => 0, 'poison' => 0 );
+    foreach my $curr (@{$data->{'foodnutrition'}}) {
+        my $constant = 0;
+        $constant += 4 if ($title =~ /\b$curr\b/i);
+        $constant += @{[ $summary =~ /\b$curr\b/gi ]};
+        $result{'nutrition'} += $constant;
+    }
+    foreach my $curr (@{$data->{'foodpoison'}}) {
+        my $constant = 0;
+        $constant += 4 if ($title =~ /\b$curr\b/i);
+        $constant += @{[ $summary =~ /\b$curr\b/gi ]};
+        $result{'poison'} += $constant;
+    }
+    return \%result;
+}
+
 1;

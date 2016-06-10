@@ -51,9 +51,9 @@
              \"drop <object>\" - Drop the object from your inventory~@
              \"attack <object> with <object>\" - Attack the entity with a weapon~@
              \"attack <object> with fists\" - Attack the entity unarmed~@
-             ~:[~;~:@
+             ~:[~;~
              \"probe\" - Get developer specs on an entity or object~@
-             ~]~:@
+             ~]~
              \"help\" - Display this message~@
              \"quit\" - Exit the game~%"
           *god-mode*))

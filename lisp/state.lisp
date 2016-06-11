@@ -51,6 +51,7 @@
              \"drop <object>\" - Drop the object from your inventory~@
              \"attack <object> with <object>\" - Attack the entity with a weapon~@
              \"attack <object> with fists\" - Attack the entity unarmed~@
+             \"eat <object>\" - Eat the object~@
              ~:[~;~
              \"probe\" - Get developer specs on an entity or object~@
              ~]~

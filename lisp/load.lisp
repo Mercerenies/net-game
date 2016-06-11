@@ -114,6 +114,24 @@
         finally (let ((wpn (make-weapon name type mod)))
                   (move-object wpn node))))
 
+(defmethod load-object-with-type (node (type (eql 'plant)) &rest args)
+  (loop with name = (first args)
+        with type = nil
+        with food = nil
+        with growth-time = 5
+        for rest = (cdr args) then (cddr rest)
+        for key = (first rest)
+        for value = (second rest)
+        while (not (null rest))
+        do (case key
+             (:type (setf type value))
+             (:food (progn
+                      (unless (eq (car value) 'food) (error "Flawed data"))
+                      (setf food (apply #'make-instance 'food-data :name (cdr value)))))
+             (:growth-time (setf growth-time value)))
+        finally (let ((plant (make-instance 'plant :name name :type type :food food :growth-time growth-time)))
+                  (move-object plant node))))
+
 ; Uses *world*
 (defun halo (node &optional (n 1) &key (self t))
   (if (not (plusp n))

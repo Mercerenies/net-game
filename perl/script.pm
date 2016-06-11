@@ -156,8 +156,8 @@ sub shortest_food_synonym {
         foreach my $suffix_loop (@{$data->{'foodsuffixes'}}) {
             my $suffix = $suffix_loop;
             $suffix =~ s/\$title/$title/g;
-            if (($shortsumm =~ /\b$prefix (?:the )?([\w ]+)$suffix\W/) or
-                ($longsumm =~ /\b$prefix (?:the )?([\w ]+)$suffix\W/)) {
+            if (($shortsumm =~ /\b$prefix (?:the )?([\w ]+)\b$suffix\W/) or
+                ($longsumm =~ /\b$prefix (?:the )?([\w ]+)\b$suffix\W/)) {
                 push @candidates, $1;
             }
         }

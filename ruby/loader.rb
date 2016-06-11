@@ -60,10 +60,24 @@ class AnimalPage
 
 end
 
+class FoodPage
+  attr_reader :name, :full_name, :plant, :nutrition, :poison
+
+  def initialize(json)
+    @name = json['nickname']
+    @full_name = json['name']
+    @plant = json['plant']
+    @plant = @plant.intern if @plant
+    @nutrition = json['nutrition']
+    @poison = json['poison']
+  end
+
+end
+
 module Loader
 
   def self.whitelist
-    [PersonPage, PlacePage, WeaponPage, AnimalPage]
+    [PersonPage, PlacePage, WeaponPage, AnimalPage, FoodPage]
   end
 
   def self.load(json)

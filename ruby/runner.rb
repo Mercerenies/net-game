@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
 
 load './ruby/util.rb'
+load './ruby/criteria.rb'
 load './ruby/numeral.rb'
 load './ruby/sampler.rb'
 
@@ -18,6 +19,7 @@ load './ruby/building.rb'
 load './ruby/objs.rb'
 load './ruby/weapon.rb'
 load './ruby/person.rb'
+load './ruby/food.rb'
 
 load './ruby/spawner.rb'
 load './ruby/creatures.rb'

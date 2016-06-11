@@ -131,6 +131,27 @@ class Genner
     end
   end
 
+  def generate_foods
+    foods = CriteriaQueue[]
+    @arr = @arr.reject do |elem|
+      case elem
+      when FoodPage
+        foods << Food.new(elem) if elem.plant
+      end
+    end
+    @map.each do |loc|
+      if rand < 0.90
+        # Try to put some sort of food at the location, if possible
+        food = foods.shift { |f| loc.can_have? f }
+        if food
+          loc.push Plant.new(food.plant_type, food.dup)
+          foods << food # We want to leave the food at the back of the queue for later
+        end
+      end
+    end
+  end
+
+  # TODO Separate all of these complicated stages into some separate objects; this is getting out of hand
   def generate
     # Stage 1 - Generate the main nodal structures
     generate_nodes
@@ -144,9 +165,11 @@ class Genner
     generate_creatures
     # Stage 6 - Put items into the map
     generate_items
-    # Stage 7 - Make people and put them somewhere
+    # Stage 7 - Put plants that grow food on the map
+    generate_foods
+    # Stage 8 - Make people and put them somewhere
     generate_people
-    # Stage 8 - Position the player
+    # Stage 9 - Position the player
     @map.put_somewhere Player.new
     # Return result
     [@map, @creatures, @spawners]
@@ -154,6 +177,6 @@ class Genner
 
   private :generate_nodes, :generate_node, :generate_map, :generate_buildings,
           :generate_items, :generate_bridges, :generate_creatures,
-          :generate_people
+          :generate_people, :generate_foods
 
 end

@@ -57,17 +57,14 @@ class Location
   def_delegators :@contents, :each, :[], :[]=, :push, :delete, :pop
   def_delegator :@links, :each, :each_link
 
-  def initialize(id, name, country_name, valid_creatures = nil)
+  def initialize(id, name, country_name, valid_creatures: nil, valid_plants: nil)
     @id = id
     @name = name
     @country_name = country_name
     @contents = []
     @links = []
     @valid_creatures = valid_creatures
-  end
-
-  def has_creatures?
-    not @creatures.empty?
+    @valid_plants = valid_plants
   end
 
   def can_have_creatures?
@@ -75,7 +72,11 @@ class Location
   end
 
   def can_have?(x)
-    @valid_creatures === x
+    case x
+    when @valid_creatures then true
+    when @valid_plants then true
+    else false
+    end
   end
 
   def long_name

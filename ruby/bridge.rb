@@ -68,7 +68,9 @@ class Forest < Bridge
       id = Node.get_id
       name = names.sample
       names.delete name
-      Location.new id, name, nil, Animal
+      Location.new id, name, nil,
+                   valid_creatures: Animal,
+                   valid_plants: Plants[:tree, :plant, :bush, :grass, :flower]
     end
 
     # Standard Path

@@ -8,3 +8,6 @@
   (if (zerop (length args))
       nil
       (elt args (random (length args)))))
+
+(defun lerp (value lower upper)
+  (+ (* lower value) (* upper (- 1 value))))

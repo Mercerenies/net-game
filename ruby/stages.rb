@@ -33,7 +33,6 @@ class NodeStage < Stage
   end
 
   def run(data)
-    STDERR.puts "Stage 1"
     nodes = []
     data.consume_each do |elem|
       if elem.kind_of? PlacePage
@@ -55,7 +54,6 @@ end
 # Stage 2 - Pre-generate any bridges that can be made
 class BridgeStage < Stage
   def run(data)
-    STDERR.puts "Stage 2"
     bridges = []
     data.consume_each do |elem|
       if elem.kind_of? PlacePage
@@ -70,7 +68,6 @@ end
 # Stage 3 - Convert the nodes into a map
 class MapStage < Stage
   def run(data)
-    STDERR.puts "Stage 3"
     temp = Node.new '', Level.individual
     data.nodes.each { |obj| temp << obj }
     data.map = Map.new temp.expand_to_map gdata: data
@@ -80,7 +77,6 @@ end
 # Stage 4 - Add buildings to the map
 class BuildingStage < Stage
   def run(data)
-    STDERR.puts "Stage 4"
     buildings = []
     data.consume_each do |elem|
       if elem.kind_of? PlacePage
@@ -98,7 +94,6 @@ end
 # Stage 5 - Make a list of creatures and put them places
 class CreatureStage < Stage
   def run(data)
-    STDERR.puts "Stage 5"
     # Identify and set up valid creatures
     data.consume_each { |elem| data.load_creature elem }
     creatures = data.creatures.to_a.shuffle.cycle
@@ -119,7 +114,6 @@ end
 # Stage 6 - Put items into the map
 class ItemStage < Stage
   def run(data)
-    STDERR.puts "Stage 6"
     data.consume_each do |elem|
       case elem
       when WeaponPage
@@ -132,7 +126,6 @@ end
 # Stage 7 - Put plants that grow food on the map
 class FoodStage < Stage
   def run(data)
-    STDERR.puts "Stage 7"
     foods = CriteriaQueue[]
     data.consume_each do |elem|
       case elem
@@ -156,7 +149,6 @@ end
 # Stage 8 - Make people and put them somewhere
 class PersonStage < Stage
   def run(data)
-    STDERR.puts "Stage 8"
     data.consume_each do |elem|
       case elem
       when PersonPage
@@ -171,7 +163,6 @@ end
 # Stage 9 - Position the player
 class PlayerStage < Stage
   def run(data)
-    STDERR.puts "Stage 9"
     data.map.put_somewhere Player.new
   end
 end

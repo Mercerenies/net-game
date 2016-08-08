@@ -98,7 +98,7 @@
                   (passive nil)
                   (hunting (setf (anim-mood obj) 'hunting)
                            (entity-turn obj))
-                  (stalking (setf (anim-mood obj) 'sneaky))))
+                  (stalking (setf (anim-mood obj) 'sneaky)))) ; TODO Doesn't happen immediately after move
                ((<= (random 6) (anim-speed obj))
                 (let* ((local-halo (halo (get-loc obj)))
                        (valid-locs (if (eq (anim-attitude obj) 'passive)

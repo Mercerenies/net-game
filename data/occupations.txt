@@ -96,3 +96,7 @@ entrepreneur           scholar
 music conductor        musician
 musical conductor      musician
 radio dj               musician
+hotel owner            merchant
+developer              engineer
+footballer             athlete
+football player        athlete

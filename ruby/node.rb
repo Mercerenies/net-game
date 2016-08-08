@@ -50,7 +50,7 @@ class Node
     @contents.each &:waterfall
   end
 
-  def expand_to_map(country: nil, genner:)
+  def expand_to_map(country: nil, gdata:)
     if @contents.empty?
       Array[Location.new id, name, country]
     else
@@ -74,7 +74,7 @@ class Node
         end
       end
       country ||= self.name unless self.name.empty?
-      nodes = @contents.map { |obj| obj.expand_to_map(country: country, genner: genner) }
+      nodes = @contents.map { |obj| obj.expand_to_map(country: country, gdata: gdata) }
       use_real_bridge = (Util.median(nodes.map &:size) > 3)
       bridge_nodes = []
       nodes.zip(links).map.with_index do |arg, n0|
@@ -83,8 +83,8 @@ class Node
           if n0 < n1
             if not use_real_bridge
               bridge = TrivialBridge.new
-            elsif genner.has_bridge?
-              bridge = genner.get_a_bridge
+            elsif gdata.has_bridge?
+              bridge = gdata.get_a_bridge
             else
               bridge = Bridge.create_random
             end

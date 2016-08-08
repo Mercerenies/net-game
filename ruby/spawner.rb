@@ -59,4 +59,8 @@ class SpawnerSet
     ([:'spawner-set'] + to_a).to_sxp
   end
 
+  def empty?
+    @spawners.empty?
+  end
+
 end

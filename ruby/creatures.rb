@@ -36,6 +36,10 @@ class CreatureSet
     ([:'creature-set'] + to_a).to_sxp
   end
 
+  def empty?
+    @animals.empty?
+  end
+
 end
 
 class Creature

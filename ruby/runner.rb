@@ -25,6 +25,8 @@ load './ruby/spawner.rb'
 load './ruby/creatures.rb'
 
 load './ruby/loader.rb'
+load './ruby/gdata.rb'
+load './ruby/stages.rb'
 load './ruby/genner.rb'
 
 require 'json'

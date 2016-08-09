@@ -1,5 +1,19 @@
 (basic-intro
- (neutral . ("My name is " :my-name ". I am something of a " (to-lower :my-occu) ".")))
+ (neutral . (one-liner
+             ("My name is " :my-name ". I am something of a " (to-lower :my-occu) "."))))
 (basic-nicknamed-intro
- (neutral . ("My name is " :my-name ". You can call me " :my-nickname
-                           ". I am something of a " (to-lower :my-occu) ".")))
+ (neutral . (one-liner
+             ("My name is " :my-name ". You can call me " :my-nickname
+                            ". I am something of a " (to-lower :my-occu) "."))))
+
+#|
+(basic-nicknamed-intro
+ (neutral . (branch
+             ("My name is " :my-name)
+             (("\"Say again?\"") . basic-nicknamed-intro)
+             (("\"Goodbye!\"") . basic-nicknamed-intro-0))))
+
+(basic-nicknamed-intro-0
+ (neutral . (one-liner
+             ("Goodbye..."))))
+|#

@@ -12,6 +12,7 @@ skyscraper              tower
 tower                   tower
 district                district
 county                  district
+village                 village
 castle                  castle
 estate                  estate
 forest                  forest
@@ -29,6 +30,7 @@ democracy               country
 garden                  garden
 empire                  country
 territory               state
+territories             state
 maison                  estate
 metropolitan area       city
 crater                  crater
@@ -55,3 +57,4 @@ monastery               church
 dam                     dam
 peninsula               island
 province                state
+street                  street

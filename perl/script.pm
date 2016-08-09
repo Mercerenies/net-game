@@ -71,6 +71,13 @@ sub find_place_information {
             }
         }
     }
+    foreach $ptn (keys %placenames) {
+        foreach my $titlevar (@titles) {
+            if ($titlevar =~ /\b$ptn\b/i && not $titlevar =~ /^$ptn$/i) {
+                return $ptn;
+            }
+        }
+    }
     return undef;
 }
 

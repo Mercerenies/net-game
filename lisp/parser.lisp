@@ -73,9 +73,10 @@
                        (getf keys :preps) (getf keys :arts) nil)))
     (apply #'scan-then-parse words sentence keys)))
 
-; Uses *player*, *world*
+; Uses *player*, *world*, (indirectly) *numerical*
 (defun parse-default (sentence)
-  (let ((nouns (append (mapcar #'get-name (location-contents (get-loc *player*)))
+  (let ((nouns (append (get-formatted-numbers)
+                       (mapcar #'get-name (location-contents (get-loc *player*)))
                        (mapcar #'get-name (inventory *player*))
                        (mapcar #'location-short-name (halo (get-loc *player*) 1))
                        '("fists"))))
@@ -99,6 +100,7 @@
                                    (if (typep x 'location)
                                        (location-short-name x)
                                        (get-name x))))
+                    (get-numerical-object noun)
                     (intern-upcase noun)))))
     (let ((parse (parse-default sentence)))
       (when parse

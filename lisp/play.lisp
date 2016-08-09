@@ -26,6 +26,8 @@
 
 (defparameter *spawners* nil)
 
+(defparameter *numerical* nil)
+
 (defparameter *state*
   (list 'global))
 
@@ -55,10 +57,14 @@
             with *god-mode* = t ; TODO Remove this; it's for debugging purposes only
             with cmd = nil
             with acmd = nil
+            do (assign-numbers (mapcar (lambda (x) (find x *world* :key #'get-id))
+                                       (location-exits (get-loc *player*)))
+                               (location-contents (get-loc *player*))
+                               (inventory *player*))
             do (progn
                  (format t "~%=== ~A ===~%~
                               Stats: ~,1F HP~%~
-                              Exits: ~S~%~
+                              Exits: ~:[(None)~;~:*~{~A~^, ~}~]~%~
                               Objects: ~:[(None)~;~:*~{~A~^, ~}~]~%~
                               Inventory: ~:[(None)~;~:*~{~A~^, ~}~]~%~
                               Mode: ~A~%~
@@ -67,10 +73,10 @@
                          (get-name (get-loc *player*))
                          (* 100 (hp *player*))
                          (mapcar (lambda (x)
-                                   (location-short-name (find x *world* :key #'get-id)))
+                                   (get-numbered-name (find x *world* :key #'get-id)))
                                  (location-exits (get-loc *player*)))
-                         (mapcar #'get-name (location-contents (get-loc *player*)))
-                         (mapcar #'get-name (inventory *player*))
+                         (mapcar #'get-numbered-name (location-contents (get-loc *player*)))
+                         (mapcar #'get-numbered-name (inventory *player*))
                          (mode-name (first *state*))
                          (mode-text (first *state*)))
                  (setf cmd (read-line)))

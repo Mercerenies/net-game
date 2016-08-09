@@ -1,0 +1,5 @@
+(basic-intro
+ (neutral . ("My name is " :my-name ". I am something of a " (to-lower :my-occu) ".")))
+(basic-nicknamed-intro
+ (neutral . ("My name is " :my-name ". You can call me " :my-nickname
+                           ". I am something of a " (to-lower :my-occu) ".")))

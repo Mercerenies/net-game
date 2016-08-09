@@ -13,6 +13,7 @@
 (load "./lisp/numbernoun.lisp")
 (load "./lisp/parser.lisp")
 
+(load "./lisp/speech.lisp")
 (load "./lisp/action.lisp")
 (load "./lisp/state.lisp")
 

@@ -1,5 +1,9 @@
 (in-package #:net-game)
 
+(defparameter *creatures* nil)
+
+(defparameter *spawners* nil)
+
 (defclass spawner ()
   ((creature :accessor spawner-creature
              :initform nil

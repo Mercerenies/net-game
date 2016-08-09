@@ -1,5 +1,7 @@
 (in-package #:net-game)
 
+(defparameter *numerical* nil)
+
 ; Uses *numerical*
 (defun assign-numbers (&rest lists)
   (setf *numerical*

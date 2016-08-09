@@ -22,17 +22,9 @@
 
 (defparameter *world* nil)
 
-(defparameter *creatures* nil)
+(defparameter *state* (list 'global))
 
-(defparameter *spawners* nil)
-
-(defparameter *numerical* nil)
-
-(defparameter *state*
-  (list 'global))
-
-(defparameter *warps*
-  nil)
+(defparameter *warps* nil)
 
 (defun word-split (string &optional (token #\SPACE))
   (loop for start = 0 then (1+ finish)

@@ -16,6 +16,11 @@ load './ruby/feature.rb'
 load './ruby/bridge.rb'
 load './ruby/building.rb'
 
+load './ruby/structure.rb'
+load './ruby/tower.rb'
+load './ruby/crater.rb'
+load './ruby/forest.rb'
+
 load './ruby/objs.rb'
 load './ruby/weapon.rb'
 load './ruby/person.rb'

@@ -43,7 +43,7 @@ class NodeStage < Stage
         when :district then nodes << generate_node(elem, Level.district)
         when :bank, :tower, :estate, :library, :castle, :forest, :garden then nil
         when :landform, :moon, :museum, :park, :plain, :river, :village then nil
-        when :street then nil
+        when :street, :waterfall then nil
         end
       end
     end
@@ -86,8 +86,8 @@ class BuildingStage < Stage
       end
     end
     buildings.each do |building|
-      building.each_node { |x| data.map.push x }
       building.integrate_with data.map
+      building.each_node { |x| data.map.push x }
     end
   end
 end

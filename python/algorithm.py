@@ -3,13 +3,14 @@ import wikipedia
 import sys
 from sys import stderr
 from util import *
+from links import LinkSelector, BasicLinkSelector
 import time
 import string
 from keywords import Keywords
 
 DELAY = 0.5
 
-def recurse(base, match_function, depth = 5, max_tries = 3, debug = False):
+def recurse(base, selector, match_function, depth = 5, max_tries = 3, debug = False):
     def find_inner(page, depth_):
         time.sleep(DELAY)
         if debug:
@@ -22,7 +23,7 @@ def recurse(base, match_function, depth = 5, max_tries = 3, debug = False):
         elif depth_ >= depth:
             return None
         else:
-            link = rnd(page.links)
+            link = selector.select_link(page)
             new_page = wikipedia.page(link)
             return find_inner(new_page, depth_ + 1)
     toplevel = wikipedia.page(base)
@@ -49,11 +50,11 @@ def is_person_page(page):
                 and "errors" not in c.lower()
                 and "wikipedia" not in c.lower()]) > 0
 
-def find_a_person(depth = 5, max_tries = 3, debug = False):
-    return recurse("Lists of people", is_person_page, depth, max_tries, debug)
+def find_a_person(**key):
+    return recurse("Lists of people", BasicLinkSelector(), is_person_page, **key)
 
 def find_a_celebrity(**key):
-    return recurse("Lists of celebrities", is_person_page, **key)
+    return recurse("Lists of celebrities", BasicLinkSelector(), is_person_page, **key)
 
 def is_place_page(page):
     if "list" in page.title.lower():
@@ -68,7 +69,7 @@ def is_place_page(page):
 
 def find_a_place(**key):
     basis = rnd(["Lists of places", "List of buildings and structures"])
-    return recurse(basis, is_place_page, **key)
+    return recurse(basis, BasicLinkSelector(), is_place_page, **key)
 
 def is_weapon_page(page):
     if "list" in page.title.lower():
@@ -83,7 +84,7 @@ def is_weapon_page(page):
 
 def find_a_weapon(**key):
     basis = rnd(["List of premodern combat weapons", "List of medieval weapons"])
-    return recurse(basis, is_weapon_page, **key)
+    return recurse(basis, BasicLinkSelector(), is_weapon_page, **key)
 
 def is_monster_page(page):
     if "list" in page.title.lower():
@@ -99,7 +100,7 @@ def is_monster_page(page):
 def find_a_monster(**key):
     letter = random.choice(string.ascii_uppercase)
     pagename = "List of legendary creatures ({})".format(letter)
-    return recurse(pagename, is_monster_page, **key)
+    return recurse(pagename, BasicLinkSelector(), is_monster_page, **key)
 
 def is_animal_page(page):
     if "list" in page.title.lower():
@@ -113,7 +114,7 @@ def is_animal_page(page):
                 and "wikipedia" not in c.lower()]) > 0
 
 def find_a_animal(**key):
-    return recurse("List of animals by common name", is_animal_page, **key)
+    return recurse("List of animals by common name", BasicLinkSelector(), is_animal_page, **key)
 
 def is_food_page(page):
     if "list" in page.title.lower():
@@ -128,7 +129,7 @@ def is_food_page(page):
 
 def find_a_food(**key):
     basis = rnd(["List of culinary fruits", "List of vegetables"])
-    return recurse(basis, is_food_page, **key)
+    return recurse(basis, BasicLinkSelector(), is_food_page, **key)
 
 def nearby(x):
     try:

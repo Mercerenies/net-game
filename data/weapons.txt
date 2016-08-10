@@ -34,3 +34,4 @@ siege weapon       club
 sickle             sickle
 musket             missile
 cannon             missile
+fork               spear

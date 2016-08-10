@@ -111,6 +111,13 @@ sub find_weapon_information {
             }
         }
     }
+    foreach $ptn (keys %weapons) {
+        foreach my $titlevar (@titles) {
+            if ($titlevar =~ /\b$ptn\b/i && not $titlevar =~ /^$ptn$/i) {
+                return $ptn;
+            }
+        }
+    }
     return undef;
 }
 

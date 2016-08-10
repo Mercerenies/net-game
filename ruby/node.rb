@@ -96,6 +96,7 @@ class Node
       nodes = nodes.flatten
       if @level.kind_of? LevelTwo
         # Put a warp point somewhere on the map, about once per country
+        # TODO This distribution is not working; sometimes they end up on the same spot
         somewhere = nodes.sample
         somewhere.push WarpPoint.new
       end

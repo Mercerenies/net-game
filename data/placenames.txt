@@ -58,3 +58,15 @@ dam                     dam
 peninsula               island
 province                state
 street                  street
+waterfall               waterfall
+waterfalls              waterfall
+apartment               apartment
+residential building    apartment
+university              university
+ocean                   ocean
+sea                     ocean
+palace                  castle
+municipality            district
+strait                  river
+abbey                   church
+archipelago             island

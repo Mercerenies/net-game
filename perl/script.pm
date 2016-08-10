@@ -65,7 +65,7 @@ sub find_place_information {
     $titles[3] =~ s/(Greater|Lesser) +//;
     foreach $ptn (keys %placenames) {
         foreach my $titlevar (@titles) {
-            my $expr = qr/$titlevar (?:(or|in) (?:[\w-]+ ){1,3})?$LINKVERB (?:[\w-]+ )?$ARTICLE?(?:[^ ]+ ){0,9}\b$ptn\b/i;
+            my $expr = qr/\Q$titlevar\E (?:(or|in|of) (?:[\w-]+ ){1,3})?$LINKVERB (?:[\w-]+ )?$ARTICLE?(?:[^ ]+ ){0,9}\b$ptn\b/i;
             if ($shortsumm =~ $expr || $summary =~ $expr || $longsumm =~ $expr) {
                 return $ptn;
             }
@@ -105,7 +105,7 @@ sub find_weapon_information {
     #$titles[3] = $1 if ($titles[3] =~ /(\w+)$/);
     foreach $ptn (keys %weapons) {
         foreach my $titlevar (@titles) {
-            my $expr = qr/$titlevar (?:or (?:[\w-]+ ){1,3})?$LINKVERB (?:[\w-]+ )?$ARTICLE?(?:[^ ]+ ){0,9}\b$ptn\b/i;
+            my $expr = qr/\Q$titlevar\E (?:or (?:[\w-]+ ){1,3})?$LINKVERB (?:[\w-]+ )?$ARTICLE?(?:[^ ]+ ){0,9}\b$ptn\b/i;
             if ($shortsumm =~ $expr || $summary =~ $expr || $longsumm =~ $expr) {
                 return $ptn;
             }

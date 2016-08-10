@@ -67,7 +67,8 @@ def is_place_page(page):
                 and "wikipedia" not in c.lower()]) > 0
 
 def find_a_place(**key):
-    return recurse("Lists of places", is_place_page, **key)
+    basis = rnd(["Lists of places", "List of buildings and structures"])
+    return recurse(basis, is_place_page, **key)
 
 def is_weapon_page(page):
     if "list" in page.title.lower():

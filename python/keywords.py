@@ -19,6 +19,6 @@ class Keywords:
         if not Keywords._key:
             Keywords._load_file()
         for x in Keywords._key[key]:
-            if x in c.lower():
+            if x in c.lower(): # TODO Whole words only? Consider the consequences if we switched to that
                 return True
         return False

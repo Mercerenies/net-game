@@ -39,6 +39,10 @@ cantref
 cantrefi
 cantrefs
 parks
+church
+churches
+headlands
+populated place
 :: weapons
 sword
 knife

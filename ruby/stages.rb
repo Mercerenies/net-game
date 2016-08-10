@@ -47,6 +47,13 @@ class NodeStage < Stage
         end
       end
     end
+    if nodes.length < 2
+      new_country = PlacePage.new({
+        'name' => Namer.instance.sample,
+        'info' => ['country', 'country']
+      })
+      nodes << generate_node(new_country, Level.country)
+    end
     data.nodes = nodes
   end
 

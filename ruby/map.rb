@@ -112,12 +112,4 @@ class Location
     self.count { |x| x.kind_of? type }
   end
 
-  def whitelist_creatures(creatures)
-    @valid_creatures = creatures
-  end
-
-  def whitelist_plants(plants)
-    @valid_plants = plants
-  end
-
 end

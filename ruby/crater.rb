@@ -1,26 +1,24 @@
 
 class CraterNode < StructureNode
 
-  def initialize(builder, crater_name, kw = "Crater")
-    nickname = crater_name
-    unless crater_name =~ /crater$/i
-      nickname = "#{crater_name} #{Util.titlecase kw}"
+  def initialize(builder, kw = "Crater")
+    nickname = builder.core_name
+    unless nickname =~ /crater$/i
+      nickname = "#{builder.core_name} #{Util.titlecase kw}"
     end
     super builder, "#{nickname}"
-    @crater_name = crater_name
   end
 
   def expand
-    edge = make_node CraterEdgeNode, @crater_name
+    edge = make_node CraterEdgeNode
     connect self, edge
   end
 
 end
 
 class CraterEdgeNode < StructureNode
-  def initialize(builder, crater_name)
-    super builder, "#{crater_name} Site"
-    @crater_name = crater_name
+  def initialize(builder)
+    super builder, "#{builder.core_name} Site"
     mark_as_exit
   end
 end
@@ -29,12 +27,12 @@ class CraterBuilder < StructureBuilder
 
   def initialize(name, kw)
     super()
-    @name = name
+    self.core_name = name
     @keyword = kw
   end
 
   def construct
-    make_node CraterNode, @name, @keyword
+    make_node CraterNode, @keyword
   end
 
 end

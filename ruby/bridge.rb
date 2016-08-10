@@ -6,16 +6,19 @@ class Bridge < Feature
       case data.type
       when :forest
         Forest.new.tap { |o| o.load data }
+      when :lake
+        Lake.new.tap { |o| o.load data }
       end
     end
   end
 
   def self.create_random(nodal_size = nil)
     nodal_size ||= (2..6).to_a.sample
-    Forest.new.tap do |o|
-#      points = [(nodal_size * 3 / 4).round, 2].max
-#      o.establish_nodes "#{Natural.namer.sample} Forest", points
-      o.load nil
+    case [1, 2].sample
+    when 1
+      Forest.new.tap { |o| o.load nil }
+    when 2
+      Lake.new.tap { |o| o.load nil }
     end
   end
 

@@ -1,16 +1,15 @@
 
 class TowerNode < StructureNode
 
-  def initialize(builder, tower_name, number)
-    super builder, "#{tower_name} Floor #{Numeral.to_numeral number}"
-    @tower_name = tower_name
+  def initialize(builder, number)
+    super builder, "#{builder.core_name} Floor #{Numeral.to_numeral number}"
     @number = number
     mark_as_exit if number == 1
   end
 
   def expand
     if @number < 8 and (rand < 0.5 or @number < 4)
-      next_node = make_node TowerNode, @tower_name, @number + 1
+      next_node = make_node TowerNode, @number + 1
       connect self, next_node
     end
   end
@@ -21,11 +20,11 @@ class TowerBuilder < StructureBuilder
 
   def initialize(name)
     super()
-    @name = name
+    self.core_name = name
   end
 
   def construct
-    make_node TowerNode, @name, 1
+    make_node TowerNode, 1
   end
 
 end

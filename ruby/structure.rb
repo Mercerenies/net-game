@@ -6,20 +6,23 @@ class StructureNode
 
   attr_reader :id
 
-  def_delegators :@builder, :make_node, :connect, :add_names, :get_a_name, :sample_node, :sample_nodes
+  def_delegators :@builder, :make_node, :connect, :add_names, :get_a_name, :sample_node, :sample_nodes,
+                            :core_name=, :core_name, :each_node, :select_nodes, :each_exit
 
   def initialize(builder, name)
     @builder = builder
     @id = Node.get_id
     @name = name
     @exit = false
+    @creatures = nil
+    @plants = nil
   end
 
   def expand
   end
 
   def to_loc
-    Location.new @id, @name, nil
+    Location.new @id, @name, nil, valid_creatures: @creatures, valid_plants: @plants
   end
 
   def exit?
@@ -33,11 +36,13 @@ class StructureNode
 end
 
 class StructureBuilder
+  attr_accessor :core_name
 
   def initialize
     @nodes = []
     @connections = []
     @names = []
+    @core_name = nil
   end
 
   def add(*nodes)
@@ -94,6 +99,18 @@ class StructureBuilder
     end
   end
 
+  def each_node(&block)
+    @nodes.each &block
+  end
+
+  def select_nodes(&block)
+    each_node.select &block
+  end
+
+  def each_exit(&block)
+    @nodes.select(&:exit?).each &block
+  end
+
 end
 
 class StructureResult
@@ -105,5 +122,3 @@ class StructureResult
   end
 
 end
-
-# ///// Mountains, churches, then other structures and meaning to the nodes

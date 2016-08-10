@@ -6,6 +6,8 @@ class ForestNode < StructureNode
     super builder, @name
     @number = number
     mark_as_exit if number == 1
+    @creatures = Animal
+    @plants = Plants[:tree, :plant, :bush, :grass, :flower]
   end
 
   def expand
@@ -17,27 +19,20 @@ class ForestNode < StructureNode
     end
   end
 
-  def to_loc
-    super.tap do |o|
-      o.whitelist_creatures Animal
-      o.whitelist_plants Plants[:tree, :plant, :bush, :grass, :flower]
-    end
-  end
-
 end
 
 class ForestBuilder < StructureBuilder
 
   def initialize(name)
     super()
-    @name = name
+    self.core_name = name
   end
 
   def construct
-    add_names "#{@name} Edge", "#{@name} Depths", "Deep #{@name}",
-              "#{@name} Treeline", "#{@name} Loop", "#{@name} Branch",
-              "#{@name} Wall", "#{@name} Center", "Inner #{@name} Region",
-              "Outer #{@name} Region"
+    add_names "#{core_name} Edge", "#{core_name} Depths", "Deep #{core_name}",
+              "#{core_name} Treeline", "#{core_name} Loop", "#{core_name} Branch",
+              "#{core_name} Wall", "#{core_name} Center", "Inner #{core_name} Region",
+              "Outer #{core_name} Region"
     make_node ForestNode, 1
     (2..4).to_a.sample.times do
       node1, node2 = sample_nodes 2

@@ -70,3 +70,9 @@ municipality            district
 strait                  river
 abbey                   church
 archipelago             island
+shop                    shop
+shopping mall           shop
+aqueduct                site
+lake                    lake
+reservoir               lake
+weir                    dam

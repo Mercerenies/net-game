@@ -20,7 +20,7 @@ class GData
   def get_a_bridge
     if has_bridge?
       result = @bridges.sample
-      @bridges = @bridges.remove result
+      @bridges = @bridges.delete result
       result
     end
   end

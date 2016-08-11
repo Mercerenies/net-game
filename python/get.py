@@ -5,13 +5,17 @@
 import sys
 from getopt import getopt
 import xml.etree.ElementTree as ET
+from basis import Basis
 import algorithm
 import xmlify
 
-def do_search(script, number, **key):
+def do_search(tup, number, **key):
+    base_script, match_func = tup
+    spider = algorithm.Spider(**key)
     arr = []
     for i in range(0, number):
-        curr = script(**key)
+        base = base_script()
+        curr = spider.crawl_times(base, match_func)
         if curr:
             arr.append(curr)
     return arr
@@ -27,12 +31,12 @@ if __name__ == '__main__':
     foods = int(args.get("-f", "0"))
     debug = "-d" in args
     parts = {
-        'celebs':    do_search(algorithm.find_a_celebrity, celebs  , debug = debug),
-        'people':    do_search(algorithm.find_a_person   , people  , debug = debug),
-        'places':    do_search(algorithm.find_a_place    , places  , debug = debug),
-        'weapons':   do_search(algorithm.find_a_weapon   , weapons , debug = debug),
-        'monsters':  do_search(algorithm.find_a_monster  , monsters, debug = debug),
-        'animals':   do_search(algorithm.find_a_animal   , animals , debug = debug),
-        'foods':     do_search(algorithm.find_a_food     , foods   , debug = debug),
+        'celebs':    do_search(Basis.celebrity, celebs  , debug = debug),
+        'people':    do_search(Basis.person   , people  , debug = debug),
+        'places':    do_search(Basis.place    , places  , debug = debug),
+        'weapons':   do_search(Basis.weapon   , weapons , debug = debug),
+        'monsters':  do_search(Basis.monster  , monsters, debug = debug),
+        'animals':   do_search(Basis.animal   , animals , debug = debug),
+        'foods':     do_search(Basis.food     , foods   , debug = debug),
     }
     print(ET.tostring(xmlify.xmlify(parts)).decode())

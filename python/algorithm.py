@@ -38,6 +38,8 @@ class Spider:
                 return None
             else:
                 link = self.selector.select_link(page)
+                if link is None:
+                    return None
                 new_page = wikipedia.page(link)
                 return _crawl_once(new_page, depth_ + 1)
         if type(base) is str:
@@ -58,7 +60,9 @@ class Spider:
         if type(base) is str:
             base = wikipedia.page(base)
         for i in range(0, self.max_tries):
+            self.selector.start_crawl()
             res = self.crawl_once(base, match_function)
+            self.selector.end_crawl()
             if res:
                 return res
 

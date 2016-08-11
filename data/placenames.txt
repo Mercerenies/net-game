@@ -76,3 +76,6 @@ aqueduct                site
 lake                    lake
 reservoir               lake
 weir                    dam
+tundra                  tundra
+ski resort              tundra
+church                  church

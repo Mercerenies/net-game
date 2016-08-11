@@ -8,10 +8,11 @@ import xml.etree.ElementTree as ET
 from basis import Basis
 import algorithm
 import xmlify
+import links
 
 def do_search(tup, number, **key):
     base_script, match_func = tup
-    spider = algorithm.Spider(**key)
+    spider = algorithm.Spider(selector = links.NoDupLinkSelector(), **key)
     arr = []
     for i in range(0, number):
         base = base_script()

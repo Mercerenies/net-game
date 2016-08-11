@@ -44,6 +44,7 @@ protein proteins
 vitamin vitamins
 nutrient nutrients
 medicine medicinal
+herbal
 pharmaceutical pharmaceutically
 salad salads
 :poison

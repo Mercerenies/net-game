@@ -50,7 +50,7 @@ if __name__ == '__main__':
         'places':    do_search(Basis.place    , places  , make_sel('places',   rein)),
         'weapons':   do_search(Basis.weapon   , weapons , make_sel('weapons',  rein)),
         'monsters':  do_search(Basis.monster  , monsters, make_sel('monsters', rein)),
-        'animals':   do_search(Basis.animal   , animals , make_sel('animals',  rein)),
-        'foods':     do_search(Basis.food     , foods   , make_sel('foods',    rein)),
+        'animals':   do_search(Basis.animal   , animals , make_sel('animals',  False)),
+        'foods':     do_search(Basis.food     , foods   , make_sel('foods',    False)),
     }
     print(ET.tostring(xmlify.xmlify(parts)).decode())

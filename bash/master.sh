@@ -13,8 +13,9 @@ stage1=""
 stage2=""
 stage3=""
 stage4=""
-prefix="net"
 clisp="clisp"
+
+prefix="net"
 
 if [ $# -eq 0 ]; then
     echo "Usage: ./master.sh <args>"
@@ -41,7 +42,7 @@ if [ $1 == "--help" ]; then
     exit
 fi
 
-while getopts 'c:p:P:w:m:a:f:d:r1234F:l:' opt; do
+while getopts 'c:p:P:w:m:a:f:d:r1234l:' opt; do
     case "$opt" in
         c) # Celebrities
             celebs="-c $OPTARG"
@@ -81,9 +82,6 @@ while getopts 'c:p:P:w:m:a:f:d:r1234F:l:' opt; do
             ;;
         4) # Stage 4
             stage4="./bash/stage4.sh"
-            ;;
-        F) # Intermediates with Filename
-            prefix="$OPTARG"
             ;;
         l) # CLisp
             clisp="$OPTARG"

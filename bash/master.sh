@@ -31,7 +31,7 @@ if [ $1 == "--help" ]; then
     echo " -m Number of monsters"
     echo " -a Number of animals"
     echo " -f Number of foods"
-    echo " -d Debug mode"
+    echo " -d Debug level"
     echo " -r Use the reinforcement learning engine (experimental)"
     echo " -1 Run Stage 1 (Python / Site Crawling)"
     echo " -2 Run Stage 2 (Perl / Page Parsing)"
@@ -42,7 +42,7 @@ if [ $1 == "--help" ]; then
     exit
 fi
 
-while getopts 'c:p:P:w:m:a:f:dr1234F:l:' opt; do
+while getopts 'c:p:P:w:m:a:f:d:r1234F:l:' opt; do
     case "$opt" in
         c) # Celebrities
             celebs="-c $OPTARG"
@@ -66,7 +66,7 @@ while getopts 'c:p:P:w:m:a:f:dr1234F:l:' opt; do
             foods="-f $OPTARG"
             ;;
         d) # Debug Mode
-            debug="-d"
+            debug="-d $OPTARG"
             ;;
         r) # Reinforcement Engine
             rein="-r"

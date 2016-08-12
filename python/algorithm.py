@@ -1,21 +1,20 @@
 
 import wikipedia
 import sys
-from sys import stderr
 from util import escape
 from links import BasicLinkSelector
 import time
+from logger import echo
 
 DELAY = 0.5
 
 class Spider:
 
-    def __init__(self, selector = None, depth = 5, max_tries = 3, debug = False):
+    def __init__(self, selector = None, depth = 5, max_tries = 3):
         if selector is None:
             selector = BasicLinkSelector()
         self.depth = depth
         self.max_tries = max_tries
-        self.debug = debug
         self.selector = selector
 
     def finished(self):
@@ -24,18 +23,12 @@ class Spider:
     def wait(self, delay = DELAY):
         time.sleep(delay)
 
-    def echo(self, *args, flush = False):
-        if self.debug:
-            print(*args, file=stderr)
-            if flush:
-                sys.stderr.flush()
-
     def crawl_once(self, base, match_function):
         def _crawl_once(page, depth_):
             self.wait()
-            self.echo("Trying", escape(page.title), "at", depth_, flush = True)
+            echo("Trying", escape(page.title), "at", depth_, flush = True)
             if match_function(page):
-                self.echo("Taking", escape(page.title))
+                echo("Taking", escape(page.title))
                 return page
             elif depth_ >= self.depth:
                 return None
@@ -53,10 +46,10 @@ class Spider:
         try:
             return func()
         except wikipedia.PageError as e:
-            self.echo("Found red link", e)
+            echo("Found red link", e)
             return None
         except wikipedia.DisambiguationError as e:
-            self.echo("Ambiguous article found", e)
+            echo("Ambiguous article found", e)
             return None
 
     def crawl_times(self, base, match_function):

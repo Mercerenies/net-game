@@ -19,12 +19,12 @@ if [ $# -eq 0 ] || [ "$1" == "--help" ]; then
     echo " -m Number of monsters"
     echo " -a Number of animals"
     echo " -f Number of foods"
-    echo " -d Debug mode"
+    echo " -d Debug level"
     echo " -r Use the reinforcement learning engine (experimental)"
     exit
 fi
 
-while getopts 'c:p:P:w:m:a:f:dr' opt; do
+while getopts 'c:p:P:w:m:a:f:d:r' opt; do
     case "$opt" in
         c) # Celebrities
             celebs="-c $OPTARG"
@@ -48,7 +48,7 @@ while getopts 'c:p:P:w:m:a:f:dr' opt; do
             foods="-f $OPTARG"
             ;;
         d) # Debug Mode
-            debug="-d"
+            debug="-d $OPTARG"
             ;;
         r) # Reinforcement Engine
             rein="-r"

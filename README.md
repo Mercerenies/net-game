@@ -56,23 +56,23 @@ There are several scripts in the `./bash/` directory, but (aside from the initia
  * `-a` Animals
  * `-f` Foods
 
-The first several flags control the number of crawls to perform for each type of entity. Note that this is the number of *attempts*, not necessarily the number of results. If you would like five locations, it is often a good idea to run `-P 6` or `-P 7` to be safe, since some of the crawls are likely to fail.
+   The first several flags control the number of crawls to perform for each type of entity. Note that this is the number of *attempts*, not necessarily the number of results. If you would like five locations, it is often a good idea to run `-P 6` or `-P 7` to be safe, since some of the crawls are likely to fail.
 
  * `-d` Debug Level
 
-The debug level controls the information printed to STDERR. An absent (or 0) debug level results in nothing being printed to STDERR. At debug level 1, the Python engine will print all of the pages it visits during its crawl. At level 2, the reinforcement engine will print whether or not it is in "exploration mode".
+   The debug level controls the information printed to STDERR. An absent (or 0) debug level results in nothing being printed to STDERR. At debug level 1, the Python engine will print all of the pages it visits during its crawl. At level 2, the reinforcement engine will print whether or not it is in "exploration mode".
 
  * `-r` Reinforcement Engine
 
-The reinforcement learning engine is an experimental learning machine encoded into the Wikipedia crawling algorithm. As it is highly experimental, it is disabled by default but can be enabled with this flag. The engine will remember past crawls and use them to improve its ability to search through the Internet. Note that, even with this flag, some types of crawls will not use the reinforcement engine anyway, as it is not necessary in all cases.
+   The reinforcement learning engine is an experimental learning machine encoded into the Wikipedia crawling algorithm. As it is highly experimental, it is disabled by default but can be enabled with this flag. The engine will remember past crawls and use them to improve its ability to search through the Internet. Note that, even with this flag, some types of crawls will not use the reinforcement engine anyway, as it is not necessary in all cases.
 
  * `-1` Site Crawling
  * `-2` Page Parsing
  * `-3` World Generation
  * `-4` Gameplay
 
-These flags control which stages of the game to run. The first stage crawls Wikipedia to obtain pages. The second stage scans these pages and outputs certain information that it was able to scrape from them. The third stage generates a game world. The fourth stage is the only interactive stage, which allows you to play the game itself. In general, the first and second stages should be run as a set, getting new game information and scanning through it. The third stage will generate a new world from the current information, and the fourth stage will simply start a new game in the current world.
+   These flags control which stages of the game to run. The first stage crawls Wikipedia to obtain pages. The second stage scans these pages and outputs certain information that it was able to scrape from them. The third stage generates a game world. The fourth stage is the only interactive stage, which allows you to play the game itself. In general, the first and second stages should be run as a set, getting new game information and scanning through it. The third stage will generate a new world from the current information, and the fourth stage will simply start a new game in the current world.
 
  * `-l` Lisp Implementation
 
-This flag allows you to customize your Common Lisp implementation. If you use a Lisp implementation other than GNU CLISP, you must supply its name and any command line arguments it requires using this flag.
+   This flag allows you to customize your Common Lisp implementation. If you use a Lisp implementation other than GNU CLISP, you must supply its name and any command line arguments it requires using this flag.

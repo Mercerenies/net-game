@@ -45,6 +45,8 @@ headlands
 populated place
 palaces
 houses
+counties
+county
 :: weapons
 sword
 knife

@@ -80,3 +80,4 @@ tundra                  tundra
 ski resort              tundra
 church                  church
 sculpture               site
+cathedral               church

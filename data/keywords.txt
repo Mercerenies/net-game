@@ -47,6 +47,7 @@ palaces
 houses
 counties
 county
+forts
 :: weapons
 sword
 knife

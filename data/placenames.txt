@@ -81,3 +81,7 @@ ski resort              tundra
 church                  church
 sculpture               site
 cathedral               church
+fort                    fort
+courthouse              courthouse
+town hall               courthouse
+city hall               courthouse

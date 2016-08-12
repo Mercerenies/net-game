@@ -140,6 +140,7 @@ class ReinLinkSelector(links.LinkSelector):
         self.db.load()
         self.pages = []
         self.explore = explore
+        self.already_exploring = False
 
     def finished(self):
         self.explore.finished()
@@ -148,26 +149,41 @@ class ReinLinkSelector(links.LinkSelector):
     def start_crawl(self):
         self.explore.start_crawl()
         self.pages = []
+        self.already_exploring = False
 
     def end_crawl(self, success):
         self.explore.end_crawl(success)
         score = 1 if success else 0
         for page in self.pages:
             self.db.add_score(page, score)
+        # Make the final result worth a half point. This encourages the reinforcement
+        # engine to "run down the clock", so to speak, making it more likely to keep
+        # scanning new pages and then explore at the end to get unusual pages.
+        self.db.add_info(self.pages[-1], Fraction(-0.5, 0))
 
-    def should_explore(self):
-        return random.random() < 0.20
+    def should_explore(self, state):
+        if self.already_exploring:
+            return True
+        numer = state.depth_left()
+        denom = state.total_depth()
+        cap = 1 - numer / (denom + 1)
+        #echo("Explore cap", cap, level = 2)
+        res = random.random() < cap
+        if res:
+            self.already_exploring = True
+        return res
 
-    def select_link(self, page):
+    def select_link(self, state):
+        page = state.page()
         if not self.pages: # We are on the first page so store this one too
             self.pages.append(page.title)
         pages = filter(lambda x: x not in self.pages, page.links)
         pages = filter(lambda x: self.db.get_score(x).denom > 0, pages)
         pages = map(lambda x: (x, float(self.db.get_score(x))), pages)
         pages = list(pages)
-        if not pages or self.should_explore():
+        if not pages or self.should_explore(state):
             echo("Exploring", level = 2)
-            result = self.explore.select_link(page)
+            result = self.explore.select_link(state)
         else:
             echo("Using prior knowledge", level = 2)
             result = self._weighted_random(pages)

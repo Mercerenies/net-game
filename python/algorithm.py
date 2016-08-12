@@ -5,6 +5,7 @@ from util import escape
 from links import BasicLinkSelector
 import time
 from logger import echo
+from links import LinkState
 
 DELAY = 0.5
 
@@ -33,7 +34,8 @@ class Spider:
             elif depth_ >= self.depth:
                 return None
             else:
-                link = self.selector.select_link(page)
+                state = LinkState(page, self.depth - depth_, self.depth)
+                link = self.selector.select_link(state)
                 if link is None:
                     return None
                 new_page = wikipedia.page(link)

@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-# TODO Consider making a reinforcement learning engine to improve the crawling
-
 import sys
 from getopt import getopt
 import xml.etree.ElementTree as ET

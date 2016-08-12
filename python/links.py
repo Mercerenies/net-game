@@ -1,10 +1,13 @@
 
+import sys
 from util import rnd
 
 class LinkSelector:
+    def finished(self):
+        pass
     def start_crawl(self):
         pass
-    def end_crawl(self):
+    def end_crawl(self, success):
         pass
     def select_link(self, page):
         raise NotImplementedError("select_link not implemented!")

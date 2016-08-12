@@ -8,6 +8,7 @@ monsters=""
 animals=""
 foods=""
 debug=""
+rein=""
 stage1=""
 stage2=""
 stage3=""
@@ -31,6 +32,7 @@ if [ $1 == "--help" ]; then
     echo " -a Number of animals"
     echo " -f Number of foods"
     echo " -d Debug mode"
+    echo " -r Use the reinforcement learning engine (experimental)"
     echo " -1 Run Stage 1 (Python / Site Crawling)"
     echo " -2 Run Stage 2 (Perl / Page Parsing)"
     echo " -3 Run Stage 3 (Ruby / World Generation)"
@@ -40,7 +42,7 @@ if [ $1 == "--help" ]; then
     exit
 fi
 
-while getopts 'c:p:P:w:m:a:f:d1234F:l:' opt; do
+while getopts 'c:p:P:w:m:a:f:dr1234F:l:' opt; do
     case "$opt" in
         c) # Celebrities
             celebs="-c $OPTARG"
@@ -66,6 +68,9 @@ while getopts 'c:p:P:w:m:a:f:d1234F:l:' opt; do
         d) # Debug Mode
             debug="-d"
             ;;
+        r) # Reinforcement Engine
+            rein="-r"
+            ;;
         1) # Stage 1
             stage1="./bash/stage1.sh"
             ;;
@@ -88,7 +93,7 @@ while getopts 'c:p:P:w:m:a:f:d1234F:l:' opt; do
 done
 
 if [ -n "$stage1" ]; then
-    stage1="$stage1 $celebs $people $places $weapons $monsters $animals $foods $debug"
+    stage1="$stage1 $celebs $people $places $weapons $monsters $animals $foods $debug $rein"
 fi
 
 if [ -n "$stage4" ]; then

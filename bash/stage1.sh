@@ -8,6 +8,7 @@ monsters=""
 animals=""
 foods=""
 debug=""
+rein=""
 
 if [ $# -eq 0 ] || [ "$1" == "--help" ]; then
     echo "Usage: ./stage1.sh <args>"
@@ -19,10 +20,11 @@ if [ $# -eq 0 ] || [ "$1" == "--help" ]; then
     echo " -a Number of animals"
     echo " -f Number of foods"
     echo " -d Debug mode"
+    echo " -r Use the reinforcement learning engine (experimental)"
     exit
 fi
 
-while getopts 'c:p:P:w:m:a:f:d' opt; do
+while getopts 'c:p:P:w:m:a:f:dr' opt; do
     case "$opt" in
         c) # Celebrities
             celebs="-c $OPTARG"
@@ -48,7 +50,10 @@ while getopts 'c:p:P:w:m:a:f:d' opt; do
         d) # Debug Mode
             debug="-d"
             ;;
+        r) # Reinforcement Engine
+            rein="-r"
+            ;;
     esac
 done
 
-./python/get.py $celebs $people $places $weapons $monsters $animals $foods $debug
+./python/get.py $celebs $people $places $weapons $monsters $animals $foods $debug $rein

@@ -18,6 +18,9 @@ class Spider:
         self.debug = debug
         self.selector = selector
 
+    def finished(self):
+        self.selector.finished()
+
     def wait(self, delay = DELAY):
         time.sleep(delay)
 
@@ -62,7 +65,7 @@ class Spider:
         for i in range(0, self.max_tries):
             self.selector.start_crawl()
             res = self.crawl_once(base, match_function)
-            self.selector.end_crawl()
+            self.selector.end_crawl(bool(res))
             if res:
                 return res
 

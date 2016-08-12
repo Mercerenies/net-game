@@ -43,6 +43,8 @@ church
 churches
 headlands
 populated place
+palaces
+houses
 :: weapons
 sword
 knife

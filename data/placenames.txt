@@ -79,3 +79,4 @@ weir                    dam
 tundra                  tundra
 ski resort              tundra
 church                  church
+sculpture               site

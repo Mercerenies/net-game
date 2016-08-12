@@ -37,7 +37,6 @@ if [ $1 == "--help" ]; then
     echo " -2 Run Stage 2 (Perl / Page Parsing)"
     echo " -3 Run Stage 3 (Ruby / World Generation)"
     echo " -4 Run Stage 4 (Common Lisp / Gameplay)"
-    echo " -F Specify intermediate filename prefix"
     echo " -l Use the given Common Lisp implementation"
     exit
 fi

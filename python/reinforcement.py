@@ -6,6 +6,7 @@ import os
 import pickle
 import links
 import random
+from logger import echo
 
 class DBError(Exception):
     def __init__(self, *args, **key):
@@ -165,8 +166,10 @@ class ReinLinkSelector(links.LinkSelector):
         pages = map(lambda x: (x, float(self.db.get_score(x))), pages)
         pages = list(pages)
         if not pages or self.should_explore():
+            echo("Exploring", level = 2)
             result = self.explore.select_link(page)
         else:
+            echo("Using prior knowledge", level = 2)
             result = self._weighted_random(pages)
         if result:
             self.pages.append(result)

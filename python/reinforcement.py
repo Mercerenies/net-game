@@ -8,6 +8,8 @@ import links
 import random
 from logger import echo
 
+# TODO Further improvements to this? Or at least further testing
+
 class DBError(Exception):
     def __init__(self, *args, **key):
         super().__init__(*args, **key)

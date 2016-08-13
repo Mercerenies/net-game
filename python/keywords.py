@@ -16,6 +16,10 @@ class Keywords:
                 Keywords._key[state] = Keywords._key.get(state, []) + [curr]
     @staticmethod
     def check_match(key, c):
+        """
+        Attempt to match the category c against the match words associated with the keyword key
+        provided. Returns whether any matches were found
+        """
         if not Keywords._key:
             Keywords._load_file()
         for x in Keywords._key[key]:

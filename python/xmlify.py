@@ -3,6 +3,10 @@ import re
 import xml.etree.ElementTree as ET
 
 def xmlify_once(page):
+    """
+    Given a single Wikipedia page object, convert it into an XML structure organized by
+    page sections.
+    """
     stack = [ET.Element("page", name = page.title)]
     re_titles = re.compile(r'^(=+) *(.*) *\1$')
     for line in page.content.splitlines():
@@ -26,6 +30,11 @@ def xmlify_once(page):
     return stack[0]
 
 def xmlify(pages): # Pages should be a dict with key strings and value lists of pages
+    """
+    Organize a collection of pages into an XML structure, using xmlify_once. The argument
+    should be a dictionary containing string 'type' keywords as keys and lists of pages
+    satisfying that 'type' of page as values.
+    """
     root = ET.Element("data")
     for key, value in pages.items():
         curr = ET.Element("pages", type = key)

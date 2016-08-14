@@ -18,12 +18,59 @@ sub _flatten_sections {
     return \%sections;
 }
 
-# flatten_sections(%page)
+=head2 flatten_sections(%page)
+
+Given a Wikipedia page with section headers, flatten the hierarchy into a single
+hash consisting of all sections on the page, listed hierarchically. For example,
+given the following section hierarchy:
+
+=over
+
+=item * History
+
+=item * Uses
+
+=over
+
+=item * Recent Uses
+
+=item * Historical Uses
+
+=back
+
+=item * Pop Culture
+
+=back
+
+The following result will be produced
+
+=over
+
+=item * History
+
+=item * Uses
+
+=item * Uses\0Recent Uses
+
+=item * Uses\0Historical Uses
+
+=item * Pop Culture
+
+=back
+
+=cut
+
 sub flatten_sections {
     return _flatten_sections($_[0], '');
 }
 
-# nonhierarchical(%sections) # Expects the output of flatten_sections()
+=head2 nonhierarchical(%sections)
+
+Given the output of flatten_sections(), remove the hierarchical information and keep only the
+deepest-level section name of each entry.
+
+=cut
+
 sub nonhierarchical {
     local $1;
     my %sections = %{$_[0]};

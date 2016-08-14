@@ -79,4 +79,24 @@ sub nonhierarchical {
     return \%new_sections;
 }
 
+=head2 page_title($xml)
+
+Return the page's title.
+
+=cut
+
+sub page_title {
+    return $_[0]->{'name'};
+}
+
+=head2 page_summary($xml)
+
+Return the page's summary text.
+
+=cut
+
+sub page_summary {
+    return $_[0]->{'content'};
+}
+
 1;

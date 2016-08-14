@@ -16,6 +16,7 @@ local $_;
 
 my %data = do './perl/load.pl';
 die("$@") if $@;
+#print STDERR Dumper \%data;
 
 my %table = (
     'places'   => \&read_place  ,

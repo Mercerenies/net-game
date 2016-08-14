@@ -1,50 +1,31 @@
+
 local $_;
+
+use perl::datafile;
 
 my(%occu, @mwords, @fwords, %placenames, %weapons, %animals, @foodprefixes, @foodblacklist, @foodsuffixes,
    %foodtrees, @foodnegatives, @foodnutrition, @foodpoison, @foodsections);
 my $fh;
 
 open $fh, '<', './data/occupations.txt' or die("$!");
-while (<$fh>) {
-    chomp;
-    /^((?:\w+ )+) +([\w ]+)$/ or die("Illegal line in occupations.txt at line $.");
-    my $key = $1;
-    chop $key;
-    $occu{$key} = $2;
-}
+%occu = load_two_column_file($fh, 'occupations.txt');
 close $fh;
 
 open $fh, '<', './data/gender.txt' or die("$!");
-while (<$fh>) {
-    chomp;
-    /^((?:\w+ )+) +([\w ]+)$/ or die("Illegal line in gender.txt at line $.");
-    my $key = $1;
-    my $gen = $2;
+my %genders = load_two_column_file($fh, 'gender.txt');
+foreach my $key (keys %genders) {
+    my $gen = $genders{$key};
     push @mwords, $key if ($gen =~ /^male$/);
     push @fwords, $key if ($gen =~ /^female$/);
 }
-chop @mwords;
-chop @fwords;
 close $fh;
 
 open $fh, '<', './data/placenames.txt' or die("$!");
-while (<$fh>) {
-    chomp;
-    /^((?:[\w\-]+ )+) +([\w ]+)$/ or die("Illegal line in placenames.txt at line $.");
-    my $key = $1;
-    chop $key;
-    $placenames{$key} = $2;
-}
+%placenames = load_two_column_file($fh, 'placenames.txt');
 close $fh;
 
 open $fh, '<', './data/weapons.txt' or die("$!");
-while (<$fh>) {
-    chomp;
-    /^((?:[\w\-]+ )+) +([\w ]+)$/ or die("Illegal line in weapons.txt at line $.");
-    my $key = $1;
-    chop $key;
-    $weapons{$key} = $2;
-}
+%weapons = load_two_column_file($fh, 'weapons.txt');
 close $fh;
 
 open $fh, '<', './data/animals.txt' or die("$!");

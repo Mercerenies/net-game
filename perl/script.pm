@@ -4,13 +4,9 @@ use Data::Dumper;
 my $LINKVERB = "(?:is|was|are|were)";
 my $ARTICLE = "(?:an? |the )";
 
-local $_;
+# ///// Refactor this file into something much less messy... Good luck :)
 
-# crop($x);
-sub crop {
-    $_[0] =~ s/b'(.*)'/$1/;
-    $_[0] =~ s/b"(.*)"/$1/;
-}
+local $_;
 
 # find_occu($summary, %occu);
 sub find_occu {
@@ -19,7 +15,7 @@ sub find_occu {
     my %occu = %{$_[1]};
     my @res = ();
     foreach my $o (keys %occu) {
-        my @arr = ($o, $occu{$o});
+        my @arr = ($occu{$o}, $o);
         push @res, \@arr if ($summary =~ /\b$o\b/i);
     }
     return @res;
@@ -67,14 +63,14 @@ sub find_place_information {
         foreach my $titlevar (@titles) {
             my $expr = qr/\Q$titlevar\E (?:(or|in|of) (?:[\w-]+ ){1,3})?$LINKVERB (?:[\w-]+ )?$ARTICLE?(?:[^ ]+ ){0,9}\b$ptn\b/i;
             if ($shortsumm =~ $expr || $summary =~ $expr || $longsumm =~ $expr) {
-                return $ptn;
+                return [$placenames{$ptn}, $ptn];
             }
         }
     }
     foreach $ptn (keys %placenames) {
         foreach my $titlevar (@titles) {
             if ($titlevar =~ /\b$ptn\b/i && not $titlevar =~ /^$ptn$/i) {
-                return $ptn;
+                return [$placenames{$ptn}, $ptn];
             }
         }
     }
@@ -107,14 +103,14 @@ sub find_weapon_information {
         foreach my $titlevar (@titles) {
             my $expr = qr/\Q$titlevar\E (?:or (?:[\w-]+ ){1,3})?$LINKVERB (?:[\w-]+ )?$ARTICLE?(?:[^ ]+ ){0,9}\b$ptn\b/i;
             if ($shortsumm =~ $expr || $summary =~ $expr || $longsumm =~ $expr) {
-                return $ptn;
+                return [$weapons{$ptn}, $ptn];
             }
         }
     }
     foreach $ptn (keys %weapons) {
         foreach my $titlevar (@titles) {
             if ($titlevar =~ /\b$ptn\b/i && not $titlevar =~ /^$ptn$/i) {
-                return $ptn;
+                return [$weapons{$ptn}, $ptn];
             }
         }
     }
@@ -135,13 +131,51 @@ sub deduce_animal_stats {
             $constant = @{[ $summary =~ /\b$keyword\b/gi ]};
         }
         $stats{'matches'} += $constant;
-#        print STDERR "$title has $keyword match $constant times\n" if $constant > 0;
+        #print STDERR "$title has $keyword match $constant times\n" if $constant > 0;
         foreach my $stat (keys %{$data->{'animals'}->{$keyword}}) {
             my $coef = $data->{'animals'}->{$keyword}->{$stat};
             $stats{$stat} += $coef * $constant;
         }
    }
     return \%stats;
+}
+
+# normalize_animal_stats(%stats)
+sub normalize_animal_stats {
+    my %stats = %{$_[0]};
+    # $threat, $size, $pack, $speed are on a scale of 1 to 5
+    # $air, $sea are booleans
+    my($threat, $size, $pack, $speed, $air, $sea);
+    $threat = 5;
+    $threat -=!! ($stats{'threat'} <=  9);
+    $threat -=!! ($stats{'threat'} <=  4);
+    $threat -=!! ($stats{'threat'} <=  2);
+    $threat -=!! ($stats{'threat'} <= -1);
+    $size = 5;
+    $size -=!! ($stats{'size'} <= 10);
+    $size -=!! ($stats{'size'} <=  8);
+    $size -=!! ($stats{'size'} <=  4);
+    $size -=!! ($stats{'size'} <= -4);
+    $pack = 5;
+    $pack -=!! ($stats{'pack'} <= 3);
+    $pack -=!! ($stats{'pack'} <= 2);
+    $pack -=!! ($stats{'pack'} <= 1);
+    $pack -=!! ($stats{'pack'} <= 0);
+    $speed = 5;
+    $speed -=!! ($stats{'speed'} <= 10);
+    $speed -=!! ($stats{'speed'} <=  6);
+    $speed -=!! ($stats{'speed'} <=  0);
+    $speed -=!! ($stats{'speed'} <= -2);
+    $sea = 0+!! ($stats{'sea'} > 1);
+    $air = 0+!! ($stats{'air'} > 1);
+    return (
+        threat => $threat,
+        size => $size,
+        pack => $pack,
+        speed => $speed,
+        sea => \$sea,
+        air => \$air
+        );
 }
 
 # shortest_food_synonym($title, $summary, $data)
@@ -190,16 +224,16 @@ sub shortest_food_synonym {
     return $shortest;
 }
 
-# get_plant_type($title, $summary, $data)
+# get_plant_type($title, $summary, $trees)
 sub get_plant_type {
     my $title = $_[0];
     my $summary = $_[1];
-    my $data = $_[2];
+    my %trees = %{$_[2]};
     my $max = undef;
     my $max_num = 0; # Set a threshold so that if nothing matches, we don't falsely identify as something
-    foreach my $curr (keys %{$data->{'foodtrees'}}) {
+    foreach my $curr (keys %trees) {
         my $constant = 0;
-        foreach my $key (@{$data->{'foodtrees'}->{$curr}}) {
+        foreach my $key (@{$trees{$curr}}) {
             $constant += 8 if ($title =~ /\b$key\b/i);
             $constant += @{[ $summary =~ /\b$key\b/gi ]};
         }

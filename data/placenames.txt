@@ -85,3 +85,4 @@ fort                    fort
 courthouse              courthouse
 town hall               courthouse
 city hall               courthouse
+locality                city

@@ -1,4 +1,6 @@
 
+# TODO Control integration better (towers can integrate into other towers right now)
+
 class Building < Feature
 
   def self.load_building(data)

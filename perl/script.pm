@@ -1,4 +1,6 @@
 
+use perl::filters;
+
 use Data::Dumper;
 
 my $LINKVERB = "(?:is|was|are|were)";
@@ -46,19 +48,18 @@ sub find_place_information {
     my $summary = $_[1];
     my %placenames = %{$_[2]};
     my $shortsumm = $summary;
-    my $matches = 1;
-    $matches = $shortsumm =~ s/\([^()]*\)//g while $matches > 0;
-    $shortsumm =~ s|/[^ /]+/||g;
+    Filters::paren_expr($shortsumm);
+    Filters::slash_phrase($shortsumm);
     my $longsumm = $shortsumm;
-    $shortsumm =~ s/,[A-Za-z0-9:\-' _]*,//g;
-    $shortsumm =~ s/ {2,}/ /g;
-    $longsumm =~ s/ {2,}/ /g;
+    Filters::appositive_phrase($shortsumm);
+    Filters::consecutive_spaces($shortsumm);
+    Filters::consecutive_spaces($longsumm);
     my $ptn;
     my @titles = ("$title", "$title", "$title", "$title");
-    $titles[1] =~ s/,.*$//;
-    $matches = 1;
-    $matches = $titles[2] =~ s/ ?\([^()]*\) ?//g while $matches > 0;
+    Filters::trailing_comma_phrase($titles[1]);
+    Filters::paren_expr($titles[2]);
     $titles[3] =~ s/(Greater|Lesser) +//;
+    Filters::consecutive_spaces($titles[2]);
     foreach $ptn (keys %placenames) {
         foreach my $titlevar (@titles) {
             my $expr = qr/\Q$titlevar\E (?:(or|in|of) (?:[\w-]+ ){1,3})?$LINKVERB (?:[\w-]+ )?$ARTICLE?(?:[^ ]+ ){0,9}\b$ptn\b/i;
@@ -83,21 +84,20 @@ sub find_weapon_information {
     my $summary = $_[1];
     my %weapons = %{$_[2]};
     my $shortsumm = $summary;
-    my $matches = 1;
-    $matches = $shortsumm =~ s/\([^()]*\)//g while $matches > 0;
-    $shortsumm =~ s|/[^ /]+/||g;
+    Filters::paren_expr($shortsumm);
+    Filters::slash_phrase($shortsumm);
     $shortsumm =~ s/"//g;
     my $longsumm = $shortsumm;
-    $shortsumm =~ s/,[A-Za-z0-9:\-' _]*,//g;
-    $shortsumm =~ s/ {2,}/ /g;
-    $longsumm =~ s/ {2,}/ /g;
+    Filters::appositive_phrase($shortsumm);
+    Filters::consecutive_spaces($shortsumm);
+    Filters::consecutive_spaces($longsumm);
     my $ptn;
     $title =~ s/-/ /;
     $shortsumm =~ s/-/ /;
     my @titles = ("$title", "$title", "$title", "$title");
-    $titles[1] =~ s/,.*$//;
-    $matches = 1;
-    $matches = $titles[2] =~ s/ ?\([^()]*\) ?//g while $matches > 0;
+    Filters::trailing_comma_phrase($titles[1]);
+    Filters::paren_expr($titles[2]);
+    Filters::consecutive_spaces($titles[2]);
     #$titles[3] = $1 if ($titles[3] =~ /(\w+)$/);
     foreach $ptn (keys %weapons) {
         foreach my $titlevar (@titles) {
@@ -184,16 +184,16 @@ sub shortest_food_synonym {
     my $summary = $_[1];
     my $data = $_[2];
     my $shortsumm = $summary;
-    my $matches = 1;
-    $matches = $title =~ s/\([^()]*\)//g while $matches > 0;
-    $shortsumm =~ s|/[^ /]+/||g;
+    Filters::paren_expr($title);
+    Filters::slash_phrase($shortsumm);
     $shortsumm =~ s/"//g;
+    Filters::consecutive_spaces($title);
     my $longsumm = $shortsumm;
-    #$shortsumm =~ s/,[A-Za-z0-9:\-' _]*,//g;
+    #Filters::appositive_phrase($shortsumm);
     $matches = 1;
-    $matches = $shortsumm =~ s/\([^()]*\)//g while $matches > 0;
-    $shortsumm =~ s/ {2,}/ /g;
-    $longsumm =~ s/ {2,}/ /g;
+    Filters::paren_expr($shortsumm);
+    Filters::consecutive_spaces($shortsumm);
+    Filters::consecutive_spaces($longsumm);
     $title =~ s/-/ /;
     $shortsumm =~ s/-/ /;
     my @candidates;

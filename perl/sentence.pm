@@ -27,11 +27,16 @@ If this value is truthy, a "word" which can be skimmed over is considered more s
 only consist of regex word characters and hyphens. By default, any sequence of non-space characters is
 considered a word for the purposes of skimming.
 
+=item * SkimWordCount (default: 9)
+
+The maximum number of "skim words" allowed between the title and the pattern. More skim words results in
+more false positives but also more correct results. Fewer skim words eliminates results but also eliminates
+false positives.
+
 =back
 
 =cut
 
-# TODO /x on this? It seems to propogate downward too much right now.
 sub simple_linked_sentence {
     my $titlevar = shift;
     my $ptn = shift;
@@ -39,11 +44,12 @@ sub simple_linked_sentence {
 
     my $rename_words = $options{'MoreRenameClauses'} ? $RENAME : 'or';
     my $skim_word = $options{'StrictSkimWords'} ? qr/[\w-]+/i : qr/[^ ]+/i;
+    my $skim_count = 0+ ($options{'SkimWordCount'} // 9);
 
     my $rename_clause = qr/(?:$rename_words (?:$skim_word ){1,3})/i;
     my $title_word = qr/(?:\Q$titlevar\E )/i;
     my $link_word = qr/(?:$LINKVERB )/i;
-    my $skim_clause = qr/(?:(?:$skim_word ){0,9})/i;
+    my $skim_clause = qr/(?:(?:$skim_word ){0,$skim_count})/i;
     my $ptn_clause = qr/(?:\b$ptn\b)/i;
 
     return qr/$title_word $rename_clause? $link_word $skim_clause $ptn_clause/ix;

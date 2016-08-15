@@ -21,6 +21,7 @@ package Filters {
             s/ {2,}/ /g;
             s/^ +//;
             s/ +$//;
+            s/ +,/,/g;
         }
     }
 
@@ -30,6 +31,26 @@ package Filters {
         }
     }
 
+}
+
+sub apply_filter {
+    my $func = shift;
+    my @arr;
+    for (@_) {
+        my $arg = $_;
+        $func->($arg);
+        push @arr, ($_, $arg);
+    }
+    return @arr;
+}
+
+sub apply_filters {
+    my $funcs = shift;
+    my @arr = @_;
+    for my $func (@$funcs) {
+        @arr = apply_filter($func, @arr);
+    }
+    return @arr;
 }
 
 1;

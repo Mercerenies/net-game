@@ -32,6 +32,8 @@ sub compute_gender {
     my $male = 0;
     my $female = 0;
     my $ptn;
+    # TODO Currently this counts the number of distinct pronouns that match; should we change it to count
+    #      all matches? The gender identification works pretty well right now.
     foreach $ptn (@mwords) {
         $male++ if ($summary =~ /\b$ptn\b/i);
     }
@@ -47,24 +49,32 @@ sub find_place_information {
     my $title = $_[0];
     my $summary = $_[1];
     my %placenames = %{$_[2]};
-    my $shortsumm = $summary;
-    Filters::paren_expr($shortsumm);
-    Filters::slash_phrase($shortsumm);
-    my $longsumm = $shortsumm;
-    Filters::appositive_phrase($shortsumm);
-    Filters::consecutive_spaces($shortsumm);
-    Filters::consecutive_spaces($longsumm);
+    my @titles = apply_filters(
+        [
+         \&Filters::trailing_comma_phrase,
+         \&Filters::paren_expr,
+         sub { for (@_) { s/(Greater|Lesser) +//; } }
+        ],
+        $title
+        );
+    my @summaries = apply_filters(
+        [
+         \&Filters::paren_expr,
+         \&Filters::slash_phrase,
+         \&Filters::appositive_phrase
+        ],
+        $summary
+        );
+    Filters::consecutive_spaces(@titles);
+    Filters::consecutive_spaces(@summaries);
     my $ptn;
-    my @titles = ("$title", "$title", "$title", "$title");
-    Filters::trailing_comma_phrase($titles[1]);
-    Filters::paren_expr($titles[2]);
-    $titles[3] =~ s/(Greater|Lesser) +//;
-    Filters::consecutive_spaces($titles[2]);
     foreach $ptn (keys %placenames) {
         foreach my $titlevar (@titles) {
             my $expr = qr/\Q$titlevar\E (?:(or|in|of) (?:[\w-]+ ){1,3})?$LINKVERB (?:[\w-]+ )?$ARTICLE?(?:[^ ]+ ){0,9}\b$ptn\b/i;
-            if ($shortsumm =~ $expr || $summary =~ $expr || $longsumm =~ $expr) {
-                return [$placenames{$ptn}, $ptn];
+            foreach my $summaryvar (@summaries) {
+                if ($summaryvar =~ $expr) {
+                    return [$placenames{$ptn}, $ptn];
+                }
             }
         }
     }
@@ -84,26 +94,34 @@ sub find_weapon_information {
     my $summary = $_[1];
     my %weapons = %{$_[2]};
     my $shortsumm = $summary;
-    Filters::paren_expr($shortsumm);
-    Filters::slash_phrase($shortsumm);
-    $shortsumm =~ s/"//g;
-    my $longsumm = $shortsumm;
-    Filters::appositive_phrase($shortsumm);
-    Filters::consecutive_spaces($shortsumm);
-    Filters::consecutive_spaces($longsumm);
-    my $ptn;
     $title =~ s/-/ /;
-    $shortsumm =~ s/-/ /;
-    my @titles = ("$title", "$title", "$title", "$title");
-    Filters::trailing_comma_phrase($titles[1]);
-    Filters::paren_expr($titles[2]);
-    Filters::consecutive_spaces($titles[2]);
-    #$titles[3] = $1 if ($titles[3] =~ /(\w+)$/);
+    $summary =~ s/-/ /;
+    my @titles = apply_filters(
+        [
+         \&Filters::trailing_comma_phrase,
+         \&Filters::paren_expr,
+        ],
+        $title
+        );
+    my @summaries = apply_filters(
+        [
+         \&Filters::paren_expr,
+         \&Filters::slash_phrase,
+         sub { for (@_) { s/"//g; } },
+         \&Filters::appositive_phrase
+        ],
+        $summary
+        );
+    Filters::consecutive_spaces(@titles);
+    Filters::consecutive_spaces(@summaries);
+    my $ptn;
     foreach $ptn (keys %weapons) {
         foreach my $titlevar (@titles) {
             my $expr = qr/\Q$titlevar\E (?:or (?:[\w-]+ ){1,3})?$LINKVERB (?:[\w-]+ )?$ARTICLE?(?:[^ ]+ ){0,9}\b$ptn\b/i;
-            if ($shortsumm =~ $expr || $summary =~ $expr || $longsumm =~ $expr) {
-                return [$weapons{$ptn}, $ptn];
+            for my $summaryvar (@summaries) {
+                if ($summaryvar =~ $expr) {
+                    return [$weapons{$ptn}, $ptn];
+                }
             }
         }
     }
@@ -183,19 +201,21 @@ sub shortest_food_synonym {
     my $title = $_[0];
     my $summary = $_[1];
     my $data = $_[2];
-    my $shortsumm = $summary;
-    Filters::paren_expr($title);
-    Filters::slash_phrase($shortsumm);
-    $shortsumm =~ s/"//g;
-    Filters::consecutive_spaces($title);
-    my $longsumm = $shortsumm;
-    #Filters::appositive_phrase($shortsumm);
-    $matches = 1;
-    Filters::paren_expr($shortsumm);
-    Filters::consecutive_spaces($shortsumm);
-    Filters::consecutive_spaces($longsumm);
     $title =~ s/-/ /;
-    $shortsumm =~ s/-/ /;
+    $summary =~ s/-/ /;
+    Filters::paren_expr($title); # TODO Make the synonym checker use @titles like the other systems
+    my @summaries = apply_filters(
+        [
+         \&Filters::paren_expr,
+         \&Filters::slash_phrase,
+         sub { for (@_) { s/"//g; } },
+         \&Filters::paren_expr,
+         \&Filters::appositive_phrase
+        ],
+        $summary
+        );
+    Filters::consecutive_spaces($title);
+    Filters::consecutive_spaces(@summaries);
     my @candidates;
     push @candidates, $title;
     foreach my $prefix_loop (@{$data->{'foodprefixes'}}) {
@@ -204,9 +224,10 @@ sub shortest_food_synonym {
         foreach my $suffix_loop (@{$data->{'foodsuffixes'}}) {
             my $suffix = $suffix_loop;
             $suffix =~ s/\$title/$title/g;
-            if (($shortsumm =~ /\b$prefix (?:the )?([\w ]+)\b$suffix\W/) or
-                ($longsumm =~ /\b$prefix (?:the )?([\w ]+)\b$suffix\W/)) {
-                push @candidates, $1;
+            for my $summaryvar (@summaries) {
+                if ($summaryvar =~ /\b$prefix (?:the )?([\w ]+)\b$suffix\W/) {
+                    push @candidates, $1;
+                }
             }
         }
     }

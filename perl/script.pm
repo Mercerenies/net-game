@@ -1,5 +1,6 @@
 
 use perl::filters;
+use perl::sentence;
 
 use Data::Dumper;
 
@@ -70,7 +71,7 @@ sub find_place_information {
     my $ptn;
     foreach $ptn (keys %placenames) {
         foreach my $titlevar (@titles) {
-            my $expr = qr/\Q$titlevar\E (?:(or|in|of) (?:[\w-]+ ){1,3})?$LINKVERB (?:[\w-]+ )?$ARTICLE?(?:[^ ]+ ){0,9}\b$ptn\b/i;
+            my $expr = simple_linked_sentence($titlevar, $ptn, {MoreRenameClauses => 1});
             foreach my $summaryvar (@summaries) {
                 if ($summaryvar =~ $expr) {
                     return [$placenames{$ptn}, $ptn];
@@ -117,7 +118,7 @@ sub find_weapon_information {
     my $ptn;
     foreach $ptn (keys %weapons) {
         foreach my $titlevar (@titles) {
-            my $expr = qr/\Q$titlevar\E (?:or (?:[\w-]+ ){1,3})?$LINKVERB (?:[\w-]+ )?$ARTICLE?(?:[^ ]+ ){0,9}\b$ptn\b/i;
+            my $expr = simple_linked_sentence($titlevar, $ptn, {MoreRenameClauses => 0});
             for my $summaryvar (@summaries) {
                 if ($summaryvar =~ $expr) {
                     return [$weapons{$ptn}, $ptn];

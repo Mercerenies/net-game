@@ -79,6 +79,16 @@ sub nonhierarchical {
     return \%new_sections;
 }
 
+=head2 nonhierarchical_sections(%page)
+
+Flattens the sections and then removes the hierarchical nature from them.
+
+=cut
+
+sub nonhierarchical_sections {
+    return nonhierarchical flatten_sections shift;
+}
+
 =head2 page_title($xml)
 
 Return the page's title.
@@ -97,6 +107,23 @@ Return the page's summary text.
 
 sub page_summary {
     return $_[0]->{'content'};
+}
+
+=head2 full_page_text($xml)
+
+Returns the full text of the page, leaving headers in as plaintext (without the Wikipedia-style header markdown).
+Note that, as the page sections themselves are hash elements, the order of sections is undefined, but all sections
+will be present.
+
+=cut
+
+sub full_page_text { # TODO Get the sections in the right order, if possible
+    my %sects = %{nonhierarchical_sections shift};
+    my $text = '';
+    for my $key (keys %sects) {
+        $text .= "$key\n$sects{$key}\n";
+    }
+    return $text;
 }
 
 1;

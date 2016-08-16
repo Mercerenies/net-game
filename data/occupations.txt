@@ -100,3 +100,4 @@ hotel owner            merchant
 developer              engineer
 footballer             athlete
 football player        athlete
+singer-songwriter      musician

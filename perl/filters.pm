@@ -1,6 +1,4 @@
 
-# TODO The filters currently operate in a first-fit fashion; see if we can get some semblance of best-fit.
-
 package Filters {
 
     sub trailing_comma_phrase {

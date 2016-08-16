@@ -96,25 +96,28 @@ sub find_place_information {
         );
     Filters::consecutive_spaces(@titles);
     Filters::consecutive_spaces(@summaries);
+    my @res = ();
     my $ptn;
-    foreach $ptn (keys %placenames) {
-        foreach my $titlevar (@titles) {
-            my $expr = simple_linked_sentence($titlevar, $ptn, {MoreRenameClauses => 1});
-            foreach my $summaryvar (@summaries) {
-                if ($summaryvar =~ $expr) {
-                    return [$placenames{$ptn}, $ptn];
-                }
-            }
-        }
-    }
-    foreach $ptn (keys %placenames) {
-        foreach my $titlevar (@titles) {
-            if ($titlevar =~ /\b$ptn\b/i && not $titlevar =~ /^$ptn$/i) {
-                return [$placenames{$ptn}, $ptn];
-            }
-        }
-    }
-    return undef;
+  PATTERN: foreach $ptn (keys %placenames) {
+      foreach my $titlevar (@titles) {
+          my $expr = simple_linked_sentence($titlevar, $ptn, {MoreRenameClauses => 1});
+          foreach my $summaryvar (@summaries) {
+              if ($summaryvar =~ $expr) {
+                  push @res, [$placenames{$ptn}, $ptn];
+                  next PATTERN;
+              }
+          }
+      }
+  }
+  PATTERN: foreach $ptn (keys %placenames) {
+      foreach my $titlevar (@titles) {
+          if ($titlevar =~ /\b$ptn\b/i && not $titlevar =~ /^$ptn$/i) {
+              push @res, [$placenames{$ptn}, $ptn];
+              next PATTERN;
+          }
+      }
+  }
+    return \@res;
 }
 
 # find_weapon_information($title, $summary, %weapons)
@@ -143,25 +146,28 @@ sub find_weapon_information {
         );
     Filters::consecutive_spaces(@titles);
     Filters::consecutive_spaces(@summaries);
+    my @res;
     my $ptn;
-    foreach $ptn (keys %weapons) {
-        foreach my $titlevar (@titles) {
-            my $expr = simple_linked_sentence($titlevar, $ptn, {MoreRenameClauses => 0});
-            for my $summaryvar (@summaries) {
-                if ($summaryvar =~ $expr) {
-                    return [$weapons{$ptn}, $ptn];
-                }
-            }
-        }
-    }
-    foreach $ptn (keys %weapons) {
-        foreach my $titlevar (@titles) {
-            if ($titlevar =~ /\b$ptn\b/i && not $titlevar =~ /^$ptn$/i) {
-                return [$weapons{$ptn}, $ptn];
-            }
-        }
-    }
-    return undef;
+  PATTERN: foreach $ptn (keys %weapons) {
+      foreach my $titlevar (@titles) {
+          my $expr = simple_linked_sentence($titlevar, $ptn, {MoreRenameClauses => 0});
+          for my $summaryvar (@summaries) {
+              if ($summaryvar =~ $expr) {
+                  push @res, [$weapons{$ptn}, $ptn];
+                  next PATTERN;
+              }
+          }
+      }
+  }
+  PATTERN: foreach $ptn (keys %weapons) {
+      foreach my $titlevar (@titles) {
+          if ($titlevar =~ /\b$ptn\b/i && not $titlevar =~ /^$ptn$/i) {
+              push @res, [$weapons{$ptn}, $ptn];
+              next PATTERN;
+          }
+      }
+  }
+    return \@res;
 }
 
 # deduce_animal_stats($title, $summary, $data)

@@ -13,17 +13,24 @@ class PersonPage
 end
 
 class PlacePage
-  attr_reader :name, :type, :keyword
+  attr_reader :name
 
   def initialize(json)
     @name = json['name']
-    if json['info']
-      @type = json['info'][0].intern
-      @keyword = json['info'][1]
-    else
-      @type = nil
-      @keyword = nil
+    @info = json['info'].map { |xx| [xx[1], xx[0].intern] }.to_h
+  end
+
+  def type
+    key = keyword
+    key and @info[key]
+  end
+
+  def keyword
+    freq = @info.each_with_object(Hash.new(0)) do |(key, val), hash|
+      hash[val] += 1
     end
+    mode = freq.max_by { |k, v| v }
+    mode and @info.detect { |k, v| v == mode[0] }[0]
   end
 
 end
@@ -33,13 +40,20 @@ class WeaponPage
 
   def initialize(json)
     @name = json['name']
-    if json['info']
-      @type = json['info'][0].intern
-      @keyword = json['info'][1]
-    else
-      @type = nil
-      @keyword = nil
+    @info = json['info'].map { |xx| [xx[1], xx[0].intern] }.to_h
+  end
+
+  def type
+    key = keyword
+    key and @info[key]
+  end
+
+  def keyword
+    freq = @info.each_with_object(Hash.new(0)) do |(key, val), hash|
+      hash[val] += 1
     end
+    mode = freq.max_by { |k, v| v }
+    mode and @info.detect { |k, v| v == mode[0] }[0]
   end
 
 end

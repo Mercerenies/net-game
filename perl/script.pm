@@ -12,16 +12,43 @@ my $ARTICLE = "(?:an? |the )";
 
 local $_;
 
-# find_occu($summary, %occu);
+# find_occu($title, $summary, %occu);
 sub find_occu {
     local $_;
-    my $summary = $_[0];
-    my %occu = %{$_[1]};
+    my $title = $_[0];
+    my $summary = $_[1];
+    my @titles = apply_filters(
+        [
+         \&Filters::paren_expr,
+         \&Filters::trailing_comma_phrase
+        ],
+        $title
+        );
+    my @summaries = apply_filters(
+        [
+         \&Filters::paren_expr,
+         \&Filters::slash_phrase,
+         \&Filters::appositive_phrase,
+         sub { for (@_) { s/"//g; } }
+        ],
+        $summary
+        );
+    Filters::consecutive_spaces(@titles);
+    Filters::consecutive_spaces(@summaries);
+    my %occu = %{$_[2]};
     my @res = ();
-    foreach my $o (keys %occu) {
-        my @arr = ($occu{$o}, $o);
-        push @res, \@arr if ($summary =~ /\b$o\b/i);
-    }
+  KEYWORD: foreach my $o (keys %occu) {
+      foreach my $titlevar (@titles) {
+          my $expr = simple_linked_sentence($titlevar, $o, {MiddleNameRule => 1});
+          my @arr = ($occu{$o}, $o);
+          foreach my $summaryvar (@summaries) {
+              if ($summaryvar =~ $expr) {
+                  push @res, \@arr;
+                  next KEYWORD;
+              }
+          }
+      }
+  }
     return @res;
 }
 

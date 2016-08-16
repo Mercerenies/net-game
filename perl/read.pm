@@ -20,7 +20,7 @@ sub read_person {
     my $data = $_[1];
     my $name = page_title($xml);
     my $summary = page_summary($xml);
-    my @occs = find_occu($summary, $data->{'occu'});
+    my @occs = find_occu($name, $summary, $data->{'occu'});
     my $gender = compute_gender($summary, $data->{'mwords'}, $data->{'fwords'});
     my %curr = (
         nature => 'Person',

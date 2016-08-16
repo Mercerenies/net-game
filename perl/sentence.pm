@@ -1,6 +1,8 @@
 
 local $_;
 
+use Data::Dumper;
+
 my $LINKVERB = "(?:is|was|are|were)";
 my $ARTICLE = "(?:an?|the)"; # Unused currently; we'll see if we can do something about that at some point
 my $RENAME = "(?:or|in|of)";
@@ -33,6 +35,13 @@ The maximum number of "skim words" allowed between the title and the pattern. Mo
 more false positives but also more correct results. Fewer skim words eliminates results but also eliminates
 false positives.
 
+=item * MiddleNameRule (default: false)
+
+If this value is truthy, it will allow a single "word" (using a variant of strict words, even if
+StrictSkimWords is not specified) in between the first and last name of the title. Specifically, it
+will allow a single word immediately before the final word of the title. This rule is ignored if the
+title consists of less than two words.
+
 =back
 
 =cut
@@ -40,14 +49,18 @@ false positives.
 sub simple_linked_sentence {
     my $titlevar = shift;
     my $ptn = shift;
-    my %options = %{shift};
+    my %options = %{+shift};
 
     my $rename_words = $options{'MoreRenameClauses'} ? $RENAME : 'or';
     my $skim_word = $options{'StrictSkimWords'} ? qr/[\w-]+/i : qr/[^ ]+/i;
     my $skim_count = 0+ ($options{'SkimWordCount'} // 9);
+    my $title_intermediate = qr/(?:\Q$titlevar\E)/i;
+    if ($options{'MiddleNameRule'} && $titlevar =~ /^([\w\"-]+\s)+([\w\"-]+)$/) {
+        $title_intermediate = qr/$1(?:[\w"-]+ )?$2/i;
+    }
 
     my $rename_clause = qr/(?:$rename_words (?:$skim_word ){1,3})/i;
-    my $title_word = qr/(?:\Q$titlevar\E )/i;
+    my $title_word = qr/(?:$title_intermediate )/i;
     my $link_word = qr/(?:$LINKVERB )/i;
     my $skim_clause = qr/(?:(?:$skim_word ){0,$skim_count})/i;
     my $ptn_clause = qr/(?:\b$ptn\b)/i;

@@ -1,7 +1,6 @@
 (in-package #:net-game)
 
-; TODO Put states in for interactive objects (something like the state design pattern)
-; TODO People in the world
+; ///// Quest system
 
 (defclass player (named located)
   ((hp :accessor hp

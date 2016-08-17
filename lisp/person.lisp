@@ -19,7 +19,10 @@
             :initarg :old-job)
    (old-job-name :accessor person-old-job-name
                  :initform nil
-                 :initarg :old-job-name)))
+                 :initarg :old-job-name)
+   (quest-list :accessor quest-list
+               :initform nil
+               :initarg :quest-list)))
 
 (defmethod load-object-with-type (node (type (eql 'npc)) &rest args)
   (let ((person (apply #'make-instance 'person :name args)))
@@ -37,13 +40,28 @@
   (format t "Person: ~S~%"
           obj))
 
+; Uses *player*
 (defmethod do-action ((type (eql 'talk)) (obj person) preps)
   (declare (ignore preps))
-  (if (string-equal (person-nickname obj) (get-name obj))
-      (do-speak 'basic-intro 'neutral
-                :my-name (get-name obj)
-                :my-occu (person-job-name obj))
-      (do-speak 'basic-nicknamed-intro 'neutral
-                :my-name (get-name obj)
-                :my-nickname (person-nickname obj)
-                :my-occu (person-job-name obj))))
+  (labels ((player-has-started (q)
+             (member q (quest-list *player*) :key #'get-id))
+           (player-has-finished (q)
+             (and (player-has-started q)
+                  (is-quest-completed (find q (quest-list *player*) :key #'get-id)))))
+    (let ((first-incomplete (find-if (complement #'player-has-finished)
+                                     (quest-list obj))))
+      (cond
+;        ((and first-incomplete
+;              (player-has-started q))
+;         nil)
+;        (first-complete
+;         nil)
+        ((not (string-equal (person-nickname obj) (get-name obj)))
+         (do-speak 'basic-nicknamed-intro 'neutral
+                   :my-name (get-name obj)
+                   :my-nickname (person-nickname obj)
+                   :my-occu (person-job-name obj)))
+        (t
+         (do-speak 'basic-intro 'neutral
+                   :my-name (get-name obj)
+                   :my-occu (person-job-name obj)))))))

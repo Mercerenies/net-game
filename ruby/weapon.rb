@@ -18,16 +18,16 @@ module WeaponMod
 end
 
 class Weapon < Item
-  attr_reader :name, :type
+  attr_reader :type
 
   def initialize(name, type)
-    @name = name
+    super(name)
     @type = type
     @modifier = WeaponMod.choose
   end
 
   def to_sxp
-    [:weapon, @name, :':type', @type, :':mod', @modifier].to_sxp
+    [:weapon, name, :':type', @type, :':mod', @modifier, :':flags', flags].to_sxp
   end
 
 end

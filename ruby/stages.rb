@@ -168,7 +168,21 @@ class PersonStage < Stage
   end
 end
 
-# Stage 9 - Position the player
+# Stage 9 - Put default quests for any person who lacks quests
+class QuestStage < Stage
+  def run(data)
+    data.map.each do |node|
+      node.each do |obj|
+        case obj
+        when NPC
+          data.quests.push QuestMaker.make_fetch_quest(data.map, obj)
+        end
+      end
+    end
+  end
+end
+
+# Stage 10 - Position the player
 class PlayerStage < Stage
   def run(data)
     data.map.put_somewhere Player.new

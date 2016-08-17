@@ -33,6 +33,7 @@ class NPC < Person
     else
       @old, @old_name = [nil, nil]
     end
+    @quest_list = []
   end
 
   def full_name
@@ -67,9 +68,14 @@ class NPC < Person
     @old_name
   end
 
+  def add_quest(qid)
+    # The quest list is a list of quest identifiers
+    @quest_list.push qid
+  end
+
   def to_sxp
     [:npc, full_name, :':short-name', name, :':gender', @gender, :':job', job, :':job-name', job_name,
-     :':old-job', old_job, :':old-job-name', old_job_name].to_sxp
+     :':old-job', old_job, :':old-job-name', old_job_name, :':quest-list', @quest_list].to_sxp
   end
 
 end

@@ -1,6 +1,6 @@
 
 class GData
-  attr_accessor :nodes, :bridges, :map, :creatures, :spawners
+  attr_accessor :nodes, :bridges, :map, :creatures, :spawners, :quests
 
   def initialize(everything)
     @arr = everything.clone
@@ -9,6 +9,7 @@ class GData
     @map = nil
     @creatures = CreatureSet.new
     @spawners = SpawnerSet.new
+    @quests = QuestSet.new
   end
 
   # Checks if the list of bridges is non-empty
@@ -54,7 +55,7 @@ class GData
 
   # Return the generator data in an appropriate output list format
   def result_structure
-    [@map, @creatures, @spawners]
+    [@map, @creatures, @spawners, @quests]
   end
 
 end

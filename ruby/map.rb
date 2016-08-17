@@ -31,7 +31,7 @@ class Map
   def put_somewhere(obj, type = Object, &block)
     block = proc { true } unless block
     weight = Proc.new { |x| 1 / (x.count_items(type) + 1) }
-    total = @ary.map( &weight ).reduce(:+)
+    total = @ary.select( &block ).map( &weight ).reduce(:+)
     num = rand total
     result = @ary.detect do |x|
       next unless block.call x

@@ -77,7 +77,15 @@
      (destructuring-bind (spawner-sym . spawners) (third data)
        (unless (eq spawner-sym 'spawner-set) (error "Flawed data"))
        (loop for data in spawners
-             collect (apply #'load-spawner (first data) (rest data)))))))
+             collect (apply #'load-spawner (first data) (rest data))))
+     (destructuring-bind (quest-sym . quests) (fourth data)
+       (unless (eq quest-sym 'quest-set) (error "Flawed data"))
+       (loop with hash = (make-hash-table)
+             for data in quests
+             for quest = (apply #'load-quest (first data) (rest data))
+             do (let ((*quests* hash))
+                  (add-quest quest))
+             finally (return hash))))))
 
 (defun load-object (node obj)
   (apply #'load-object-with-type node (car obj) (cdr obj)))
@@ -100,18 +108,28 @@
   (let ((obj (make-instance 'warp-point)))
     (move-object obj node)))
 
+(defmethod load-object-with-type (node (type (eql 'item)) &rest args)
+  (let* ((name (first args))
+         (args (rest args))
+         (item (apply #'make-instance 'item :name name args)))
+    (move-object item node)))
+
 (defmethod load-object-with-type (node (type (eql 'weapon)) &rest args)
   (loop with name = (first args)
         with type = nil
         with mod = nil
+        with flags = nil
         for rest = (cdr args) then (cddr rest)
         for key = (first rest)
         for value = (second rest)
         while (not (null rest))
         do (case key
              (:type (setf type value))
-             (:mod (setf mod value)))
+             (:mod (setf mod value))
+             (:flags (setf flags value)))
         finally (let ((wpn (make-weapon name type mod)))
+                  (when flags
+                    (setf (item-flags wpn) flags))
                   (move-object wpn node))))
 
 (defmethod load-object-with-type (node (type (eql 'plant)) &rest args)

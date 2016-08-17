@@ -2,6 +2,8 @@
 
 ; ///// Quest system
 
+; TODO We need some more check-type calls; they're nice and self-documenting
+
 (defclass player (named located)
   ((hp :accessor hp
        :initarg :hp
@@ -9,7 +11,11 @@
    (inventory :accessor inventory
               :initarg :inventory
               :initform nil
-              :type list))
+              :type list)
+   (quest-list :accessor quest-list
+               :initarg :quest-list
+               :initform nil
+               :type list))
   (:default-initargs :name "Sandy"))
 
 (defparameter *do-exit*
@@ -32,8 +38,8 @@
         until (null finish)))
 
 (defun run-game (&optional (filename "./temp/system.txt"))
-  (multiple-value-bind (*world* *creatures* *spawners*) (with-open-file (file filename)
-                                                                        (load-data :file file))
+  (multiple-value-bind (*world* *creatures* *spawners* *quests*) (with-open-file (file filename)
+                                                                   (load-data :file file))
     (let ((*player* (some (lambda (x)
                             (find-if (lambda (y) (typep y 'player))
                                      (location-contents x)))

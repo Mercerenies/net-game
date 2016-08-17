@@ -5,7 +5,7 @@ class Genner
   def initialize(everything)
     @data = GData.new everything
     stages = [NodeStage, BridgeStage, MapStage, BuildingStage, CreatureStage,
-              ItemStage, FoodStage, PersonStage, PlayerStage]
+              ItemStage, FoodStage, PersonStage, QuestStage, PlayerStage]
     @stages = stages.collect(&:new)
   end
 

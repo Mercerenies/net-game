@@ -29,7 +29,8 @@ sub find_occu {
          \&Filters::paren_expr,
          \&Filters::slash_phrase,
          \&Filters::appositive_phrase,
-         sub { for (@_) { s/"//g; } }
+         sub { for (@_) { s/"//g; } },
+         sub { for (@_) { s/,//g; } }
         ],
         $summary
         );

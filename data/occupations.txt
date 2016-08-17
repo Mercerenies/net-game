@@ -101,3 +101,4 @@ developer              engineer
 footballer             athlete
 football player        athlete
 singer-songwriter      musician
+revolutionary          soldier

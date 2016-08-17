@@ -1,7 +1,10 @@
 (in-package #:net-game)
 
 (defclass item (named located)
-  ())
+  ((flags :accessor item-flags
+          :initarg :flags
+          :initform nil
+          :type list)))
 
 (defclass weapon (item)
   ((type :accessor weapon-type

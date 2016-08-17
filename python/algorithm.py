@@ -9,6 +9,9 @@ from links import LinkState
 
 DELAY = 0.5
 
+# TODO Consider making the MediaWiki queries myself. The current wikipedia module has a few limitations
+#      (namespace 0 only, for instance)
+
 class Spider:
     """
     The Spider class is responsible for the actual crawling of the Internet and stores state information

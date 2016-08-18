@@ -63,6 +63,7 @@
                               Exits: ~:[(None)~;~:*~{~A~^, ~}~]~%~
                               Objects: ~:[(None)~;~:*~{~A~^, ~}~]~%~
                               Inventory: ~:[(None)~;~:*~{~A~^, ~}~]~%~
+                              Carrying: ~D/~D units~%~
                               Quests: ~:[(None)~;~:*~{~A~@[ (Done)~*~]~^, ~}~]~%~
                               Mode: ~A~%~
                               ~A~
@@ -74,6 +75,8 @@
                                  (location-exits (get-loc *player*)))
                          (mapcar #'get-numbered-name (location-contents (get-loc *player*)))
                          (mapcar #'get-numbered-name (inv-items *player*))
+                         (inv-current-weight *player*)
+                         (inv-max-weight *player*)
                          (mapcan (lambda (x)
                                    (list (get-name x)
                                          (is-quest-completed x)))

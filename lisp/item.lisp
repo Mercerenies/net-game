@@ -70,12 +70,15 @@
 
 (defmethod do-action ((act (eql 'collect)) (obj item) preps)
   (declare (ignore preps))
-  (if (has-item obj *player*)
-      (format t "You're already holding the ~A...~%" (get-name obj))
-      (progn
-        (format t "You pick up the ~A.~%" (get-name obj))
-        (move-object obj nil)
-        (add-item obj *player*))))
+  (cond
+    ((has-item obj *player*)
+     (format t "You're already holding the ~A...~%" (get-name obj)))
+    ((can-carry-item obj *player*)
+     (format t "You pick up the ~A.~%" (get-name obj))
+     (move-object obj nil)
+     (add-item obj *player*))
+    (t
+     (format t "You're already carrying too much.~%"))))
 
 (defmethod do-action ((act (eql 'drop)) (obj item) preps)
   (declare (ignore preps))

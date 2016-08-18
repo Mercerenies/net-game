@@ -3,7 +3,7 @@ class Food
   attr_reader :name, :full_name, :plant_type
 
   def initialize(data)
-    @name = data.name.capitalize
+    @name = Util.titlecase data.name
     @name = @name.gsub(/ (?:tree|plant|bush|flower)$/i, '');
     @full_name = data.full_name
     @plant_type = data.plant
@@ -36,7 +36,7 @@ class Plant
   end
 
   def initialize(type, food, growth_time = nil)
-    @name = food.name + Plant.suffix(type)
+    @name = Util.titlecase(food.name) + Plant.suffix(type)
     @type = type
     @food = food
     @growth_time = growth_time || rand(3..7)

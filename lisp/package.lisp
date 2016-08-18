@@ -20,6 +20,7 @@
 
 (load "./lisp/quests.lisp")
 
+(load "./lisp/inventory.lisp")
 (load "./lisp/item.lisp")
 (load "./lisp/creature.lisp")
 (load "./lisp/food.lisp")

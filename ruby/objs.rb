@@ -19,19 +19,25 @@ class WarpPoint
 end
 
 class Item
-  attr_reader :name, :flags
+  attr_reader :name, :flags, :weight
 
-  def initialize(name)
+  def initialize(name, i_weight = 1)
     @name = name
     @flags = []
+    self.weight = i_weight
   end
 
   def add_flags(*args)
     @flags.push(*args)
   end
 
+  def weight=(val)
+    @weight = val.to_i
+    @weight = 1 if @weight < 1
+  end
+
   def to_sxp
-    [:item, name, :':flags', flags].to_sxp
+    [:item, name, :':weight', weight, :':flags', flags].to_sxp
   end
 
   def self.make_random(&block)

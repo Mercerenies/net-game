@@ -4,12 +4,8 @@
 
 ; TODO We need some more check-type calls; they're nice and self-documenting
 
-(defclass player (named located damageable)
-  ((inventory :accessor inventory
-              :initarg :inventory
-              :initform nil
-              :type list)
-   (active-quests :accessor active-quests
+(defclass player (named located damageable carrying)
+  ((active-quests :accessor active-quests
                   :initarg :active-quests
                   :initform nil
                   :type list))
@@ -60,7 +56,7 @@
             do (assign-numbers (mapcar (lambda (x) (find x *world* :key #'get-id))
                                        (location-exits (get-loc *player*)))
                                (location-contents (get-loc *player*))
-                               (inventory *player*))
+                               (inv-items *player*))
             do (progn
                  (format t "~%=== ~A ===~%~
                               Stats: ~,1F HP~%~
@@ -77,7 +73,7 @@
                                    (get-numbered-name (find x *world* :key #'get-id)))
                                  (location-exits (get-loc *player*)))
                          (mapcar #'get-numbered-name (location-contents (get-loc *player*)))
-                         (mapcar #'get-numbered-name (inventory *player*))
+                         (mapcar #'get-numbered-name (inv-items *player*))
                          (mapcan (lambda (x)
                                    (list (get-name x)
                                          (is-quest-completed x)))

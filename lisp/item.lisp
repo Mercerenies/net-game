@@ -4,7 +4,11 @@
   ((flags :accessor item-flags
           :initarg :flags
           :initform nil
-          :type list)))
+          :type list)
+   (weight :accessor item-weight
+           :initarg :weight
+           :initform 1
+           :type integer)))
 
 (defun item-check-flag (item flag)
   (member flag (item-flags item)))
@@ -59,32 +63,40 @@
 (defun make-weapon (name type mod)
   (let ((wpn (make-instance 'weapon :name name :type type :mod mod))
         (stats (apply-modifiers mod (lookup-weapon-stats type))))
+    (setf (item-weight wpn) (floor (* 30 (- 1 (first stats)))))
     (setf (weapon-wieldy wpn) (first stats))
     (setf (weapon-damage wpn) (second stats))
     wpn))
 
 (defmethod do-action ((act (eql 'collect)) (obj item) preps)
   (declare (ignore preps))
-  (if (find obj (inventory *player*))
+  (if (has-item obj *player*)
       (format t "You're already holding the ~A...~%" (get-name obj))
       (progn
         (format t "You pick up the ~A.~%" (get-name obj))
         (move-object obj nil)
-        (push obj (inventory *player*)))))
+        (add-item obj *player*))))
 
 (defmethod do-action ((act (eql 'drop)) (obj item) preps)
   (declare (ignore preps))
-  (if (find obj (inventory *player*))
+  (if (has-item obj *player*)
       (progn
         (format t "You drop the ~A.~%" (get-name obj))
-        (setf (inventory *player*) (remove obj (inventory *player*)))
+        (remove-item obj *player*)
         (move-object obj (get-loc *player*)))
       (format t "But you're not holding the ~A...~%" (get-name obj))))
 
 ; TODO More user-friendly text
+(defmethod do-action ((act (eql 'examine)) (obj item) preps)
+  (declare (ignore preps))
+  (format t "An item weighing about ~A units.~%"
+          (item-weight obj)))
+
+; TODO More user-friendly text
 (defmethod do-action ((act (eql 'examine)) (obj weapon) preps)
   (declare (ignore preps))
-  (format t "A weapon~%"))
+  (format t "A weapon weighing about ~A units.~%"
+          (item-weight obj)))
 
 (defmethod do-action ((act (eql 'probe)) (obj weapon) preps)
   (declare (ignore preps))

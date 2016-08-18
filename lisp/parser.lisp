@@ -77,7 +77,7 @@
 (defun parse-default (sentence)
   (let ((nouns (append (get-formatted-numbers)
                        (mapcar #'get-name (location-contents (get-loc *player*)))
-                       (mapcar #'get-name (inventory *player*))
+                       (mapcar #'get-name (inv-items *player*))
                        (mapcar #'location-short-name (halo (get-loc *player*) 1))
                        '("fists"))))
     (parse-with-words sentence
@@ -93,7 +93,7 @@
   (flet ((translate-noun (noun)
            (and noun
                 (or (find noun (append (location-contents (get-loc *player*))
-                                       (inventory *player*)
+                                       (inv-items *player*)
                                        (halo (get-loc *player*) 1))
                           :test #'string-equal
                           :key #'(lambda (x)

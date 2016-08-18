@@ -55,9 +55,11 @@
 (defmethod food-plant-type ((obj food))
   (food-plant-type (food-data obj)))
 
-; TODO Standardize the capitalization so we don't get things like "Golden samphire Plant"
 (defun make-food (data)
-  (let ((food (make-instance 'food :name (get-name data) :data data))
+  (let ((food (make-instance 'food
+                             :name (get-name data)
+                             :data data
+                             :weight (choose '(4 5 5 6 6 6 7 7 8))))
         (restore (lerp (/ (1- (food-nutrition data)) 2) 3.0 20.0))
         (poisoned (< (random 1.0) (food-poison-chance data))))
     (setf restore (+ (random 10.0) restore -5))
@@ -104,11 +106,12 @@
 
 (defmethod do-action ((act (eql 'examine)) (obj food) preps)
   (declare (ignore preps))
-  (format t "A ~(~A~)~@[, or ~(~A~)~]. You could probably eat it.~%"
+  (format t "A ~(~A~)~@[, or ~(~A~)~]. You could probably eat it. It weighs ~A units.~%"
           (get-name obj)
           (if (string-equal (get-name obj) (food-full-name obj))
               nil
-              (food-full-name obj))))
+              (food-full-name obj))
+          (item-weight obj)))
 
 (defmethod do-action ((act (eql 'probe)) (obj food) preps)
   (declare (ignore preps))
@@ -133,4 +136,4 @@
   (when (> (hp *player*) 1.00)
     (setf (hp *player*) 1.00))
   (move-object obj nil)
-  (setf (inventory *player*) (remove obj (inventory *player*))))
+  (remove-item obj *player*))

@@ -2,6 +2,8 @@
 
 (defparameter *quests* nil)
 
+; TODO Quests should reward the player upon completion; currently they just sort of... finish
+
 ; These are the read-only objects that are stored in *quests*
 (defclass quest-details (identifiable named)
   ((nature :accessor quest-nature
@@ -104,13 +106,12 @@
 (defmethod quest-status-update-instance ((details quest-details) (nature (eql 'fetch)))
   (let* ((q-item-flag (quest-specific-slot details 'item-flag))
          (matching-item (find-if (lambda (x) (item-check-flag x q-item-flag))
-                                 (inventory *player*))))
+                                 (inv-items *player*))))
     (with-speech-vars ((item-name (quest-specific-slot details 'item-name))
                        (item-loc (quest-specific-slot details 'item-loc))
                        (current-quest details))
       (if matching-item
-          (progn (setf (inventory *player*)
-                       (remove matching-item (inventory *player*)))
+          (progn (remove-item matching-item *player*)
                  (do-speak 'fetch-quest-success))
           (do-speak 'fetch-quest-reminder)))))
 

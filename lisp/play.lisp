@@ -4,11 +4,8 @@
 
 ; TODO We need some more check-type calls; they're nice and self-documenting
 
-(defclass player (named located)
-  ((hp :accessor hp
-       :initarg :hp
-       :initform 1.00)
-   (inventory :accessor inventory
+(defclass player (named located damageable)
+  ((inventory :accessor inventory
               :initarg :inventory
               :initform nil
               :type list)
@@ -21,8 +18,7 @@
 (defmethod do-action ((act (eql 'nuke)) (obj player) preps)
   (declare (ignore preps))
   (format t "Nuking self...~%")
-  (setf (hp obj) 0)
-  (check-for-death obj))
+  (setf (hp obj) 0))
 
 (defparameter *do-exit*
   (lambda () (error "Nothing to exit!")))

@@ -3,28 +3,15 @@
 ; TODO Consolidate some things, like how player and animal have HP; they should share an ancestor
 ;      CLOS has multiple inheritance; use it
 
-; TODO "Named" and "ID'd" should really be separate concepts a lot of the time
-(defclass named ()
-  ((id :accessor get-id
-       :initarg :id
-       :initform nil
-       :type t)
-   (name :accessor get-name
-         :initarg :name
-         :initform ""
-         :type string)))
-
 (defmethod print-object ((obj named) stream)
   (print-unreadable-object (obj stream :type t :identity t)
-    (format stream "~S ~S" (get-id obj) (get-name obj))))
+    (format stream "~S ~S"
+            (if (typep obj 'identifiable)
+                (get-id obj)
+                nil)
+            (get-name obj))))
 
-(defclass located ()
-  ((loc :accessor get-loc
-        :initarg :loc
-        :initform nil
-        :type (or null location))))
-
-(defclass location (named)
+(defclass location (identifiable named)
   ((exits :accessor location-exits
           :initform nil
           :type list)
@@ -47,6 +34,8 @@
   (:default-initargs :name "Warp Point"))
 
 (defun move-object (obj new-loc)
+  (check-type obj located)
+  (check-type new-loc location)
   (let ((old-loc (get-loc obj)))
     (when old-loc
       (setf (location-contents old-loc)

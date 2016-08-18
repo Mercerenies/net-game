@@ -132,6 +132,5 @@
   (setf (hp *player*) (+ (hp *player*) (/ (food-health obj) 100)))
   (when (> (hp *player*) 1.00)
     (setf (hp *player*) 1.00))
-  (check-for-death *player*)
   (move-object obj nil)
   (setf (inventory *player*) (remove obj (inventory *player*))))

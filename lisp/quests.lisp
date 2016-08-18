@@ -3,7 +3,7 @@
 (defparameter *quests* nil)
 
 ; These are the read-only objects that are stored in *quests*
-(defclass quest-details (named)
+(defclass quest-details (identifiable named)
   ((nature :accessor quest-nature
            :initarg :nature
            :initform nil
@@ -14,7 +14,7 @@
               :type list)))
 
 ; These are the mutable structures that the player modifies locally
-(defclass quest (named)
+(defclass quest (identifiable named)
   ((nature :accessor quest-nature
            :initarg :nature
            :initform nil

@@ -1,6 +1,6 @@
 (in-package #:net-game)
 
-(defclass animal-data (named)
+(defclass animal-data (identifiable named)
   ((pack :accessor anim-pack
          :initform 1
          :initarg :pack)
@@ -45,7 +45,7 @@
  | * Hunting - Moves to Hunting mood when a player is spotted.
  | * Stalking - Moves to Sneaky mood when a player moves away.
  |#
-(defclass animal (creature)
+(defclass animal (creature damageable)
   ((speed :accessor anim-speed
           :initform 1
           :initarg :speed)
@@ -55,9 +55,6 @@
    (attitude :accessor anim-attitude
              :initform 'passive
              :initarg :attitude)
-   (hp :accessor hp
-       :initform 1
-       :initarg :hp)
    (atk :accessor atk
         :initform 1
         :initarg :atk)))
@@ -154,5 +151,4 @@
   (declare (ignore preps))
   (format t "Nuking the ~A... you monster.~%"
           (get-name obj))
-  (setf (hp obj) 0)
-  (check-for-death obj))
+  (setf (hp obj) 0))

@@ -9,6 +9,7 @@
 (load "./lisp/scheme.lisp")
 
 (load "./lisp/util.lisp")
+(load "./lisp/base.lisp")
 (load "./lisp/load.lisp")
 (load "./lisp/numbernoun.lisp")
 (load "./lisp/parser.lisp")

@@ -105,3 +105,5 @@ revolutionary          soldier
 baseball player        athlete
 waiter                 waiter
 waitress               waitress
+scientist              scientist
+attorney               scholar

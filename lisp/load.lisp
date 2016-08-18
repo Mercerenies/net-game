@@ -35,7 +35,7 @@
 
 (defun move-object (obj new-loc)
   (check-type obj located)
-  (check-type new-loc location)
+  (check-type new-loc (or location null))
   (let ((old-loc (get-loc obj)))
     (when old-loc
       (setf (location-contents old-loc)

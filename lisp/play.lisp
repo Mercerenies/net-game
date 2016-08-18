@@ -9,10 +9,10 @@
               :initarg :inventory
               :initform nil
               :type list)
-   (quest-list :accessor quest-list
-               :initarg :quest-list
-               :initform nil
-               :type list))
+   (active-quests :accessor active-quests
+                  :initarg :active-quests
+                  :initform nil
+                  :type list))
   (:default-initargs :name "Sandy"))
 
 (defmethod do-action ((act (eql 'nuke)) (obj player) preps)
@@ -81,7 +81,7 @@
                          (mapcan (lambda (x)
                                    (list (get-name x)
                                          (is-quest-completed x)))
-                                 (quest-list *player*))
+                                 (active-quests *player*))
                          (mode-name (first *state*))
                          (mode-text (first *state*)))
                  (setf cmd (read-line)))

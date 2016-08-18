@@ -82,11 +82,11 @@
 ; TODO All these keyword args starting with * should be renamed such that the keyword form isn't :*whatever*
 
 (defun has-started-quest (quest-id &key (*player* *player*))
-  (member quest-id (quest-list *player*) :key #'get-id))
+  (member quest-id (active-quests *player*) :key #'get-id))
 
 (defun has-finished-quest (quest-id &key (*player* *player*))
   (and (has-started-quest quest-id)
-       (is-quest-completed (find quest-id (quest-list *player*) :key #'get-id))))
+       (is-quest-completed (find quest-id (active-quests *player*) :key #'get-id))))
 
 (defgeneric introduce-quest-instance (details nature))
 

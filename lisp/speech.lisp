@@ -38,9 +38,9 @@
                                                     :answers answers)
                                *state*))))
     (accept-quest . ,(lambda (qdetails-arg &aux (qdetails (eval-text-element qdetails-arg)))
-                             (push (start-quest qdetails) (quest-list *player*))))
+                             (push (start-quest qdetails) (active-quests *player*))))
     (mark-quest . ,(lambda (qdetails-arg flag &aux (qdetails (eval-text-element qdetails-arg)))
-                           (let ((quest (find (get-id qdetails) (quest-list *player*) :key #'get-id)))
+                           (let ((quest (find (get-id qdetails) (active-quests *player*) :key #'get-id)))
                              (and quest
                                   (pushnew flag (quest-flags quest))))))))
 

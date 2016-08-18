@@ -54,8 +54,7 @@ module QuestMaker
     end
     item.add_flags flag
     item_loc = map.put_somewhere item
-    # TODO The quest should have a non-default name
-    Quest.new("Fetch Quest", :fetch).tap do |q|
+    Quest.new("#{person.name}'s Missing #{item_raw_name}", :fetch).tap do |q|
       person.add_quest q.id
       q.add_specifics :'item-flag', flag
       q.add_specifics :'item-name', item_raw_name

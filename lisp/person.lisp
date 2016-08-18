@@ -35,10 +35,14 @@
     (male (format t "An ordinary guy.~%"))
     (female (format t "An ordinary woman.~%"))))
 
-(defmethod do-action ((type (eql 'probe)) (obj person) preps)
-  (declare (ignore preps))
-  (format t "Person: ~S~%"
-          obj))
+(defmethod system-keys append ((obj person))
+  `((person-nickname "Nickname" ,(person-nickname obj))
+    (person-gender "Gender" ,(person-gender obj))
+    (person-job "Occupation" ,(person-job obj))
+    (person-job-name "Occupation Name" ,(person-job-name obj))
+    (person-old-job "Prior Occupation" ,(person-old-job obj))
+    (person-old-job-name "Prior Occupation Name" ,(person-old-job-name obj))
+    (quest-list "Quests" ,(quest-list obj))))
 
 ; Uses *player*
 (defmethod do-action ((type (eql 'talk)) (obj person) preps)

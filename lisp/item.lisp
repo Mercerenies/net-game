@@ -95,17 +95,16 @@
   (format t "An item weighing about ~A units.~%"
           (item-weight obj)))
 
+(defmethod system-keys append ((obj item))
+  `((item-weight "Weight" ,(item-weight obj))
+    (item-flags "Flags" ,(item-flags obj))))
+
 ; TODO More user-friendly text
 (defmethod do-action ((act (eql 'examine)) (obj weapon) preps)
   (declare (ignore preps))
   (format t "A weapon weighing about ~A units.~%"
           (item-weight obj)))
 
-(defmethod do-action ((act (eql 'probe)) (obj weapon) preps)
-  (declare (ignore preps))
-  (format t "~A~@
-             * Usability: ~D%~@
-             * Damage: ~D%~%"
-          (get-name obj)
-          (floor (* (weapon-wieldy obj) 100))
-          (floor (* (weapon-damage obj) 100))))
+(defmethod system-keys append ((obj weapon))
+  `((weapon-wieldy "Wieldiness" ,(* 100 (weapon-wieldy obj)))
+    (weapon-damage "Damage" ,(* 100 (weapon-damage obj)))))

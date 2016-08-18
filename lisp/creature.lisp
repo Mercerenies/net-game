@@ -139,16 +139,6 @@
   (declare (ignore preps))
   (format t "An animal~%"))
 
-(defmethod do-action ((act (eql 'probe)) (obj animal) preps)
-  (declare (ignore preps))
-  (format t "Animal: ~S ~S ~S ~S~%"
-          (get-name obj)
-          (anim-mood obj)
-          (anim-attitude obj)
-          (hp obj)))
-
-(defmethod do-action ((act (eql 'nuke)) (obj animal) preps)
-  (declare (ignore preps))
-  (format t "Nuking the ~A... you monster.~%"
-          (get-name obj))
-  (setf (hp obj) 0))
+(defmethod system-keys append ((obj animal))
+  `((anim-mood "Current Mood" ,(anim-mood obj))
+    (anim-attitude "Attitude" ,(anim-attitude obj))))

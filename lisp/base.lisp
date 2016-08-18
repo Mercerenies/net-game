@@ -31,3 +31,13 @@
         :initarg :loc
         :initform nil
         :type (or null location))))
+
+; Returns a list of elements of the form (key-name friendly-name value)
+(defgeneric system-keys (obj)
+  (:method-combination append))
+
+(defmethod system-keys append ((obj t))
+  nil)
+
+(defmethod system-keys append ((obj damageable))
+  `((hp "Health" ,(* 100 (hp obj)))))

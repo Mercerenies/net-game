@@ -12,18 +12,14 @@
   (declare (ignore act preps))
   (format t "Nothing happened...~%"))
 
-(defmethod do-action ((act (eql 'probe)) obj preps)
-  (do-action 'examine obj preps))
-
 (defmethod do-action ((act (eql 'examine)) (obj warp-point) preps)
   (declare (ignore preps))
   (format t "A teleport point that can be used to warp to different ~
              areas of the map. ~:[Must be activated before it can be ~
              used~;Is currently active.~]~%" (warp-active obj)))
 
-(defmethod do-action ((act (eql 'probe)) (obj warp-point) preps)
-  (declare (ignore preps))
-  (format t "Warp point: ~S" obj))
+(defmethod system-keys append ((obj warp-point))
+  `((warp-active "Activated" ,(warp-active obj))))
 
 (defmethod do-action ((act (eql 'activate)) (obj warp-point) preps)
   (declare (ignore preps))

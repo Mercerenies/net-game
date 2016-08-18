@@ -76,7 +76,6 @@
       (push 'poison (food-tags food)))
     food))
 
-; TODO Make an inventory limit so the player can't hoard fruits from a plant
 (defmethod entity-turn ((obj plant))
   (let ((loc (get-loc obj))
         (data (plant-food obj)))
@@ -94,15 +93,14 @@
           (get-name obj)
           (floor (/ (- (plant-growth-moment obj) (plant-growth-time obj)) 2))))
 
-(defmethod do-action ((act (eql 'probe)) (obj plant) preps)
-  (declare (ignore preps))
-  (format t "Plant (~A) will produce Food (~A) in ~D turn~:P. ~
-             The food has nutrition property ~F and poison chance ~F.~%"
-          (get-name obj)
-          (food-full-name (plant-food obj))
-          (- (plant-growth-time obj) (plant-growth-moment obj))
-          (food-nutrition (plant-food obj))
-          (food-poison-chance (plant-food obj))))
+(defmethod system-keys append ((obj plant))
+  (let ((food (plant-food obj)))
+    `((food-full-name "Full Name" ,(food-full-name food))
+      (plant-growth-moment "Current Growth" ,(plant-growth-moment obj))
+      (plant-growth-time "Total Growth Time" ,(plant-growth-time obj))
+      (nil "Remaining Growth Time" ,(- (plant-growth-time obj) (plant-growth-moment obj)))
+      (food-nutrition "Nutritional Value" ,(food-nutrition food))
+      (food-poison-chance "Poison Chance" ,(food-poison-chance food)))))
 
 (defmethod do-action ((act (eql 'examine)) (obj food) preps)
   (declare (ignore preps))
@@ -113,12 +111,9 @@
               (food-full-name obj))
           (item-weight obj)))
 
-(defmethod do-action ((act (eql 'probe)) (obj food) preps)
-  (declare (ignore preps))
-  (format t "Food: ~S (restores ~D) (tags ~:S)~%"
-          (get-name obj)
-          (food-health obj)
-          (food-tags obj)))
+(defmethod system-keys append ((obj food))
+  `((food-health "Health Restored" ,(food-health obj))
+    (food-tags "Tags" ,(food-tags obj))))
 
 (defmethod is-trivial ((act (eql 'eat)) (obj food) preps)
   nil)

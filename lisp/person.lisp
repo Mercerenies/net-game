@@ -57,11 +57,11 @@
 ;        (first-complete
 ;         nil)
         ((not (string-equal (person-nickname obj) (get-name obj)))
-         (do-speak 'basic-nicknamed-intro 'neutral
-                   :my-name (get-name obj)
-                   :my-nickname (person-nickname obj)
-                   :my-occu (person-job-name obj)))
+         (with-speech-vars ((:my-name (get-name obj))
+                            (:my-nickname (person-nickname obj))
+                            (:my-occu (person-job-name obj)))
+           (do-speak 'basic-nicknamed-intro)))
         (t
-         (do-speak 'basic-intro 'neutral
-                   :my-name (get-name obj)
-                   :my-occu (person-job-name obj)))))))
+         (with-speech-vars ((:my-name (get-name obj))
+                            (:my-occu (person-job-name obj)))
+           (do-speak 'basic-intro)))))))

@@ -101,7 +101,7 @@
                   (stalking (setf (anim-mood obj) 'sneaky)))) ; TODO Doesn't happen immediately after move
                ((<= (random 6) (anim-speed obj))
                 (let* ((local-halo (halo (get-loc obj)))
-                       (valid-locs (if (eq (anim-attitude obj) 'passive)
+                       (valid-locs (if (eq (anim-attitude obj) 'passive) ; TODO Just passive birds or all passives?
                                        local-halo
                                      (remove-if (lambda (x) (location-civilized x))
                                                 local-halo)))
@@ -149,3 +149,10 @@
           (anim-mood obj)
           (anim-attitude obj)
           (hp obj)))
+
+(defmethod do-action ((act (eql 'nuke)) (obj animal) preps)
+  (declare (ignore preps))
+  (format t "Nuking the ~A... you monster.~%"
+          (get-name obj))
+  (setf (hp obj) 0)
+  (check-for-death obj))

@@ -50,6 +50,10 @@
   (declare (ignore obj preps))
   t)
 
+(defmethod is-admin-only ((act (eql 'nuke)) obj preps)
+  (declare (ignore obj preps))
+  t)
+
 (defgeneric is-trivial (act obj preps))
 
 (defmethod is-trivial ((act symbol) obj preps)

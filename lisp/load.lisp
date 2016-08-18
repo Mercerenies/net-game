@@ -1,5 +1,9 @@
 (in-package #:net-game)
 
+; TODO Consolidate some things, like how player and animal have HP; they should share an ancestor
+;      CLOS has multiple inheritance; use it
+
+; TODO "Named" and "ID'd" should really be separate concepts a lot of the time
 (defclass named ()
   ((id :accessor get-id
        :initarg :id

@@ -53,7 +53,8 @@
              \"attack <object> with fists\" - Attack the entity unarmed~@
              \"eat <object>\" - Eat the object~@
              ~:[~;~
-             \"probe\" - Get developer specs on an entity or object~@
+             \"probe <object>\" - (GOD) Get developer specs on an entity or object~@
+             \"nuke <object>\" - (GOD) Insta-kill any entity which has health~@
              ~]~
              \"help\" - Display this message~@
              \"quit\" - Exit the game~%"

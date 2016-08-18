@@ -18,6 +18,12 @@
                :type list))
   (:default-initargs :name "Sandy"))
 
+(defmethod do-action ((act (eql 'nuke)) (obj player) preps)
+  (declare (ignore preps))
+  (format t "Nuking self...~%")
+  (setf (hp obj) 0)
+  (check-for-death obj))
+
 (defparameter *do-exit*
   (lambda () (error "Nothing to exit!")))
 

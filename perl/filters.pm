@@ -27,7 +27,7 @@ package Filters {
 
     sub appositive_phrase {
         for (@_) {
-            s/,[A-Za-z0-9:\-' _]*,//g;
+            s/,[A-Za-z0-9:\-' _"]*,//g;
         }
     }
 

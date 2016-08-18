@@ -1,18 +1,26 @@
 ; -*- Lisp -*-
 (basic-intro
- (one-liner ("My name is " :my-name ". I am something of a " (to-lower :my-occu) ".")))
+ (one-liner ("My name is " (name-of speaker) ". I am something of a " (to-lower (job-of speaker)) ".")))
 (basic-nicknamed-intro
- (one-liner ("My name is " :my-name ". You can call me " :my-nickname
-                           ". I am something of a " (to-lower :my-occu) ".")))
+ (one-liner ("My name is " (name-of speaker) ". You can call me " (nick-of speaker)
+                           ". I am something of a " (to-lower (job-of speaker)) ".")))
+(fetch-quest-start
+ (branch ("Hey! You seem fairly capable! Listen, I dropped my "
+          (to-lower item-name) " somewhere. Do you think you could go and get it?")
+         (("\"Sure thing!\"") . fetch-quest-start-yes)
+         (("\"I don't have time.\"") . fetch-quest-start-no)))
 
-#|
-(basic-nicknamed-intro
- (neutral . (branch
-             ("My name is " :my-name)
-             (("\"Say again?\"") . basic-nicknamed-intro)
-             (("\"Goodbye!\"") . basic-nicknamed-intro-0))))
+(fetch-quest-start-yes
+ (accept-quest current-quest)
+ (one-liner ("Perfect! I'm pretty sure I left it somewhere near "
+             item-loc ". Just bring it by if you find it.")))
 
-(basic-nicknamed-intro-0
- (neutral . (one-liner
-             ("Goodbye..."))))
-|#
+(fetch-quest-start-no
+ (one-liner ("Oh... sorry to bother you.")))
+
+(fetch-quest-reminder
+ (one-liner ("Remember, you're looking for my " (to-lower item-name) " somewhere near " item-loc ".")))
+
+(fetch-quest-success
+ (mark-quest current-quest delivered)
+ (one-liner ("Oh, my " (to-lower item-name) "! Thank you so much!")))

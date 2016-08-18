@@ -6,6 +6,9 @@
           :initform nil
           :type list)))
 
+(defun item-check-flag (item flag)
+  (member flag (item-flags item)))
+
 (defclass weapon (item)
   ((type :accessor weapon-type
          :initarg :type

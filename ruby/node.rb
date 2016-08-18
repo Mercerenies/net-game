@@ -50,9 +50,9 @@ class Node
     @contents.each &:waterfall
   end
 
-  def expand_to_map(country: nil, gdata:)
+  def expand_to_map(country: nil, gdata:) # TODO Should the country: arg be required?
     if @contents.empty?
-      Array[Location.new id, name, country]
+      Array[Location.new id, name, country, generic_name: country || "Map"]
     else
       links = @contents.size.times.collect { [] }
       connected = []

@@ -22,7 +22,7 @@ class StructureNode
   end
 
   def to_loc
-    Location.new @id, @name, nil, valid_creatures: @creatures, valid_plants: @plants
+    Location.new @id, @name, nil, generic_name: core_name, valid_creatures: @creatures, valid_plants: @plants
   end
 
   def exit?

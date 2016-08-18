@@ -40,9 +40,9 @@ class Map
     end
     if result
       result.push obj
-      true
+      result
     else
-      false
+      nil
     end
   end
 
@@ -52,15 +52,16 @@ class Location
   extend Forwardable
   include Enumerable
 
-  attr_reader :id, :name, :country_name
+  attr_reader :id, :name, :country_name, :generic_name
 
   def_delegators :@contents, :each, :[], :[]=, :push, :delete, :pop
   def_delegator :@links, :each, :each_link
 
-  def initialize(id, name, country_name, valid_creatures: nil, valid_plants: nil)
+  def initialize(id, name, country_name, generic_name: nil, valid_creatures: nil, valid_plants: nil)
     @id = id
     @name = name
     @country_name = country_name
+    @generic_name = generic_name
     @contents = []
     @links = []
     @valid_creatures = valid_creatures

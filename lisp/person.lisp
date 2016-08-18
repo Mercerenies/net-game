@@ -43,25 +43,24 @@
 ; Uses *player*
 (defmethod do-action ((type (eql 'talk)) (obj person) preps)
   (declare (ignore preps))
-  (labels ((player-has-started (q)
-             (member q (quest-list *player*) :key #'get-id))
-           (player-has-finished (q)
-             (and (player-has-started q)
-                  (is-quest-completed (find q (quest-list *player*) :key #'get-id)))))
-    (let ((first-incomplete (find-if (complement #'player-has-finished)
-                                     (quest-list obj))))
+  (let* ((next-quest-id (find-if (complement #'has-finished-quest)
+                                 (quest-list obj)))
+         (next-quest (and next-quest-id (get-quest-details next-quest-id))))
+    (with-speech-vars ((speaker obj))
       (cond
-;        ((and first-incomplete
-;              (player-has-started q))
-;         nil)
-;        (first-complete
-;         nil)
-        ((not (string-equal (person-nickname obj) (get-name obj)))
-         (with-speech-vars ((:my-name (get-name obj))
-                            (:my-nickname (person-nickname obj))
-                            (:my-occu (person-job-name obj)))
-           (do-speak 'basic-nicknamed-intro)))
-        (t
-         (with-speech-vars ((:my-name (get-name obj))
-                            (:my-occu (person-job-name obj)))
-           (do-speak 'basic-intro)))))))
+        ((and next-quest
+              (has-started-quest next-quest-id))
+         (quest-status-update next-quest))
+        (next-quest
+         (introduce-quest next-quest))
+        (t (default-dialogue obj))))))
+
+(defun default-dialogue (person)
+  (with-accessors ((name get-name)
+                   (nickname person-nickname))
+      person
+    (cond
+      ((not (string-equal nickname name))
+       (do-speak 'basic-nicknamed-intro))
+      (t
+       (do-speak 'basic-intro)))))

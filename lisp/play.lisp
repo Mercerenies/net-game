@@ -65,6 +65,7 @@
                               Exits: ~:[(None)~;~:*~{~A~^, ~}~]~%~
                               Objects: ~:[(None)~;~:*~{~A~^, ~}~]~%~
                               Inventory: ~:[(None)~;~:*~{~A~^, ~}~]~%~
+                              Quests: ~:[(None)~;~:*~{~A~@[ (Done)~*~]~^, ~}~]~%~
                               Mode: ~A~%~
                               ~A~
                               > "
@@ -75,6 +76,10 @@
                                  (location-exits (get-loc *player*)))
                          (mapcar #'get-numbered-name (location-contents (get-loc *player*)))
                          (mapcar #'get-numbered-name (inventory *player*))
+                         (mapcan (lambda (x)
+                                   (list (get-name x)
+                                         (is-quest-completed x)))
+                                 (quest-list *player*))
                          (mode-name (first *state*))
                          (mode-text (first *state*)))
                  (setf cmd (read-line)))

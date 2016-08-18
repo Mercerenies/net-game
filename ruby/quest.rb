@@ -47,14 +47,19 @@ module QuestMaker
 
   def self.make_fetch_quest(map, person)
     flag = QuestMaker.make_quest_flag
-    Item.make_random { |item_name| "#{person.name}'s #{item_name}" }.tap do |item|
-      item.add_flags flag
-      map.put_somewhere item
+    item_raw_name = nil
+    item = Item.make_random do |name|
+      item_raw_name = name
+      "#{person.name}'s #{item_raw_name}"
     end
+    item.add_flags flag
+    item_loc = map.put_somewhere item
     # TODO The quest should have a non-default name
     Quest.new("Fetch Quest", :fetch).tap do |q|
       person.add_quest q.id
-      q.add_specifics :item_flag, flag
+      q.add_specifics :'item-flag', flag
+      q.add_specifics :'item-name', item_raw_name
+      q.add_specifics :'item-loc', item_loc.generic_name
     end
   end
 

@@ -24,9 +24,18 @@
           :initform nil
           :type list)))
 
+(defclass fetch-quest (quest)
+  ()
+  (:default-initargs :nature 'fetch))
+
 ; Uses *quests*
 (defun get-quest-details (qname)
   (gethash qname *quests*))
+
+(defgeneric quest-specific-slot (details slot-name))
+
+(defmethod quest-specific-slot ((details quest-details) slot-name)
+  (getf (quest-specifics details) slot-name))
 
 ; Uses *quests*
 (defun add-quest (details)
@@ -41,6 +50,12 @@
                  :name (get-name details)
                  :nature (quest-nature details)))
 
+(defmethod create-quest-instance ((details quest-details) (nature (eql 'fetch)))
+  (declare (ignore nature))
+  (make-instance 'fetch-quest
+                 :id (get-id details)
+                 :name (get-name details)))
+
 (defun start-quest (details)
   (check-type details quest-details)
   (create-quest-instance details (quest-nature details)))
@@ -51,6 +66,9 @@
 (defmethod is-quest-completed ((quest quest))
   nil)
 
+(defmethod is-quest-completed ((quest fetch-quest))
+  (member 'delivered (quest-flags quest)))
+
 (defgeneric load-quest (type &rest data))
 
 (defmethod load-quest ((type (eql 'quest)) &rest data)
@@ -60,3 +78,41 @@
                    :name name
                    :nature nature
                    :specifics specifics)))
+
+; TODO All these keyword args starting with * should be renamed such that the keyword form isn't :*whatever*
+
+(defun has-started-quest (quest-id &key (*player* *player*))
+  (member quest-id (quest-list *player*) :key #'get-id))
+
+(defun has-finished-quest (quest-id &key (*player* *player*))
+  (and (has-started-quest quest-id)
+       (is-quest-completed (find quest-id (quest-list *player*) :key #'get-id))))
+
+(defgeneric introduce-quest-instance (details nature))
+
+(defmethod introduce-quest-instance ((details quest-details) (nature (eql 'fetch)))
+  (with-speech-vars ((item-name (quest-specific-slot details 'item-name))
+                     (item-loc (quest-specific-slot details 'item-loc))
+                     (current-quest details))
+    (do-speak 'fetch-quest-start)))
+
+(defun introduce-quest (details)
+  (introduce-quest-instance details (quest-nature details)))
+
+(defgeneric quest-status-update-instance (details nature))
+
+(defmethod quest-status-update-instance ((details quest-details) (nature (eql 'fetch)))
+  (let* ((q-item-flag (quest-specific-slot details 'item-flag))
+         (matching-item (find-if (lambda (x) (item-check-flag x q-item-flag))
+                                 (inventory *player*))))
+    (with-speech-vars ((item-name (quest-specific-slot details 'item-name))
+                       (item-loc (quest-specific-slot details 'item-loc))
+                       (current-quest details))
+      (if matching-item
+          (progn (setf (inventory *player*)
+                       (remove matching-item (inventory *player*)))
+                 (do-speak 'fetch-quest-success))
+          (do-speak 'fetch-quest-reminder)))))
+
+(defun quest-status-update (details)
+  (quest-status-update-instance details (quest-nature details)))

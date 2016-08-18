@@ -66,7 +66,7 @@ sub read_weapon {
 
 # Monsters
 sub read_monster {
-    # TODO This
+    # TODO Monster Reading
 }
 
 # Animals

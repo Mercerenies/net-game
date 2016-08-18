@@ -134,7 +134,7 @@
                          (move-object obj (first inter))
                          (setf (anim-mood obj) 'passive))))))))
 
-; TODO This
+; TODO User-friendly description
 (defmethod do-action ((act (eql 'examine)) (obj animal) preps)
   (declare (ignore preps))
   (format t "An animal~%"))

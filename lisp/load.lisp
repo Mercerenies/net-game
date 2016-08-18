@@ -1,8 +1,5 @@
 (in-package #:net-game)
 
-; TODO Consolidate some things, like how player and animal have HP; they should share an ancestor
-;      CLOS has multiple inheritance; use it
-
 (defmethod print-object ((obj named) stream)
   (print-unreadable-object (obj stream :type t :identity t)
     (format stream "~S ~S"

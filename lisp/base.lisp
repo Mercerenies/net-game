@@ -13,7 +13,6 @@
 (defmethod (setf hp) :after (val (obj damageable))
   (check-for-death obj))
 
-; TODO "Named" and "ID'd" should really be separate concepts a lot of the time
 (defclass named ()
   ((name :accessor get-name
          :initarg :name

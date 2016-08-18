@@ -28,7 +28,7 @@
   (let ((person (apply #'make-instance 'person :name args)))
     (move-object person node)))
 
-; TODO This
+; TODO More user-friendly text here
 (defmethod do-action ((type (eql 'examine)) (obj person) preps)
   (declare (ignore preps))
   (case (person-gender obj)

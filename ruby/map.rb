@@ -61,7 +61,7 @@ class Location
     @id = id
     @name = name
     @country_name = country_name
-    @generic_name = generic_name
+    @generic_name = generic_name # TODO Store generic_name in the system.txt file (will need it if we reload)
     @contents = []
     @links = []
     @valid_creatures = valid_creatures

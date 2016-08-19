@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# TODO All the bash scripts should really be printing usage stuff to STDERR
+
 celebs=""
 people=""
 places=""

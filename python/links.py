@@ -1,6 +1,7 @@
 
 import sys
 from util import rnd
+from logger import echo
 
 class LinkState:
     def __init__(self, page, depth_left, total_depth):

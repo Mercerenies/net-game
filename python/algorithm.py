@@ -71,7 +71,7 @@ class Spider:
             base = wikipedia.page(base)
         return self.safely_call(lambda: _crawl_once(base, 0))
 
-    def safely_call(self, func):
+    def safely_call(self, func): # TODO We need to handle "connection aborted" ConnectionResetError too.
         """A convenience function which calls the 0-ary function supplied, while handling Wikipedia errors."""
         try:
             return func()

@@ -56,7 +56,7 @@ sub simple_linked_sentence {
     my $skim_count = 0+ ($options{'SkimWordCount'} // 9);
     my $title_intermediate = qr/(?:\Q$titlevar\E)/i;
     if ($options{'MiddleNameRule'} && $titlevar =~ /^([\w\"-]+\s)+([\w\"-]+)$/) {
-        $title_intermediate = qr/$1(?:[\w"-]+ )?$2/i;
+        $title_intermediate = qr/$1(?:[\w"-]+\.? )?$2/i;
     }
 
     my $rename_clause = qr/(?:$rename_words (?:$skim_word ){1,3})/i;

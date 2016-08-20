@@ -31,6 +31,12 @@ package Filters {
         }
     }
 
+    sub quoted_phrase {
+        for (@_) {
+            s/"[A-Za-z0-9:\-' _,.]*"//g;
+        }
+    }
+
 }
 
 sub apply_filter {

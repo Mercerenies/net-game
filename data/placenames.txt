@@ -87,3 +87,4 @@ town hall               courthouse
 city hall               courthouse
 locality                city
 casino                  casino
+parish                  church

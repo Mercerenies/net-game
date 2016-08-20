@@ -104,6 +104,7 @@ singer-songwriter      musician
 revolutionary          soldier
 baseball player        athlete
 waiter                 waiter
-waitress               waitress
+waitress               waiter
 scientist              scientist
 attorney               scholar
+activist               activist

@@ -20,11 +20,14 @@
          :initform 1
          :initarg :size)))
 
+(defun make-animal-data (id name &rest keys &key &allow-other-keys)
+  (apply #'make-instance 'animal-data :id id :name name keys))
+
 (defgeneric load-creature (type &rest data))
 
 (defmethod load-creature ((type (eql 'animal)) &rest data)
   (destructuring-bind (id name . rest) data
-    (apply #'make-instance 'animal-data :id id :name name rest)))
+    (apply #'make-animal-data id name rest)))
 
 (defgeneric make-creature (data))
 

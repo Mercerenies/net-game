@@ -55,6 +55,12 @@
 (defmethod food-plant-type ((obj food))
   (food-plant-type (food-data obj)))
 
+(defun make-plant (name &rest keys &key &allow-other-keys)
+  (apply #'make-instance 'plant :name name keys))
+
+(defun make-food-data (name &rest keys &key &allow-other-keys)
+  (apply #'make-instance 'food-data :name name keys))
+
 (defun make-food (data)
   (let ((food (make-instance 'food
                              :name (get-name data)

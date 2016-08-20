@@ -24,11 +24,20 @@
               :initform nil
               :type boolean)))
 
+(defun make-location (id name &key short-name)
+  (make-instance 'location
+                 :id id
+                 :name name
+                 :short-name short-name))
+
 (defclass warp-point (named located)
   ((active :accessor warp-active
            :initform nil
            :type boolean))
   (:default-initargs :name "Warp Point"))
+
+(defun make-warp-point ()
+  (make-instance 'warp-point))
 
 (defun move-object (obj new-loc)
   (check-type obj located)
@@ -48,7 +57,7 @@
      (destructuring-bind (map-sym . locs) (first data)
        (unless (eq map-sym 'map) (error "Flawed data"))
        (loop for (loc id name . rst) in locs
-             for inst = (make-instance 'location :name name :short-name name :id id)
+             for inst = (make-location id name :short-name name)
              do (loop for elems = rst then (cdr (cdr elems))
                       for key = (first elems)
                       for value = (second elems)
@@ -91,18 +100,18 @@
 
 (defmethod load-object-with-type (node (type (eql 'player)) &rest args)
   (declare (ignore args))
-  (let ((obj (make-instance 'player)))
+  (let ((obj (make-player)))
     (move-object obj node)))
 
 (defmethod load-object-with-type (node (type (eql 'warp-point)) &rest args)
   (declare (ignore args))
-  (let ((obj (make-instance 'warp-point)))
+  (let ((obj (make-warp-point)))
     (move-object obj node)))
 
 (defmethod load-object-with-type (node (type (eql 'item)) &rest args)
   (let* ((name (first args))
          (args (rest args))
-         (item (apply #'make-instance 'item :name name args)))
+         (item (apply #'make-item name args)))
     (move-object item node)))
 
 (defmethod load-object-with-type (node (type (eql 'weapon)) &rest args)
@@ -136,9 +145,9 @@
              (:type (setf type value))
              (:food (progn
                       (unless (eq (car value) 'food) (error "Flawed data"))
-                      (setf food (apply #'make-instance 'food-data :name (cdr value)))))
+                      (setf food (apply #'make-food-data (cdr value)))))
              (:growth-time (setf growth-time value)))
-        finally (let ((plant (make-instance 'plant :name name :type type :food food :growth-time growth-time)))
+        finally (let ((plant (make-plant name :type type :food food :growth-time growth-time)))
                   (move-object plant node))))
 
 ; Uses *world*

@@ -10,6 +10,9 @@
            :initform 1
            :type integer)))
 
+(defun make-item (name &rest keys &key &allow-other-keys)
+  (apply #'make-instance 'item :name name keys))
+
 (defun item-check-flag (item flag)
   (member flag (item-flags item)))
 

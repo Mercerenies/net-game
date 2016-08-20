@@ -24,8 +24,11 @@
                :initform nil
                :initarg :quest-list)))
 
+(defun make-person (name &rest keys &key &allow-other-keys)
+  (apply #'make-instance 'person :name name keys))
+
 (defmethod load-object-with-type (node (type (eql 'npc)) &rest args)
-  (let ((person (apply #'make-instance 'person :name args)))
+  (let ((person (apply #'make-person args)))
     (move-object person node)))
 
 ; TODO More user-friendly text here

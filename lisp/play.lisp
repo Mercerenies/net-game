@@ -22,6 +22,9 @@
 
 (defparameter *warps* nil)
 
+(defun make-player ()
+  (make-instance 'player))
+
 (defun word-split (string &optional (token #\SPACE))
   (loop for start = 0 then (1+ finish)
         for finish = (position token string :start start)

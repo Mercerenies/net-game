@@ -121,6 +121,7 @@ def node_level_up(node)
   lvl = nil
   loop do
     lvl = node.level.level_up
+    # TODO What if we waterfall'd here?
     break unless lvl
     node = Node.new(Namer.instance.sample, lvl).tap { |o| o << node }
   end

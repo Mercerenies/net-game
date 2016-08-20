@@ -21,6 +21,10 @@ class Level
     @@country ||= LevelTwo.new 4..8
   end
 
+  def self.top
+    self.individual
+  end
+
   def self.[](*args)
     self.new(*args)
   end

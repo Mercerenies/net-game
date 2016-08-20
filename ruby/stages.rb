@@ -54,7 +54,9 @@ class NodeStage < Stage
       })
       nodes << generate_node(new_country, Level.country)
     end
-    data.nodes = nodes
+    toplevel = Node.new '', Level.top
+    nodes.each { |obj| toplevel << obj }
+    data.node = toplevel
   end
 
 end
@@ -69,16 +71,14 @@ class BridgeStage < Stage
         bridges << bridge if bridge
       end
     end
-    data.bridges = bridges
+    data.add_bridges(*bridges)
   end
 end
 
 # Stage 3 - Convert the nodes into a map
 class MapStage < Stage
   def run(data)
-    temp = Node.new '', Level.individual
-    data.nodes.each { |obj| temp << obj }
-    data.map = Map.new temp.expand_to_map gdata: data
+    data.node_to_map
   end
 end
 
@@ -104,7 +104,7 @@ class CreatureStage < Stage
   def run(data)
     # Identify and set up valid creatures
     data.consume_each { |elem| data.load_creature elem }
-    creatures = data.creatures.to_a.shuffle.cycle
+    creatures = data.each_creature.to_a.shuffle.cycle
     return unless data.has_creature?
     # Now identify all of the "dangerous" nodes, that is
     # anywhere that should have a creature in it

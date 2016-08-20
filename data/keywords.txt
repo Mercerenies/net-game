@@ -66,6 +66,7 @@ artillery
 siege weapon
 siege engine
 musket
+projectile weapon
 :: monsters
 legendary creature
 legendary mammal

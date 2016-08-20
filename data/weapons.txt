@@ -36,3 +36,4 @@ musket             missile
 cannon             missile
 fork               spear
 staff              polearm
+supergun           missile

@@ -61,7 +61,7 @@ class Location
     @id = id
     @name = name
     @country_name = country_name
-    @generic_name = generic_name # TODO Store generic_name in the system.txt file (will need it if we reload)
+    @generic_name = generic_name
     @contents = []
     @links = []
     @valid_creatures = valid_creatures
@@ -106,7 +106,8 @@ class Location
     links = [:':links', @links.dup]
     contents = [:':contents', @contents.dup]
     civilized = [:':civilized', civilized?]
-    (prefix + country + links + contents + civilized).to_sxp
+    meta = [:':meta', MetaData.new(:':generic-name' => generic_name)]
+    (prefix + country + links + contents + civilized + meta).to_sxp
   end
 
   def count_items(type = Item)

@@ -68,7 +68,8 @@
                                                                    value)))
                            (:links (setf (location-exits inst) value))
                            (:contents (mapc #'(lambda (x) (load-object inst x)) value))
-                           (:civilized (setf (location-civilized inst) value))))
+                           (:civilized (setf (location-civilized inst) value))
+                           (:meta))) ; Explicitly ignore this case
              collect inst))
      (destructuring-bind (anim-sym . anims) (second data)
        (unless (eq anim-sym 'creature-set) (error "Flawed data"))

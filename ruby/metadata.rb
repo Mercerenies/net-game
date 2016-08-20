@@ -7,8 +7,8 @@ class MetaData
 
   def_delegators :@hash, :[], :[]=, :each
 
-  def initialize
-    @hash = {}
+  def initialize(arg = nil)
+    @hash = arg.to_h
   end
 
   def to_h

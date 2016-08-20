@@ -43,6 +43,7 @@
 
 (defun load-data (&key (file *standard-input*))
   (let ((data (with-scheme-notation (read file))))
+    ; Note that the fourth element of data is meta and is intentionally ignored by this segment of the program
     (values
      (destructuring-bind (map-sym . locs) (first data)
        (unless (eq map-sym 'map) (error "Flawed data"))

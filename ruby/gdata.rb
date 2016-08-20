@@ -2,7 +2,7 @@
 # ///// Continue factoring things into methods; we want to minimize any direct read/write on the fields
 
 class GData
-  attr_accessor :spawners, :quests
+  attr_accessor :meta
   attr_reader :node, :map
 
   def initialize(everything)
@@ -13,6 +13,7 @@ class GData
     @creatures = CreatureSet.new
     @spawners = SpawnerSet.new
     @quests = QuestSet.new
+    @meta = MetaData.new
   end
 
   # Assigns the singular node
@@ -69,6 +70,16 @@ class GData
     not @spawners.empty?
   end
 
+  # Adds one or more spawners to the spawner set
+  def add_spawners(*elems)
+    @spawners.push(*elems)
+  end
+
+  # Adds one or more quests to the quest set
+  def add_quests(*elems)
+    @quests.push(*elems)
+  end
+
   # Select all nodes on the map for which the predicate returns truthy
   def select_nodes(&block)
     @map.select(&block)
@@ -87,7 +98,7 @@ class GData
 
   # Return the generator data in an appropriate output list format
   def result_structure
-    [@map, @creatures, @spawners, @quests]
+    [@map, @creatures, @spawners, @quests, @meta]
   end
 
 end

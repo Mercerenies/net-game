@@ -35,11 +35,13 @@ load './ruby/spawner.rb'
 load './ruby/creatures.rb'
 
 load './ruby/loader.rb'
+load './ruby/metadata.rb'
 load './ruby/gdata.rb'
 load './ruby/stages.rb'
 load './ruby/genner.rb'
 
 require 'json'
+require 'sxp'
 
 data = Loader.load JSON.parse(ARGF.read)
 gen = Genner.new data

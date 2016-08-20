@@ -114,7 +114,7 @@ class CreatureStage < Stage
       spawner = Spawner.new creatures.next, data.map, needed.first, [2, 2, 2, 3].sample
       area = spawner.area_covered.to_a
       needed = needed.reject { |loc| area.include? loc }
-      data.spawners.push spawner
+      data.add_spawners spawner
     end
   end
 end
@@ -175,7 +175,7 @@ class QuestStage < Stage
       node.each do |obj|
         case obj
         when NPC
-          data.quests.push QuestMaker.make_fetch_quest(data.map, obj)
+          data.add_quests QuestMaker.make_fetch_quest(data.map, obj)
         end
       end
     end

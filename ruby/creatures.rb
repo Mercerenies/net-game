@@ -36,6 +36,13 @@ class CreatureSet
     ([:'creature-set'] + to_a).to_sxp
   end
 
+  def self.from_sxp(arg)
+    arr = Reloader.assert_first :'creature-set', arg
+    CreatureSet.new.tap do |set|
+      Reloader.list_like(arr) { |x| set.push Reloader.instance.load(x) }
+    end
+  end
+
   def empty?
     @animals.empty?
   end
@@ -77,5 +84,19 @@ class Animal < Creature
     [:animal, id, name, :':pack', pack, :':speed', speed, :':threat', threat,
      :':size', size, :':air', air?, :':sea', sea?].to_sxp
   end
-
+=begin
+  def self.from_sxp(arg)
+    id, name, *arr = Reloader.assert_first :animal, arg
+    pg = AnimalPage.new({})
+    pg.instance_variable_set :@name, 
+    Reloader.hash_like do |k, v|
+      case k
+      when :':nam
+      end
+    end
+    Animal.new(pg).tap do |an|
+      an.instance_variable_set :@id, id
+    end
+  end
+=end
 end

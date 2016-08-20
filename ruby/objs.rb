@@ -8,12 +8,22 @@ class Player < Person
     [:'player'].to_sxp
   end
 
+  def self.from_sxp(arg)
+    Reloader.assert_first :'player', arg
+    Player.new
+  end
+
 end
 
 class WarpPoint
 
   def to_sxp
     [:'warp-point'].to_sxp
+  end
+
+  def self.from_sxp(arg)
+    Reloader.assert_first :'warp-point', arg
+    WarpPoint.new
   end
 
 end
@@ -38,6 +48,20 @@ class Item
 
   def to_sxp
     [:item, name, :':weight', weight, :':flags', flags].to_sxp
+  end
+
+  def self.from_sxp(arg)
+    name, *arr = Reloader.assert_first :item, arg
+    Item.new(name).tap do |item|
+      Reloader.hash_like(arr) do |k, v|
+        case k
+        when :':weight'
+          item.weight = v
+        when :':flags'
+          item.add_flags *v
+        end
+      end
+    end
   end
 
   def self.make_random(&block)

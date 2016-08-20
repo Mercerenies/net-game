@@ -9,7 +9,7 @@ class Map
   def_delegators :@ary, :each, :push
 
   def initialize(ary = [])
-    @ary = ary
+    @ary = ary.to_a
   end
 
   def to_ary
@@ -22,6 +22,11 @@ class Map
 
   def to_sxp
     ([:map] + @ary).to_sxp
+  end
+
+  def self.from_sxp(arg)
+    arr = Reloader.assert_first:map, arg
+    Map.new Reloader.list_like(arr)
   end
 
   def [](val)
@@ -107,7 +112,32 @@ class Location
     contents = [:':contents', @contents.dup]
     civilized = [:':civilized', civilized?]
     meta = [:':meta', MetaData.new(:':generic-name' => generic_name)]
+    # TODO We definitely need to save/load valid-creatures/plants in the meta field,
+    #      but to do that we need them to be to_sxp'able, which is tricky since they
+    #      might be Class objects
     (prefix + country + links + contents + civilized + meta).to_sxp
+  end
+
+  def self.from_sxp(arg)
+    id, name, *arr = Reloader.assert_first :location, arg
+    Location.new(id, name, '').tap do |loc|
+      Reloader.hash_like(arr) do |k, v|
+        case k
+        when :':country'
+          loc.instance_variable_set :@country_name, v
+        when :':links'
+          loc.instance_variable_set :@links, v
+        when :':contents'
+          elems = v.collect { |x| Reloader.load x }
+          loc.instance_variable_set :@contents, elems
+        when :':civilized'
+          # Ignore this arg; we'll get the necessary info from :meta
+        when :':meta'
+          meta = Reloader.load v
+          loc.instance_variable_set :@generic_name, meta[:':generic-name']
+        end
+      end
+    end
   end
 
   def count_items(type = Item)

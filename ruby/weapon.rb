@@ -30,4 +30,20 @@ class Weapon < Item
     [:weapon, name, :':type', @type, :':mod', @modifier, :':flags', flags].to_sxp
   end
 
+  def self.from_sxp(arg)
+    name, *arr = Reloader.assert_first :weapon, arg
+    Weapon.new(name, nil).tap do |wpn|
+      Reloader.hash_like(arr) do |k, v|
+        case k
+        when :':type'
+          wpn.instance_variable_set :@type, v
+        when :':mod'
+          wpn.instance_variable_set :@modifier, v
+        when :':flags'
+          wpn.add_flags *v
+        end
+      end
+    end
+  end
+
 end

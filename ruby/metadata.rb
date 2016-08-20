@@ -24,4 +24,9 @@ class MetaData
     ([:meta] + arr).to_sxp
   end
 
+  def self.from_sxp(arg)
+    arr = Reloader.assert_first :meta, arg
+    MetaData.new Hash[*arr]
+  end
+
 end

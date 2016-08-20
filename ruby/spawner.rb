@@ -59,6 +59,13 @@ class SpawnerSet
     ([:'spawner-set'] + to_a).to_sxp
   end
 
+  def self.from_sxp(arg)
+    arr = Reloader.assert_first :'spawner-set', arg
+    SpawnerSet.new.tap do |set|
+      Reloader.list_like(arr) { |x| set.push Reloader.instance.load(x) }
+    end
+  end
+
   def empty?
     @spawners.empty?
   end

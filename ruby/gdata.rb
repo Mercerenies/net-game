@@ -101,4 +101,16 @@ class GData
     [@map, @creatures, @spawners, @quests, @meta]
   end
 
+  def self.from_sxp(arg)
+    map, creatures, spawners, quests, meta = arg
+    reloader = Reloader.instance
+    GData.new([]).tap do |gdata|
+      gdata.instance_variable_set :@map, reloader.load(map)
+      gdata.instance_variable_set :@creatures, reloader.load(creatures)
+      gdata.instance_variable_set :@spawners, reloader.load(spawners)
+      gdata.instance_variable_set :@quests, reloader.load(quests)
+      gdata.instance_variable_set :@meta, reloader.load(meta)
+    end
+  end
+
 end

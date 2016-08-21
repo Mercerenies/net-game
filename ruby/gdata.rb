@@ -2,7 +2,6 @@
 # ///// Continue factoring things into methods; we want to minimize any direct read/write on the fields
 
 class GData
-  attr_accessor :meta
   attr_reader :node, :map
 
   def initialize(everything)
@@ -13,7 +12,6 @@ class GData
     @creatures = CreatureSet.new
     @spawners = SpawnerSet.new
     @quests = QuestSet.new
-    @meta = MetaData.new
   end
 
   # Assigns the singular node
@@ -98,18 +96,22 @@ class GData
 
   # Return the generator data in an appropriate output list format
   def result_structure
-    [@map, @creatures, @spawners, @quests, @meta]
+    meta = MetaData.new(:':curr-id' => Node.current_id,
+                        :':curr-quest-flag' => QuestMaker.current_quest_flag)
+    [@map, @creatures, @spawners, @quests, meta]
   end
 
   def self.from_sxp(arg)
     map, creatures, spawners, quests, meta = arg
     reloader = Reloader.instance
+    meta = reloader.load meta
     GData.new([]).tap do |gdata|
       gdata.instance_variable_set :@map, reloader.load(map)
       gdata.instance_variable_set :@creatures, reloader.load(creatures)
       gdata.instance_variable_set :@spawners, reloader.load(spawners)
       gdata.instance_variable_set :@quests, reloader.load(quests)
-      gdata.instance_variable_set :@meta, reloader.load(meta)
+      Node.current_id = meta[:':curr-id']
+      QuestMaker.current_quest_flag = meta[:':curr-quest-flag']
     end
   end
 

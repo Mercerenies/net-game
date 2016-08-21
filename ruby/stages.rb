@@ -112,7 +112,7 @@ class CreatureStage < Stage
     # Now put animals / creatures in those spots
     until needed.empty?
       spawner = Spawner.new creatures.next, data.map, needed.first, [2, 2, 2, 3].sample
-      area = spawner.area_covered.to_a
+      area = spawner.node_ids.map { |id| data.map[id] }
       needed = needed.reject { |loc| area.include? loc }
       data.add_spawners spawner
     end

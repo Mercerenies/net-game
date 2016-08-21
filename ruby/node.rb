@@ -11,6 +11,14 @@ class Node
 
   @@curr_id = 1
 
+  def self.current_id
+    @@curr_id
+  end
+
+  def self.current_id=(val)
+    @@curr_id = val.to_i
+  end
+
   def self.get_id
     @@curr_id += 1
     @@curr_id

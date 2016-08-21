@@ -15,13 +15,18 @@ class Reloader
       :meta => MetaData,
       :'creature-set' => CreatureSet,
       :'spawner-set' => SpawnerSet,
+      :'quest-set' => QuestSet,
       :map => Map,
       :location => Location,
       :'warp-point' => WarpPoint,
       :npc => NPC,
       :player => Player,
       :item => Item,
-      :weapon => Weapon
+      :weapon => Weapon,
+      :animal => Animal,
+      :spawner => Spawner,
+      :quest => Quest,
+      :validity => ValidityWrapper
     }
   end
 

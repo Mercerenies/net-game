@@ -102,6 +102,8 @@ class NPC < Person
           npc.instance_variable_set :@old, v
         when :':old-job-name'
           npc.instance_variable_set :@old_name, v
+        when :':quest-list'
+          npc.instance_variable_set :@quest_list, v
         end
       end
     end

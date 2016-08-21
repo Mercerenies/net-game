@@ -19,6 +19,14 @@ class Quest
     [:quest, id, name, nature, specifics].to_sxp
   end
 
+  def self.from_sxp(arg)
+    id, name, nature, specifics = Reloader.assert_first :quest, arg
+    Quest.new(name, nature).tap do |quest|
+      quest.instance_variable_set :@id, id
+      specifics.each_slice(2) { |k, v| quest.add_specifics(k, v) }
+    end
+  end
+
 end
 
 class QuestSet
@@ -35,10 +43,25 @@ class QuestSet
     ([:'quest-set'] + to_a).to_sxp
   end
 
+  def self.from_sxp(arg)
+    arr = Reloader.assert_first :'quest-set', arg
+    QuestSet.new.tap do |set|
+      Reloader.list_like(arr) { |x| set.push x }
+    end
+  end
+
 end
 
 module QuestMaker
   @@quest_flag_n = 0
+
+  def self.current_quest_flag
+    @@quest_flag_n
+  end
+
+  def self.current_quest_flag=(val)
+    @@quest_flag_n = val.to_i
+  end
 
   def self.make_quest_flag
     @@quest_flag_n += 1

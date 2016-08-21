@@ -17,18 +17,46 @@ class Spawner
     end
   end
 
-  def area_covered
-    @nodes.each
+  def node_ids
+    @nodes.collect(&:id).each
+  end
+
+  def creature_id
+    @creature.id
   end
 
   def to_sxp
     prefix = [:spawner]
-    creature = [:':creature', @creature.id]
-    area = [:':area', @nodes.collect(&:id)]
+    creature = [:':creature', creature_id]
+    area = [:':area', node_ids.to_a]
     (prefix + creature + area).to_sxp
   end
 
+  def self.from_sxp(arg)
+    arr = Reloader.assert_first :spawner, arg
+    ReloadedSpawner.new.tap do |spawn|
+      Reloader.hash_like(arr) do |k, v|
+        case k
+        when :':creature'
+          spawn.creature_id = v
+        when :':area'
+          spawn.node_ids = v
+        end
+      end
+    end
+  end
+
   private :spread_from_center
+end
+
+class ReloadedSpawner < Spawner
+  attr_accessor :node_ids, :creature_id
+
+  def initialize
+    @node_ids = []
+    @creature_id = nil
+  end
+
 end
 
 class SpawnerSet
@@ -62,7 +90,7 @@ class SpawnerSet
   def self.from_sxp(arg)
     arr = Reloader.assert_first :'spawner-set', arg
     SpawnerSet.new.tap do |set|
-      Reloader.list_like(arr) { |x| set.push Reloader.instance.load(x) }
+      Reloader.list_like(arr) { |x| set.push x }
     end
   end
 

@@ -111,16 +111,15 @@ class Location
     links = [:':links', @links.dup]
     contents = [:':contents', @contents.dup]
     civilized = [:':civilized', civilized?]
-    meta = [:':meta', MetaData.new(:':generic-name' => generic_name)]
-    # TODO We definitely need to save/load valid-creatures/plants in the meta field,
-    #      but to do that we need them to be to_sxp'able, which is tricky since they
-    #      might be Class objects
+    meta = [:':meta', MetaData.new(:':generic-name' => generic_name,
+                                   :':creatures' => ValidityWrapper.new(@valid_creatures),
+                                   :':plants' => ValidityWrapper.new(@valid_plants))]
     (prefix + country + links + contents + civilized + meta).to_sxp
   end
 
   def self.from_sxp(arg)
     id, name, *arr = Reloader.assert_first :location, arg
-    Location.new(id, name, '').tap do |loc|
+    Location.new(id, name, nil).tap do |loc|
       Reloader.hash_like(arr) do |k, v|
         case k
         when :':country'
@@ -135,6 +134,8 @@ class Location
         when :':meta'
           meta = Reloader.load v
           loc.instance_variable_set :@generic_name, meta[:':generic-name']
+          loc.instance_variable_set :@valid_creatures, Reloader.load(meta[:':creatures']).data
+          loc.instance_variable_set :@valid_plants, Reloader.load(meta[:':plants']).data
         end
       end
     end

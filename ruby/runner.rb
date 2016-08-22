@@ -45,11 +45,11 @@ load './ruby/genner.rb'
 require 'json'
 require 'sxp'
 
-#data = Loader.load JSON.parse(ARGF.read)
-#gen = Genner.new data
-#puts gen.generate.to_sxp
+data = Loader.load JSON.parse(ARGF.read)
+gen = Genner.new data
+puts gen.generate.to_sxp
 
 # This is temporary to test things ; it WILL NOT be in the final version in this form
-sxp = SXP::Reader::Scheme.read_file "./temp/system1.txt"
-gdata = GData.from_sxp sxp
-STDERR.puts gdata.result_structure.to_sxp
+#sxp = SXP::Reader::Scheme.read_file "./temp/system1.txt"
+#gdata = GData.from_sxp sxp
+#STDERR.puts gdata.result_structure.to_sxp

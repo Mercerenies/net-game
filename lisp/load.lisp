@@ -55,7 +55,7 @@
     ; Note that the fourth element of data is meta and is intentionally ignored by this segment of the program
     (values
      (destructuring-bind (map-sym . locs) (first data)
-       (unless (eq map-sym 'map) (error "Flawed data"))
+       (unless (eq map-sym 'map) (error "Flawed data - map"))
        (loop for (loc id name . rst) in locs
              for inst = (make-location id name :short-name name)
              do (loop for elems = rst then (cdr (cdr elems))
@@ -72,15 +72,15 @@
                            (:meta))) ; Explicitly ignore this case
              collect inst))
      (destructuring-bind (anim-sym . anims) (second data)
-       (unless (eq anim-sym 'creature-set) (error "Flawed data"))
+       (unless (eq anim-sym 'creature-set) (error "Flawed data - creature-set"))
        (loop for data in anims
              collect (apply #'load-creature (first data) (rest data))))
      (destructuring-bind (spawner-sym . spawners) (third data)
-       (unless (eq spawner-sym 'spawner-set) (error "Flawed data"))
+       (unless (eq spawner-sym 'spawner-set) (error "Flawed data - spawner-set"))
        (loop for data in spawners
              collect (apply #'load-spawner (first data) (rest data))))
      (destructuring-bind (quest-sym . quests) (fourth data)
-       (unless (eq quest-sym 'quest-set) (error "Flawed data"))
+       (unless (eq quest-sym 'quest-set) (error "Flawed data - quest-set"))
        (loop with hash = (make-hash-table)
              for data in quests
              for quest = (apply #'load-quest (first data) (rest data))
@@ -145,7 +145,7 @@
         do (case key
              (:type (setf type value))
              (:food (progn
-                      (unless (eq (car value) 'food) (error "Flawed data"))
+                      (unless (eq (car value) 'food) (error "Flawed data - food"))
                       (setf food (apply #'make-food-data (cdr value)))))
              (:growth-time (setf growth-time value)))
         finally (let ((plant (make-plant name :type type :food food :growth-time growth-time)))

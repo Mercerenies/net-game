@@ -6,6 +6,8 @@
 
 (defparameter *socket* nil)
 
+(defparameter *client-loc* nil)
+
 (defun handle-args-and-play (argv &aux (*port* *port*) (*socket* *socket*))
   (let ((filename "./temp/system.txt"))
     (loop for rest = argv then (cddr rest)
@@ -25,5 +27,13 @@
            (run-game :filename filename)
         (when (open-stream-p *socket*)
           (format *socket* "quit~%"))))))
+
+(defmethod do-action :after (act obj preps)
+  (declare (ignore act obj preps))
+  (when (and *client-loc* (not (eql *client-loc* (get-loc *player*))))
+    nil))
+; /////
+; TODO Check for updates in *socket* to update the world
+; TODO Send a check-in signal in any case
 
 (handle-args-and-play (ng-os:argv))

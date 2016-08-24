@@ -1,5 +1,3 @@
-# ///// Lua toplevel via sockets; yes, it's time. Good luck, Silvio :)
-# Also, remember to change compatibility stuff so GNU CLISP is official
 import sys
 import collections
 import locker

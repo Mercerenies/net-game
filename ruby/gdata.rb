@@ -1,6 +1,4 @@
 
-# ///// Continue factoring things into methods; we want to minimize any direct read/write on the fields
-
 class GData
   attr_reader :node, :map
 
@@ -73,9 +71,19 @@ class GData
     @spawners.push(*elems)
   end
 
+  # Iterates over the spawners in the spawner set
+  def each_spawner(&block)
+    @spawners.each(&block)
+  end
+
   # Adds one or more quests to the quest set
   def add_quests(*elems)
     @quests.push(*elems)
+  end
+
+  # Iterates over the quests in the quest set
+  def each_quest(&block)
+    @quests.each(&block)
   end
 
   # Select all nodes on the map for which the predicate returns truthy
@@ -86,19 +94,23 @@ class GData
   # Convert the node into a map and add the locations to it
   def node_to_map
     new_map = Map.new @node.expand_to_map(gdata: self)
-    if @map.nil?
+    if map.nil?
       @map = new_map
     else
       # TODO Connect the old and the new using connectors
-      new_map.each { |loc| @map.push loc }
+      new_map.each { |loc| map.push loc }
     end
   end
 
   # Return the generator data in an appropriate output list format
   def result_structure
-    meta = MetaData.new(:':curr-id' => Node.current_id,
-                        :':curr-quest-flag' => QuestMaker.current_quest_flag)
-    [@map, @creatures, @spawners, @quests, meta]
+    AlphaStructure.new map, @creatures, @spawners, @quests, get_meta_data
+  end
+
+  # Return the metadata object that will be stored with the result structure
+  def get_meta_data
+    MetaData.new(:':curr-id' => Node.current_id,
+                 :':curr-quest-flag' => QuestMaker.current_quest_flag)
   end
 
   def self.from_sxp(arg)
@@ -113,6 +125,22 @@ class GData
       Node.current_id = meta[:':curr-id']
       QuestMaker.current_quest_flag = meta[:':curr-quest-flag']
     end
+  end
+
+end
+
+class AlphaStructure
+
+  def initialize(map, creatures, spawners, quests, meta)
+    @map = map
+    @creatures = creatures
+    @spawners = spawners
+    @quests = quests
+    @meta = meta
+  end
+
+  def to_sxp
+    [:alpha, @map, @creatures, @spawners, @quests, @meta].to_sxp
   end
 
 end

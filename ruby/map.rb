@@ -21,7 +21,7 @@ class Map
   end
 
   def to_sxp
-    ([:map] + @ary).to_sxp
+    ([:map] + to_ary).to_sxp
   end
 
   def self.from_sxp(arg)
@@ -30,15 +30,15 @@ class Map
   end
 
   def [](val)
-    @ary.find { |x| x.id == val }
+    to_ary.find { |x| x.id == val }
   end
 
   def put_somewhere(obj, type = Object, &block)
     block = proc { true } unless block
     weight = Proc.new { |x| 1 / (x.count_items(type) + 1) }
-    total = @ary.select( &block ).map( &weight ).reduce(:+)
+    total = select( &block ).map( &weight ).reduce(:+)
     num = rand total
-    result = @ary.detect do |x|
+    result = detect do |x|
       next unless block.call x
       num -= weight.(x)
       num <= 0
@@ -59,7 +59,7 @@ class Location
 
   attr_reader :id, :name, :country_name, :generic_name
 
-  def_delegators :@contents, :each, :[], :[]=, :push, :delete, :pop
+  def_delegators :@contents, :each, :push, :delete
   def_delegator :@links, :each, :each_link
 
   def initialize(id, name, country_name, generic_name: nil, valid_creatures: nil, valid_plants: nil)
@@ -86,10 +86,10 @@ class Location
   end
 
   def long_name
-    if @country_name
-      "#{@name}, #{@country_name}"
+    if country_name
+      "#{name}, #{country_name}"
     else
-      @name
+      name
     end
   end
 
@@ -106,14 +106,14 @@ class Location
   end
 
   def to_sxp
-    prefix = [:location, @id, @name]
-    country = @country_name ? [:':country', @country_name] : []
-    links = [:':links', @links.dup]
-    contents = [:':contents', @contents.dup]
+    prefix = [:location, id, name]
+    country = country_name ? [:':country', country_name] : []
+    links = [:':links', each_link.to_a]
+    contents = [:':contents', each.to_a]
     civilized = [:':civilized', civilized?]
     meta = [:':meta', MetaData.new(:':generic-name' => generic_name,
-                                   :':creatures' => ValidityWrapper.new(@valid_creatures),
-                                   :':plants' => ValidityWrapper.new(@valid_plants))]
+                                   :':creatures' => valid_creatures_wrapper,
+                                   :':plants' => valid_plants_wrapper)]
     (prefix + country + links + contents + civilized + meta).to_sxp
   end
 
@@ -143,6 +143,14 @@ class Location
 
   def count_items(type = Item)
     self.count { |x| x.kind_of? type }
+  end
+
+  def valid_creatures_wrapper
+    ValidityWrapper.new @valid_creatures
+  end
+
+  def valid_plants_wrapper
+    ValidityWrapper.new @valid_plants
   end
 
 end

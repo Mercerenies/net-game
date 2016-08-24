@@ -52,9 +52,11 @@
 
 (defun load-data (&key (file *standard-input*))
   (let ((data (with-scheme-notation (read file))))
-    ; Note that the fourth element of data is meta and is intentionally ignored by this segment of the program
+    ; Note that the sixth element of data is meta and is intentionally ignored by this segment of the program
+    (unless (eq (first data) 'alpha)
+      (error "Flawed data - alpha"))
     (values
-     (destructuring-bind (map-sym . locs) (first data)
+     (destructuring-bind (map-sym . locs) (second data)
        (unless (eq map-sym 'map) (error "Flawed data - map"))
        (loop for (loc id name . rst) in locs
              for inst = (make-location id name :short-name name)
@@ -71,15 +73,15 @@
                            (:civilized (setf (location-civilized inst) value))
                            (:meta))) ; Explicitly ignore this case
              collect inst))
-     (destructuring-bind (anim-sym . anims) (second data)
+     (destructuring-bind (anim-sym . anims) (third data)
        (unless (eq anim-sym 'creature-set) (error "Flawed data - creature-set"))
        (loop for data in anims
              collect (apply #'load-creature (first data) (rest data))))
-     (destructuring-bind (spawner-sym . spawners) (third data)
+     (destructuring-bind (spawner-sym . spawners) (fourth data)
        (unless (eq spawner-sym 'spawner-set) (error "Flawed data - spawner-set"))
        (loop for data in spawners
              collect (apply #'load-spawner (first data) (rest data))))
-     (destructuring-bind (quest-sym . quests) (fourth data)
+     (destructuring-bind (quest-sym . quests) (fifth data)
        (unless (eq quest-sym 'quest-set) (error "Flawed data - quest-set"))
        (loop with hash = (make-hash-table)
              for data in quests

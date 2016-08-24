@@ -1,6 +1,12 @@
 
 require 'singleton'
 
+class DeltaError < StandardError
+  def initialize(msg = "Error in delta class")
+    super
+  end
+end
+
 class SExprLoadError < StandardError
   def initialize(msg = "Error loading S-Expression")
     super

@@ -6,6 +6,8 @@
 
 ; (ql:quickload 'cl-json)
 
+(load "./lisp/os.lisp")
+
 (load "./lisp/scheme.lisp")
 
 (load "./lisp/util.lisp")

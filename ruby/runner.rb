@@ -60,3 +60,5 @@ puts gen.generate.to_sxp
 #sxp = SXP::Reader::Scheme.read_file "./temp/system1.txt"
 #gdata = GData.from_sxp sxp
 #STDERR.puts gdata.result_structure.to_sxp
+
+# ///// Need to set up this engine to use command line arguments to differentiate between alpha/delta

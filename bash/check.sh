@@ -4,7 +4,7 @@ function onpath {
     which $1 >/dev/null 2>/dev/null
 }
 
-rein=1
+check_flock=1
 lisp=''
 
 case "$1" in
@@ -18,8 +18,8 @@ esac
 
 for var in "$@"; do
     case "$var" in
-        -no-rein)
-            rein=0
+        -no-flock)
+            check_flock=0
             ;;
         *)
             echo "error: Invalid option '$var'."
@@ -163,14 +163,14 @@ if [ ! -d './temp' ]; then
 else
     echo ' Yes'
 fi
-if [ "$rein" != 0 ]; then
+if [ "$check_flock" != 0 ]; then
     echo -n 'Is flock supported?'
     type flock >/dev/null 2>/dev/null
     if [ "$?" != 0 ]; then
         echo ' No'
         echo 'error: flock is not supported.'
-        echo '  * flock is required for the reinforcement engine (-r).'
-        echo '  * To ignore this error, pass -no-rein to the check script.'
+        echo '  * flock is required for certain optional features in this game.'
+        echo '  * To ignore this error, pass -no-flock to the check script.'
         exit 1
     else
         echo ' Yes'

@@ -1,7 +1,5 @@
 (in-package #:net-game)
 
-; ///// Quest system
-
 ; TODO We need some more check-type calls; they're nice and self-documenting
 
 (defclass player (named located damageable carrying)

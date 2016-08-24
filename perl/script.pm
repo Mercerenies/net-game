@@ -8,8 +8,6 @@ use Data::Dumper;
 my $LINKVERB = "(?:is|was|are|were)";
 my $ARTICLE = "(?:an? |the )";
 
-# ///// Refactor this file into something much less messy... Good luck :)
-
 local $_;
 
 # find_occu($title, $summary, %occu);

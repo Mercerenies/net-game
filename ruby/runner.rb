@@ -61,4 +61,4 @@ puts gen.generate.to_sxp
 #gdata = GData.from_sxp sxp
 #STDERR.puts gdata.result_structure.to_sxp
 
-# ///// Need to set up this engine to use command line arguments to differentiate between alpha/delta
+# TODO Need to set up this engine to use command line arguments to differentiate between alpha/delta

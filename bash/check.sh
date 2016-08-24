@@ -177,5 +177,11 @@ if [ "$check_flock" != 0 ]; then
     fi
 fi
 
+# TODO Update the check script once the self-modifying system is up and running and dependencies are more clear
+echo
+echo 'warning: Experimental gameplay version.'
+echo '  * You are playing an experimental version of the game that may utilize'
+echo '  * some undocumented language or system features that are not tested here.'
+
 echo
 echo 'Passed all checks. Enjoy your gameplay.'

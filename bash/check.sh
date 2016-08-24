@@ -4,6 +4,30 @@ function onpath {
     which $1 >/dev/null 2>/dev/null
 }
 
+rein=1
+lisp=''
+
+case "$1" in
+    -*)
+        ;;
+    *)
+        lisp="$1"
+        shift
+        ;;
+esac
+
+for var in "$@"; do
+    case "$var" in
+        -no-rein)
+            rein=0
+            ;;
+        *)
+            echo "error: Invalid option '$var'."
+            exit 1
+            ;;
+    esac
+done
+
 echo
 echo 'Checking whether your system is set up correctly to handle the game...'
 
@@ -95,8 +119,8 @@ echo
 echo 'Checking Common Lisp...'
 clisp='clisp'
 setclisp=0
-if [ -n "$1" ]; then
-    clisp=$1
+if [ -n "$lisp" ]; then
+    clisp=$lisp
     setclisp=1
 fi
 echo "Common Lisp implementation is \`$clisp\`."
@@ -138,6 +162,19 @@ if [ ! -d './temp' ]; then
     fi
 else
     echo ' Yes'
+fi
+if [ "$rein" != 0 ]; then
+    echo -n 'Is flock supported?'
+    type flock >/dev/null 2>/dev/null
+    if [ "$?" != 0 ]; then
+        echo ' No'
+        echo 'error: flock is not supported.'
+        echo '  * flock is required for the reinforcement engine (-r).'
+        echo '  * To ignore this error, pass -no-rein to the check script.'
+        exit 1
+    else
+        echo ' Yes'
+    fi
 fi
 
 echo

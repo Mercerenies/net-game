@@ -17,5 +17,10 @@ while true do
    for elem in data:gmatch '%S+' do
       table.insert(tokens, elem)
    end
-   dispatch[ tokens[1] ]()
+   local func = dispatch[ tokens[1] ]
+   if type(func) == 'function' then
+      func()
+   else
+      io.stderr:write("WARNING: Unknown message '" .. tokens[1] .. "' received!\n")
+   end
 end

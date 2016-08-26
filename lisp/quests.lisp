@@ -117,3 +117,29 @@
 
 (defun quest-status-update (details)
   (quest-status-update-instance details (quest-nature details)))
+
+; Uses *quests*
+(defun total-quest-count ()
+  (hash-table-count *quests*))
+
+; Uses *player*
+(defun started-quests ()
+  ; Returns quests which have been started, including those that are completed
+  (active-quests *player*))
+
+; Uses *player* indirectly
+(defun finished-quests ()
+  (remove-if (complement #'is-quest-completed)
+             (started-quests)))
+
+; Uses *player*, *quests*
+(defun percent-started-quests ()
+  (if (zerop (total-quest-count))
+      1
+      (/ (length (started-quests)) (total-quest-count))))
+
+; Uses *player*, *quests*
+(defun percent-finished-quests ()
+  (if (zerop (total-quest-count))
+      1
+      (/ (length (finished-quests)) (total-quest-count))))

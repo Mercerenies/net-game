@@ -4,9 +4,15 @@
   (:nicknames :ng-os)
   (:export :argv
            :full-exit
-           :connect-to-socket
-           :socket-listen))
+           :connect-to-socket))
 (in-package #:net-game-os)
+
+#|
+ | This file consists of all of the GNU-specific code required to run the game. If you
+ | wish to use another Common Lisp implementation, all you need to do is add a line to
+ | each of these functions mapping the function to its implementation-specific name
+ | in the implementation of your choice.
+ |#
 
 (defun argv ()
   (or #+clisp (return-from argv ext:*args*)

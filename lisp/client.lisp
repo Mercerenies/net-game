@@ -51,7 +51,7 @@
 (defun client-waiting-on (sym)
   (assoc sym *client-pending*))
 
-(defun client-request (sym)
+(defun client-request (sym) ; TODO Some way of merging delta files so Lua can parallelize better
   (let ((worldname (client-make-fname))
         (donename (client-make-fname)))
     (format *socket* "need ~(~A~) ~A ~A~%" sym worldname donename)

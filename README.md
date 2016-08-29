@@ -13,11 +13,13 @@ This game (specifically, the Python part) accesses the Internet. Your antivirus 
 
 # Getting Started
 
-Once you've cloned this repository, you'll want to run `./bash/check.sh` to determine any dependencies you're missing. Note that all scripts should be run with the top-level project directory as the current directory. The script will not attempt to install any missing dependencies but will simply report them; see the Dependencies section below for details. Once the check script passes, you're ready to play. You can use `./bash/master.sh --help` to get a full set of commands, but a good initial gameplay session can be obtained through the following command:
+Once you've cloned this repository, you'll want to run `./bash/check.sh` to determine any dependencies you're missing. Note that all scripts should be run with the top-level project directory as the current directory. The script will not attempt to install any missing dependencies but will simply report them; see the Dependencies section below for details. Once the check script passes, you're ready to play.
 
-    $ ./bash/master.sh -P 3 -w 4 -a 4 -1 -2 -3 -4 -l <name-of-common-lisp-implementation>
+There are currently two different ways to play the game: Legacy Mode and Client Mode. Client Mode requires additional dependencies such as the Lua programming language but has the added benefit of being self-modifying. Legacy Mode is still fully supported through `./bash/master.sh`. The following command is a good initial play.
 
-The `-P`, `-w`, and `-a` arguments tell the system to find places, weapons, and animals (the numbers correspond to the number of attempts). The `-1 -2 -3 -4` specifies that all four stages of the pipeline should be run, and the `-l ...` specifies the name of your Common Lisp implementation (since many such implementations install themselves in non-standard locations).
+    $ ./bash/master.sh -P 3 -w 4 -a 4 -1 -2 -3 -4
+
+The `-P`, `-w`, and `-a` arguments tell the system to find places, weapons, and animals (the numbers correspond to the number of attempts). The `-1 -2 -3 -4` specifies that all four stages of the pipeline should be run.
 
 Note that, if you lose the game and would like to try again with the same world data, simply leave off the `-1 -2 -3` and the system will only run the Common Lisp portion of the pipeline. Likewise, if you want to keep the pages but randomly generate a new world with the same information, use `-3 -4` to only run the latter two stages of the pipeline.
 
@@ -41,10 +43,23 @@ Note that Python, Perl, and Ruby are expected to be in /usr/bin. The Lisp implem
 * SXP gem (`gem install sxp`)
 
 ###### Common Lisp
-* Any conforming Common Lisp implementation (with CLOS)
-(NOTE: The system defaults to assuming GNU CLISP is on the path. If you wish to use another implementation, you may have to pass its name as a command line argument to some scripts.)
+* GNU CLISP (if you wish to use another implementation, you merely need to write a small shim inside of `./lisp/os.lisp` to bridge the gap)
 
-# Master Script Arguments
+##### Lua
+* Lua 5.2 or newer
+* LuaSocket module
+
+##### Bash
+* Bash (any reasonably modern version should suffice)
+* `flock` (only required for the reinforcement learning engine)
+
+# Client Mode
+
+Client Mode allows the game to communicate with its own internal server and modify itself to make gameplay last longer. Client Mode requires a recent Lua implementation, as well as GNU CLISP (other CLISP implementations may work with some amount of effort; see above).
+
+To run the game in Client Mode, use `./bash/client.sh` (no arguments). The game will start almost immediately, but the world will be relatively empty. After a short period of time wandering around, you will start to notice more people and objects in the game world.
+
+# Legacy Mode
 
 There are several scripts in the `./bash/` directory, but (aside from the initial `./bash/check.sh` script) the entrypoint to all of these is `./bash/master.sh`. Running the script with `--help` as the only option will print a summary of the command line flags available.
 

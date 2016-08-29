@@ -28,6 +28,7 @@ sub find_occu {
          \&Filters::slash_phrase,
          \&Filters::appositive_phrase,
          \&Filters::quoted_phrase,
+         \&Filters::people_titles,
          sub { for (@_) { s/"//g; } },
          sub { for (@_) { s/,//g; } }
         ],

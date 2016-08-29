@@ -29,7 +29,7 @@
         collect (subseq string start finish)
         until (null finish)))
 
-(defun run-game (&optional (filename "./temp/system.txt"))
+(defun run-game (&key (filename "./temp/system.txt"))
   (multiple-value-bind (*world* *creatures* *spawners* *quests*) (with-open-file (file filename)
                                                                    (load-data :file file))
     (let ((*player* (some (lambda (x)

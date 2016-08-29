@@ -15,4 +15,8 @@ class Genner
     @data.result_structure
   end
 
+  def alpha_structure
+    @data.result_structure
+  end
+
 end

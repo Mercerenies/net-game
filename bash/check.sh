@@ -4,7 +4,8 @@ function onpath {
     which $1 >/dev/null 2>/dev/null
 }
 
-check_flock=1
+check_flock=0
+check_lua=0
 lisp=''
 
 case "$1" in
@@ -18,8 +19,11 @@ esac
 
 for var in "$@"; do
     case "$var" in
-        -no-flock)
-            check_flock=0
+        -rein)
+            check_flock=1
+            ;;
+        -client)
+            check_lua=1
             ;;
         *)
             echo "error: Invalid option '$var'."
@@ -133,9 +137,37 @@ if ! onpath $clisp; then
         echo '  * implementation to this script.'
     fi
     exit 1
+else
+    echo ' Yes'
+    if [ $clisp != 'clisp' ]; then
+        echo 'warning: Using non-default Common Lisp implementation.'
+        echo '  * The game assumes GNU CLISP as the Common Lisp implementation.'
+        echo '  * Using another version may require some modification to ./lisp/os.lisp.'
+    fi
 fi
-echo ' Yes'
 echo 'Common Lisp is ready.'
+
+# Lua Stage
+if [ "$check_lua" != 0 ]; then
+    echo
+    echo 'Checking Lua...'
+    echo -n 'Does Lua exist?'
+    if ! onpath lua; then
+        echo ' No'
+        echo 'error: Cannot find Lua.'
+        echo '  * Lua is required for the client self-modifying'
+        echo '  * gameplay but unnecessary for the legacy system.'
+        exit 1
+    fi
+    echo ' Yes'
+    echo -n 'Does the luasocket module exist?'
+    if ! lua -e 'require "socket"' >/dev/null 2>/dev/null; then
+        echo ' No'
+        echo 'error: Please install the luasocket module.'
+        exit 1
+    fi
+    echo ' Yes'
+fi
 
 # Misc Stage
 echo
@@ -169,8 +201,8 @@ if [ "$check_flock" != 0 ]; then
     if [ "$?" != 0 ]; then
         echo ' No'
         echo 'error: flock is not supported.'
-        echo '  * flock is required for certain optional features in this game.'
-        echo '  * To ignore this error, pass -no-flock to the check script.'
+        echo '  * flock is required for the reinforcement learning'
+        echo '  * engine, which is optional and can be disabled.'
         exit 1
     else
         echo ' Yes'

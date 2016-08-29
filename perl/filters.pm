@@ -37,6 +37,12 @@ package Filters {
         }
     }
 
+    sub people_titles {
+        for (@_) {
+            s/(Jr\.?|Sr\.|CC|[CKDGOM]BE)//g
+        }
+    }
+
 }
 
 sub apply_filter {

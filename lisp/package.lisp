@@ -6,6 +6,8 @@
 
 ; (ql:quickload 'cl-json)
 
+(load "./lisp/os.lisp")
+
 (load "./lisp/scheme.lisp")
 
 (load "./lisp/util.lisp")
@@ -28,5 +30,6 @@
 (load "./lisp/spawner.lisp")
 (load "./lisp/combat.lisp")
 
+(load "./lisp/delta.lisp")
 (load "./lisp/godmode.lisp")
 (load "./lisp/play.lisp")

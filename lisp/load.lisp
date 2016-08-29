@@ -50,6 +50,30 @@
     (when new-loc
       (push obj (location-contents new-loc)))))
 
+(defun load-loc (loc)
+  (destructuring-bind (loc id name . rst) loc
+    (let ((inst (make-location id name :short-name name)))
+      (loop for elems = rst then (cdr (cdr elems))
+            for key = (first elems)
+            for value = (second elems)
+            while elems
+            do (case key
+                 (:country (setf (get-name inst) (format nil "~A, ~A"
+                                                         (get-name inst)
+                                                         value)))
+                 (:links (setf (location-exits inst) value))
+                 (:contents (mapc #'(lambda (x) (load-object inst x)) value))
+                 (:civilized (setf (location-civilized inst) value))
+                 (:meta))) ; Explicitly ignore this case
+      inst)))
+
+(defun load-with (data func header)
+  (unless (eq (first data) header)
+    (error "Flawed data - ~(~S~)" header))
+  (loop for dd in (rest data)
+        collect (apply func dd)))
+
+; Returns (values map creatures spawners quests)
 (defun load-data (&key (file *standard-input*))
   (let ((data (with-scheme-notation (read file))))
     ; Note that the sixth element of data is meta and is intentionally ignored by this segment of the program
@@ -58,29 +82,12 @@
     (values
      (destructuring-bind (map-sym . locs) (second data)
        (unless (eq map-sym 'map) (error "Flawed data - map"))
-       (loop for (loc id name . rst) in locs
-             for inst = (make-location id name :short-name name)
-             do (loop for elems = rst then (cdr (cdr elems))
-                      for key = (first elems)
-                      for value = (second elems)
-                      while elems
-                      do (case key
-                           (:country (setf (get-name inst) (format nil "~A, ~A"
-                                                                   (get-name inst)
-                                                                   value)))
-                           (:links (setf (location-exits inst) value))
-                           (:contents (mapc #'(lambda (x) (load-object inst x)) value))
-                           (:civilized (setf (location-civilized inst) value))
-                           (:meta))) ; Explicitly ignore this case
-             collect inst))
-     (destructuring-bind (anim-sym . anims) (third data)
-       (unless (eq anim-sym 'creature-set) (error "Flawed data - creature-set"))
-       (loop for data in anims
-             collect (apply #'load-creature (first data) (rest data))))
-     (destructuring-bind (spawner-sym . spawners) (fourth data)
-       (unless (eq spawner-sym 'spawner-set) (error "Flawed data - spawner-set"))
-       (loop for data in spawners
-             collect (apply #'load-spawner (first data) (rest data))))
+       (loop for loc in locs
+             collect (load-loc loc)))
+     (destructuring-bind anims (third data)
+       (load-with anims #'load-creature 'creature-set))
+     (destructuring-bind spawners (fourth data)
+       (load-with spawners #'load-spawner 'spawner-set))
      (destructuring-bind (quest-sym . quests) (fifth data)
        (unless (eq quest-sym 'quest-set) (error "Flawed data - quest-set"))
        (loop with hash = (make-hash-table)

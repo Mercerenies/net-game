@@ -23,6 +23,7 @@ while getopts 'l:C:f:' opt; do
             ;;
         f)
             infile="-file $OPTARG"
+            ;;
     esac
 done
 

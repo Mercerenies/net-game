@@ -32,6 +32,14 @@ class NodeStage < Stage
     node
   end
 
+  def make_default_node
+    new_country = PlacePage.new({
+                                  'name' => Namer.instance.sample,
+                                  'info' => ['country', 'country']
+                                })
+    generate_node(new_country, Level.country)
+  end
+
   def run(data)
     nodes = []
     data.consume_each do |elem|
@@ -48,17 +56,20 @@ class NodeStage < Stage
       end
     end
     if nodes.length < 2
-      new_country = PlacePage.new({
-        'name' => Namer.instance.sample,
-        'info' => ['country', 'country']
-      })
-      nodes << generate_node(new_country, Level.country)
+      default = make_default_node
+      nodes << default if default
     end
     toplevel = Node.new '', Level.top
     nodes.each { |obj| toplevel << obj }
     data.node = toplevel
   end
 
+end
+
+class DeltaNodeStage < NodeStage
+  def make_default_node
+    nil
+  end
 end
 
 # Stage 2 - Pre-generate any bridges that can be made
@@ -142,7 +153,8 @@ class FoodStage < Stage
       end
     end
     data.map.each do |loc|
-      if rand < 0.90
+      current_count = loc.count_items Plant
+      if rand < 0.90 / (current_count + 1)
         # Try to put some sort of food at the location, if possible
         food = foods.shift { |f| loc.can_have? f }
         if food

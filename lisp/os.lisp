@@ -4,7 +4,8 @@
   (:nicknames :ng-os)
   (:export :argv
            :full-exit
-           :connect-to-socket))
+           :connect-to-socket
+           :socket-listen))
 (in-package #:net-game-os)
 
 (defun argv ()
@@ -18,3 +19,4 @@
 (defun connect-to-socket (port)
   (or #+clisp (socket:socket-connect port) ; TODO Handle the OS-ERROR if the connection fails
       (error "Unsupported CL - connect-to-socket")))
+

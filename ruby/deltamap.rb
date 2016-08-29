@@ -105,7 +105,7 @@ class DeltaLocation < Location
     #  - New objects can be added. Old objects should not be removed or modified in
     #    any way.
     #  - Basic node properties, such as name and allowable creatures, are read-only.
-    [:location, :':remove-links', @sans_links, :':add-links', @new_links, :':add-contents', @new_contents]
+    [:location, id, :':remove-links', @sans_links, :':add-links', @new_links, :':add-contents', @new_contents]
   end
 
 end

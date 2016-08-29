@@ -108,3 +108,14 @@ waitress               waiter
 scientist              scientist
 attorney               scholar
 activist               activist
+dancer                 actor
+screenwriter           writer
+flyweight champion     fighter
+professor              scholar
+statesman              leader
+comedian               actor
+khedive                leader
+lama                   clergy
+Internet personality   actor
+equestrian rider       athlete
+economist              scientist

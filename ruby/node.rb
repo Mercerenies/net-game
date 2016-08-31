@@ -58,7 +58,7 @@ class Node
     @contents.each &:waterfall
   end
 
-  def expand_to_map(country: nil, gdata:) # TODO Should the country: arg be required?
+  def expand_to_map(existing: nil, country: nil, gdata:) # TODO Should the country: arg be required?
     if @contents.empty?
       Array[Location.new id, name, country, generic_name: country || "Map"]
     else
@@ -82,7 +82,7 @@ class Node
         end
       end
       country ||= self.name unless self.name.empty?
-      nodes = @contents.map { |obj| obj.expand_to_map(country: country, gdata: gdata) }
+      nodes = @contents.map { |obj| obj.expand_to_map(existing: existing, country: country, gdata: gdata) }
       use_real_bridge = (Util.median(nodes.map &:size) > 3)
       bridge_nodes = []
       nodes.zip(links).map.with_index do |arg, n0|
@@ -102,6 +102,16 @@ class Node
         end
       end
       nodes = nodes.flatten
+      # Bridge to the rest of the map, if needed
+      if existing and use_real_bridge
+        if gdata.has_bridge?
+          bridge = gdata.get_a_bridge
+        else
+          bridge = Bridge.create_random
+        end
+        bridge.each_node { |bridge_node| bridge_nodes << bridge_node }
+        bridge.bridge_on nodes, existing.to_a
+      end
       if @level.kind_of? LevelTwo
         # Put a warp point somewhere on the map, about once per country
         # TODO This distribution is not working; sometimes they end up on the same spot

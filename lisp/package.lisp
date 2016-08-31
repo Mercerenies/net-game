@@ -30,6 +30,7 @@
 (load "./lisp/spawner.lisp")
 (load "./lisp/combat.lisp")
 
+(load "./lisp/updates.lisp")
 (load "./lisp/delta.lisp")
 (load "./lisp/godmode.lisp")
 (load "./lisp/play.lisp")

@@ -6,7 +6,10 @@
   ((active-quests :accessor active-quests
                   :initarg :active-quests
                   :initform nil
-                  :type list))
+                  :type list)
+   (visited-locs :accessor visited-locs
+                 :initform (make-hash-table)
+                 :type hash-table))
   (:default-initargs :name "Sandy"))
 
 (defparameter *do-exit*
@@ -14,7 +17,7 @@
 
 (defparameter *player* nil)
 
-(defparameter *world* nil)
+(defparameter *world* nil) ; TODO Make this a hash, not a list
 
 (defparameter *state* (list 'global))
 
@@ -22,6 +25,17 @@
 
 (defun make-player ()
   (make-instance 'player))
+
+(defun visited-count (player)
+  (hash-table-count (visited-locs player)))
+
+(defmethod move-object :after ((obj player) (new-loc location))
+  (setf (gethash (get-id new-loc) (visited-locs obj)) t))
+
+(defmethod system-keys append ((obj player))
+           `((nil "Percent Explored" ,(if *world*
+                                          (* 100.0 (/ (visited-count *player*) (length *world*)))
+                                          0.0))))
 
 (defun word-split (string &optional (token #\SPACE))
   (loop for start = 0 then (1+ finish)
@@ -67,7 +81,8 @@
                          (mapcar (lambda (x)
                                    (get-numbered-name (find x *world* :key #'get-id)))
                                  (location-exits (get-loc *player*)))
-                         (mapcar #'get-numbered-name (location-contents (get-loc *player*)))
+                         (mapcar #'get-numbered-name (remove-if-not #'(lambda (x) (typep x 'named))
+                                                                    (location-contents (get-loc *player*))))
                          (mapcar #'get-numbered-name (inv-items *player*))
                          (inv-current-weight *player*)
                          (inv-max-weight *player*)

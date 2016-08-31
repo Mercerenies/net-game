@@ -1,5 +1,5 @@
 
--- ///// Respond to 'ter' and 'need'. Note that the Ruby delta system (and cmd args) is untested
+-- TODO Background jobs started by this still run, even if the game completes; can we kill them?
 
 local gensema = require 'lua/gensema'
 local filenamer = require 'lua/filenamer'
@@ -12,7 +12,11 @@ local dispatch = {
 }
 
 local req_objs = {
-   quests = function () return query.Query.new():people(1):celebs(1) end
+   quests = function () return query.Query.new():people(1):celebs(1) end,
+   map = function () return query.Query.new():places(3) end,
+   wildlife = function () return query.Query.new():animals(2) end,
+   foliage = function () return query.Query.new():foods(2) end,
+   equipment = function () return query.Query.new():weapons(2) end
 }
 
 local allqueries = {}

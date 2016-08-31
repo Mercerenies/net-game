@@ -32,7 +32,9 @@ class Reloader
       :animal => Animal,
       :spawner => Spawner,
       :quest => Quest,
-      :validity => ValidityWrapper
+      :validity => ValidityWrapper,
+      :plant => Plant,
+      :food => Food
     }
   end
 

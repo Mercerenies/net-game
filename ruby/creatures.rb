@@ -65,11 +65,15 @@ end
 class Animal < Creature
   extend Forwardable
 
-  def_delegators :@page, :name, :pack, :speed, :threat, :size
+  def_delegators :@page, :pack, :speed, :threat, :size
 
   def initialize(data)
     super()
     @page = data
+  end
+
+  def name
+    Util.titlecase @page.name
   end
 
   def air?

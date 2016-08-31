@@ -79,6 +79,10 @@ class NPC < Person
     @quest_list.push qid
   end
 
+  def quest_count
+    @quest_list.size
+  end
+
   def to_sxp
     [:npc, full_name, :':short-name', name, :':gender', @gender, :':job', job, :':job-name', job_name,
      :':old-job', old_job, :':old-job-name', old_job_name, :':quest-list', @quest_list].to_sxp

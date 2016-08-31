@@ -22,8 +22,40 @@ class Food
   end
 
   def to_sxp
+    meta = MetaData.new(:':raw-nutrition' => @raw_nutrition,
+                        :':raw-poison' => @raw_poison)
     [:food, name, :':full-name', full_name, :':plant-type', plant_type,
-     :':nutritional-value', base_nutritional_value, :':poison-chance', base_poison_chance].to_sxp
+     :':nutritional-value', base_nutritional_value, :':poison-chance', base_poison_chance,
+     :':meta', meta].to_sxp
+  end
+
+  def self.from_sxp(arg)
+    name, *arr = Reloader.assert_first :food, arg
+    ReloadedFood.new(name).tap do |rfd|
+      Reloader.hash_like(arr) do |k, v|
+        case k
+        when :':full-name'
+          rfd.full_name = v
+        when :':plant-type'
+          rfd.plant_type = v
+        when :':nutritional-value', :':poison-chance'
+          # Ignore
+        when :':meta'
+          meta = Reloader.load v
+          rfd.raw_nutrition = meta[:':raw-nutrition']
+          rfd.raw_poison = meta[:':raw-poison']
+        end
+      end
+    end
+  end
+
+end
+
+class ReloadedFood < Food
+  attr_accessor :name, :full_name, :plant_type, :raw_nutrition, :raw_poison
+
+  def initialize(name)
+    self.name = name
   end
 
 end
@@ -44,6 +76,26 @@ class Plant
 
   def to_sxp
     [:plant, name, :':type', type, :':food', food, :':growth-time', growth_time].to_sxp
+  end
+
+  def self.from_sxp(arg)
+    name, *arr = Reloader.assert_first :plant, arg
+    type = nil
+    food = nil
+    time = nil
+    Reloader.hash_like(arr) do |k, v|
+      case k
+      when :':type'
+        type = v
+      when :':food'
+        food = Reloader.load v
+      when :':growth-time'
+        time = v
+      end
+    end
+    Plant.new(type, food, time).tap do |pl|
+      pl.instance_variable_set :@name, name
+    end
   end
 
 end

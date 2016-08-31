@@ -16,7 +16,8 @@
    (poison-chance :accessor food-poison-chance
                   :initform 0.0
                   :initarg :poison-chance
-                  :type number)))
+                  :type number)
+   (meta :initarg :meta))) ; TODO Filter out the make-food-data :meta some other way
 
 (defclass plant (named located)
   ((type :accessor plant-type

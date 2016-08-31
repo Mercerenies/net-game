@@ -1,4 +1,7 @@
 
+# TODO The "paint splotch" algorithm for spawners and trees creates an uneven distribution when
+#      making delta files.
+
 class Stage
   def run(data)
   end
@@ -187,7 +190,9 @@ class QuestStage < Stage
       node.each do |obj|
         case obj
         when NPC
-          data.add_quests QuestMaker.make_fetch_quest(data.map, obj)
+          if obj.quest_count == 0 # TODO Update the delta system so old NPCs can get new quests
+            data.add_quests QuestMaker.make_fetch_quest(data.map, obj)
+          end
         end
       end
     end

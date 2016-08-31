@@ -28,7 +28,7 @@
   (find (choose (spawner-area spawner)) *world* :key #'get-id))
 
 ; Uses *creatures*
-(defun do-spawn (spawner) ; TODO Not all spawners should spawn; only the ones near the player
+(defun do-spawn (spawner) ; TODO Localize the spawning
   (unless (and (spawner-creature-instance spawner)
                (get-loc (spawner-creature-instance spawner)))
     (let ((loc (choose-spawn-point spawner))
@@ -38,4 +38,10 @@
         (setf (spawner-creature-instance spawner) inst)
         (move-object inst loc)))))
 
-
+(defun active-spawner-set (&key (player-object *player*) (radius +active-radius+))
+  (loop with nearby = (mapcar #'get-id
+                              (remove-if #'location-civilized
+                                         (halo (get-loc player-object) radius)))
+        for spawner in *spawners*
+        when (not (null (intersection nearby (spawner-area spawner))))
+            collect spawner))

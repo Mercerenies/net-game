@@ -59,6 +59,8 @@ Client Mode allows the game to communicate with its own internal server and modi
 
 To run the game in Client Mode, use `./bash/client.sh` (no arguments). The game will start almost immediately, but the world will be relatively empty. After a short period of time wandering around, you will start to notice more people and objects in the game world.
 
+If you use Client Mode, take note of this. There is a known bug in which the Lua system will occasionally leave behind "garbage" files in the temp directory. If your game isn't working, look in the temp directory for any files prefixed with "dat" or "dfile" and delete them.
+
 # Legacy Mode
 
 There are several scripts in the `./bash/` directory, but (aside from the initial `./bash/check.sh` script) the entrypoint to all of these is `./bash/master.sh`. Running the script with `--help` as the only option will print a summary of the command line flags available.

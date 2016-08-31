@@ -51,26 +51,26 @@
 (defun client-waiting-on (sym)
   (assoc sym *client-pending*))
 
-(defun client-request (sym) ; TODO Some way of merging delta files so Lua can parallelize better
-  (let ((worldname (client-make-fname))
-        (donename (client-make-fname)))
-    (format *socket* "need ~(~A~) ~A ~A~%" sym worldname donename)
-    (push (list sym worldname donename) *client-pending*)))
+(defun client-request (sym &optional name) ; TODO Some way of merging delta files so Lua can parallelize better
+  (setf name (or name sym))
+  (unless (client-waiting-on name)
+    (format t "$$$$$$$ Making request for ~S~%" name)
+    (let ((worldname (client-make-fname))
+          (donename (client-make-fname)))
+      (format *socket* "need ~(~A~) ~A ~A~%" sym worldname donename)
+      (push (list name worldname donename) *client-pending*))))
 
 (defun report-checkin ()
   (format *socket* "ter~%"))
 
 (defun report-updates ()
-  (when (and (not (client-waiting-on 'quests))
-             (> (percent-started-quests) 0.5)
-             (> (percent-finished-quests) 0.35))
-    (client-request 'quests)))
-; TODO More requests
+  (make-update-requests))
 
 (defun check-for-updates ()
   (loop for (sym delta sentinel) in *client-pending*
         when (probe-file sentinel)
             do (with-open-file (file delta)
+                 (format t "~S~%" delta)
                  (load-delta :file file))
             and collect sym into removing
         finally (loop for rr in removing

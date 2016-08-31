@@ -19,7 +19,7 @@
     (error "Flawed data - location"))
   (let ((loc (find (second dloc) *world* :key #'get-id)))
     (unless loc
-      (error "Invalid ID in delta location"))
+      (error "Invalid ID ~D in delta location" (second dloc)))
     (loop for arg = (cddr dloc) then (cddr arg)
           for key = (first arg)
           for value = (second arg)

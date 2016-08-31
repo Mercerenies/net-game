@@ -93,12 +93,13 @@ class GData
 
   # Convert the node into a map and add the locations to it
   def node_to_map
-    new_map = Map.new @node.expand_to_map(gdata: self)
     if map.nil?
-      @map = new_map
+      @map = Map.new @node.expand_to_map(gdata: self)
     else
-      # TODO Connect the old and the new using connectors
-      new_map.each { |loc| map.push loc }
+      new_map = @node.expand_to_map(existing: map, gdata: self)
+      if new_map.size > 1 # TODO Detect trivial integrations in node.rb, not here
+        new_map.each { |loc| map.push loc }
+      end
     end
   end
 

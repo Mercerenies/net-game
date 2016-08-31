@@ -35,6 +35,26 @@ function Query:places(n)
    return self
 end
 
+function Query:weapons(n)
+   self._weapons = (self._weapons or 0) + n
+   return self
+end
+
+function Query:monsters(n)
+   self._monsters = (self._monsters or 0) + n
+   return self
+end
+
+function Query:animals(n)
+   self._animals = (self._animals or 0) + n
+   return self
+end
+
+function Query:foods(n)
+   self._foods = (self._foods or 0) + n
+   return self
+end
+
 function Query:req()
    local fn0 = filenamer.get_filename()
    local fn1 = filenamer.get_filename()
@@ -47,6 +67,18 @@ function Query:req()
    end
    if self._places then
       cmd = cmd .. ' -P ' .. self._places
+   end
+   if self._weapons then
+      cmd = cmd .. ' -w ' .. self._weapons
+   end
+   if self._monsters then
+      cmd = cmd .. ' -m ' .. self._monsters
+   end
+   if self._animals then
+      cmd = cmd .. ' -a ' .. self._animals
+   end
+   if self._foods then
+      cmd = cmd .. ' -f ' .. self._foods
    end
    cmd = cmd .. ' | ./bash/stage2.sh >' .. fn0 .. ' ; touch ' .. fn1
    cmd = '(' .. cmd .. ')&'

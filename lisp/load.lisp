@@ -39,16 +39,22 @@
 (defun make-warp-point ()
   (make-instance 'warp-point))
 
-(defun move-object (obj new-loc)
-  (check-type obj located)
-  (check-type new-loc (or location null))
+(defgeneric move-object (obj new-loc))
+
+(defmethod move-object ((obj located) (new-loc location))
   (let ((old-loc (get-loc obj)))
     (when old-loc
       (setf (location-contents old-loc)
             (remove obj (location-contents old-loc))))
     (setf (get-loc obj) new-loc)
-    (when new-loc
-      (push obj (location-contents new-loc)))))
+    (push obj (location-contents new-loc))))
+
+(defmethod move-object ((obj located) (new-loc null))
+  (let ((old-loc (get-loc obj)))
+    (when old-loc
+      (setf (location-contents old-loc)
+            (remove obj (location-contents old-loc))))
+    (setf (get-loc obj) new-loc)))
 
 (defun load-loc (loc)
   (destructuring-bind (loc id name . rst) loc
@@ -79,23 +85,24 @@
     ; Note that the sixth element of data is meta and is intentionally ignored by this segment of the program
     (unless (eq (first data) 'alpha)
       (error "Flawed data - alpha"))
-    (values
-     (destructuring-bind (map-sym . locs) (second data)
-       (unless (eq map-sym 'map) (error "Flawed data - map"))
-       (loop for loc in locs
-             collect (load-loc loc)))
-     (destructuring-bind anims (third data)
-       (load-with anims #'load-creature 'creature-set))
-     (destructuring-bind spawners (fourth data)
-       (load-with spawners #'load-spawner 'spawner-set))
-     (destructuring-bind (quest-sym . quests) (fifth data)
-       (unless (eq quest-sym 'quest-set) (error "Flawed data - quest-set"))
-       (loop with hash = (make-hash-table)
-             for data in quests
-             for quest = (apply #'load-quest (first data) (rest data))
-             do (let ((*quests* hash))
-                  (add-quest quest))
-             finally (return hash))))))
+    (let ((*world* (destructuring-bind (map-sym . locs) (second data)
+                     (unless (eq map-sym 'map) (error "Flawed data - map"))
+                     (loop for loc in locs
+                           collect (load-loc loc)))))
+      (values
+       *world*
+       (destructuring-bind anims (third data)
+         (load-with anims #'load-creature 'creature-set))
+       (destructuring-bind spawners (fourth data)
+         (load-with spawners #'load-spawner 'spawner-set))
+       (destructuring-bind (quest-sym . quests) (fifth data)
+         (unless (eq quest-sym 'quest-set) (error "Flawed data - quest-set"))
+         (loop with hash = (make-hash-table)
+               for data in quests
+               for quest = (apply #'load-quest (first data) (rest data))
+               do (let ((*quests* hash))
+                    (add-quest quest))
+               finally (return hash)))))))
 
 (defun load-object (node obj)
   (apply #'load-object-with-type node (car obj) (cdr obj)))

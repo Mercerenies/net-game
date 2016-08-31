@@ -17,7 +17,7 @@
 
 (defparameter *player* nil)
 
-(defparameter *world* nil) ; TODO Make this a hash, not a list
+(defparameter *world* nil)
 
 (defparameter *state* (list 'global))
 

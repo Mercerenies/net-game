@@ -1,6 +1,4 @@
 
--- TODO Background jobs started by this still run, even if the game completes; can we kill them?
-
 local gensema = require 'lua/gensema'
 local filenamer = require 'lua/filenamer'
 local query = require 'lua/query'

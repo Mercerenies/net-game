@@ -33,12 +33,12 @@
   (setf (gethash (get-id new-loc) (visited-locs obj)) t))
 
 (defmethod move-object :after ((obj player) (new-loc null))
-  (format t "** GAME OVER **~%You have died.~%")
+  (format t "~%** GAME OVER **~%You have died.~%~%")
   (funcall *do-exit*))
 
 (defmethod system-keys append ((obj player))
-           `((nil "Percent Explored" ,(if *world*
-                                          (* 100.0 (/ (visited-count *player*) (length *world*)))
+           `((nil "Percent Explored" ,(if (plusp (hash-table-count *world*))
+                                          (* 100.0 (/ (visited-count *player*) (hash-table-count *world*)))
                                           0.0))))
 
 (defun word-split (string &optional (token #\SPACE))
@@ -50,11 +50,11 @@
 (defun run-game (&key (filename "./temp/system.txt"))
   (multiple-value-bind (*world* *creatures* *spawners* *quests*) (with-open-file (file filename)
                                                                    (load-data :file file))
-    (let ((*player* (some (lambda (x)
-                            (find-if (lambda (y) (typep y 'player))
-                                     (location-contents x)))
-                          *world*)))
-      (unless *world*
+    (let ((*player* (loop for loc being the hash-values in *world*
+                          for player = (find-if (lambda (y) (typep y 'player))
+                                                (location-contents loc))
+                          when player return player)))
+      (unless (plusp (hash-table-count *world*))
         (error "The world is empty."))
       (unless *player*
         (error "The player object does not exist."))
@@ -65,7 +65,7 @@
             with *god-mode* = t ; TODO Remove this; it's for debugging purposes only
             with cmd = nil
             with acmd = nil
-            do (assign-numbers (mapcar (lambda (x) (find x *world* :key #'get-id))
+            do (assign-numbers (mapcar (lambda (x) (gethash x *world*))
                                        (location-exits (get-loc *player*)))
                                (location-contents (get-loc *player*))
                                (inv-items *player*))
@@ -83,7 +83,7 @@
                          (get-name (get-loc *player*))
                          (* 100 (hp *player*))
                          (mapcar (lambda (x)
-                                   (get-numbered-name (find x *world* :key #'get-id)))
+                                   (get-numbered-name (gethash x *world*)))
                                  (location-exits (get-loc *player*)))
                          (mapcar #'get-numbered-name (remove-if-not #'(lambda (x) (typep x 'named))
                                                                     (location-contents (get-loc *player*))))

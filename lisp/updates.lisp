@@ -18,8 +18,8 @@
                (null (active-spawner-set :player-object *player* :radius (1+ +active-radius+))))
       (client-request 'wildlife))
     ; Explored Map Trigger
-    (when (and *world*
-               (>= (/ (visited-count *player*) (length *world*)) 0.6))
+    (when (and (plusp (hash-table-count *world*))
+               (>= (/ (visited-count *player*) (hash-table-count *world*)) 0.6))
       (client-request 'map))
     ; Lack of Trees Trigger
     (when (> (count-if #'(lambda (loc) (and (not (location-civilized loc))

@@ -25,7 +25,7 @@
 
 ; Uses *world*
 (defmethod choose-spawn-point ((spawner spawner))
-  (find (choose (spawner-area spawner)) *world* :key #'get-id))
+  (gethash (choose (spawner-area spawner)) *world*))
 
 ; Uses *creatures*
 (defun do-spawn (spawner) ; TODO Localize the spawning

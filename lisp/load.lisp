@@ -87,8 +87,12 @@
       (error "Flawed data - alpha"))
     (let ((*world* (destructuring-bind (map-sym . locs) (second data)
                      (unless (eq map-sym 'map) (error "Flawed data - map"))
-                     (loop for loc in locs
-                           collect (load-loc loc)))))
+                     (loop with hash = (make-hash-table)
+                           for loc in locs
+                           for loc-node = (load-loc loc)
+                           do (setf (gethash (get-id loc-node) hash)
+                                    loc-node)
+                           finally (return hash)))))
       (values
        *world*
        (destructuring-bind anims (third data)
@@ -172,7 +176,7 @@
   (if (not (plusp n))
       (list node)
       (loop for exit in (location-exits node)
-            append (halo (find exit *world* :key #'get-id) (1- n)) into result
+            append (halo (gethash exit *world*) (1- n)) into result
             finally (if self
                         (return (remove-duplicates (cons node result)))
                         (return (remove-duplicates result))))))

@@ -10,14 +10,15 @@
         while arg
         do (case key
              (:new (loop for elem in value
-                         do (push (load-loc elem) *world*)))
+                         for loc = (load-loc elem)
+                         do (setf (gethash (get-id loc) *world*) loc)))
              (:mod (loop for elem in value
                          do (delta-modify elem))))))
 
 (defun delta-modify (dloc)
   (unless (eq (first dloc) 'location)
     (error "Flawed data - location"))
-  (let ((loc (find (second dloc) *world* :key #'get-id)))
+  (let ((loc (gethash (second dloc) *world*)))
     (unless loc
       (error "Invalid ID ~D in delta location" (second dloc)))
     (loop for arg = (cddr dloc) then (cddr arg)

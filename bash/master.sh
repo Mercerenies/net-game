@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# TODO All the bash scripts should really be printing usage stuff to STDERR
-
 celebs=""
 people=""
 places=""
@@ -20,27 +18,27 @@ clisp="clisp"
 prefix="net"
 
 if [ $# -eq 0 ]; then
-    echo "Usage: ./master.sh <args>"
-    echo "For detailed help with instructions, try \`./master.sh --help\`"
+    >&2 echo "Usage: ./master.sh <args>"
+    >&2 echo "For detailed help with instructions, try \`./master.sh --help\`"
     exit
 fi
 
 if [ $1 == "--help" ]; then
-    echo "Usage: ./master.sh <args>"
-    echo " -c Number of celebrities"
-    echo " -p Number of people"
-    echo " -P Number of places"
-    echo " -w Number of weapons"
-    echo " -m Number of monsters"
-    echo " -a Number of animals"
-    echo " -f Number of foods"
-    echo " -d Debug level"
-    echo " -r Use the reinforcement learning engine (experimental)"
-    echo " -1 Run Stage 1 (Python / Site Crawling)"
-    echo " -2 Run Stage 2 (Perl / Page Parsing)"
-    echo " -3 Run Stage 3 (Ruby / World Generation)"
-    echo " -4 Run Stage 4 (Common Lisp / Gameplay)"
-    echo " -l Use the given Common Lisp implementation"
+    >&2 echo "Usage: ./master.sh <args>"
+    >&2 echo " -c Number of celebrities"
+    >&2 echo " -p Number of people"
+    >&2 echo " -P Number of places"
+    >&2 echo " -w Number of weapons"
+    >&2 echo " -m Number of monsters"
+    >&2 echo " -a Number of animals"
+    >&2 echo " -f Number of foods"
+    >&2 echo " -d Debug level"
+    >&2 echo " -r Use the reinforcement learning engine (experimental)"
+    >&2 echo " -1 Run Stage 1 (Python / Site Crawling)"
+    >&2 echo " -2 Run Stage 2 (Perl / Page Parsing)"
+    >&2 echo " -3 Run Stage 3 (Ruby / World Generation)"
+    >&2 echo " -4 Run Stage 4 (Common Lisp / Gameplay)"
+    >&2 echo " -l Use the given Common Lisp implementation"
     exit
 fi
 

@@ -1,10 +1,10 @@
 #!/bin/bash
 
 if [ "$1" == "--help" ]; then
-    echo "Usage: ./stage4.sh [-l clisp] [-C port] [-f filename]"
-    echo " -l Use the specified Common Lisp implementation"
-    echo " -C Use the client system and connect to the specified port"
-    echo " -f Use the specified world file"
+    >&2 echo "Usage: ./stage4.sh [-l clisp] [-C port] [-f filename]"
+    >&2 echo " -l Use the specified Common Lisp implementation"
+    >&2 echo " -C Use the client system and connect to the specified port"
+    >&2 echo " -f Use the specified world file"
     exit
 fi
 

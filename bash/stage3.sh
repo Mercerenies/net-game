@@ -1,9 +1,9 @@
 #!/bin/bash
 
 if [ "$1" == "--help" ]; then
-    echo "Usage: ./stage3.sh [-D delta_file] [-0 old_alpha]"
-    echo " -D Output delta information to the given file"
-    echo " -0 Get old alpha information from the specified file (required if -D is given)"
+    >&2 echo "Usage: ./stage3.sh [-D delta_file] [-0 old_alpha]"
+    >&2 echo " -D Output delta information to the given file"
+    >&2 echo " -0 Get old alpha information from the specified file (required if -D is given)"
     exit
 fi
 

@@ -11,16 +11,16 @@ debug=""
 rein=""
 
 if [ $# -eq 0 ] || [ "$1" == "--help" ]; then
-    echo "Usage: ./stage1.sh <args>"
-    echo " -c Number of celebrities"
-    echo " -p Number of people"
-    echo " -P Number of places"
-    echo " -w Number of weapons"
-    echo " -m Number of monsters"
-    echo " -a Number of animals"
-    echo " -f Number of foods"
-    echo " -d Debug level"
-    echo " -r Use the reinforcement learning engine (experimental)"
+    >&2 echo "Usage: ./stage1.sh <args>"
+    >&2 echo " -c Number of celebrities"
+    >&2 echo " -p Number of people"
+    >&2 echo " -P Number of places"
+    >&2 echo " -w Number of weapons"
+    >&2 echo " -m Number of monsters"
+    >&2 echo " -a Number of animals"
+    >&2 echo " -f Number of foods"
+    >&2 echo " -d Debug level"
+    >&2 echo " -r Use the reinforcement learning engine (experimental)"
     exit
 fi
 

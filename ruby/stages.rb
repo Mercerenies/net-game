@@ -118,14 +118,21 @@ class CreatureStage < Stage
   def run(data)
     # Identify and set up valid creatures
     data.consume_each { |elem| data.load_creature elem }
-    creatures = data.each_creature.to_a.shuffle.cycle
+    all_creatures = data.each_creature.to_a
+    creatures = all_creatures.shuffle.cycle
     return unless data.has_creature?
     # Now identify all of the "dangerous" nodes, that is
     # anywhere that should have a creature in it
     needed = data.select_nodes(&:can_have_creatures?).to_a
     # Now put animals / creatures in those spots
     until needed.empty?
-      spawner = Spawner.new creatures.next, data.map, needed.first, [2, 2, 2, 3].sample
+      node = needed.first
+      if all_creatures.select { |x| node.can_have? x }.empty?
+        # If none of the creatures will agree with the node, don't bother looking for one
+        needed.delete node
+        next
+      end
+      spawner = Spawner.new creatures.next, data.map, node, [2, 2, 2, 3].sample
       area = spawner.node_ids.map { |id| data.map[id] }
       needed = needed.reject { |loc| area.include? loc }
       data.add_spawners spawner

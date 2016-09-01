@@ -6,7 +6,7 @@ class ForestNode < StructureNode
     super builder, @name
     @number = number
     mark_as_exit if number == 1
-    @creatures = Animal
+    @creatures = LandBasedAnimals.new
     @plants = Plants[:tree, :plant, :bush, :grass, :flower]
   end
 

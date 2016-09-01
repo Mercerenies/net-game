@@ -142,3 +142,13 @@ class ReloadedAnimal < Animal
   end
 
 end
+
+# TODO We really need to get these "qualifier" objects a superclass and stop using class names
+#      for them
+class LandBasedAnimals
+
+  def ===(obj)
+    obj.kind_of? Animal and not obj.sea?
+  end
+
+end

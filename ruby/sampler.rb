@@ -23,3 +23,22 @@ class SamplerArray
   end
 
 end
+
+class SamplerEnumerator
+  include Enumerable
+
+  def initialize(ary)
+    @ary = ary
+  end
+
+  def sample
+    @ary.sample
+  end
+
+  def each
+    Enumerator::Lazy.new([1]) do |y|
+      loop { y << sample }
+    end
+  end
+
+end

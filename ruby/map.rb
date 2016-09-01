@@ -57,7 +57,7 @@ class Location
   extend Forwardable
   include Enumerable
 
-  attr_reader :id, :name, :country_name, :generic_name
+  attr_reader :id, :name, :country_name, :generic_name, :water_mode
 
   def_delegators :@contents, :each, :push, :delete
   def_delegator :@links, :each, :each_link
@@ -71,6 +71,7 @@ class Location
     @links = []
     @valid_creatures = valid_creatures
     @valid_plants = valid_plants
+    @water_mode = nil
   end
 
   def can_have_creatures?
@@ -105,16 +106,29 @@ class Location
     not can_have_creatures?
   end
 
+  def mark_as_dry
+    @water_mode = nil
+  end
+
+  def mark_as_shore
+    @water_mode = :shore
+  end
+
+  def mark_as_sea
+    @water_mode = :sea
+  end
+
   def to_sxp
     prefix = [:location, id, name]
     country = country_name ? [:':country', country_name] : []
     links = [:':links', each_link.to_a]
     contents = [:':contents', each.to_a]
     civilized = [:':civilized', civilized?]
+    water = [:':water', water_mode]
     meta = [:':meta', MetaData.new(:':generic-name' => generic_name,
                                    :':creatures' => valid_creatures_wrapper,
                                    :':plants' => valid_plants_wrapper)]
-    (prefix + country + links + contents + civilized + meta).to_sxp
+    (prefix + country + links + contents + civilized + water + meta).to_sxp
   end
 
   def self.from_sxp(arg)
@@ -131,6 +145,8 @@ class Location
           loc.instance_variable_set :@contents, elems
         when :':civilized'
           # Ignore this arg; we'll get the necessary info from :meta
+        when :':water'
+          loc.instance_variable_set :@water_mode, v
         when :':meta'
           meta = Reloader.load v
           loc.instance_variable_set :@generic_name, meta[:':generic-name']

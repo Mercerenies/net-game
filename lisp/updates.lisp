@@ -13,7 +13,7 @@
     (when (< (- (length (finished-quests)) (total-quest-count)) 5) ; TODO Probably increase this number
       (client-request 'quests 'q2))
     ; No Active Spawner Trigger
-    (when (and (member-if (complement #'location-civilized)
+    (when (and (member-if #'(lambda (x) (not (check-flag 'civilized x)))
                           active-halo)
                (null (active-spawner-set :player-object *player* :radius (1+ +active-radius+))))
       (client-request 'wildlife))
@@ -22,7 +22,7 @@
                (>= (/ (visited-count *player*) (hash-table-count *world*)) 0.6))
       (client-request 'map))
     ; Lack of Trees Trigger
-    (when (> (count-if #'(lambda (loc) (and (not (location-civilized loc))
+    (when (> (count-if #'(lambda (loc) (and (not (check-flag 'civilized loc))
                                             (not (member-if #'(lambda (x) (typep x 'plant))
                                                             (location-contents loc)))))
                        active-halo)

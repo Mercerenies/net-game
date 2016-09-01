@@ -8,7 +8,7 @@
                 nil)
             (get-name obj))))
 
-(defclass location (identifiable named)
+(defclass location (identifiable named flagged)
   ((exits :accessor location-exits
           :initform nil
           :type list)
@@ -19,10 +19,10 @@
                :initarg :short-name
                :initform ""
                :type string)
-   (civilized :accessor location-civilized
-              :initarg :civilized
-              :initform nil
-              :type boolean)))
+   (flags :accessor location-flags
+          :initarg :flags
+          :initform nil
+          :type list)))
 
 (defun make-location (id name &key short-name)
   (make-instance 'location
@@ -69,7 +69,12 @@
                                                          value)))
                  (:links (setf (location-exits inst) value))
                  (:contents (mapc #'(lambda (x) (load-object inst x)) value))
-                 (:civilized (setf (location-civilized inst) value))
+                 (:civilized (when value
+                               (add-flag 'civilized inst)))
+                 (:water (case value
+                           ((nil))
+                           ((sea) (add-flag 'sea inst))
+                           ((shore) (add-flag 'shore inst))))
                  (:meta))) ; Explicitly ignore this case
       inst)))
 
@@ -150,7 +155,7 @@
              (:flags (setf flags value)))
         finally (let ((wpn (make-weapon name type mod)))
                   (when flags
-                    (setf (item-flags wpn) flags))
+                    (setf (get-flags wpn) flags))
                   (move-object wpn node))))
 
 (defmethod load-object-with-type (node (type (eql 'plant)) &rest args)

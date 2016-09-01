@@ -1,20 +1,13 @@
 (in-package #:net-game)
 
-(defclass item (named located)
-  ((flags :accessor item-flags
-          :initarg :flags
-          :initform nil
-          :type list)
-   (weight :accessor item-weight
+(defclass item (named located flagged)
+  ((weight :accessor item-weight
            :initarg :weight
            :initform 1
            :type integer)))
 
 (defun make-item (name &rest keys &key &allow-other-keys)
   (apply #'make-instance 'item :name name keys))
-
-(defun item-check-flag (item flag)
-  (member flag (item-flags item)))
 
 (defclass weapon (item)
   ((type :accessor weapon-type
@@ -99,8 +92,7 @@
           (item-weight obj)))
 
 (defmethod system-keys append ((obj item))
-  `((item-weight "Weight" ,(item-weight obj))
-    (item-flags "Flags" ,(item-flags obj))))
+  `((item-weight "Weight" ,(item-weight obj))))
 
 ; TODO More user-friendly text
 (defmethod do-action ((act (eql 'examine)) (obj weapon) preps)

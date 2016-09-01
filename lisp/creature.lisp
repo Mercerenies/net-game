@@ -103,7 +103,7 @@
                 (let* ((local-halo (halo (get-loc obj)))
                        (valid-locs (if (eq (anim-attitude obj) 'passive) ; TODO Just passive birds or all passives?
                                        local-halo
-                                     (remove-if (lambda (x) (location-civilized x))
+                                     (remove-if (lambda (x) (check-flag 'civilized x))
                                                 local-halo)))
                        (new-loc (choose valid-locs)))
                   (when new-loc

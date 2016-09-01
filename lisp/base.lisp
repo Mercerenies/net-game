@@ -31,6 +31,22 @@
         :initform nil
         :type (or null location))))
 
+(defclass flagged ()
+  ((flags :accessor get-flags
+          :initarg :flags
+          :initform nil
+          :type list)))
+
+(defgeneric add-flag (flag obj))
+
+(defmethod add-flag ((flag symbol) (obj flagged))
+  (push flag (get-flags obj)))
+
+(defgeneric check-flag (flag obj))
+
+(defmethod check-flag (flag (obj flagged)) ; Non-symbols will not be found and will simply return nil
+  (member flag (get-flags obj)))
+
 ; Returns a list of elements of the form (key-name friendly-name value)
 (defgeneric system-keys (obj)
   (:method-combination append))
@@ -40,3 +56,6 @@
 
 (defmethod system-keys append ((obj damageable))
   `((hp "Health" ,(* 100 (hp obj)))))
+
+(defmethod system-keys append ((obj flagged))
+  `((get-flags "Flags" ,(get-flags obj))))

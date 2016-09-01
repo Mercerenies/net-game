@@ -39,7 +39,8 @@ class DeltaLocation < Location
 
   def_delegators :@new_contents, :push
   def_delegators :@old_node, :id, :name, :country_name, :generic_name, :can_have_creatures?,
-                             :can_have?, :valid_creatures_wrapper, :valid_plants_wrapper
+                             :can_have?, :valid_creatures_wrapper, :valid_plants_wrapper,
+                             :water_mode, :mark_as_dry, :mark_as_sea, :mark_as_shore
 
   def initialize(old)
     @old_node = old

@@ -79,7 +79,7 @@
                        (mapcar #'get-name (location-contents (get-loc *player*)))
                        (mapcar #'get-name (inv-items *player*))
                        (mapcar #'location-short-name (halo (get-loc *player*) 1))
-                       '("fists"))))
+                       '("fists" "here"))))
     (parse-with-words sentence
                       :nouns nouns
                       :verbs '("go" "examine" "use" "activate" "collect"
@@ -101,6 +101,7 @@
                                        (location-short-name x)
                                        (get-name x))))
                     (get-numerical-object noun)
+                    (and (equalp noun "here") (get-loc *player*))
                     (intern-upcase noun)))))
     (let ((parse (parse-default sentence)))
       (when parse

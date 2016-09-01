@@ -40,7 +40,7 @@
 
 (defun active-spawner-set (&key (player-object *player*) (radius +active-radius+))
   (loop with nearby = (mapcar #'get-id
-                              (remove-if #'location-civilized
+                              (remove-if #'(lambda (x) (check-flag 'civilized x))
                                          (halo (get-loc player-object) radius)))
         for spawner in *spawners*
         when (not (null (intersection nearby (spawner-area spawner))))

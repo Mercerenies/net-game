@@ -60,7 +60,13 @@
              :initarg :attitude)
    (atk :accessor atk
         :initform 1
-        :initarg :atk)))
+        :initarg :atk)
+   (air :accessor anim-air
+        :initform nil
+        :initarg :air)
+   (sea :accessor anim-sea
+        :initform nil
+        :initarg :sea)))
 
 (defun make-animal (data)
   (make-instance 'animal
@@ -86,56 +92,66 @@
                         (2 (+ 0.05 (random 0.10)))
                         (3 (+ 0.14 (random 0.10)))
                         (4 (+ 0.19 (random 0.15)))
-                        (5 (+ 0.29 (random 0.30))))))
+                        (5 (+ 0.29 (random 0.30))))
+                 :sea (anim-sea data)
+                 :air (anim-air data)))
 
 (defmethod entity-turn ((obj animal))
 ;  (format t "The ~A (~A / ~A) at ~A is going to go now.~%"
 ;          (get-name obj) (anim-mood obj) (anim-attitude obj) (get-name (get-loc obj)))
-  (case (anim-mood obj)
-    (passive (cond
-               ((member *player* (location-contents (get-loc obj)))
-                (case (anim-attitude obj)
-                  (passive nil)
-                  (hunting (setf (anim-mood obj) 'hunting)
-                           (entity-turn obj))
-                  (stalking (setf (anim-mood obj) 'sneaky)))) ; TODO Doesn't happen immediately after move
-               ((<= (random 6) (anim-speed obj))
-                (let* ((local-halo (halo (get-loc obj)))
-                       (valid-locs (if (eq (anim-attitude obj) 'passive) ; TODO Just passive birds or all passives?
-                                       local-halo
-                                     (remove-if (lambda (x) (check-flag 'civilized x))
-                                                local-halo)))
-                       (new-loc (choose valid-locs)))
-                  (when new-loc
-                    (move-object obj new-loc))))
-               (t nil)))
-    (sneaky (cond
-              ((member *player* (location-contents (get-loc obj))) nil)
-              ((some (lambda (x) (member *player* (location-contents x)))
-                     (halo (get-loc obj) 1))
-               (setf (anim-mood obj) 'stalking))
-              (t (setf (anim-mood obj) 'passive))))
-    (hunting (cond
-               ((member *player* (location-contents (get-loc obj)))
-                (format t "The ~A attacks.~%" (get-name obj))
-                (do-attack obj :target *player*))
-               ((some (lambda (x) (member *player* (location-contents x)))
-                      (halo (get-loc obj) 1))
-                (move-object obj (get-loc *player*))
-                (entity-turn obj))
-               (t nil))) ; TODO Should we have him passively move here?
-    (stalking (cond
-                ((member *player* (location-contents (get-loc obj)))
-                 (setf (anim-mood obj) 'hunting)
-                 (entity-turn obj))
-                ((some (lambda (x) (member *player* (location-contents x)))
-                       (halo (get-loc obj) 1))
-                 nil)
-                (t (let ((inter (intersection (halo (get-loc *player*) 1 :self nil)
-                                              (halo (get-loc obj) 1 :self nil))))
-                     (if (not (null inter))
-                         (move-object obj (first inter))
-                         (setf (anim-mood obj) 'passive))))))))
+  (if (not (is-desirable-square obj (get-loc obj)))
+      (move-object obj (choose (halo (get-loc obj) 1)))
+      (case (anim-mood obj)
+        (passive (cond
+                   ((member *player* (location-contents (get-loc obj)))
+                    (case (anim-attitude obj)
+                      (passive nil)
+                      (hunting (setf (anim-mood obj) 'hunting)
+                               (entity-turn obj))
+                      (stalking (setf (anim-mood obj) 'sneaky))))
+                   ((<= (random 6) (anim-speed obj))
+                    (wander obj)
+                    (when (and (eql (anim-attitude obj) 'stalking)
+                               (member *player* (location-contents (get-loc obj))))
+                      (setf (anim-mood obj) 'sneaky)))
+                   (t nil)))
+        (sneaky (cond
+                  ((member *player* (location-contents (get-loc obj))) nil)
+                  ((some (lambda (x) (member *player* (location-contents x)))
+                         (halo (get-loc obj) 1))
+                   (setf (anim-mood obj) 'stalking))
+                  (t (setf (anim-mood obj) 'passive))))
+        (hunting (cond
+                   ((member *player* (location-contents (get-loc obj)))
+                    (format t "The ~A attacks.~%" (get-name obj))
+                    (do-attack obj :target *player*))
+                   ((adjacent-pursue obj *player*))
+                   ((<= (random 6) (anim-speed obj))
+                    (wander obj))
+                   (t nil)))
+        (stalking (cond
+                    ((member *player* (location-contents (get-loc obj)))
+                     (setf (anim-mood obj) 'hunting)
+                     (entity-turn obj))
+                    ((some (lambda (x) (member *player* (location-contents x)))
+                           (halo (get-loc obj) 1))
+                     nil)
+                    ((simple-stalk obj *player*))
+                    (t (setf (anim-mood obj) 'passive)))))))
+
+(defmethod is-desirable-square ((obj animal) (loc location))
+  (cond
+    ; If sea-based and location is a land tile, undesirable.
+    ((and (anim-sea obj)
+          (not (or (check-flag 'shore loc)
+                   (check-flag 'sea loc)))) nil)
+    ; If passive attitude, civilized tile, and not a passive bird, then undesirable.
+    ((and (eql (anim-attitude obj) 'passive)
+          (check-flag 'civilized loc)
+          (not (and (anim-air obj)
+                    (eql (anim-mood obj) 'passive)))) nil)
+    ; Otherwise, desirable.
+    (t)))
 
 ; TODO User-friendly description
 (defmethod do-action ((act (eql 'examine)) (obj animal) preps)

@@ -99,13 +99,8 @@ function Query:ter()
 end
 
 function Query:ter1()
-   local f = io.open(self._donename)
-   local exists = false
-   if f ~= nil then
-      exists = true
-      io.close(f)
-   end
-   if exists then
+   if util.exists(self._donename) then
+      self._gennerparm = self._resultname
       gensema.genner_lock(self)
    end
 end

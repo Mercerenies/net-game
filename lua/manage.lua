@@ -1,7 +1,9 @@
 
+local util = require 'lua/util'
 local gensema = require 'lua/gensema'
 local filenamer = require 'lua/filenamer'
 local query = require 'lua/query'
+local pquery = require 'lua/pquery'
 
 local dispatch = {
    quit = function (_) filenamer.cleanup() os.exit(1) end,
@@ -10,11 +12,11 @@ local dispatch = {
 }
 
 local req_objs = {
-   quests = function () return query.Query.new():people(1):celebs(1) end,
-   map = function () return query.Query.new():places(3) end,
-   wildlife = function () return query.Query.new():animals(2) end,
-   foliage = function () return query.Query.new():foods(2) end,
-   equipment = function () return query.Query.new():weapons(2) end
+   quests    = function () return pquery.PQuery.new():people(1):celebs(1) end,
+   map       = function () return pquery.PQuery.new():places(3) end,
+   wildlife  = function () return pquery.PQuery.new():animals(2) end,
+   foliage   = function () return pquery.PQuery.new():foods(2) end,
+   equipment = function () return pquery.PQuery.new():weapons(2) end
 }
 
 local allqueries = {}

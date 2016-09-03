@@ -3,6 +3,8 @@ local P = {}
 gensema = P
 setmetatable(P, {__index = _G})
 
+-- gensema = generator semaphore
+
 local alpha = "./temp/alpha.txt"
 
 local queue = {first = 0, last = 0}
@@ -36,7 +38,7 @@ local function is_empty_queue()
 end
 
 local function run_ruby(query)
-   local old_e_fn = query._resultname
+   local old_e_fn = query._gennerparm
    local old_a_fn = alpha
    local new_a_fn = filenamer.get_filename()
    local new_d_fn = query._worldname
@@ -46,7 +48,7 @@ local function run_ruby(query)
    alpha = new_a_fn
    local cmd = './bash/stage3.sh'
    cmd = cmd .. ' -D ' .. new_d_fn .. ' -0 ' .. old_a_fn
-   cmd = cmd .. ' <' .. old_e_fn .. ' >' .. new_a_fn
+   cmd = cmd .. ' -- ' .. old_e_fn .. ' >' .. new_a_fn
    cmd = cmd .. ' ; touch ' .. new_exit_fn
    cmd = '(' .. cmd .. ')&'
    os.execute(cmd)
@@ -64,13 +66,7 @@ end
 
 function P.check_unlock()
    if active then
-      local f = io.open(active._donename)
-      local exists = false
-      if f ~= nil then
-         exists = true
-         io.close(f)
-      end
-      if exists then
+      if util.exists(active._donename) then
          active._process = 4
          active = nil
          if not is_empty_queue() then

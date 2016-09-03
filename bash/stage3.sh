@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$1" == "--help" ]; then
-    >&2 echo "Usage: ./stage3.sh [-D delta_file] [-0 old_alpha]"
+    >&2 echo "Usage: ./stage3.sh [-D delta_file] [-0 old_alpha] [data_file]..."
     >&2 echo " -D Output delta information to the given file"
     >&2 echo " -0 Get old alpha information from the specified file (required if -D is given)"
     exit
@@ -21,8 +21,10 @@ while getopts 'D:0:' opt; do
     esac
 done
 
+shift $((OPTIND - 1))
+
 if [ -n "$dfile" ] && [ -n "$afile" ]; then
-    ./ruby/deltarunner.rb "$afile" "$dfile"
+    ./ruby/deltarunner.rb "$afile" "$dfile" $*
 else
-    ./ruby/runner.rb
+    ./ruby/runner.rb # TODO Getting this to work with multiple data files will require runner.rb modification
 fi

@@ -102,4 +102,5 @@
 
 (defmethod system-keys append ((obj weapon))
   `((weapon-wieldy "Wieldiness" ,(* 100 (weapon-wieldy obj)))
-    (weapon-damage "Damage" ,(* 100 (weapon-damage obj)))))
+    (weapon-damage "Damage" ,(* 100 (weapon-damage obj)))
+    (weapon-mod "Modifier" ,(weapon-mod obj)))) ; TODO Make weapon-mod be an item flag, possibly?

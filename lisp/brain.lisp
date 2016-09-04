@@ -29,7 +29,8 @@
 
 (defun adjacent-pursue (obj target)
   "If adjacent to the target, pursue the target directly. Returns truthy if the move was performed."
-  (when (and (member target (halo (get-loc obj) 1))
+  (when (and (member-if (lambda (loc1) (member target (location-contents loc1)))
+                        (halo (get-loc obj) 1))
              (is-desirable-square obj (get-loc target)))
     (move-object obj (get-loc target))
     t))

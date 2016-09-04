@@ -79,12 +79,12 @@
                        (mapcar #'get-name (location-contents (get-loc *player*)))
                        (mapcar #'get-name (inv-items *player*))
                        (mapcar #'location-short-name (halo (get-loc *player*) 1))
-                       '("fists" "here"))))
+                       '("fists" "here" "golden apple"))))
     (parse-with-words sentence
                       :nouns nouns
                       :verbs '("go" "examine" "use" "activate" "collect"
                                "drop" "help" "quit" "attack" "talk" "probe"
-                               "nuke" "eat")
+                               "nuke" "summon" "eat")
                       :preps '("with")
                       :arts '("the" "a" "an"))))
 

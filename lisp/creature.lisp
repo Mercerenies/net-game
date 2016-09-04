@@ -125,7 +125,8 @@
                    ((member *player* (location-contents (get-loc obj)))
                     (format t "The ~A attacks.~%" (get-name obj))
                     (do-attack obj :target *player*))
-                   ((adjacent-pursue obj *player*))
+                   ((adjacent-pursue obj *player*)
+                    (entity-turn obj))
                    ((<= (random 6) (anim-speed obj))
                     (wander obj))
                    (t nil)))
@@ -146,10 +147,10 @@
           (not (or (check-flag 'shore loc)
                    (check-flag 'sea loc)))) nil)
     ; If passive attitude, civilized tile, and not a passive bird, then undesirable.
-    ((and (eql (anim-attitude obj) 'passive)
+    ((and (eql (anim-mood obj) 'passive)
           (check-flag 'civilized loc)
           (not (and (anim-air obj)
-                    (eql (anim-mood obj) 'passive)))) nil)
+                    (eql (anim-attitude obj) 'passive)))) nil)
     ; Otherwise, desirable.
     (t)))
 
@@ -160,4 +161,7 @@
 
 (defmethod system-keys append ((obj animal))
   `((anim-mood "Current Mood" ,(anim-mood obj))
-    (anim-attitude "Attitude" ,(anim-attitude obj))))
+    (anim-attitude "Attitude" ,(anim-attitude obj))
+    (atk "Attack Power" ,(atk obj))
+    (anim-air "Flying" ,(anim-air obj))
+    (anim-sea "Swimming" ,(anim-sea obj))))

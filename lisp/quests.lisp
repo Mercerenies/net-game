@@ -81,12 +81,10 @@
                    :nature nature
                    :specifics specifics)))
 
-; TODO All these keyword args starting with * should be renamed such that the keyword form isn't :*whatever*
-
-(defun has-started-quest (quest-id &key (*player* *player*))
+(defun has-started-quest (quest-id &key ((:player *player*) *player*))
   (member quest-id (active-quests *player*) :key #'get-id))
 
-(defun has-finished-quest (quest-id &key (*player* *player*))
+(defun has-finished-quest (quest-id &key ((:player *player*) *player*))
   (and (has-started-quest quest-id)
        (is-quest-completed (find quest-id (active-quests *player*) :key #'get-id))))
 

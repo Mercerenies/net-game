@@ -10,4 +10,4 @@
       (elt args (random (length args)))))
 
 (defun lerp (value lower upper)
-  (+ (* lower value) (* upper (- 1 value))))
+  (+ (* lower (- 1 value)) (* upper value)))

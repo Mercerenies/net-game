@@ -23,6 +23,6 @@
       (error "Unsupported CL - full-exit")))
 
 (defun connect-to-socket (port)
-  (or #+clisp (socket:socket-connect port) ; TODO Handle the OS-ERROR if the connection fails
+  (or #+clisp (socket:socket-connect port)
       (error "Unsupported CL - connect-to-socket")))
 

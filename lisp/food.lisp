@@ -44,11 +44,7 @@
    (restore :accessor food-health
             :initform 0
             :initarg :health
-            :type number)
-   (tags :accessor food-tags
-         :initform nil
-         :initarg :tags
-         :type list)))
+            :type number)))
 
 (defmethod food-full-name ((obj food))
   (food-full-name (food-data obj)))
@@ -73,14 +69,14 @@
     (when (<= restore 1.0)
       (setf restore 1.0))
     (when (< (random 1.0) 0.05)
-      (push 'fresh (food-tags food))
+      (add-flag 'food-fresh food)
       (setf restore (+ 10 restore))) ; 5% chance of boosted restore power
     (setf (food-health food)
           (if poisoned
               (/ restore -2)
               restore))
     (when poisoned
-      (push 'poison (food-tags food)))
+      (add-flag 'food-poison food))
     food))
 
 (defmethod entity-turn ((obj plant))
@@ -119,8 +115,7 @@
           (item-weight obj)))
 
 (defmethod system-keys append ((obj food))
-  `((food-health "Health Restored" ,(food-health obj))
-    (food-tags "Tags" ,(food-tags obj))))
+  `((food-health "Health Restored" ,(food-health obj))))
 
 (defmethod is-trivial ((act (eql 'eat)) (obj food) preps)
   nil)
@@ -129,7 +124,7 @@
   (declare (ignore preps))
   (format t "You eat the ~(~A~).~%"
           (get-name obj))
-  (when (find 'poison (food-tags obj))
+  (when (check-flag 'food-poison obj)
     (format t "You feel an unsettling feeling in your stomach...~%"))
   (format t "~:[Gained~;Lost~] ~D HP~%"
           (minusp (food-health obj))

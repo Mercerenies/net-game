@@ -55,6 +55,7 @@
              ~:[~;~
              \"probe <object>\" - (GOD) Get developer specs on an entity or object~@
              \"nuke <object>\" - (GOD) Insta-kill any entity which has health~@
+             \"summon <object>\" - (GOD) Force an object into existence at the current location~@
              ~]~
              \"help\" - Display this message~@
              \"quit\" - Exit the game~%"

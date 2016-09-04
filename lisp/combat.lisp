@@ -14,13 +14,11 @@
     (null (format t "Attack with what?~%"))
     ((eql fists)
      (do-attack *player* :target obj :atk 0.12)
-     (when (eq (anim-mood obj) 'passive)
-       (setf (anim-mood obj) 'hunting))
+     (setf (anim-mood obj) 'hunting)
      (format t "You punch the ~A.~%" (get-name obj)))
     (weapon
      ; TODO Weapon wieldiness
      (do-attack *player* :target obj :atk (weapon-damage (getf preps 'with)))
-     (when (eq (anim-mood obj) 'passive)
-       (setf (anim-mood obj) 'hunting))
+     (setf (anim-mood obj) 'hunting)
      (format t "You attack the ~A.~%" (get-name obj)))
     (t (call-next-method))))

@@ -11,9 +11,12 @@ local queue = {first = 0, last = 0}
 local active = nil
 
 local function enqueue(x)
-   -- TODO Should we block nil/false here, since they are returned on error in dequeue()?
+   if not x then
+      return nil, "attempted enqueue of falsy value"
+   end
    queue[queue.last] = x
    queue.last = queue.last + 1
+   return x
 end
 
 local function dequeue(x)

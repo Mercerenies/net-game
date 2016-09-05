@@ -16,8 +16,7 @@
    (poison-chance :accessor food-poison-chance
                   :initform 0.0
                   :initarg :poison-chance
-                  :type number)
-   (meta :initarg :meta))) ; TODO Filter out the make-food-data :meta some other way
+                  :type number)))
 
 (defclass plant (named located)
   ((type :accessor plant-type
@@ -56,7 +55,9 @@
   (apply #'make-instance 'plant :name name keys))
 
 (defun make-food-data (name &rest keys &key &allow-other-keys)
-  (apply #'make-instance 'food-data :name name keys))
+  (let ((keys (copy-list keys)))
+    (remf keys :meta)
+    (apply #'make-instance 'food-data :name name keys)))
 
 (defun make-food (data)
   (let ((food (make-instance 'food

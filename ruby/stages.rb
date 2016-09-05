@@ -121,6 +121,7 @@ class CreatureStage < Stage
     all_creatures = data.each_creature.to_a
     creatures = all_creatures.shuffle.cycle
     return unless data.has_creature?
+    spawner_nodes = data.each_spawner.flat_map(&:node_ids)
     # Now identify all of the "dangerous" nodes, that is
     # anywhere that should have a creature in it
     needed = data.select_nodes(&:can_have_creatures?).to_a
@@ -129,6 +130,11 @@ class CreatureStage < Stage
       node = needed.first
       if all_creatures.select { |x| node.can_have? x }.empty?
         # If none of the creatures will agree with the node, don't bother looking for one
+        needed.delete node
+        next
+      end
+      if spawner_nodes.include? node.id and rand < 0.8
+        # If the node already has a creature, high probability of skipping it
         needed.delete node
         next
       end
@@ -164,7 +170,7 @@ class FoodStage < Stage
     end
     data.map.each do |loc|
       current_count = loc.count_items Plant
-      if rand < 0.90 / (current_count + 1)
+      if rand < 0.75 / (current_count + 1)
         # Try to put some sort of food at the location, if possible
         food = foods.shift { |f| loc.can_have? f }
         if food

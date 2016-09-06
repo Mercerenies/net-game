@@ -110,3 +110,5 @@ mollusc: air -1, sea +1
 cattle: size +1, speed -1, threat -1
 aquatic: sea +1, air -1
 platypus: air -1, size -1, threat -1
+molluscan: air -1, sea +1
+nautiloids: sea +1

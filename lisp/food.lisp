@@ -118,9 +118,6 @@
 (defmethod system-keys append ((obj food))
   `((food-health "Health Restored" ,(food-health obj))))
 
-(defmethod is-trivial ((act (eql 'eat)) (obj food) preps)
-  nil)
-
 (defmethod do-action ((act (eql 'eat)) (obj food) preps)
   (declare (ignore preps))
   (format t "You eat the ~(~A~).~%"

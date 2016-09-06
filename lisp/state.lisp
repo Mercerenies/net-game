@@ -29,38 +29,6 @@
       (loop for spawner in *spawners*
             do (do-spawn spawner)))))
 
-;(defmethod do-action :before (act obj preps)
-;  (format t " >>> ~A ~A ~A <<< " act obj preps))
-
-(defmethod do-action ((act (eql 'go)) (obj location) preps)
-  (declare (ignore preps))
-  (if (eq obj (get-loc *player*))
-      (format t "You're already there...~%")
-      (progn
-        (format t "Going...~%")
-        (move-object *player* obj))))
-
-(defmethod do-action ((act (eql 'help)) obj preps)
-  (declare (ignore obj preps))
-  (format t "Valid Player Actions:~@
-             \"go <place>\" - Go to the area listed~@
-             \"examine <object>\" - Take a closer look at the object~@
-             \"use <object>\" - Interact with a tool or object~@
-             \"activate <object>\" - Turn the object on if it is currently inactive~@
-             \"collect <object>\" - Pick up the object in question~@
-             \"drop <object>\" - Drop the object from your inventory~@
-             \"attack <object> with <object>\" - Attack the entity with a weapon~@
-             \"attack <object> with fists\" - Attack the entity unarmed~@
-             \"eat <object>\" - Eat the object~@
-             ~:[~;~
-             \"probe <object>\" - (GOD) Get developer specs on an entity or object~@
-             \"nuke <object>\" - (GOD) Insta-kill any entity which has health~@
-             \"summon <object>\" - (GOD) Force an object into existence at the current location~@
-             ~]~
-             \"help\" - Display this message~@
-             \"quit\" - Exit the game~%"
-          *god-mode*))
-
 (defmethod mode-text ((state (eql 'warp)))
   (let ((nums (loop for e in *warps*
                     for i upfrom 1

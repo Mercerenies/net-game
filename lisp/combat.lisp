@@ -3,12 +3,6 @@
 (defun do-attack (obj &key (target *player*) (atk (atk obj)))
   (setf (hp target) (- (hp target) atk)))
 
-(defmethod is-trivial ((act (eql 'attack)) (obj animal) preps)
-  (typecase (getf preps 'with)
-    ((eql fists) nil)
-    (weapon nil)
-    (t (call-next-method))))
-
 (defmethod do-action ((act (eql 'attack)) (obj animal) preps)
   (typecase (getf preps 'with)
     (null (format t "Attack with what?~%"))

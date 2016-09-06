@@ -35,15 +35,3 @@
         (format t "Unrecognized entity. You can summon the following:~@
                    ~{ * ~A~%~}"
                 '("Golden Apple")))))
-
-(defmethod is-admin-only ((act (eql 'probe)) obj preps)
-  (declare (ignore obj preps))
-  t)
-
-(defmethod is-admin-only ((act (eql 'nuke)) obj preps)
-  (declare (ignore obj preps))
-  t)
-
-(defmethod is-admin-only ((act (eql 'summon)) obj preps)
-  (declare (ignore obj preps))
-  t)

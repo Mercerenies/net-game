@@ -36,50 +36,52 @@
   (when (warp-active obj)
     (push 'warp *state*)))
 
+;(defmethod do-action :before (act obj preps)
+;  (format t " >>> ~A ~A ~A <<< " act obj preps))
+
+(defmethod do-action ((act (eql 'go)) (obj location) preps)
+  (declare (ignore preps))
+  (if (eq obj (get-loc *player*))
+      (format t "You're already there...~%")
+      (progn
+        (format t "Going...~%")
+        (move-object *player* obj))))
+
+(defmethod do-action ((act (eql 'help)) obj preps)
+  (declare (ignore obj preps))
+  (format t "Valid Player Actions:~@
+             \"go <place>\" - Go to the area listed~@
+             \"examine <object>\" - Take a closer look at the object~@
+             \"use <object>\" - Interact with a tool or object~@
+             \"activate <object>\" - Turn the object on if it is currently inactive~@
+             \"collect <object>\" - Pick up the object in question~@
+             \"drop <object>\" - Drop the object from your inventory~@
+             \"attack <object> with <object>\" - Attack the entity with a weapon~@
+             \"attack <object> with fists\" - Attack the entity unarmed~@
+             \"eat <object>\" - Eat the object~@
+             ~:[~;~
+             \"probe <object>\" - (GOD) Get developer specs on an entity or object~@
+             \"nuke <object>\" - (GOD) Insta-kill any entity which has health~@
+             \"summon <object>\" - (GOD) Force an object into existence at the current location~@
+             ~]~
+             \"help\" - Display this message~@
+             \"quit\" - Exit the game~%"
+          *god-mode*))
+
+(defconstant +trivial-actions+
+  '(probe examine help quit))
+
+(defconstant +admin-actions+
+  '(probe nuke summon))
+
 (defgeneric is-admin-only (act obj preps))
 
 (defmethod is-admin-only ((act symbol) obj preps)
   (declare (ignore obj preps))
-  nil)
+  (member act +admin-actions+))
 
 (defgeneric is-trivial (act obj preps))
 
 (defmethod is-trivial ((act symbol) obj preps)
   (declare (ignore obj preps))
-  t)
-
-(defmethod is-trivial ((act (eql 'examine)) obj preps)
-  (declare (ignore obj preps))
-  t)
-
-(defmethod is-trivial ((act (eql 'probe)) obj preps)
-  (declare (ignore obj preps))
-  t)
-
-(defmethod is-trivial ((act (eql 'drop)) obj preps)
-  (declare (ignore obj preps))
-  nil)
-
-(defmethod is-trivial ((act (eql 'collect)) obj preps)
-  (declare (ignore obj preps))
-  nil)
-
-(defmethod is-trivial ((act (eql 'help)) obj preps)
-  (declare (ignore obj preps))
-  t)
-
-(defmethod is-trivial ((act (eql 'activate)) obj preps)
-  (declare (ignore obj preps))
-  nil)
-
-(defmethod is-trivial ((act (eql 'go)) obj preps)
-  (declare (ignore obj preps))
-  nil)
-
-(defmethod is-trivial ((act (eql 'use)) obj preps)
-  (declare (ignore obj preps))
-  nil)
-
-(defmethod is-trivial ((act (eql 'quit)) obj preps)
-  (declare (ignore obj preps))
-  t)
+  (member act +trivial-actions+))

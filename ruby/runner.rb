@@ -2,15 +2,10 @@
 
 load './ruby/everything.rb'
 
-data = Loader.load JSON.parse(ARGF.read)
+data = if ARGV.empty?
+         Loader.load JSON.parse(STDIN.read)
+       else
+         ARGV.collect { |name| Loader.load JSON.parse(IO.read name) }.flatten 1
+       end
 gen = Genner.new data
 puts gen.generate.to_sxp
-
-# This is temporary to test things ; it WILL NOT be in the final version in this form
-
-#gen.generate
-#puts DeltaGData.new(gen.data, []).result_structure.to_sxp
-
-#sxp = SXP::Reader::Scheme.read_file "./temp/system1.txt"
-#gdata = GData.from_sxp sxp
-#STDERR.puts gdata.result_structure.to_sxp

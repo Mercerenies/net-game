@@ -114,6 +114,11 @@ class GData
                  :':curr-quest-flag' => QuestMaker.current_quest_flag)
   end
 
+  # JSON-ify the remaining world data
+  def excess_to_json
+    @arr.to_json
+  end
+
   def self.from_sxp(arg)
     map, creatures, spawners, quests, meta = Reloader.assert_first :alpha, arg
     reloader = Reloader.instance

@@ -1,7 +1,4 @@
 
--- ///// Teach Ruby to store back it's unused raw data so it can use it later
---       Then maybe oceans? I dunno...
-
 local util = require 'lua/util'
 local gensema = require 'lua/gensema'
 local filenamer = require 'lua/filenamer'

@@ -10,6 +10,15 @@ class PersonPage
     @occupations = json['occupations'].map { |xx| [xx[1], xx[0].intern] }.to_h
   end
 
+  def to_json(options = {})
+    {
+      'nature' => 'Person',
+      'name' => @name,
+      'gender' => @gender,
+      'occupations' => @occupations.map { |k, v| [v, k] }
+    }.to_json options
+  end
+
 end
 
 class PlacePage
@@ -31,6 +40,14 @@ class PlacePage
     end
     mode = freq.max_by { |k, v| v }
     mode and @info.detect { |k, v| v == mode[0] }[0]
+  end
+
+  def to_json(options = {})
+    {
+      'nature' => 'Place',
+      'name' => @name,
+      'info' => @info.map { |k, v| [v, k] }
+    }.to_json options
   end
 
 end
@@ -56,6 +73,14 @@ class WeaponPage
     mode and @info.detect { |k, v| v == mode[0] }[0]
   end
 
+  def to_json(options = {})
+    {
+      'nature' => 'Weapon',
+      'name' => @name,
+      'info' => @info.map { |k, v| [v, k] }
+    }.to_json options
+  end
+
 end
 
 class AnimalPage
@@ -72,6 +97,20 @@ class AnimalPage
     @matches = json['matches'] # TODO Reject on low match count
   end
 
+  def to_json(options = {})
+    {
+      'nature' => 'Animal',
+      'name' => @name,
+      'pack' => @pack,
+      'speed' => @speed,
+      'sea' => @sea,
+      'air' => @air,
+      'threat' => @threat,
+      'size' => @size,
+      'matches' => @matches
+    }.to_json options
+  end
+
 end
 
 class FoodPage
@@ -84,6 +123,17 @@ class FoodPage
     @plant = @plant.intern if @plant
     @nutrition = json['nutrition']
     @poison = json['poison']
+  end
+
+  def to_json(options = {})
+    {
+      'nature' => 'Food',
+      'nickname' => @name,
+      'name' => @full_name,
+      'plant' => @plant,
+      'nutrition' => @nutrition,
+      'poison' => @poison
+    }.to_json options
   end
 
 end

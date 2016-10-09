@@ -21,7 +21,7 @@ class Quest
 
   def self.from_sxp(arg)
     id, name, nature, specifics = Reloader.assert_first :quest, arg
-    Quest.new(id, name, nature).tap do |quest|
+    ReloadedQuest.new(id, name, nature).tap do |quest|
       specifics.each_slice(2) { |k, v| quest.add_specifics(k, v) }
     end
   end

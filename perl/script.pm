@@ -239,7 +239,13 @@ sub shortest_food_synonym {
     my $data = $_[2];
     $title =~ s/-/ /;
     $summary =~ s/-/ /;
-    Filters::paren_expr($title); # TODO Make the synonym checker use @titles like the other systems
+    my @titles = apply_filters(
+        [
+         \&Filters::paren_expr,
+         \&Filters::quoted_phrase
+        ],
+        $title
+        );
     my @summaries = apply_filters(
         [
          \&Filters::paren_expr,
@@ -254,15 +260,17 @@ sub shortest_food_synonym {
     Filters::consecutive_spaces(@summaries);
     my @candidates;
     push @candidates, $title;
-    foreach my $prefix_loop (@{$data->{'foodprefixes'}}) {
-        my $prefix = $prefix_loop;
-        $prefix =~ s/\$title/$title/g;
-        foreach my $suffix_loop (@{$data->{'foodsuffixes'}}) {
-            my $suffix = $suffix_loop;
-            $suffix =~ s/\$title/$title/g;
-            for my $summaryvar (@summaries) {
-                if ($summaryvar =~ /\b$prefix (?:the )?([\w ]+)\b$suffix\W/) {
-                    push @candidates, $1;
+    foreach my $titlevar (@titles) {
+        foreach my $prefix_loop (@{$data->{'foodprefixes'}}) {
+            my $prefix = $prefix_loop;
+            $prefix =~ s/\$title/$titlevar/g;
+            foreach my $suffix_loop (@{$data->{'foodsuffixes'}}) {
+                my $suffix = $suffix_loop;
+                $suffix =~ s/\$title/$titlevar/g;
+                for my $summaryvar (@summaries) {
+                    if ($summaryvar =~ /\b$prefix (?:the )?([\w ]+)\b$suffix\W/) {
+                        push @candidates, $1;
+                    }
                 }
             }
         }

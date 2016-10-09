@@ -49,7 +49,10 @@
  | * Stalking - Moves to Sneaky mood when a player moves away.
  |#
 (defclass animal (creature damageable)
-  ((speed :accessor anim-speed
+  ((data :accessor anim-data
+         :initform nil
+         :initarg :data)
+   (speed :accessor anim-speed
           :initform 1
           :initarg :speed)
    (mood :accessor anim-mood
@@ -70,6 +73,7 @@
 
 (defun make-animal (data)
   (make-instance 'animal
+                 :data data
                  :name (get-name data)
                  :speed (anim-speed data)
                  :mood 'passive
@@ -164,4 +168,7 @@
     (anim-attitude "Attitude" ,(anim-attitude obj))
     (atk "Attack Power" ,(atk obj))
     (anim-air "Flying" ,(anim-air obj))
-    (anim-sea "Swimming" ,(anim-sea obj))))
+    (anim-sea "Swimming" ,(anim-sea obj))
+    (anim-pack "Pack Mentality" ,(anim-pack (anim-data obj)))
+    (anim-speed "Speed" ,(anim-speed (anim-data obj)))
+    (anim-threat "Threat" ,(anim-threat (anim-data obj)))))

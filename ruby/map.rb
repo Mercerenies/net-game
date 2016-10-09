@@ -118,6 +118,14 @@ class Location
     @water_mode = :sea
   end
 
+  def mark_water(water_mode)
+    case water_mode
+    when nil then mark_as_dry
+    when :shore then mark_as_shore
+    when :sea then mark_as_sea
+    end
+  end
+
   def to_sxp
     prefix = [:location, id, name]
     country = country_name ? [:':country', country_name] : []
@@ -133,25 +141,25 @@ class Location
 
   def self.from_sxp(arg)
     id, name, *arr = Reloader.assert_first :location, arg
-    Location.new(id, name, nil).tap do |loc|
+    ReloadedLocation.new(id, name, nil).tap do |loc|
       Reloader.hash_like(arr) do |k, v|
         case k
         when :':country'
-          loc.instance_variable_set :@country_name, v
+          loc.country_name = v
         when :':links'
-          loc.instance_variable_set :@links, v
+          v.each { |lnk| loc.add_link lnk }
         when :':contents'
           elems = v.collect { |x| Reloader.load x }
-          loc.instance_variable_set :@contents, elems
+          elems.each { |obj| loc.push obj }
         when :':civilized'
           # Ignore this arg; we'll get the necessary info from :meta
         when :':water'
-          loc.instance_variable_set :@water_mode, v
+          loc.mark_water v
         when :':meta'
           meta = Reloader.load v
-          loc.instance_variable_set :@generic_name, meta[:':generic-name']
-          loc.instance_variable_set :@valid_creatures, Reloader.load(meta[:':creatures']).data
-          loc.instance_variable_set :@valid_plants, Reloader.load(meta[:':plants']).data
+          loc.generic_name = meta[:':generic-name']
+          loc.valid_creatures = Reloader.load(meta[:':creatures']).data
+          loc.valid_plants = Reloader.load(meta[:':plants']).data
         end
       end
     end
@@ -167,6 +175,15 @@ class Location
 
   def valid_plants_wrapper
     ValidityWrapper.new @valid_plants
+  end
+
+end
+
+class ReloadedLocation < Location
+  attr_writer :country_name, :generic_name, :valid_creatures, :valid_plants
+
+  def initialize(id, name, country_name, generic_name: nil, valid_creatures: nil, valid_plants: nil)
+    super
   end
 
 end

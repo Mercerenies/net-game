@@ -90,8 +90,7 @@ class NPC < Person
 
   def self.from_sxp(arg)
     name, *arr = Reloader.assert_first :npc, arg
-    NPC.new(nil).tap do |npc|
-      npc.instance_variable_set :@name, name
+    ReloadedNPC.new(name).tap do |npc|
       Reloader.hash_like(arr) do |k, v|
         case k
         when :':short-name'
@@ -99,18 +98,36 @@ class NPC < Person
         when :':gender'
           npc.gender = v
         when :':job'
-          npc.instance_variable_set :@job, v
+          npc.job = v
         when :':job-name'
-          npc.instance_variable_set :@job_name, v
+          npc.job_name = v
         when :':old-job'
-          npc.instance_variable_set :@old, v
+          npc.old_job = v
         when :':old-job-name'
-          npc.instance_variable_set :@old_name, v
+          npc.old_job_name = v
         when :':quest-list'
-          npc.instance_variable_set :@quest_list, v
+          v.each { |q| npc.add_quest q }
         end
       end
     end
+  end
+
+end
+
+class ReloadedNPC < NPC
+  attr_writer :job, :job_name
+
+  def initialize(name)
+    super(nil)
+    @name = name
+  end
+
+  def old_job=(val)
+    @old = val
+  end
+
+  def old_job_name=(val)
+    @old_name = val
   end
 
 end

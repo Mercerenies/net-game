@@ -32,18 +32,27 @@ class Weapon < Item
 
   def self.from_sxp(arg)
     name, *arr = Reloader.assert_first :weapon, arg
-    Weapon.new(name, nil).tap do |wpn|
+    ReloadedWeapon.new(name).tap do |wpn|
       Reloader.hash_like(arr) do |k, v|
         case k
         when :':type'
-          wpn.instance_variable_set :@type, v
+          wpn.type = v
         when :':mod'
-          wpn.instance_variable_set :@modifier, v
+          wpn.modifier = v
         when :':flags'
           wpn.add_flags *v
         end
       end
     end
+  end
+
+end
+
+class ReloadedWeapon < Weapon
+  attr_writer :type, :modifier
+
+  def initialize(name)
+    super name, nil
   end
 
 end

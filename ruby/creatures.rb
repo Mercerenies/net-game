@@ -115,7 +115,6 @@ class Animal < Creature
 
 end
 
-# TODO We should actually do this subclass trick for more of the reload instances, probably
 class ReloadedAnimal < Animal
   extend Forwardable
 

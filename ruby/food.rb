@@ -93,9 +93,21 @@ class Plant
         time = v
       end
     end
-    Plant.new(type, food, time).tap do |pl|
-      pl.instance_variable_set :@name, name
+    ReloadedPlant.new(type, food, time).tap do |pl|
+      pl.name = name
     end
+  end
+
+end
+
+class ReloadedPlant < Plant
+
+  def initialize(type, food, growth_time = nil)
+    super
+  end
+
+  def name=(val)
+    @name = val.to_s
   end
 
 end

@@ -21,10 +21,18 @@ class Quest
 
   def self.from_sxp(arg)
     id, name, nature, specifics = Reloader.assert_first :quest, arg
-    Quest.new(name, nature).tap do |quest|
-      quest.instance_variable_set :@id, id
+    Quest.new(id, name, nature).tap do |quest|
       specifics.each_slice(2) { |k, v| quest.add_specifics(k, v) }
     end
+  end
+
+end
+
+class ReloadedQuest < Quest
+
+  def initialize(id, name, nature)
+    super name, nature
+    @id = id
   end
 
 end

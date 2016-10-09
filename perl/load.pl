@@ -2,6 +2,7 @@
 local $_;
 
 use perl::datafile;
+use perl::set
 
 my(%occu, @mwords, @fwords, %placenames, %weapons, %animals, @foodprefixes, @foodblacklist, @foodsuffixes,
    %foodtrees, @foodnegatives, @foodnutrition, @foodpoison, @foodsections);
@@ -44,15 +45,8 @@ while (<$fh>) {
 
 open $fh, '<', './data/foodnames.txt' or die("$!");
 my $foodmode = 'prefix';
-# TODO Look into CPAN Set modules for this, rather than using a hash
-my %foodmodes = ( 'prefix' => 1,
-                  'suffix' => 1,
-                  'blacklist' => 1,
-                  'negative' => 1,
-                  'plant' => 1,
-                  'nutrition' => 1,
-                  'poison' => 1,
-                  'sections' => 1 );
+my %foodmodes = set_containing('prefix', 'suffix', 'blacklist', 'negative',
+                               'plant', 'nutrition', 'poison', 'sections');
 while (<$fh>) {
     chomp;
     if (s/^://) {

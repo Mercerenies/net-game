@@ -2,7 +2,7 @@
 local $_;
 
 use perl::datafile;
-use perl::set
+use perl::set;
 
 my(%occu, @mwords, @fwords, %placenames, %weapons, %animals, @foodprefixes, @foodblacklist, @foodsuffixes,
    %foodtrees, @foodnegatives, @foodnutrition, @foodpoison, @foodsections);

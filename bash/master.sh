@@ -8,6 +8,7 @@ monsters=""
 animals=""
 foods=""
 debug=""
+debugl=""
 rein=""
 stage1=""
 stage2=""
@@ -67,6 +68,7 @@ while getopts 'c:p:P:w:m:a:f:d:r1234l:' opt; do
             ;;
         d) # Debug Mode
             debug="-d $OPTARG"
+            debugl="$OPTARG"
             ;;
         r) # Reinforcement Engine
             rein="-r"
@@ -91,6 +93,10 @@ done
 
 if [ -n "$stage1" ]; then
     stage1="$stage1 $celebs $people $places $weapons $monsters $animals $foods $debug $rein"
+fi
+
+if [ -n "$stage2" ]; then
+    stage2="$stage2 $debugl"
 fi
 
 if [ -n "$stage4" ]; then

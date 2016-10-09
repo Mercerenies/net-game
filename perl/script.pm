@@ -185,7 +185,7 @@ sub deduce_animal_stats {
             $constant = @{[ $summary =~ /\b$keyword\b/gi ]};
         }
         $stats{'matches'} += $constant;
-        #print STDERR "$title has $keyword match $constant times\n" if $constant > 0;
+        get_logger()->echo(2, "Animal $title has $keyword match $constant times") if $constant > 0;
         foreach my $stat (keys %{$data->{'animals'}->{$keyword}}) {
             my $coef = $data->{'animals'}->{$keyword}->{$stat};
             $stats{$stat} += $coef * $constant;

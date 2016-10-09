@@ -10,23 +10,32 @@ import links
 import reinforcement
 import logger
 
-def do_search(tup, number, selector = None, **key):
+def do_search(basis, number, selector = None, **key):
+    """
+    Performs an attempt to obtain the specified number of pages from the Internet.
+    The basis argument should be an instance of the Basis class. The number specifies
+    how many full spider attempts should be made. This is an upper bound on the number
+    of pages obtained, but the actual number might be less than this argument. The optional
+    selector argument specifies the selector to use in the search algorithm. If not supplied,
+    a simple default is constructed. This procedure returns a list of resulting pages. Any
+    excess key arguments are passed to algorithm.Spider unmodified.
+    """
     if number <= 0:
         return []
     if selector is None:
         selector = links.NoDupLinkSelector()
-    base_script, match_func = tup
     spider = algorithm.Spider(selector = selector, **key)
     arr = []
     for i in range(0, number):
-        base = base_script()
-        curr = spider.crawl_times(base, match_func)
+        base = basis.get_base()
+        curr = spider.crawl_times(base, basis.is_page)
         if curr:
             arr.append(curr)
     spider.finished()
     return arr
 
 def make_sel(keyword, rein):
+    """Constructs a simple selector or reinforcement learning selector, depending on arguments."""
     if rein:
         return reinforcement.ReinLinkSelector(keyword)
     else:

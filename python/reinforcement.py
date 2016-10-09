@@ -14,6 +14,7 @@ class DBError(Exception):
         super().__init__(*args, **key)
 
 class Fraction:
+    """A class representing fractions which are intended to be added and multiplied component-wise."""
 
     def __init__(self, numer, denom):
         self.numer = numer

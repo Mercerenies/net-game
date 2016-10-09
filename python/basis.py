@@ -91,10 +91,15 @@ def is_food_page(page):
                 and "wikipedia" not in c.lower()]) > 0
 
 class Basis:
-    celebrity = (get_celebrity_base, is_person_page )
-    person    = (get_person_base   , is_person_page )
-    place     = (get_place_base    , is_place_page  )
-    weapon    = (get_weapon_base   , is_weapon_page )
-    monster   = (get_monster_base  , is_monster_page)
-    animal    = (get_animal_base   , is_animal_page )
-    food      = (get_food_base     , is_food_page   )
+
+    def __init__(self, base, pred):
+        self.get_base = base
+        self.is_page = pred
+
+Basis.celebrity = Basis(get_celebrity_base, is_person_page )
+Basis.person    = Basis(get_person_base   , is_person_page )
+Basis.place     = Basis(get_place_base    , is_place_page  )
+Basis.weapon    = Basis(get_weapon_base   , is_weapon_page )
+Basis.monster   = Basis(get_monster_base  , is_monster_page)
+Basis.animal    = Basis(get_animal_base   , is_animal_page )
+Basis.food      = Basis(get_food_base     , is_food_page   )

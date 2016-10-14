@@ -1,5 +1,6 @@
 
 class DeltaMap < Map
+  include Delta
 
   def initialize(map)
     @old_ary = map.collect { |x| DeltaLocation.new x }
@@ -35,6 +36,7 @@ class DeltaMap < Map
 end
 
 class DeltaLocation < Location
+  include Delta
   extend Forwardable
 
   def_delegators :@new_contents, :push

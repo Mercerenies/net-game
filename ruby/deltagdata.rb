@@ -1,5 +1,6 @@
 
 class DeltaGData < GData
+  include Delta
 
   def initialize(old_data, everything)
     super everything

@@ -8,6 +8,7 @@ load './ruby/listlike.rb'
 load './ruby/affix.rb'
 load './ruby/namer.rb'
 
+load './ruby/delta.rb'
 load './ruby/level.rb'
 load './ruby/node.rb'
 load './ruby/map.rb'

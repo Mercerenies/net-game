@@ -5,9 +5,9 @@ local $_;
 
 # _flatten_sections(%page, $prefix)
 sub _flatten_sections {
-    my %page = %{$_[0]};
+    my %page = %{$_[0]->{'text'}->[0]};
     my $prefix = $_[1];
-    my $new_prefix = $page{'name'};
+    my $new_prefix = $_[0]->{'name'};
     $new_prefix = $prefix . "\0" . $new_prefix unless $prefix eq '';
     my %sections;
     $sections{$new_prefix} = $page{'content'};
@@ -106,7 +106,7 @@ Return the page's summary text.
 =cut
 
 sub page_summary {
-    return $_[0]->{'content'};
+    return $_[0]->{'text'}->[0]->{'content'};
 }
 
 =head2 full_page_text($xml)

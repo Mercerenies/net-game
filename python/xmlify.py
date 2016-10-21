@@ -7,7 +7,7 @@ def xmlify_once(page):
     Given a single Wikipedia page object, convert it into an XML structure organized by
     page sections.
     """
-    stack = [ET.Element("page", name = page.title)]
+    stack = [ET.Element("text")]
     re_titles = re.compile(r'^(=+) *(.*) *\1$')
     for line in page.content.splitlines():
         match = re.match(re_titles, line)
@@ -27,7 +27,9 @@ def xmlify_once(page):
     while len(stack) > 1:
         elem = stack.pop();
         stack[-1].append(elem)
-    return stack[0]
+    parent = ET.Element("page", name = page.title)
+    parent.append(stack[0])
+    return parent
 
 def xmlify(pages): # Pages should be a dict with key strings and value lists of pages
     """

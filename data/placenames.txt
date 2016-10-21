@@ -9,6 +9,7 @@ country                 country
 republic                country
 library                 library
 skyscraper              tower
+skyscrapers             tower
 tower                   tower
 district                district
 county                  district

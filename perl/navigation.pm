@@ -109,6 +109,16 @@ sub page_summary {
     return $_[0]->{'text'}->[0]->{'content'};
 }
 
+=head2 page_links($xml)
+
+Compute and return an array of the links on the page, in an unspecified order.
+
+=cut
+
+sub page_links {
+    return $_[0]->{'links'}->[0]->{'link'};
+}
+
 =head2 full_page_text($xml)
 
 Returns the full text of the page, leaving headers in as plaintext (without the Wikipedia-style header markdown).

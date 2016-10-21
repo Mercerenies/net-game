@@ -2,9 +2,20 @@
 import re
 import xml.etree.ElementTree as ET
 
-def xmlify_once(page):
+def xmlify_links(page):
     """
-    Given a single Wikipedia page object, convert it into an XML structure organized by
+    Given a Wikipedia page, encode the links in an XML element.
+    """
+    elem = ET.Element("links")
+    for link in page.links:
+        curr = ET.Element("link")
+        curr.text = link
+        elem.append(curr)
+    return elem
+
+def xmlify_content(page):
+    """
+    Given a single Wikipedia page object, convert its text into an XML structure organized by
     page sections.
     """
     stack = [ET.Element("text")]
@@ -27,8 +38,18 @@ def xmlify_once(page):
     while len(stack) > 1:
         elem = stack.pop();
         stack[-1].append(elem)
+    return stack[0]
+
+def xmlify_once(page):
+    """
+    Given a single Wikipedia page object, convert all of its structure into an XML element ready
+    for saving.
+    """
+    content = xmlify_content(page)
+    links = xmlify_links(page)
     parent = ET.Element("page", name = page.title)
-    parent.append(stack[0])
+    parent.append(content)
+    parent.append(links)
     return parent
 
 def xmlify(pages): # Pages should be a dict with key strings and value lists of pages

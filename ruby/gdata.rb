@@ -1,6 +1,6 @@
 
 class GData
-  attr_reader :node, :map
+  attr_reader :node, :map, :knowledge_base
 
   def initialize(everything)
     @arr = everything.clone
@@ -10,6 +10,7 @@ class GData
     @creatures = CreatureSet.new
     @spawners = SpawnerSet.new
     @quests = QuestSet.new
+    @knowledge_base = KnowledgeBase.new
   end
 
   # Assigns the singular node
@@ -105,7 +106,7 @@ class GData
 
   # Return the generator data in an appropriate output list format
   def result_structure
-    AlphaStructure.new map, @creatures, @spawners, @quests, get_meta_data
+    AlphaStructure.new map, @creatures, @spawners, @quests, @knowledge_base, get_meta_data
   end
 
   # Return the metadata object that will be stored with the result structure
@@ -120,7 +121,7 @@ class GData
   end
 
   def self.from_sxp(arg)
-    map, creatures, spawners, quests, meta = Reloader.assert_first :alpha, arg
+    map, creatures, spawners, quests, kb, meta = Reloader.assert_first :alpha, arg
     reloader = Reloader.instance
     meta = reloader.load meta
     GData.new([]).tap do |gdata|
@@ -128,6 +129,7 @@ class GData
       gdata.instance_variable_set :@creatures, reloader.load(creatures)
       gdata.instance_variable_set :@spawners, reloader.load(spawners)
       gdata.instance_variable_set :@quests, reloader.load(quests)
+      gdata.instance_variable_set :@knowledge_base, reloader.load(kb)
       Node.current_id = meta[:':curr-id']
       QuestMaker.current_quest_flag = meta[:':curr-quest-flag']
     end
@@ -137,16 +139,17 @@ end
 
 class AlphaStructure
 
-  def initialize(map, creatures, spawners, quests, meta)
+  def initialize(map, creatures, spawners, quests, kb, meta)
     @map = map
     @creatures = creatures
     @spawners = spawners
     @quests = quests
+    @knowledge_base = kb
     @meta = meta
   end
 
   def to_sxp
-    [:alpha, @map, @creatures, @spawners, @quests, @meta].to_sxp
+    [:alpha, @map, @creatures, @spawners, @quests, @knowledge_base, @meta].to_sxp
   end
 
 end

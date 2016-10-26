@@ -81,7 +81,7 @@ class DeltaGData < GData
     creatures = ListLikeChain.new @new_creatures, @creatures
     spawners = ListLikeChain.new @new_spawners, @spawners
     quests = ListLikeChain.new @new_quests, @quests
-    AlphaStructure.new map, creatures, spawners, quests, get_meta_data
+    AlphaStructure.new map, creatures, spawners, quests, @knowledge_base, get_meta_data
   end
 
   def delta_structure

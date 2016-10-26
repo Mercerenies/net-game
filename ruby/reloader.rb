@@ -34,7 +34,9 @@ class Reloader
       :quest => Quest,
       :validity => ValidityWrapper,
       :plant => Plant,
-      :food => Food
+      :food => Food,
+      :'knowledge-base' => KnowledgeBase,
+      :'npc-brain' => NPCBrain
     }
   end
 

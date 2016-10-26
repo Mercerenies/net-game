@@ -203,9 +203,9 @@ class QuestStage < Stage
       node.each do |obj|
         case obj
         when NPC
-          if obj.quest_count == 0 # TODO Update the delta system so old NPCs can get new quests
-            data.add_quests QuestMaker.make_fetch_quest(data.map, obj)
-          end
+          quest = QuestMaker.make_fetch_quest(data.map, obj)
+          data.add_quests quest
+          data.knowledge_base[obj.id].add_quest quest.id
         end
       end
     end

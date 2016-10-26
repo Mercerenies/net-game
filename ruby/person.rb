@@ -20,10 +20,11 @@ class Titles
 end
 
 class NPC < Person
-  attr_accessor :gender, :job, :job_name
+  attr_accessor :id, :gender, :job, :job_name
 
   def initialize(data)
     if data
+      @id = Node.get_id
       @name = data.name
       @gender = data.gender
       jobs = data.occupations
@@ -35,6 +36,7 @@ class NPC < Person
         @old, @old_name = [nil, nil]
       end
     else
+      @id = 0
       @name = ''
       @gender = nil
       @job_name, @job, @old, @old_name = [nil, nil, nil, nil]
@@ -74,23 +76,14 @@ class NPC < Person
     @old_name
   end
 
-  def add_quest(qid)
-    # The quest list is a list of quest identifiers
-    @quest_list.push qid
-  end
-
-  def quest_count
-    @quest_list.size
-  end
-
   def to_sxp
-    [:npc, full_name, :':short-name', name, :':gender', @gender, :':job', job, :':job-name', job_name,
-     :':old-job', old_job, :':old-job-name', old_job_name, :':quest-list', @quest_list].to_sxp
+    [:npc, id, full_name, :':short-name', name, :':gender', @gender, :':job', job, :':job-name', job_name,
+     :':old-job', old_job, :':old-job-name', old_job_name].to_sxp
   end
 
   def self.from_sxp(arg)
-    name, *arr = Reloader.assert_first :npc, arg
-    ReloadedNPC.new(name).tap do |npc|
+    id, name, *arr = Reloader.assert_first :npc, arg
+    ReloadedNPC.new(id, name).tap do |npc|
       Reloader.hash_like(arr) do |k, v|
         case k
         when :':short-name'
@@ -105,8 +98,6 @@ class NPC < Person
           npc.old_job = v
         when :':old-job-name'
           npc.old_job_name = v
-        when :':quest-list'
-          v.each { |q| npc.add_quest q }
         end
       end
     end
@@ -117,8 +108,9 @@ end
 class ReloadedNPC < NPC
   attr_writer :job, :job_name
 
-  def initialize(name)
+  def initialize(id, name)
     super(nil)
+    @id = id
     @name = name
   end
 

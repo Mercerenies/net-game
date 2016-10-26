@@ -84,7 +84,7 @@
   (loop for dd in (rest data)
         collect (apply func dd)))
 
-; Returns (values map creatures spawners quests)
+; Returns (values map creatures spawners quests kb)
 (defun load-data (&key (file *standard-input*))
   (let ((data (with-scheme-notation (read file))))
     ; Note that the sixth element of data is meta and is intentionally ignored by this segment of the program
@@ -111,7 +111,10 @@
                for quest = (apply #'load-quest (first data) (rest data))
                do (let ((*quests* hash))
                     (add-quest quest))
-               finally (return hash)))))))
+               finally (return hash)))
+       (destructuring-bind (kb-sym . kb) (sixth data)
+         (unless (eq kb-sym 'knowledge-base) (error "Flawed data - knowledge-base"))
+         (load-knowledge-base kb))))))
 
 (defun load-object (node obj)
   (apply #'load-object-with-type node (car obj) (cdr obj)))

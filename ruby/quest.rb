@@ -86,7 +86,6 @@ module QuestMaker
     item.add_flags flag
     item_loc = map.put_somewhere item
     Quest.new("#{person.name}'s Missing #{item_raw_name}", :fetch).tap do |q|
-      person.add_quest q.id
       q.add_specifics :'item-flag', flag
       q.add_specifics :'item-name', item_raw_name
       q.add_specifics :'item-loc', item_loc.generic_name

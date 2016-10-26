@@ -22,6 +22,7 @@
 
 (load "./lisp/quests.lisp")
 (load "./lisp/brain.lisp")
+(load "./lisp/knowledge.lisp")
 
 (load "./lisp/inventory.lisp")
 (load "./lisp/item.lisp")

@@ -1,6 +1,6 @@
 (in-package #:net-game)
 
-(defclass person (named located)
+(defclass person (identifiable named located)
   ((short-name :accessor person-nickname
                :initform ""
                :initarg :short-name
@@ -19,13 +19,10 @@
             :initarg :old-job)
    (old-job-name :accessor person-old-job-name
                  :initform nil
-                 :initarg :old-job-name)
-   (quest-list :accessor quest-list
-               :initform nil
-               :initarg :quest-list)))
+                 :initarg :old-job-name)))
 
-(defun make-person (name &rest keys &key &allow-other-keys)
-  (apply #'make-instance 'person :name name keys))
+(defun make-person (id name &rest keys &key &allow-other-keys)
+  (apply #'make-instance 'person :id id :name name keys))
 
 (defmethod load-object-with-type (node (type (eql 'npc)) &rest args)
   (let ((person (apply #'make-person args)))
@@ -44,14 +41,13 @@
     (person-job "Occupation" ,(person-job obj))
     (person-job-name "Occupation Name" ,(person-job-name obj))
     (person-old-job "Prior Occupation" ,(person-old-job obj))
-    (person-old-job-name "Prior Occupation Name" ,(person-old-job-name obj))
-    (quest-list "Quests" ,(quest-list obj))))
+    (person-old-job-name "Prior Occupation Name" ,(person-old-job-name obj))))
 
 ; Uses *player*
 (defmethod do-action ((type (eql 'talk)) (obj person) preps)
   (declare (ignore preps))
   (let* ((next-quest-id (find-if (complement #'has-finished-quest)
-                                 (quest-list obj)))
+                                 (get-quest-list (get-id obj))))
          (next-quest (and next-quest-id (get-quest-details next-quest-id))))
     (with-speech-vars ((speaker obj))
       (cond

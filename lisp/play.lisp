@@ -48,8 +48,9 @@
         until (null finish)))
 
 (defun run-game (&key (filename "./temp/system.txt"))
-  (multiple-value-bind (*world* *creatures* *spawners* *quests*) (with-open-file (file filename)
-                                                                   (load-data :file file))
+  (multiple-value-bind (*world* *creatures* *spawners* *quests* *knowledge-base*)
+      (with-open-file (file filename)
+        (load-data :file file))
     (let ((*player* (loop for loc being the hash-values in *world*
                           for player = (find-if (lambda (y) (typep y 'player))
                                                 (location-contents loc))

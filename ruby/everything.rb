@@ -28,6 +28,9 @@ load './ruby/bank.rb'
 load './ruby/site.rb'
 load './ruby/lake.rb'
 
+load './ruby/brain.rb'
+load './ruby/deltabrain.rb'
+
 load './ruby/objs.rb'
 load './ruby/weapon.rb'
 load './ruby/person.rb'

@@ -9,6 +9,7 @@ class DeltaGData < GData
     @spawners = old_data.each_spawner.to_a
     @new_spawners = SpawnerSet.new
     @quests = old_data.each_quest.to_a
+    @knowledge_base = DeltaKnowledgeBase.new old_data.knowledge_base
     @new_quests = QuestSet.new
     @new_map = DeltaMap.new old_data.map
   end
@@ -92,22 +93,23 @@ class DeltaGData < GData
     #    the pre-existing ones should be left unmodified.
     # These conditions are NOT checked; if you violate them, a potentially
     # inaccurate delta file will be produced.
-    DeltaStructure.new map, @new_creatures, @new_spawners, @new_quests
+    DeltaStructure.new map, @new_creatures, @new_spawners, @new_quests, @knowledge_base
   end
 
 end
 
 class DeltaStructure
 
-  def initialize(map, creatures, spawners, quests)
+  def initialize(map, creatures, spawners, quests, knowledge_base)
     @map = map
     @creatures = creatures
     @spawners = spawners
     @quests = quests
+    @knowledge_base = knowledge_base
   end
 
   def to_dsxp
-    [:delta, @map.to_dsxp, @creatures, @spawners, @quests].to_sxp
+    [:delta, @map.to_dsxp, @creatures, @spawners, @quests, @knowledge_base.to_dsxp].to_sxp
   end
 
 end

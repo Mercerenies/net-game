@@ -39,8 +39,12 @@ class NPCBrain
     @quests = []
   end
 
+  def each(&block)
+    @quests.each(&block)
+  end
+
   def to_sxp
-    ([:'npc-brain'] + @quests).to_sxp
+    ([:'npc-brain'] + each.to_a).to_sxp
   end
 
   def add_quest(q) # Expects a quest identifier

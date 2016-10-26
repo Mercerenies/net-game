@@ -35,7 +35,7 @@
 ; Returns (values map creatures spawners quests)
 ; Directly modifies the game world; call at the appropriate time
 (defun load-delta (&key (file *standard-input*))
-  (destructuring-bind (delta-sym dmap creatures spawners quests) (with-scheme-notation (read file))
+  (destructuring-bind (delta-sym dmap creatures spawners quests kb) (with-scheme-notation (read file))
     (unless (eq delta-sym 'delta)
       (error "Flawed data - delta"))
     ; Map
@@ -49,4 +49,5 @@
                       (error "Flawed data - quest-set"))
           for data in (rest quests)
           for quest = (apply #'load-quest data)
-          do (add-quest quest))))
+          do (add-quest quest))
+    (delta-load-knowledge-base kb)))

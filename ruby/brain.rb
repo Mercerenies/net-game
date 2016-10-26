@@ -51,6 +51,14 @@ class NPCBrain
     @quests.push q
   end
 
+  def quest_count
+    each.to_a.size
+  end
+
+  def has_quests?
+    quest_count > 0
+  end
+
   def self.from_sxp(arg)
     arr = Reloader.assert_first :'npc-brain', arg
     NPCBrain.new.tap do |brain|

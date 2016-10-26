@@ -41,7 +41,8 @@
     (person-job "Occupation" ,(person-job obj))
     (person-job-name "Occupation Name" ,(person-job-name obj))
     (person-old-job "Prior Occupation" ,(person-old-job obj))
-    (person-old-job-name "Prior Occupation Name" ,(person-old-job-name obj))))
+    (person-old-job-name "Prior Occupation Name" ,(person-old-job-name obj))
+    (get-quest-list "Quest List" ,(get-quest-list (get-id obj)))))
 
 ; Uses *player*
 (defmethod do-action ((type (eql 'talk)) (obj person) preps)

@@ -203,9 +203,11 @@ class QuestStage < Stage
       node.each do |obj|
         case obj
         when NPC
-          quest = QuestMaker.make_fetch_quest(data.map, obj)
-          data.add_quests quest
-          data.knowledge_base[obj.id].add_quest quest.id
+          if not data.knowledge_base[obj.id].has_quests?
+            quest = QuestMaker.make_fetch_quest(data.map, obj)
+            data.add_quests quest
+            data.knowledge_base[obj.id].add_quest quest.id
+          end
         end
       end
     end

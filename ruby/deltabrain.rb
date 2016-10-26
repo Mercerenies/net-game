@@ -8,8 +8,15 @@ class DeltaKnowledgeBase < KnowledgeBase
   end
 
   def each(&block)
-    @old.each(&block)
-    @new.each(&block)
+    if block.nil?
+      Enumerator.new do |y|
+        @old.each { |obj| y << obj }
+        @new.each { |obj| y << obj }
+      end
+    else
+      @old.each(&block)
+      @new.each(&block)
+    end
   end
 
   def [](key)
@@ -48,8 +55,15 @@ class DeltaNPCBrain < NPCBrain
   end
 
   def each(&block)
-    @old.each(&block)
-    @new.each(&block)
+    if block.nil?
+      Enumerator.new do |y|
+        @old_quests.each { |obj| y << obj }
+        @new_quests.each { |obj| y << obj }
+      end
+    else
+      @old_quests.each(&block)
+      @new_quests.each(&block)
+    end
   end
 
   def add_quest(q) # Expects a quest identifier

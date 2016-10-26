@@ -13,9 +13,12 @@
                          while dd
                          do (setf (gethash (first dd) *knowledge-base*) (load-brain (second dd)))))
              (:mod (loop for dd = value then (cddr dd) ; TODO Test this and make sure it reintegrates
+                         for dkey = (first dd)
+                         for dval = (second dd)
                          while dd
-                         do (setf (gethash (car dd) *knowledge-base*)
-                                  (append (cdr dd) (gethash (car dd) *knowledge-base*))))))))
+                         unless (eq (car dval) 'npc-brain) do (error "flawed data - npc-brain")
+                         do (setf (gethash dkey *knowledge-base*)
+                                  (append (gethash dkey *knowledge-base*) (cdr dval) nil)))))))
 
 (defun load-brain (data)
   (unless (eq (car data) 'npc-brain) (error "Flawed data - npc-brain"))

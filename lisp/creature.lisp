@@ -166,7 +166,7 @@
 (defmethod system-keys append ((obj animal))
   `((anim-mood "Current Mood" ,(anim-mood obj))
     (anim-attitude "Attitude" ,(anim-attitude obj))
-    (atk "Attack Power" ,(atk obj))
+    (atk "Attack Power" ,(* 100 (atk obj)))
     (anim-air "Flying" ,(anim-air obj))
     (anim-sea "Swimming" ,(anim-sea obj))
     (anim-pack "Pack Mentality" ,(anim-pack (anim-data obj)))

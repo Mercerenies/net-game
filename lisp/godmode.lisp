@@ -12,11 +12,34 @@
 
 (defmethod do-action ((act (eql 'probe)) obj preps)
   (declare (ignore preps))
-  (format t "~:[Object~;~:*~A~]~@[ (~A)~]~@
-             ~{ * ~{~*~A~2:* (~A) - ~*~A~}~%~}"
-          (and (typep obj 'named) (get-name obj))
-          (and (typep obj 'identifiable) (get-id obj))
-          (system-keys obj)))
+  (let ((padding 8)
+        (keys (system-keys obj))
+        (top-line (format nil " ~:[Object~;~:*~A~]~@[ (~A)~] "
+                          (and (typep obj 'named) (get-name obj))
+                          (and (typep obj 'identifiable) (get-id obj)))))
+    (destructuring-bind (sym-length name-length val-length)
+        (loop for (sym name val) in keys
+              maximizing (length (string sym)) into sym-length
+              maximizing (length name) into name-length
+              maximizing (length (format nil "~A" val)) into val-length
+              finally (return (list sym-length name-length val-length)))
+      (let* ((total-length (max (+ sym-length name-length val-length padding)
+                                (length top-line)))
+             (name-length-new (- total-length ; Stretch name-length to fit total-length
+                                 sym-length
+                                 val-length
+                                 padding))
+             (new-keys (mapcan (lambda (x)
+                                 (list sym-length (first x)
+                                       name-length-new (second x)
+                                       val-length (third x)))
+                               keys)))
+        (format t "+~V@{-~}+~:*~@
+                   |~VA|~@
+                   +~0@*~V@{-~}+~*~@
+                   ~{| ~*~:[~2:*~V@{ ~}~*~;~2:*~VA~] | ~VA | ~V@A |~%~}~
+                   +~0@*~V@{-~}+~%"
+                total-length top-line new-keys)))))
 
 (defconstant +god-apple+
   (make-food-data "Golden Apple"

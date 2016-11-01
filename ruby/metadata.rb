@@ -19,6 +19,10 @@ class MetaData
     to_h
   end
 
+  def to_s
+    "#<MetaData:0x#{object_id.to_s 16} @hash=#{@hash}>"
+  end
+
   def to_sxp
     arr = @hash.to_a.flatten 1
     ([:meta] + arr).to_sxp

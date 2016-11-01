@@ -10,9 +10,9 @@ class KnowledgeBase
     @data = {}
   end
 
-  def [](key)
-    @data[key] = NPCBrain.new unless @data.include? key
-    @data[key]
+  def [](person)
+    @data[person.id] = NPCBrain.new(person.job) unless @data.include? key
+    @data[person.id]
   end
 
   def []=(key, value)
@@ -34,8 +34,10 @@ class KnowledgeBase
 end
 
 class NPCBrain
+  attr_accessor :job # TODO Move this accessor to a ReloadedNPCBrain child
 
-  def initialize
+  def initialize(job)
+    @job = job
     @quests = []
   end
 
@@ -44,7 +46,8 @@ class NPCBrain
   end
 
   def to_sxp
-    ([:'npc-brain'] + each.to_a).to_sxp
+    meta = MetaData.new(:':job' => job)
+    [:'npc-brain', :':quests', each.to_a, :':meta', meta].to_sxp
   end
 
   def add_quest(q) # Expects a quest identifier
@@ -61,8 +64,16 @@ class NPCBrain
 
   def self.from_sxp(arg)
     arr = Reloader.assert_first :'npc-brain', arg
-    NPCBrain.new.tap do |brain|
-      arr.each { |n| brain.add_quest n }
+    NPCBrain.new(nil).tap do |brain|
+      Reloader.hash_like(arr) do |k, v|
+        case k
+        when :':quests'
+          v.each { |n| brain.add_quest n }
+        when :':meta'
+          meta = Reloader.load v
+          brain.job = meta[:':job']
+        end
+      end
     end
   end
 

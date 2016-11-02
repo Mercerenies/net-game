@@ -76,9 +76,17 @@ class NPC < Person
     @old_name
   end
 
+  def casual_dialogue
+    if full_name == name
+      "Hi, my name is #{full_name}. I'm something of a #{@job_name}."
+    else
+      "Hi, my name is #{full_name}. You can call me #{name}. I'm something of a #{@job_name}."
+    end
+  end
+
   def to_sxp
     [:npc, id, full_name, :':short-name', name, :':gender', @gender, :':job', job, :':job-name', job_name,
-     :':old-job', old_job, :':old-job-name', old_job_name].to_sxp
+     :':old-job', old_job, :':old-job-name', old_job_name, :':casual-dialogue', casual_dialogue].to_sxp
   end
 
   def self.from_sxp(arg)

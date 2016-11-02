@@ -19,7 +19,11 @@
             :initarg :old-job)
    (old-job-name :accessor person-old-job-name
                  :initform nil
-                 :initarg :old-job-name)))
+                 :initarg :old-job-name)
+   (casual-dialogue :accessor person-casual-dialogue
+                    :initform ""
+                    :initarg :casual-dialogue
+                    :type string)))
 
 (defun make-person (id name &rest keys &key &allow-other-keys)
   (apply #'make-instance 'person :id id :name name keys))
@@ -47,15 +51,12 @@
 ; Uses *player*
 (defmethod do-action ((type (eql 'talk)) (obj person) preps)
   (declare (ignore preps))
-  (with-speech-vars ((speaker obj))
-    (default-dialogue obj)))
+  (npc-talk-menu obj))
+
+(defun npc-talk-menu (npc)
+  (speak-branches "What can I do for you?"
+                  ("What's going on?" (default-dialogue npc))
+                  ("Nothing, really.")))
 
 (defun default-dialogue (person)
-  (with-accessors ((name get-name)
-                   (nickname person-nickname))
-      person
-    (cond
-      ((not (string-equal nickname name))
-       (do-speak '((one-liner ("Hi!"))))) ; TODO Update these to say something intelligent
-      (t
-       (do-speak '((one-liner "Hi!")))))))
+  (speak-line (person-casual-dialogue person)))

@@ -47,17 +47,8 @@
 ; Uses *player*
 (defmethod do-action ((type (eql 'talk)) (obj person) preps)
   (declare (ignore preps))
-  (let* ((next-quest-id (find-if (complement #'has-finished-quest)
-                                 (get-quest-list (get-id obj))))
-         (next-quest (and next-quest-id (get-quest-details next-quest-id))))
-    (with-speech-vars ((speaker obj))
-      (cond
-        ((and next-quest
-              (has-started-quest next-quest-id))
-         (quest-status-update next-quest))
-        (next-quest
-         (introduce-quest next-quest))
-        (t (default-dialogue obj))))))
+  (with-speech-vars ((speaker obj))
+    (default-dialogue obj)))
 
 (defun default-dialogue (person)
   (with-accessors ((name get-name)
@@ -65,6 +56,6 @@
       person
     (cond
       ((not (string-equal nickname name))
-       (do-speak 'basic-nicknamed-intro))
+       (do-speak '((one-liner ("Hi!"))))) ; TODO Update these to say something intelligent
       (t
-       (do-speak 'basic-intro)))))
+       (do-speak '((one-liner "Hi!")))))))

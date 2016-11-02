@@ -59,7 +59,7 @@
         (error "The world is empty."))
       (unless *player*
         (error "The player object does not exist."))
-      (load-speeches)
+      ;(load-speeches)
       (loop named game-loop
             with *read-eval* = nil
             with *do-exit* = (lambda () (return-from game-loop nil))

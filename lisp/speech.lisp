@@ -75,12 +75,13 @@
 (defmethod do-command ((state dialogue-state) arg)
   (let ((int (parse-integer arg :junk-allowed t)))
     (if (and int (typep int `(integer 1 ,(length (dia-answers state)))))
-        (let ((new-id (cdr (nth (1- int) (dia-answers state)))))
+        (let ((new-line (cdr (nth (1- int) (dia-answers state)))))
           (pop *state*)
           (with-speech-var-pack (dia-plist state)
-            (do-speak new-id)))
+            (do-speak new-line)))
         (format t "Invalid answer.~%"))))
 
+#|
 (defun load-speeches (&key (force nil) &aux (*read-eval* nil))
   (unless (and *speech* (not force))
     (with-open-file (file "./data/speech.txt")
@@ -92,6 +93,7 @@
 
 (defun get-speech-line (id &key (*speech* *speech*))
   (gethash id *speech*))
+|#
 
 (defun eval-text-element (elem)
   (cond ((stringp elem) elem)
@@ -110,8 +112,8 @@
          (loop for elem in line
                collect (eval-text-element elem))))
 
-(defun do-speak (id &key (*speech* *speech*))
-  (loop with cmds = (get-speech-line id)
+(defun do-speak (line &key (*speech* *speech*))
+  (loop with cmds = line
         with final-cmd = nil ; TODO Commands like (branch ...) should not allow things to come after them
         for cmd in cmds
         unless cmd

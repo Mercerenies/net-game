@@ -32,7 +32,7 @@
                                  (append value (location-exits loc))))
                (:add-contents (mapc #'(lambda (x) (load-object loc x)) value))))))
 
-; Returns (values map creatures spawners quests)
+; Returns (values map creatures spawners quests kb)
 ; Directly modifies the game world; call at the appropriate time
 (defun load-delta (&key (file *standard-input*))
   (destructuring-bind (delta-sym dmap creatures spawners quests kb) (with-scheme-notation (read file))

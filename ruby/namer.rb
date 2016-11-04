@@ -28,13 +28,14 @@ class Namer
     @@instance ||= Namer.new
   end
 
-  def initialize(fname: "./data/naming.txt", order: 2)
+  def initialize(fname: "./data/naming.txt", order: 2, termination: 0.05)
     @order = order
+    @term = termination
     @hash = {}
     File.open fname do |file|
       file.each do |name|
         name = name.chomp + ' '
-        (- order .. name.length - order - 2).each do |i|
+        (- order .. name.length - order - 1).each do |i|
           if i < 0
             subseq = name[0, order + i + 1]
           else
@@ -53,12 +54,15 @@ class Namer
 
   def sample
     curr = ""
-    len = 4 + rand(10)
-    len.times do |i|
+    multiplier = 0
+    loop do
       distr = @hash[ curr[- @order, @order ] || curr ]
       break unless distr
-      rnd = rand (distr.values.reduce(0, &:+))
+      total = distr.values.reduce(0, &:+)
+      break if rand(total) < multiplier * distr[' ']
+      rnd = rand total
       curr += distr.detect { |k, v| (rnd -= v) <= 0 }[0]
+      multiplier += @term
     end
     curr = curr.strip
     curr = curr[0 .. -3] if curr =~ / [^ ]$/ # Remove single-letter word endings

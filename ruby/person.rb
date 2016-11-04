@@ -41,7 +41,6 @@ class NPC < Person
       @gender = nil
       @job_name, @job, @old, @old_name = [nil, nil, nil, nil]
     end
-    @quest_list = []
   end
 
   def full_name

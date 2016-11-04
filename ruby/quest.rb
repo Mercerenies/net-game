@@ -1,28 +1,36 @@
 require 'forwardable'
 
 class Quest
-  attr_reader :id, :name, :nature, :specifics
+  attr_reader :id, :name
 
-  def initialize(name, nature)
+  def initialize(name)
     @id = Node.get_id
     @name = name
-    @nature = nature
-    @specifics = []
+    @states = {}
   end
 
-  def add_specifics(key, value)
-    @specifics.unshift key, value
-    self # Returns self so calls can be chained
+  def [](state)
+    @states[state]
+  end
+
+  def []=(state, val)
+    @states[state] = val
   end
 
   def to_sxp
-    [:quest, id, name, nature, specifics].to_sxp
+    states = @states.flat_map { |k, v| [k, v] }
+    [:quest, id, name, :':states', states].to_sxp
   end
 
   def self.from_sxp(arg)
-    id, name, nature, specifics = Reloader.assert_first :quest, arg
-    ReloadedQuest.new(id, name, nature).tap do |quest|
-      specifics.each_slice(2) { |k, v| quest.add_specifics(k, v) }
+    id, name, *specifics = Reloader.assert_first :quest, arg
+    ReloadedQuest.new(id, name).tap do |quest|
+      Reloader.hash_like(specifics) do |k, v|
+        case k
+        when :':states'
+          quest[k] = v
+        end
+      end
     end
   end
 
@@ -30,8 +38,8 @@ end
 
 class ReloadedQuest < Quest
 
-  def initialize(id, name, nature)
-    super name, nature
+  def initialize(id, name)
+    super name
     @id = id
   end
 
@@ -76,19 +84,33 @@ module QuestMaker
     ("qf" + @@quest_flag_n.to_s.rjust(4, '0')).intern
   end
 
-  def self.make_fetch_quest(map, person)
+  def self.make_fetch_quest(map, brain)
     flag = QuestMaker.make_quest_flag
     item_raw_name = nil
     item = Item.make_random do |name|
       item_raw_name = name
-      "#{person.name}'s #{item_raw_name}"
+      "#{brain.name}'s #{item_raw_name}"
     end
     item.add_flags flag
     item_loc = map.put_somewhere item
-    Quest.new("#{person.name}'s Missing #{item_raw_name}", :fetch).tap do |q|
-      q.add_specifics :'item-flag', flag
-      q.add_specifics :'item-name', item_raw_name
-      q.add_specifics :'item-loc', item_loc.generic_name
+    # ///// TODO Build a (Ruby) DSL to make this (Lisp) DSL prettier
+    Quest.new("#{brain.name}'s Missing #{item_raw_name}").tap do |q|
+      q[0] = [
+              [:initiate, [:branch, "Hey! You seem fairly capable. I think I dropped my #{item_raw_name.downcase} somewhere. Do you think you could go and get it?",
+                           "Sure thing!", [:begin,
+                                           [:accept, 1],
+                                           [:speak, "Perfect! I'm pretty sure I left it somewhere near #{item_loc.generic_name}."]],
+                           "I don't have time.", [:speak, "Oh... sorry to bother you."]]]
+             ]
+      q[1] = [
+              [[:'talk-to', brain.id, "Your item?"], [:'if-has-item', flag,
+                                                      [:begin,
+                                                       [:complete],
+                                                       [:'remove-item', flag],
+                                                       [:speak, "Oh, my #{item_raw_name.downcase}! Thank you so much!"]],
+                                                      [:speak, "Remember. You're looking for my #{item_raw_name.downcase} near #{item_loc.generic_name}"]]]
+             ]
+      q[:completed] = []
     end
   end
 

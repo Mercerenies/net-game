@@ -4,6 +4,7 @@ require 'forwardable'
 class KnowledgeBase
   extend Forwardable
 
+  attr_reader :data
   def_delegator :@data, :each, :each
 
   def initialize
@@ -11,12 +12,16 @@ class KnowledgeBase
   end
 
   def [](person)
-    @data[person.id] = NPCBrain.new(person.job) unless @data.include? key
+    @data[person.id] = NPCBrain.new(person.id, person.name, person.job) unless @data.include? person
     @data[person.id]
   end
 
   def []=(key, value)
-    @data[key] = value
+    @data[key.id] = value
+  end
+
+  def add_empty(person)
+    self[person] # Referencing the field forces the creation, according to the accessor above
   end
 
   def to_sxp
@@ -24,19 +29,25 @@ class KnowledgeBase
     ([:'knowledge-base'] + arr).to_sxp
   end
 
+  def to_h
+    data
+  end
+
   def self.from_sxp(arg)
     arr = Reloader.assert_first :'knowledge-base', arg
     KnowledgeBase.new.tap do |kb|
-      Reloader.hash_like(arr) { |k, v| kb[k] = Reloader.instance.load v }
+      Reloader.hash_like(arr) { |k, v| kb.data[k] = Reloader.instance.load v }
     end
   end
 
 end
 
 class NPCBrain
-  attr_accessor :job # TODO Move this accessor to a ReloadedNPCBrain child
+  attr_accessor :id, :name, :job # TODO Move this accessor to a ReloadedNPCBrain child
 
-  def initialize(job)
+  def initialize(id, name, job)
+    @id = id
+    @name = name
     @job = job
     @quests = []
   end
@@ -46,7 +57,7 @@ class NPCBrain
   end
 
   def to_sxp
-    meta = MetaData.new(:':job' => job)
+    meta = MetaData.new(:':id' => id, :':job' => job, :':name' => name)
     [:'npc-brain', :':quests', each.to_a, :':meta', meta].to_sxp
   end
 
@@ -72,6 +83,8 @@ class NPCBrain
         when :':meta'
           meta = Reloader.load v
           brain.job = meta[:':job']
+          brain.name = meta[:':name']
+          brain.id = meta[:':id']
         end
       end
     end

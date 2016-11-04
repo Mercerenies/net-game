@@ -189,7 +189,9 @@ class PersonStage < Stage
       case elem
       when PersonPage
         if elem.gender and not elem.occupations.empty?
-          data.map.put_somewhere(NPC.new elem) { |loc| loc.civilized? }
+          npc = NPC.new elem
+          data.map.put_somewhere(npc) { |loc| loc.civilized? }
+          data.knowledge_base.add_empty npc
         end
       end
     end
@@ -199,17 +201,10 @@ end
 # Stage 9 - Put default quests for any person who lacks quests
 class QuestStage < Stage
   def run(data)
-    data.map.each do |node|
-      node.each do |obj|
-        case obj
-        when NPC
-          if not data.knowledge_base[obj].has_quests?
-            quest = QuestMaker.make_fetch_quest(data.map, obj)
-            data.add_quests quest
-            data.knowledge_base[obj].add_quest quest.id
-          end
-        end
-      end
+    data.knowledge_base.each do |id, val|
+      q = QuestMaker.make_fetch_quest(data.map, val)
+      data.add_quests q
+      val.add_quest q.id
     end
   end
 end

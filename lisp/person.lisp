@@ -54,9 +54,35 @@
   (npc-talk-menu obj))
 
 (defun npc-talk-menu (npc)
-  (speak-branches "What can I do for you?"
-                  ("What's going on?" (default-dialogue npc))
-                  ("Nothing, really.")))
+  (let ((basic-responses `(("What's going on?" . ,(lambda () (npc-initiate-quests npc)))
+                           ("Nothing, really." . ,(lambda ()))))
+        (quest-responses (loop for quest in (active-quests *player*)
+                               for quest-data = (get-quest-data (get-id quest))
+                               for state = (gethash (quest-state quest) (quest-states quest-data))
+                               append (loop for (key . value) in state
+                                            do (format t "~S~%" key)
+                                            when (and (listp key)
+                                                      (eql (first key) 'talk-to)
+                                                      (eql (second key) (get-id npc)))
+                                                collect (let ((quest1 quest)
+                                                              (prompt (third key)))
+                                                          (cons prompt ; TODO Trigger properly, not forcing
+                                                                (lambda () (do-quest-trigger quest1
+                                                                             `(talk-to ,(get-id npc)
+                                                                                       ,prompt)))))))))
+    (apply #'speak-branch "What can I do for you?"
+           (append quest-responses
+                   basic-responses
+                   nil))))
+
+(defun npc-initiate-quests (person)
+  (let ((quest (loop for qid in (get-quest-list (get-id person))
+                     for quest = (get-quest-data qid)
+                     unless (has-started-quest qid)
+                         return quest)))
+    (if quest
+        (do-initiate-quest quest)
+        (default-dialogue person))))
 
 (defun default-dialogue (person)
   (speak-line (person-casual-dialogue person)))

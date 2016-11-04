@@ -45,9 +45,5 @@
           (append (load-with creatures #'load-creature 'creature-set) *creatures*))
     (setf *spawners*
           (append (load-with spawners #'load-spawner 'spawner-set) *spawners*))
-    (loop initially (unless (eq (first quests) 'quest-set)
-                      (error "Flawed data - quest-set"))
-          for data in (rest quests)
-          for quest = (apply #'load-quest data)
-          do (add-quest quest))
+    (mapc #'add-quest (load-with quests #'load-quest 'quest-set))
     (delta-load-knowledge-base kb)))

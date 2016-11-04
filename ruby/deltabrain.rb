@@ -25,7 +25,7 @@ class DeltaKnowledgeBase < KnowledgeBase
     elsif @new.include? key.id
       @new[key.id]
     else
-      @new[key.id] = NPCBrain.new key.job
+      @new[key.id] = NPCBrain.new key.id, key.name, key.job
       @new[key.id]
     end
   end
@@ -50,7 +50,7 @@ class DeltaNPCBrain < NPCBrain
   include Delta
 
   def initialize(brain)
-    super brain.job
+    super brain.id, brain.name, brain.job
     @old_quests = brain.each.to_a
     @new_quests = []
   end

@@ -69,6 +69,8 @@ class QuestSet
 end
 
 module QuestMaker
+  extend QuestBuilder
+
   @@quest_flag_n = 0
 
   def self.current_quest_flag
@@ -93,23 +95,30 @@ module QuestMaker
     end
     item.add_flags flag
     item_loc = map.put_somewhere item
-    # ///// TODO Build a (Ruby) DSL to make this (Lisp) DSL prettier
     Quest.new("#{brain.name}'s Missing #{item_raw_name}").tap do |q|
-      q[0] = [
-              [:initiate, [:branch, "Hey! You seem fairly capable. I think I dropped my #{item_raw_name.downcase} somewhere. Do you think you could go and get it?",
-                           "Sure thing!", [:begin,
-                                           [:accept, 1],
-                                           [:speak, "Perfect! I'm pretty sure I left it somewhere near #{item_loc.generic_name}."]],
-                           "I don't have time.", [:speak, "Oh... sorry to bother you."]]]
-             ]
-      q[1] = [
-              [[:'talk-to', brain.id, "Your item?"], [:'if-has-item', flag,
-                                                      [:begin,
-                                                       [:complete],
-                                                       [:'remove-item', flag],
-                                                       [:speak, "Oh, my #{item_raw_name.downcase}! Thank you so much!"]],
-                                                      [:speak, "Remember. You're looking for my #{item_raw_name.downcase} near #{item_loc.generic_name}"]]]
-             ]
+      q[0] = [trigger(initiate) {
+                branch("Hey! You seem fairly capable. I think I dropped my #{item_raw_name.downcase} somewhere. Do you think you could go and get it?") {
+                  choice("Sure thing!") {
+                    accept 1
+                    speak "Perfect! I'm pretty sure I left it somewhere near #{item_loc.generic_name}."
+                  }
+                  choice("I don't have time.") {
+                    speak "Oh... sorry to bother you."
+                  }
+                }
+              }]
+      q[1] = [trigger(talk_to(brain, "Your item?")) {
+                if_has_item(flag) {
+                  if_true {
+                    complete
+                    remove_item flag
+                    speak "Oh, my #{item_raw_name.downcase}! Thank you so much!"
+                  }
+                  if_false {
+                    speak "Remember. You're looking for my #{item_raw_name.downcase} near #{item_loc.generic_name}."
+                  }
+                }
+              }]
       q[:completed] = []
     end
   end

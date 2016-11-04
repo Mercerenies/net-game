@@ -30,12 +30,11 @@
  |  * (talk-to! <npc-id>) - This is the more "urgent" version of the talk-to trigger. If the player talks with
  |    the NPC with ID <npc-id>, this trigger is tripped immediately and, if it exists, overrides the normal
  |    NPC menu. This trigger should be used sparingly, for if there are multiple talk-to! triggers from
- |    different quests, the order of precedence is arbitrary.
+ |    different quests, the order of precedence is arbitrary. ; TODO Add this one
  |#
 (defparameter *quest-triggers*
   '((initiate . 0)
-    (talk-to . 2)
-    (talk-to! . 1)))
+    (talk-to . 2)))
 
 #|
  | Quest commands:
@@ -50,10 +49,10 @@
  |  * (speak <text>) - Causes the given text to be output as though spoken in dialogue.
  |  * (branch <prompt> &rest <text> <command>) - Display a branching dialogue choice, executing the given
  |    command based on the response given by the player.
- |  * (if-has-item <flag> <true> <false>) - Checks whether the player has an item with <flag>. If he/she does,
- |    execute the <true> branch. Otherwise, execute the <false> branch.
- |  * (remove-item <flag>) - Remove the first item with <flag> from the player's inventory, or no items if
- |    none match.
+ |  * (if-has-item <item-match> <true> <false>) - Checks whether the player has an item matching <item-match>.
+ |    If he/she does, execute the <true> branch. Otherwise, execute the <false> branch.
+ |  * (remove-item <item-match>) - Remove the first item matching <item-match> from the player's inventory,
+ |    or no items if none match.
  |#
 ; TODO Clean up if-has-item and remove-item to be more general. (Matching expressions and conditionals)
 (defparameter *quest-commands* ; Implementation Note: q is a temporarily created object for un-accepted quests
@@ -69,13 +68,13 @@
                                     collect (let ((arg1 arg))
                                               (cons (first arg1)
                                                     (lambda () (funcall g (second arg1)))))))))
-    (if-has-item . ,(lambda (g q flag true false) (if (some (lambda (x) (check-flag flag x))
-                                                            (inv-items *player*))
-                                                      (funcall g true)
-                                                      (funcall g false))))
-    (remove-item . ,(lambda (g q flag) (setf (inv-items *player*)
-                                             (remove-if (lambda (x) (check-flag flag x))
-                                                        (inv-items *player*) :count 1))))))
+    (if-has-item . ,(lambda (g q match true false) (if (some (lambda (x) (item-match match x))
+                                                             (inv-items *player*))
+                                                       (funcall g true)
+                                                       (funcall g false))))
+    (remove-item . ,(lambda (g q match) (setf (inv-items *player*)
+                                              (remove-if (lambda (x) (item-match match x))
+                                                         (inv-items *player*) :count 1))))))
 
 (defgeneric run-quest-command (quest cmd))
 

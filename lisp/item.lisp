@@ -9,6 +9,13 @@
 (defun make-item (name &rest keys &key &allow-other-keys)
   (apply #'make-instance 'item :name name keys))
 
+(defun item-match (match item)
+  (typecase match
+    (symbol (check-flag match item))
+    (string (equalp match (get-name item)))
+    (integer (= match (get-id item)))
+    (t nil)))
+
 (defclass weapon (item)
   ((type :accessor weapon-type
          :initarg :type

@@ -14,6 +14,7 @@ load './ruby/node.rb'
 load './ruby/map.rb'
 load './ruby/deltamap.rb'
 
+load './ruby/questbuilder.rb'
 load './ruby/quest.rb'
 
 load './ruby/feature.rb'

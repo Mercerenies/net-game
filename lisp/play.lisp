@@ -24,9 +24,11 @@
 (defparameter *warps* nil)
 
 (defun make-player ()
+  "Makes an instance of the player object, with no active quests and an empty visited list."
   (make-instance 'player))
 
 (defun visited-count (player)
+  "Returns the number of unique location nodes the player has visited."
   (hash-table-count (visited-locs player)))
 
 (defmethod move-object :after ((obj player) (new-loc location))
@@ -42,12 +44,17 @@
                                           0.0))))
 
 (defun word-split (string &optional (token #\SPACE))
+  "Splits a string into words, tokenized by the given token, which defaults to #\SPACE. If provided, the
+   token should be a single character, not an arbitrary string."
   (loop for start = 0 then (1+ finish)
         for finish = (position token string :start start)
         collect (subseq string start finish)
         until (null finish)))
 
 (defun run-game (&key (filename "./temp/system.txt"))
+  "Runs the game in full, loading the world data from the given file. Note that the run-game function
+   itself makes no effort to interact with external servers, such as the Lua interface. If such
+   interaction is desired, it should be implemented as a hook on do-action or a similar method."
   (multiple-value-bind (*world* *creatures* *spawners* *quests* *knowledge-base*)
       (with-open-file (file filename)
         (load-data :file file))

@@ -2,12 +2,18 @@
 import sys
 
 class Keywords:
+    """
+    Keywords is a class which provides a singleton instance and maintains a list of keywords, used to
+    check whether a page is of a specific type by comparing against its categories.
+    """
     _inst = None
 
     def __init__(self):
+        """Construct an empty Keywords object."""
         self.key = None
 
     def _load_file(self):
+        """Internal implementation which loads the keyword list on demand."""
         self.key = dict()
         state = ""
         with open("./data/keywords.txt") as f:
@@ -34,6 +40,7 @@ class Keywords:
 
     @staticmethod
     def instance():
+        """Access the singleton instance."""
         return Keywords._inst
 
     @staticmethod

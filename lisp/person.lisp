@@ -66,7 +66,7 @@
                                                       (eql (second key) (get-id npc)))
                                                 collect (let ((quest1 quest)
                                                               (prompt (third key)))
-                                                          (cons prompt ; TODO Trigger properly, not forcing
+                                                          (cons prompt
                                                                 (lambda () (do-quest-trigger quest1
                                                                              `(talk-to ,(get-id npc)
                                                                                        ,prompt)))))))))

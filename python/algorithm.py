@@ -51,7 +51,6 @@ class Spider:
         to inform the LinkSelector of the start and end of the crawl, as this method only performs
         the actual crawl.
         """
-        # TODO Move the start_crawl/end_crawl code from crawl_times to here; it makes more sense here
         def _crawl_once(page, depth_):
             self.wait()
             echo("Trying", escape(page.title), "at", depth_, flush = True)
@@ -69,7 +68,10 @@ class Spider:
                 return _crawl_once(new_page, depth_ + 1)
         if type(base) is str:
             base = wikipedia.page(base)
-        return self.safely_call(lambda: _crawl_once(base, 0))
+        self.selector.start_crawl()
+        result = self.safely_call(lambda: _crawl_once(base, 0))
+        self.selector.end_crawl(bool(result))
+        return result
 
     def safely_call(self, func): # TODO We need to handle "connection aborted" ConnectionResetError too.
         """A convenience function which calls the 0-ary function supplied, while handling Wikipedia errors."""
@@ -90,9 +92,7 @@ class Spider:
         if type(base) is str:
             base = wikipedia.page(base)
         for i in range(0, self.max_tries):
-            self.selector.start_crawl()
             res = self.crawl_once(base, match_function)
-            self.selector.end_crawl(bool(res))
             if res:
                 return res
 

@@ -10,6 +10,10 @@ from logger import echo
 # TODO Further improvements to this? Or at least further testing
 
 class DBError(Exception):
+    """
+    A parent class for database exceptions. Specifically, DBError is used when an error occurs with
+    respect to the reinforcement learning database.
+    """
     def __init__(self, *args, **key):
         super().__init__(*args, **key)
 
@@ -44,6 +48,10 @@ def _zero_frac():
     return Fraction(0, 0)
 
 class ReinDatabase:
+    """
+    A single instance of the reinforcement learning database, which supports mutation of scores, as well
+    as basic (additive and subtractive) arithmetic with other ReinDatabase instances.
+    """
 
     def __init__(self, keyword):
         self.keyword = keyword
@@ -87,6 +95,11 @@ class ReinDatabase:
         return new_db
 
 class IncrDatabase:
+    """
+    An incremental database which builds on the ReinDatabase class by providing a safe way
+    to concurrently access the reinforcement learning datafiles without stepping on the toes
+    of other processes or overwriting their changes.
+    """
 
     def __init__(self, keyword):
         self.keyword = keyword
@@ -134,6 +147,10 @@ class IncrDatabase:
         return self.db.get_score(page)
 
 class ReinLinkSelector(links.LinkSelector):
+    """
+    A link selector which uses IncrDatabase to select where to go next and updates the database appropriately
+    when it gets a result or fails.
+    """
 
     def __init__(self, keyword, explore = None):
         if explore is None:

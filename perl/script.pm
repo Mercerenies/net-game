@@ -10,7 +10,19 @@ my $ARTICLE = "(?:an? |the )";
 
 local $_;
 
-# find_occu($title, $summary, %occu);
+# TODO This is all a mess, with the various arguments that are sub-components of %data. Unify this all.
+
+=head2 find_occu($title, $summary, %occu)
+
+Given the name of a person and the page summary for that person, attempt to determine the person's occupation.
+The return value is a list of the possible occupations, with each occupation formatted as a pair of elements
+of the form C<["keyword", "friendly_name"]>. For example, the following is one possible result of
+C<find_occu>.
+
+ [["musician", "singer"], ["actor", "actress"], ["musician", "songwriter"]]
+
+=cut
+
 sub find_occu {
     local $_;
     my $title = $_[0];
@@ -53,7 +65,13 @@ sub find_occu {
     return @res;
 }
 
-# compute_gender($summary, @mwords, @fwords);
+=head2 compute_gender($summary, @mwords, @fwords)
+
+Attempt to deduce the gender of the person whose summary text is given, returning the string "male" or
+"female". The value undef is returned if there is not enough information to draw a conclusion.
+
+=cut
+
 sub compute_gender {
     local $_;
     my $summary = $_[0];
@@ -74,7 +92,14 @@ sub compute_gender {
     return ($male > $female) ? "male" : "female";
 }
 
-# find_place_information($title, $summary, %placenames)
+=head2 find_place_information($title, $summary, %placenames)
+
+Given the name and summary text of a location, determine the nature of the location, as an expression
+of the form C<["keyword", "friendly_name"]>. If no location nature can be determined, an array ref to
+an empty array C<[]> is returned.
+
+=cut
+
 sub find_place_information {
     my $title = $_[0];
     my $summary = $_[1];
@@ -121,7 +146,15 @@ sub find_place_information {
     return \@res;
 }
 
-# find_weapon_information($title, $summary, %weapons)
+
+=head2 find_weapon_information($title, $summary, %weapons)
+
+Determine the nature of the weapon whose title and summary are supplied, returning an expression
+of the form C<["keyword", "friendly_name"]>. If no such information can be drawn from the summary,
+the array ref C<[]> is returned.
+
+=cut
+
 sub find_weapon_information {
     my $title = $_[0];
     my $summary = $_[1];
@@ -171,7 +204,14 @@ sub find_weapon_information {
     return \@res;
 }
 
-# deduce_animal_stats($title, $summary, $data)
+=head2 deduce_animal_stats($title, $summary, $data)
+
+Count up the number of appearances of miscellaneous keywords used to determine the nature and behavior
+of animals from the summary and title of an animal page. A hashref containing the counted stats is
+returned.
+
+=cut
+
 sub deduce_animal_stats {
     my $title = $_[0];
     my $summary = $_[1];
@@ -194,7 +234,14 @@ sub deduce_animal_stats {
     return \%stats;
 }
 
-# normalize_animal_stats(%stats)
+=head2 normalize_animal_stats(%stats)
+
+Given the output from C<deduce_animal_stats>, normalize the stats to be on a scale from 1 to 5 (integer
+values), with the "boolean-ish" quantities such as air-based and sea-based determinations normalized to
+true or false (here, 1 or 0). The hashref that is passed in is not modified; a new hashref is returned.
+
+=cut
+
 sub normalize_animal_stats {
     my %stats = %{$_[0]};
     # $threat, $size, $pack, $speed are on a scale of 1 to 5
@@ -232,7 +279,14 @@ sub normalize_animal_stats {
         );
 }
 
-# shortest_food_synonym($title, $summary, $data)
+=head2 shortest_food_synonym($title, $summary, $data)
+
+Given the title and summary of a food page, attempt to determine a more "user-friendly" synonym, or nickname,
+for the food. The nickname returned from this subroutine is the shortest nickname that is found, or the original
+title if it is shorter than any nickname.
+
+=cut
+
 sub shortest_food_synonym {
     my $title = $_[0];
     my $summary = $_[1];
@@ -289,7 +343,14 @@ sub shortest_food_synonym {
     return $shortest;
 }
 
-# get_plant_type($title, $summary, $trees)
+=head2 get_plant_type($title, $summary, $trees)
+
+Try to determine the sort of plant (such as tree, grass, or flower) that the food grows on naturally. If such
+a plant can be determined from the page, a string containing the type of plant is returned. Otherwise, the
+special value undef is returned.
+
+=cut
+
 sub get_plant_type {
     my $title = $_[0];
     my $summary = $_[1];
@@ -310,7 +371,14 @@ sub get_plant_type {
     return $max;
 }
 
-# get_nutrition_information($title, %page, $data)
+=head2 get_nutrition_information($title, %page, $data)
+
+Given the information about a food, determine nutrition information about the food. A hashref
+containing the data acquired is returned. Values that could not be determined will default to
+an appropriate value (usually 0).
+
+=cut
+
 sub get_nutrition_information {
     my $title = $_[0];
     my %page = %{$_[1]};

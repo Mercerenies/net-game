@@ -25,7 +25,8 @@
       (error "Unsupported CL - full-exit")))
 
 (defun connect-to-socket (port)
-  "Opens a socket on the given port."
+  "Opens a socket on the given port. After opening the socket, the standard CL functions for streams can
+   be used to manage and close the socket stream."
   (or #+clisp (socket:socket-connect port)
       (error "Unsupported CL - connect-to-socket")))
 

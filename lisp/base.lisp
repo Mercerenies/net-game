@@ -3,39 +3,55 @@
 (defclass damageable ()
   ((hp :accessor hp
        :initform 1
-       :initarg :hp)))
+       :initarg :hp))
+  (:documentation "A base class for objects that have a concept of health."))
 
 (defun check-for-death (obj)
+  "Checks whether or not the object, which should be a damageable instance, is in fact dead, removing
+   it from the world if it is."
   (check-type obj (and damageable located))
   (when (<= (hp obj) 0)
     (move-object obj nil)))
 
 (defmethod (setf hp) :after (val (obj damageable))
+  "Whenever the object's HP is altered, if the object is damageable then check-for-death is run automatically."
   (check-for-death obj))
 
 (defclass named ()
   ((name :accessor get-name
          :initarg :name
          :initform ""
-         :type string)))
+         :type string))
+  (:documentation "A base class for objects which have a name. Many display functions assume the arguments
+                   are named objects."))
 
 (defclass identifiable ()
   ((id :accessor get-id
        :initarg :id
        :initform nil
-       :type t)))
+       :type t))
+  (:documentation "A base class for objects which have an ID. The ID should be eql-comparable and unique
+                   within the context of the program. In some cases, ID values of integers are preferred
+                   or even required. As such, it is recommended that IDs be integers whenever possible."))
 
 (defclass located ()
   ((loc :accessor get-loc
         :initarg :loc
         :initform nil
-        :type (or null location))))
+        :type (or null location)))
+  (:documentation "A base class for objects which have a position in the game world. The location should
+                   not be directly mutated, in most cases. Instead, the move-object generic function
+                   should be used."))
 
 (defclass flagged ()
   ((flags :accessor get-flags
           :initarg :flags
           :initform nil
-          :type list)))
+          :type list))
+  (:documentation "A base class for objects, such as items, which have flags. The list of flags should
+                   be a list of symbols. In general, flag symbols should be interned, although this is
+                   not explicitly required. Flags can be more easily interacted with using add-flag
+                   and check-flag"))
 
 (defgeneric add-flag (flag obj))
 

@@ -3,7 +3,7 @@ local $_;
 
 =head2 load_two_column_file($fh, $fname)
 
-Load the file using a two-column format. Each line should be two columns of text, separated by at least
+Loads the file using a two-column format. Each line should be two columns of text, separated by at least
 two consecutive spaces. The text entries should consist of word characters, nonconsecutive spaces, or
 hyphens.
 

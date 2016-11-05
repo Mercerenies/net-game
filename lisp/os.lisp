@@ -15,14 +15,17 @@
  |#
 
 (defun argv ()
+  "Returns the standard ARGV list of arguments passed into the program from the command line."
   (or #+clisp (return-from argv ext:*args*)
       (error "Unsupported CL - argv")))
 
 (defun full-exit (status)
+  "Fully exits the program immediately, using the given status value as the exit status of the program."
   (or #+clisp (ext:quit status)
       (error "Unsupported CL - full-exit")))
 
 (defun connect-to-socket (port)
+  "Opens a socket on the given port."
   (or #+clisp (socket:socket-connect port)
       (error "Unsupported CL - connect-to-socket")))
 

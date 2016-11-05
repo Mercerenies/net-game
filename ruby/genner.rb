@@ -1,7 +1,11 @@
 
+# The master generator instance. A generator has a corresponding GData instance, as well as a sequence of
+# Stage instances. When run, it executes the stages in sequence and uses the corresponding GData instance
+# as the result of the generation process.
 class Genner
   attr_reader :data
 
+  # Initializes the generator, given a list of pages.
   def initialize(everything)
     @data = GData.new everything
     stages = [NodeStage, BridgeStage, MapStage, BuildingStage, CreatureStage,
@@ -9,12 +13,15 @@ class Genner
     @stages = stages.collect(&:new)
   end
 
+  # Runs each stage of the generator, returning the resulting structure.
   def generate
     @stages.each { |stage| stage.run @data }
     # Return result
     @data.result_structure
   end
 
+  # Returns the resulting structure from the generation. The value of #alpha_structure is undefined
+  # if #generate has not been run yet.
   def alpha_structure
     @data.result_structure
   end

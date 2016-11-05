@@ -1,33 +1,16 @@
 
-=begin
-require 'singleton'
-
-class Ratio
-  attr_accessor :numer, :denom
-
-  def initialize(n, m)
-    @numer = n
-    @denom = m
-  end
-
-  def to_r
-    Rational(@numer, @denom)
-  end
-
-  def rationalize(eps = 0.0)
-    to_r
-  end
-
-end
-=end
-
+# An object which manages the generation of natural-sounding names of a specific type. The default Namer
+# instance is designed to construct city and country names, but other instances are available.
 class Namer
 
-  # Not a singleton; I'm just providing a utility instance
+  # Returns the default city/country name generator.
   def self.instance
     @@instance ||= Namer.new
   end
 
+  # Constructs a name generator. The generator uses a Markov chain algorithm of order +order+ (default +2+),
+  # using a special termination algorithm. The +termination+ algorithm determines how quickly the algorithm will
+  # attempt to terminate. Higher termination values will result in shorter generated names.
   def initialize(fname: "./data/naming.txt", order: 2, termination: 0.05)
     @order = order
     @term = termination
@@ -52,6 +35,7 @@ class Namer
     to_s
   end
 
+  # Generates a name using the name generator's rules and data.
   def sample
     curr = ""
     multiplier = 0
@@ -71,7 +55,9 @@ class Namer
 
 end
 
+# A module containing a natural landform Namer instance.
 module Natural
+  # Returns the natural Namer instance for landforms, constructing it on-demand if it does not exist.
   def self.namer
     @@namer ||= Namer.new(fname: './data/naming_natural.txt')
   end

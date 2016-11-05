@@ -20,7 +20,7 @@ sub _flatten_sections {
 
 =head2 flatten_sections(%page)
 
-Given a Wikipedia page with section headers, flatten the hierarchy into a single
+Given a Wikipedia page with section headers, flattens the hierarchy into a single
 hash consisting of all sections on the page, listed hierarchically. For example,
 given the following section hierarchy:
 
@@ -66,7 +66,7 @@ sub flatten_sections {
 
 =head2 nonhierarchical(%sections)
 
-Given the output of flatten_sections(), remove the hierarchical information and keep only the
+Given the output of flatten_sections(), removes the hierarchical information to keep only the
 deepest-level section name of each entry.
 
 =cut
@@ -91,7 +91,7 @@ sub nonhierarchical_sections {
 
 =head2 page_title($xml)
 
-Return the page's title.
+Returns the page's title.
 
 =cut
 
@@ -101,7 +101,7 @@ sub page_title {
 
 =head2 page_summary($xml)
 
-Return the page's summary text.
+Returns the page's summary text.
 
 =cut
 
@@ -111,7 +111,7 @@ sub page_summary {
 
 =head2 page_links($xml)
 
-Compute and return an array of the links on the page, in an unspecified order.
+Computes and returns an array of the links on the page, in an unspecified order.
 
 =cut
 

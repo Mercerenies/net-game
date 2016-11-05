@@ -1,13 +1,14 @@
 
 # TODO The "paint splotch" algorithm for spawners and trees creates an uneven distribution when
-#      making delta files.
+# making delta files.
 
+# A stage of the generation process. The Stage class itself is intended as an abstract base class.
 class Stage
   def run(data)
   end
 end
 
-# Stage 1 - Generate the main nodal structures
+# \Stage 1 of the generation process generates the main nodal structure.
 class NodeStage < Stage
 
   def generate_node(elem, lvl)
@@ -69,13 +70,15 @@ class NodeStage < Stage
 
 end
 
+# The first stage of the delta generation process is identical to the standard NodeStage except that the
+# default node is not generated.
 class DeltaNodeStage < NodeStage
   def make_default_node
     nil
   end
 end
 
-# Stage 2 - Pre-generate any bridges that can be made
+# \Stage 2 of the generation process pre-generates any bridges that can be made from the data.
 class BridgeStage < Stage
   def run(data)
     bridges = []
@@ -89,14 +92,14 @@ class BridgeStage < Stage
   end
 end
 
-# Stage 3 - Convert the nodes into a map
+# \Stage 3 converts the nodal structure generated in NodeStage into a coherent map.
 class MapStage < Stage
   def run(data)
     data.node_to_map
   end
 end
 
-# Stage 4 - Add buildings to the map
+# \Stage 4 adds buildings to the map generated in MapStage.
 class BuildingStage < Stage
   def run(data)
     buildings = []
@@ -113,7 +116,7 @@ class BuildingStage < Stage
   end
 end
 
-# Stage 5 - Make a list of creatures and put them places
+# \Stage 5 constructs a list of creatures and puts generators for them in places on the map.
 class CreatureStage < Stage
   def run(data)
     # Identify and set up valid creatures
@@ -146,7 +149,7 @@ class CreatureStage < Stage
   end
 end
 
-# Stage 6 - Put items into the map
+# \Stage 6 generates items and puts them into the map.
 class ItemStage < Stage
   def run(data)
     data.consume_each do |elem|
@@ -158,7 +161,7 @@ class ItemStage < Stage
   end
 end
 
-# Stage 7 - Put plants that grow food on the map
+# \Stage 7 produces and places appropriate plants for each food type.
 class FoodStage < Stage
   def run(data)
     foods = CriteriaQueue[]
@@ -182,7 +185,7 @@ class FoodStage < Stage
   end
 end
 
-# Stage 8 - Make people and put them somewhere
+# \Stage 8 makes NPCs from person data and puts them somewhere.
 class PersonStage < Stage
   def run(data)
     data.consume_each do |elem|
@@ -198,7 +201,7 @@ class PersonStage < Stage
   end
 end
 
-# Stage 9 - Put default quests for any person who lacks quests
+# \Stage 9 puts basic fetch quests into the game for each NPC.
 class QuestStage < Stage
   def run(data)
     data.knowledge_base.each do |id, val|
@@ -209,7 +212,7 @@ class QuestStage < Stage
   end
 end
 
-# Stage 10 - Position the player
+# \Stage 10 finds a starting position for the player and puts him/her there.
 class PlayerStage < Stage
   def run(data)
     data.map.put_somewhere Player.new

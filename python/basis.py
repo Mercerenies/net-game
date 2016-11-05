@@ -5,32 +5,32 @@ from util import rnd
 from keywords import Keywords
 
 def get_person_base():
-    """Return a starting page for person crawling."""
+    """Returns a starting page for person crawling."""
     return "Lists of people"
 
 def get_celebrity_base():
-    """Return a starting page for celebrity crawling."""
+    """Returns a starting page for celebrity crawling."""
     return "Lists of celebrities"
 
 def get_place_base():
-    """Select and return a starting page for location crawling."""
+    """Selects and returns a starting page for location crawling."""
     return rnd(["Lists of places", "List of buildings and structures"])
 
 def get_weapon_base():
-    """Select and return a starting page for weapon crawling."""
+    """Selects and returns a starting page for weapon crawling."""
     return rnd(["List of premodern combat weapons", "List of medieval weapons"])
 
 def get_monster_base():
-    """Select and return a starting page for monster crawling."""
+    """Selects and returns a starting page for monster crawling."""
     letter = random.choice(string.ascii_uppercase)
     return "List of legendary creatures ({})".format(letter)
 
 def get_animal_base():
-    """Return a starting page for animal crawling."""
+    """Returns a starting page for animal crawling."""
     return "List of animals by common name"
 
 def get_food_base():
-    """Select and return a starting page for food crawling."""
+    """Selects and returns a starting page for food crawling."""
     return rnd(["List of culinary fruits", "List of vegetables"])
 
 def is_person_page(page):

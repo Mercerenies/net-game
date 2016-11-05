@@ -9,7 +9,7 @@ my $RENAME = "(?:or|in|of)";
 
 =head2 sentence($titlevar, $ptn, %options)
 
-Compile a regular expression to detect sentences roughly of the form "SOMETHING is SOMETHING_ELSE".
+Compiles a regular expression to detect sentences roughly of the form "SOMETHING is SOMETHING_ELSE".
 The $titlevar argument is taken literally, while $ptn will be interpreted as a regex string. This
 distinction is to allow $ptn to be loaded from trusted data files, while $titlevar is downloaded raw
 as a page title from outside sources.

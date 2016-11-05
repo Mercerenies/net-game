@@ -5,7 +5,7 @@ use perl::logging;
 
 =head2 unparen($value)
 
-Remove any trailing parenthesized expression from the string.
+Removes any trailing parenthesized expression from the string.
 
 =cut
 
@@ -17,7 +17,7 @@ sub unparen {
 
 =head2 read_person($xml, $data)
 
-Given the XML data for a person page, parse the page for the person's basic information and return a hashref
+Given the XML data for a person page, parses the page for the person's basic information and returns a hashref
 containing the appropriate information, substituting undef for any values that cannot be determined.
 
 =cut
@@ -40,7 +40,7 @@ sub read_person {
 
 =head2 read_place($xml, $data)
 
-Given the XML data for a place page, compute the name and basic information about the location, returning
+Given the XML data for a place page, computes the name and basic information about the location, returning
 a hashref containing the results, with undef filled in for any un-identifiable fields.
 
 =cut
@@ -61,7 +61,7 @@ sub read_place {
 
 =head2 read_weapon($xml, $data)
 
-Given the XML data for a weapon page, parse the page and compute the basic information about the weapon
+Given the XML data for a weapon page, parses the page and computes the basic information about the weapon
 itself, returning a hashref. Any un-identifiable fields are filled in with undef.
 
 =cut
@@ -90,7 +90,7 @@ sub read_monster {
 
 =head2 read_animal($xml, $data)
 
-Read the XML animal page data supplied and return a hashref containing computed values for the animal's nature
+Reads the XML animal page data supplied and returns a hashref containing computed values for the animal's nature
 and attitude, filling in un-identifiable values with undef, or 0 in cases where the value would be computed,
 not parsed.
 
@@ -117,7 +117,7 @@ sub read_animal {
 
 =head2 read_food($xml, $data)
 
-Parse the XML food page and determine basic information about the food's name and nutritional value, returning
+Parses the XML food page and determines basic information about the food's name and nutritional value, returning
 a hashref containing the results. The special value undef is used in place of any fields that cannot be
 determined from the data.
 

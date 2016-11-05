@@ -54,7 +54,7 @@ package Filters {
 
 =head2 apply_filter($func, $elems...)
 
-Apply the filter given by $func to each of the arguments supplied, producing an array twice as big as the list
+Applies the filter given by $func to each of the arguments supplied, producing an array twice as big as the list
 of arguments passed in, containing (in an unspecified order) all of the original elements plus the filtered
 elements.
 
@@ -73,7 +73,7 @@ sub apply_filter {
 
 =head2 apply_filters($funcs, $elems...)
 
-Apply the collection of filters given in the first argument to the elements, producing a list of all possible
+Applies the collection of filters given in the first argument to the elements, producing a list of all possible
 combinations of filters applied to elements.
 
 =cut

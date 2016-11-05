@@ -36,7 +36,7 @@ my $logger = Logger->new();
 
 =head2 get_logger()
 
-Return the default Logger instance, which is the only Logger instance that is necessary for most purposes.
+Returns the default Logger instance, which is the only Logger instance that is necessary for most purposes.
 
 =cut
 

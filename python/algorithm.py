@@ -21,7 +21,7 @@ class Spider:
 
     def __init__(self, selector = None, depth = 5, max_tries = 3):
         """
-        Initialize the Spider. The selector should be either None (in which case it will default to
+        Initializes the Spider. The selector should be either None (in which case it will default to
         a BasicLinkSelector) or a LinkSelector object. The depth and max_tries should be positive
         integers, which respectively indicate the depth of an individual attempt and the number of
         attempts to make during a single crawl.
@@ -37,12 +37,12 @@ class Spider:
         self.selector.finished()
 
     def wait(self, delay = DELAY):
-        """Pause for a certain period of time, defaulting to the global constant DELAY."""
+        """Pauses for a certain period of time, defaulting to the global constant DELAY."""
         time.sleep(delay)
 
     def crawl_once(self, base, match_function):
         """
-        Make a single crawl, using the Spider's link selector and parameters with the supplied matching
+        Makes a single crawl, using the Spider's link selector and parameters with the supplied matching
         function. A single crawl will start at the base page supplied and, using the link selector, follow
         links until it finds a match (according to the supplied match_function) or until it has gone
         self.depth layers deep and gives up. The match function should be a function of one argument,
@@ -86,7 +86,7 @@ class Spider:
 
     def crawl_times(self, base, match_function):
         """
-        Perform self.crawl_once until a single match is found or self.max_tries attempts have
+        Performs self.crawl_once until a single match is found or self.max_tries attempts have
         been made.
         """
         if type(base) is str:
@@ -97,7 +97,7 @@ class Spider:
                 return res
 
 def nearby(x):
-    """Locate and return any Wikipedia page whose physical location is near that of the page supplied."""
+    """Locates and returns any Wikipedia page whose physical location is near that of the page supplied."""
     try:
         (lat, lon) = x.coordinates
         return wikipedia.geosearch(lat, lon, radius=10000)

@@ -9,7 +9,7 @@ class Keywords:
     _inst = None
 
     def __init__(self):
-        """Construct an empty Keywords object."""
+        """Constructs an empty Keywords object."""
         self.key = None
 
     def _load_file(self):
@@ -28,7 +28,7 @@ class Keywords:
 
     def match(self, key, c):
         """
-        Attempt to match the category c against the match words associated with the keyword key
+        Attempts to match the category c against the match words associated with the keyword key
         provided. Returns whether any matches were found.
         """
         if not self.key:
@@ -40,7 +40,7 @@ class Keywords:
 
     @staticmethod
     def instance():
-        """Access the singleton instance."""
+        """Accesses the singleton instance."""
         return Keywords._inst
 
     @staticmethod

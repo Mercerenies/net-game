@@ -14,7 +14,7 @@ local $_;
 
 =head2 find_occu($title, $summary, %occu)
 
-Given the name of a person and the page summary for that person, attempt to determine the person's occupation.
+Given the name of a person and the page summary for that person, attempts to determine the person's occupation.
 The return value is a list of the possible occupations, with each occupation formatted as a pair of elements
 of the form C<["keyword", "friendly_name"]>. For example, the following is one possible result of
 C<find_occu>.
@@ -67,7 +67,7 @@ sub find_occu {
 
 =head2 compute_gender($summary, @mwords, @fwords)
 
-Attempt to deduce the gender of the person whose summary text is given, returning the string "male" or
+Attempts to deduce the gender of the person whose summary text is given, returning the string "male" or
 "female". The value undef is returned if there is not enough information to draw a conclusion.
 
 =cut
@@ -94,7 +94,7 @@ sub compute_gender {
 
 =head2 find_place_information($title, $summary, %placenames)
 
-Given the name and summary text of a location, determine the nature of the location, as an expression
+Given the name and summary text of a location, determines the nature of the location, as an expression
 of the form C<["keyword", "friendly_name"]>. If no location nature can be determined, an array ref to
 an empty array C<[]> is returned.
 
@@ -149,7 +149,7 @@ sub find_place_information {
 
 =head2 find_weapon_information($title, $summary, %weapons)
 
-Determine the nature of the weapon whose title and summary are supplied, returning an expression
+Determines the nature of the weapon whose title and summary are supplied, returning an expression
 of the form C<["keyword", "friendly_name"]>. If no such information can be drawn from the summary,
 the array ref C<[]> is returned.
 
@@ -206,7 +206,7 @@ sub find_weapon_information {
 
 =head2 deduce_animal_stats($title, $summary, $data)
 
-Count up the number of appearances of miscellaneous keywords used to determine the nature and behavior
+Counts up the number of appearances of miscellaneous keywords used to determine the nature and behavior
 of animals from the summary and title of an animal page. A hashref containing the counted stats is
 returned.
 
@@ -236,7 +236,7 @@ sub deduce_animal_stats {
 
 =head2 normalize_animal_stats(%stats)
 
-Given the output from C<deduce_animal_stats>, normalize the stats to be on a scale from 1 to 5 (integer
+Given the output from C<deduce_animal_stats>, normalizes the stats to be on a scale from 1 to 5 (integer
 values), with the "boolean-ish" quantities such as air-based and sea-based determinations normalized to
 true or false (here, 1 or 0). The hashref that is passed in is not modified; a new hashref is returned.
 
@@ -281,7 +281,7 @@ sub normalize_animal_stats {
 
 =head2 shortest_food_synonym($title, $summary, $data)
 
-Given the title and summary of a food page, attempt to determine a more "user-friendly" synonym, or nickname,
+Given the title and summary of a food page, attempts to determine a more "user-friendly" synonym, or nickname,
 for the food. The nickname returned from this subroutine is the shortest nickname that is found, or the original
 title if it is shorter than any nickname.
 
@@ -345,7 +345,7 @@ sub shortest_food_synonym {
 
 =head2 get_plant_type($title, $summary, $trees)
 
-Try to determine the sort of plant (such as tree, grass, or flower) that the food grows on naturally. If such
+Tries to determine the sort of plant (such as tree, grass, or flower) that the food grows on naturally. If such
 a plant can be determined from the page, a string containing the type of plant is returned. Otherwise, the
 special value undef is returned.
 
@@ -373,7 +373,7 @@ sub get_plant_type {
 
 =head2 get_nutrition_information($title, %page, $data)
 
-Given the information about a food, determine nutrition information about the food. A hashref
+Given the information about a food, determines nutrition information about the food. A hashref
 containing the data acquired is returned. Values that could not be determined will default to
 an appropriate value (usually 0).
 

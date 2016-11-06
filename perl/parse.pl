@@ -36,12 +36,14 @@ my @result = ();
 my $xml = XMLin(\*STDIN, ForceArray => 1, KeyAttr => {});
 my @pages = @{$xml->{'pages'}};
 
+my $xdata = data_compile(\%data);
+
 for my $pageset (@pages) {
     my $call = $table{ $pageset->{'type'} };
     next unless defined $call;
     for my $page (@{$pageset->{'page'}}) {
         get_logger()->echo(1, "Parsing ${\page_title($page)}");
-        push @result, $call->($page, \%data);
+        push @result, $call->($page, $xdata);
     }
 }
 

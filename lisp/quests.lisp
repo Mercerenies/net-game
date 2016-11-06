@@ -54,7 +54,6 @@
  |  * (remove-item <item-match>) - Remove the first item matching <item-match> from the player's inventory,
  |    or no items if none match.
  |#
-; TODO Clean up if-has-item and remove-item to be more general. (Matching expressions and conditionals)
 (defparameter *quest-commands* ; Implementation Note: q is a temporarily created object for un-accepted quests
   `((begin . ,(lambda (g q &rest commands) (mapc g commands)))
     (goto . ,(lambda (g q state) (quest-goto q state)))

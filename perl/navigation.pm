@@ -3,16 +3,17 @@ use Data::Dumper;
 
 local $_;
 
-# _flatten_sections(%page, $prefix)
+# _flatten_sections($name, %page, $prefix)
 sub _flatten_sections {
-    my %page = %{$_[0]->{'text'}->[0]};
-    my $prefix = $_[1];
-    my $new_prefix = $_[0]->{'name'};
+    my $name = $_[0];
+    my %page = %{$_[1]};
+    my $prefix = $_[2];
+    my $new_prefix = $page{'name'} // $name;
     $new_prefix = $prefix . "\0" . $new_prefix unless $prefix eq '';
     my %sections;
     $sections{$new_prefix} = $page{'content'};
     for my $section (@{$page{'section'}}) {
-        my %curr = %{_flatten_sections($section, $new_prefix)};
+        my %curr = %{_flatten_sections($name, $section, $new_prefix)};
         @sections{keys %curr} = values %curr;
     }
     return \%sections;
@@ -61,7 +62,7 @@ The following result will be produced
 =cut
 
 sub flatten_sections {
-    return _flatten_sections($_[0], '');
+    return _flatten_sections($_[0]->{'name'}, $_[0]->{'text'}->[0], '');
 }
 
 =head2 nonhierarchical(%sections)
@@ -127,7 +128,7 @@ will be present.
 
 =cut
 
-sub full_page_text { # TODO Get the sections in the right order, if possible
+sub full_page_text {
     my %sects = %{nonhierarchical_sections shift};
     my $text = '';
     for my $key (keys %sects) {

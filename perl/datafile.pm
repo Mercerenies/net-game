@@ -1,4 +1,6 @@
 
+use Data::Dumper;
+
 local $_;
 
 =head2 load_two_column_file($fh, $fname)
@@ -22,6 +24,118 @@ sub load_two_column_file {
         $result{$key} = $2;
     }
     return %result;
+}
+
+package OData {
+
+    sub new {
+        my $class = shift;
+        return bless({-occu => undef,
+                      -mwords => undef,
+                      -fwords => undef,
+                      -placenames => undef,
+                      -weapons => undef,
+                      -animals => undef,
+                      -foodprefixes => undef,
+                      -foodnegatives => undef,
+                      -foodblacklist => undef,
+                      -foodsuffixes => undef,
+                      -foodtrees => undef,
+                      -foodnutrition => undef,
+                      -foodpoison => undef,
+                      -foodsections => undef}, $class);
+    }
+
+    sub occupations {
+        my $self = shift;
+        return %{$self->{-occu}};
+    }
+
+    sub male_words {
+        my $self = shift;
+        return @{$self->{-mwords}};
+    }
+
+    sub female_words {
+        my $self = shift;
+        return @{$self->{-fwords}};
+    }
+
+    sub placenames {
+        my $self = shift;
+        return %{$self->{-placenames}};
+    }
+
+    sub weapons {
+        my $self = shift;
+        return %{$self->{-weapons}};
+    }
+
+    sub animals {
+        my $self = shift;
+        return %{$self->{-animals}};
+    }
+
+    sub food_prefixes {
+        my $self = shift;
+        return @{$self->{-foodprefixes}};
+    }
+
+    sub food_suffixes {
+        my $self = shift;
+        return @{$self->{-foodsuffixes}};
+    }
+
+    sub food_blacklist {
+        my $self = shift;
+        return @{$self->{-foodblacklist}};
+    }
+
+    sub food_negatives {
+        my $self = shift;
+        return @{$self->{-foodnegatives}};
+    }
+
+    sub food_sections {
+        my $self = shift;
+        return @{$self->{-foodsections}};
+    }
+
+    sub food_nutrition {
+        my $self = shift;
+        return @{$self->{-foodnutrition}};
+    }
+
+    sub food_poison {
+        my $self = shift;
+        return @{$self->{-foodpoison}};
+    }
+
+    sub food_trees {
+        my $self = shift;
+        return %{$self->{-foodtrees}};
+    }
+
+}
+
+sub data_compile {
+    my %data = %{$_[0]};
+    my $result = OData->new();
+    $result->{-occu} = $data{'occu'};
+    $result->{-mwords} = $data{'mwords'};
+    $result->{-fwords} = $data{'fwords'};
+    $result->{-placenames} = $data{'placenames'};
+    $result->{-weapons} = $data{'weapons'};
+    $result->{-animals} = $data{'animals'};
+    $result->{-foodprefixes} = $data{'foodprefixes'};
+    $result->{-foodnegatives} = $data{'foodnegatives'};
+    $result->{-foodblacklist} = $data{'foodblacklist'};
+    $result->{-foodsuffixes} = $data{'foodsuffixes'};
+    $result->{-foodtrees} = $data{'foodtrees'};
+    $result->{-foodnutrition} = $data{'foodnutrition'};
+    $result->{-foodpoison} = $data{'foodpoison'};
+    $result->{-foodsections} = $data{'foodsections'};
+    return $result;
 }
 
 1;

@@ -10,9 +10,7 @@ my $ARTICLE = "(?:an? |the )";
 
 local $_;
 
-# TODO This is all a mess, with the various arguments that are sub-components of %data. Unify this all.
-
-=head2 find_occu($title, $summary, %occu)
+=head2 find_occu($title, $summary, $xdata)
 
 Given the name of a person and the page summary for that person, attempts to determine the person's occupation.
 The return value is a list of the possible occupations, with each occupation formatted as a pair of elements
@@ -27,6 +25,7 @@ sub find_occu {
     local $_;
     my $title = $_[0];
     my $summary = $_[1];
+    my $xdata = $_[2];
     my @titles = apply_filters(
         [
          \&Filters::paren_expr,
@@ -48,7 +47,7 @@ sub find_occu {
         );
     Filters::consecutive_spaces(@titles);
     Filters::consecutive_spaces(@summaries);
-    my %occu = %{$_[2]};
+    my %occu = $xdata->occupations();
     my @res = ();
   KEYWORD: foreach my $o (keys %occu) {
       foreach my $titlevar (@titles) {
@@ -65,7 +64,7 @@ sub find_occu {
     return @res;
 }
 
-=head2 compute_gender($summary, @mwords, @fwords)
+=head2 compute_gender($summary, $xdata)
 
 Attempts to deduce the gender of the person whose summary text is given, returning the string "male" or
 "female". The value undef is returned if there is not enough information to draw a conclusion.
@@ -75,8 +74,9 @@ Attempts to deduce the gender of the person whose summary text is given, returni
 sub compute_gender {
     local $_;
     my $summary = $_[0];
-    my @mwords = @{$_[1]};
-    my @fwords = @{$_[2]};
+    my $xdata = $_[1];
+    my @mwords = $xdata->male_words();
+    my @fwords = $xdata->female_words();
     my $male = 0;
     my $female = 0;
     my $ptn;
@@ -92,7 +92,7 @@ sub compute_gender {
     return ($male > $female) ? "male" : "female";
 }
 
-=head2 find_place_information($title, $summary, %placenames)
+=head2 find_place_information($title, $summary, $xdata)
 
 Given the name and summary text of a location, determines the nature of the location, as an expression
 of the form C<["keyword", "friendly_name"]>. If no location nature can be determined, an array ref to
@@ -103,7 +103,8 @@ an empty array C<[]> is returned.
 sub find_place_information {
     my $title = $_[0];
     my $summary = $_[1];
-    my %placenames = %{$_[2]};
+    my $xdata = $_[2];
+    my %placenames = $xdata->placenames();
     my @titles = apply_filters(
         [
          \&Filters::trailing_comma_phrase,
@@ -147,7 +148,7 @@ sub find_place_information {
 }
 
 
-=head2 find_weapon_information($title, $summary, %weapons)
+=head2 find_weapon_information($title, $summary, $xdata)
 
 Determines the nature of the weapon whose title and summary are supplied, returning an expression
 of the form C<["keyword", "friendly_name"]>. If no such information can be drawn from the summary,
@@ -158,7 +159,8 @@ the array ref C<[]> is returned.
 sub find_weapon_information {
     my $title = $_[0];
     my $summary = $_[1];
-    my %weapons = %{$_[2]};
+    my $xdata = $_[2];
+    my %weapons = $xdata->weapons();
     my $shortsumm = $summary;
     $title =~ s/-/ /;
     $summary =~ s/-/ /;
@@ -204,7 +206,7 @@ sub find_weapon_information {
     return \@res;
 }
 
-=head2 deduce_animal_stats($title, $summary, $data)
+=head2 deduce_animal_stats($title, $summary, $xdata)
 
 Counts up the number of appearances of miscellaneous keywords used to determine the nature and behavior
 of animals from the summary and title of an animal page. A hashref containing the counted stats is
@@ -215,9 +217,10 @@ returned.
 sub deduce_animal_stats {
     my $title = $_[0];
     my $summary = $_[1];
-    my $data = $_[2];
+    my $xdata = $_[2];
+    my %animals = $xdata->animals();
     my %stats;
-    foreach my $keyword (keys %{$data->{'animals'}}) {
+    foreach my $keyword (keys %animals) {
         my $constant;
         if ($title =~ /\b$keyword\b/i) {
             $constant = 4;
@@ -226,8 +229,8 @@ sub deduce_animal_stats {
         }
         $stats{'matches'} += $constant;
         get_logger()->echo(2, "Animal $title has $keyword match $constant times") if $constant > 0;
-        foreach my $stat (keys %{$data->{'animals'}->{$keyword}}) {
-            my $coef = $data->{'animals'}->{$keyword}->{$stat};
+        foreach my $stat (keys %{$animals{$keyword}}) {
+            my $coef = $animals{$keyword}->{$stat};
             $stats{$stat} += $coef * $constant;
         }
    }
@@ -279,7 +282,7 @@ sub normalize_animal_stats {
         );
 }
 
-=head2 shortest_food_synonym($title, $summary, $data)
+=head2 shortest_food_synonym($title, $summary, $xdata)
 
 Given the title and summary of a food page, attempts to determine a more "user-friendly" synonym, or nickname,
 for the food. The nickname returned from this subroutine is the shortest nickname that is found, or the original
@@ -290,7 +293,7 @@ title if it is shorter than any nickname.
 sub shortest_food_synonym {
     my $title = $_[0];
     my $summary = $_[1];
-    my $data = $_[2];
+    my $xdata = $_[2];
     $title =~ s/-/ /;
     $summary =~ s/-/ /;
     my @titles = apply_filters(
@@ -315,10 +318,10 @@ sub shortest_food_synonym {
     my @candidates;
     push @candidates, $title;
     foreach my $titlevar (@titles) {
-        foreach my $prefix_loop (@{$data->{'foodprefixes'}}) {
+        foreach my $prefix_loop ($xdata->food_prefixes()) {
             my $prefix = $prefix_loop;
             $prefix =~ s/\$title/$titlevar/g;
-            foreach my $suffix_loop (@{$data->{'foodsuffixes'}}) {
+            foreach my $suffix_loop ($xdata->food_suffixes()) {
                 my $suffix = $suffix_loop;
                 $suffix =~ s/\$title/$titlevar/g;
                 for my $summaryvar (@summaries) {
@@ -331,10 +334,10 @@ sub shortest_food_synonym {
     }
     my $shortest = $title;
   EXCLUDE: foreach my $candidate (@candidates) {
-      foreach my $word (@{$data->{'foodblacklist'}}) {
+      foreach my $word ($xdata->food_blacklist()) {
           next EXCLUDE if $candidate =~ /\b$word\b/i;
       }
-      foreach my $word (@{$data->{'foodnegatives'}}) {
+      foreach my $word ($xdata->food_negatives()) {
           next EXCLUDE if $candidate =~ /^\s*$word\s*$/i;
       }
       $shortest = $candidate if length $candidate < length $shortest;
@@ -343,7 +346,7 @@ sub shortest_food_synonym {
     return $shortest;
 }
 
-=head2 get_plant_type($title, $summary, $trees)
+=head2 get_plant_type($title, $summary, $xdata)
 
 Tries to determine the sort of plant (such as tree, grass, or flower) that the food grows on naturally. If such
 a plant can be determined from the page, a string containing the type of plant is returned. Otherwise, the
@@ -354,7 +357,8 @@ special value undef is returned.
 sub get_plant_type {
     my $title = $_[0];
     my $summary = $_[1];
-    my %trees = %{$_[2]};
+    my $xdata = $_[2];
+    my %trees = $xdata->food_trees();
     my $max = undef;
     my $max_num = 0; # Set a threshold so that if nothing matches, we don't falsely identify as something
     foreach my $curr (keys %trees) {
@@ -371,7 +375,7 @@ sub get_plant_type {
     return $max;
 }
 
-=head2 get_nutrition_information($title, %page, $data)
+=head2 get_nutrition_information($title, %page, $xdata)
 
 Given the information about a food, determines nutrition information about the food. A hashref
 containing the data acquired is returned. Values that could not be determined will default to
@@ -382,12 +386,12 @@ an appropriate value (usually 0).
 sub get_nutrition_information {
     my $title = $_[0];
     my %page = %{$_[1]};
-    my $data = $_[2];
+    my $xdata = $_[2];
     my %result = ( 'nutrition' => 0, 'poison' => 0 );
     my %sections = %{flatten_sections(\%page)};
     foreach my $section (keys %sections) {
         my $okay = 0;
-        foreach my $keyword (@{$data->{'foodsections'}}) {
+        foreach my $keyword ($xdata->food_sections()) {
             $keyword =~ s/\$title/$title/g;
             if ($section =~ /\b$keyword\b/i) {
                 $okay = 1;
@@ -396,12 +400,12 @@ sub get_nutrition_information {
         }
         next unless $okay;
         my $summary = $sections{$section};
-        foreach my $curr (@{$data->{'foodnutrition'}}) {
+        foreach my $curr ($xdata->food_nutrition()) {
             my $constant = 0;
             $constant += @{[ $summary =~ /\b$curr\b/gi ]};
             $result{'nutrition'} += $constant;
         }
-        foreach my $curr (@{$data->{'foodpoison'}}) {
+        foreach my $curr ($xdata->food_poison()) {
             my $constant = 0;
             $constant += @{[ $summary =~ /\b$curr\b/gi ]};
             $result{'poison'} += $constant;

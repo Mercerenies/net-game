@@ -119,3 +119,4 @@ lama                   clergy
 Internet personality   actor
 equestrian rider       athlete
 economist              scientist
+sergeant               soldier

@@ -93,7 +93,7 @@ class NPCBrain
 
   def self.from_sxp(arg)
     arr = Reloader.assert_first :'npc-brain', arg
-    NPCBrain.new(nil).tap do |brain|
+    NPCBrain.new(0, "", nil).tap do |brain|
       Reloader.hash_like(arr) do |k, v|
         case k
         when :':quests'

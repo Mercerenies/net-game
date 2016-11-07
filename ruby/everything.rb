@@ -4,6 +4,7 @@ load './ruby/criteria.rb'
 load './ruby/numeral.rb'
 load './ruby/sampler.rb'
 load './ruby/listlike.rb'
+load './ruby/pqueue.rb'
 
 load './ruby/affix.rb'
 load './ruby/namer.rb'

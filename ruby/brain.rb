@@ -22,7 +22,9 @@ class KnowledgeBase
   # Accesses the brain of the given person object, constructing an empty brain if it does
   # not exist.
   def [](person)
-    @data[person.id] = NPCBrain.new(person.id, person.name, person.job) unless @data.include? person
+    unless @data.include? person
+      @data[person.id] = NPCBrain.new(person.id, person.name, person.job)
+    end
     @data[person.id]
   end
 

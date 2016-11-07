@@ -63,6 +63,7 @@
              \"probe <object>\" - (GOD) Get developer specs on an entity or object~@
              \"nuke <object>\" - (GOD) Insta-kill any entity which has health~@
              \"summon <object>\" - (GOD) Force an object into existence at the current location~@
+             \"console\" - (GOD) Drop into the developer console to directly type Lisp code~@
              ~]~
              \"help\" - Display this message~@
              \"quit\" - Exit the game~%"
@@ -72,7 +73,7 @@
   '(probe examine help quit))
 
 (defconstant +admin-actions+
-  '(probe nuke summon))
+  '(probe nuke summon console))
 
 (defgeneric is-admin-only (act obj preps))
 

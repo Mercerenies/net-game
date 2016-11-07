@@ -19,6 +19,7 @@
 (load "./lisp/action.lisp")
 (load "./lisp/state.lisp")
 (load "./lisp/speech.lisp")
+(load "./lisp/console.lisp")
 
 (load "./lisp/quests.lisp")
 (load "./lisp/brain.lisp")

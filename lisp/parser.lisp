@@ -84,7 +84,7 @@
                       :nouns nouns
                       :verbs '("go" "examine" "use" "activate" "collect"
                                "drop" "help" "quit" "attack" "talk" "probe"
-                               "nuke" "summon" "eat")
+                               "nuke" "summon" "eat" "console")
                       :preps '("with")
                       :arts '("the" "a" "an"))))
 

@@ -19,7 +19,7 @@ class NodeStage < Stage
                   end
     node = Node.new name, lvl
     node.waterfall
-    node = node_level_up node
+    node = Node.node_level_up node
     if child
       if lvl.level_up
         node = Node.new(child, lvl.level_up).tap { |o| o << node }

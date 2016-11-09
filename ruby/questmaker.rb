@@ -36,7 +36,7 @@ class QuestStub
 end
 
 module QuestMaker
-  extend QuestBuilder
+  include QuestBuilder
 
   @@quest_flag_n = 0
 

@@ -140,6 +140,10 @@ module QuestBuilder
     [:'talk-to', brain.id, prompt]
   end
 
+  def talk_to!(brain)
+    [:'talk-to!', brain.id]
+  end
+
   def self.included(base)
     base.extend self
   end

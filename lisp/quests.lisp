@@ -16,8 +16,8 @@
 
 #|
  | Quest triggers:
- |    (Note that quest triggers are either symbols or lists, depending on complexity)
- |    (Note also that triggers only trip if the quest has been accepted; initiate is the one and only
+ |    (Note that most quest triggers are lists; some special ones, such as 'initiate, are symbols)
+ |    (Note also that triggers only trip if the quest has been accepted; 'initiate is the one and only
  |     exception to this rule)
  |  * initiate - When an un-accepted quest is in the knowledge base for an NPC and the player talks to that
  |    NPC and asks if he/she can help with anything ("requests a quest", in a sense), The initiate trigger is
@@ -30,11 +30,12 @@
  |  * (talk-to! <npc-id>) - This is the more "urgent" version of the talk-to trigger. If the player talks with
  |    the NPC with ID <npc-id>, this trigger is tripped immediately and, if it exists, overrides the normal
  |    NPC menu. This trigger should be used sparingly, for if there are multiple talk-to! triggers from
- |    different quests, the order of precedence is arbitrary. ; TODO Add this one
+ |    different quests, the order of precedence is arbitrary. ; ///// talk-to! doesn't work
  |#
 (defparameter *quest-triggers*
   '((initiate . 0)
-    (talk-to . 2)))
+    (talk-to . 2)
+    (talk-to! . 1)))
 
 #|
  | Quest commands:
@@ -110,7 +111,7 @@
     (setf (is-quest-completed quest) t)
     (quest-goto quest 'completed)))
 
-; TODO Make it so triggers can be "matched" in more sophisticated ways than equality
+; TODO Make it so triggers can be "matched" in more sophisticated ways than equality (here and quest-has-trigger)
 (defun do-quest-trigger (quest trigger)
   (let* ((quest-data (get-quest-data (get-id quest)))
          (state (quest-state quest))
@@ -119,9 +120,29 @@
     (when cmd
       (mapc (lambda (x) (run-quest-command quest x)) cmd))))
 
+(defun quest-has-trigger (quest trigger)
+  (let* ((quest-data (get-quest-data (get-id quest)))
+         (state (quest-state quest))
+         (triggers (gethash state (quest-states quest-data)))
+         (cmd (cdr (assoc trigger triggers :test #'equal))))
+    cmd))
+
 ; Uses *player*; triggers for all active quests (do not use this for 'initiate)
 (defun do-trigger (trigger)
   (mapc (lambda (q) (do-quest-trigger q trigger))
+        (active-quests *player*)))
+
+; Uses *player*; triggers for the first active quest which has the appropriate trigger
+(defun do-first-trigger (trigger)
+  (loop for q in (active-quests *player*)
+        when (quest-has-trigger q trigger)
+            do (do-quest-trigger q trigger)
+            and return t
+        finally (return nil)))
+
+; Uses *player*
+(defun has-trigger (trigger)
+  (some (lambda (q) (quest-has-trigger q trigger))
         (active-quests *player*)))
 
 (defun do-initiate-quest (quest-data)

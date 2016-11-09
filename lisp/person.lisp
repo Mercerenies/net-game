@@ -51,7 +51,13 @@
 ; Uses *player*
 (defmethod do-action ((type (eql 'talk)) (obj person) preps)
   (declare (ignore preps))
-  (npc-talk-menu obj))
+  (npc-talk obj))
+
+(defun npc-talk (npc)
+  (let ((urgent `(talk-to! ,(get-id npc))))
+    (if (has-trigger urgent)
+        (do-first-trigger urgent)
+        (npc-talk-menu npc))))
 
 (defun npc-talk-menu (npc)
   (let ((basic-responses `(("What's going on?" . ,(lambda () (npc-initiate-quests npc)))

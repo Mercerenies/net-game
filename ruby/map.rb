@@ -2,20 +2,27 @@
 require 'forwardable'
 require 'sxp'
 
+# The map contains a collection of Location instances, which are interconnected with one another.
 class Map
   extend Forwardable
   include Enumerable
 
   def_delegators :@ary, :each, :push
 
+  # Initializes a map from the given collection of locations. The collection defaults to the empty
+  # list. If provided, the argument should be a collection of Location objects which responds to #to_a.
   def initialize(ary = [])
     @ary = ary.to_a
   end
 
+  # Returns the underlying list structure. The individual elements of the returned list can be modified, but
+  # the list itself should be left unmodified.
   def to_ary
     @ary
   end
 
+  # Returns the underlying list structure. The individual elements of the returned list can be modified, but
+  # the list itself should be left unmodified.
   def to_a
     to_ary
   end
@@ -29,10 +36,17 @@ class Map
     Map.new Reloader.list_like(arr)
   end
 
+  # Retrieves a location by ID value, or +nil+ if no matching location exists.
   def [](val)
     to_ary.find { |x| x.id == val }
   end
 
+  # Places +obj+ somewhere on the map. The block and type arguments are both optional. This method
+  # will weight the locations when choosing a random position so that locations which have objects
+  # already in them are less likely to be chosen. If +type+ is provided, it should be a class type
+  # (or other object which responds to #===) which restricts the object which are considered when
+  # counting the existing objects in the world. If the block is provided, it should take one
+  # argument, a Location, and return whether or not that location should be considered at all.
   def put_somewhere(obj, type = Object, &block)
     block = proc { true } unless block
     weight = Proc.new { |x| 1 / (x.count_items(type) + 1) }
@@ -53,6 +67,8 @@ class Map
 
 end
 
+# A location on the map. Locations keep track of what is allowed to spawn in them, as well as what other
+# locations they are connected to.
 class Location
   extend Forwardable
   include Enumerable
@@ -62,6 +78,11 @@ class Location
   def_delegators :@contents, :each, :push, :delete
   def_delegator :@links, :each, :each_link
 
+  # Initializes a location, given an ID, a name, and a country name. If a generic name is provided,
+  # it will be used when referring to the general location colloquially and is often simply the
+  # country name. The +valid_creatures+ and +valid_plants+ arguments restrict which animals and plants
+  # can spawn in this location, respectively. If not provided, no creatures or animals are allowed at
+  # the position.
   def initialize(id, name, country_name, generic_name: nil, valid_creatures: nil, valid_plants: nil)
     @id = id
     @name = name
@@ -74,10 +95,13 @@ class Location
     @water_mode = nil
   end
 
+  # Returns whether or not the location is allowed to have any creatures.
   def can_have_creatures?
     not @valid_creatures.nil?
   end
 
+  # Given a plant or animal, returns whether or not the location is allowed to house that plant or
+  # animal.
   def can_have?(x)
     case x
     when @valid_creatures then true
@@ -86,6 +110,7 @@ class Location
     end
   end
 
+  # Returns the full name of the location, including the short name and the country name.
   def long_name
     if country_name
       "#{name}, #{country_name}"
@@ -94,30 +119,42 @@ class Location
     end
   end
 
+  # Adds a link from this location to another location. Note that this is a one-directional
+  # link by default, meaning that if a symmetrical link is desired, #add_link should be called
+  # on both ends of the link.
   def add_link(x)
     @links.push x unless @links.include? x
   end
 
+  # Removes the link to the given location.
   def remove_link(x)
     @links.delete x
   end
 
+  # Returns whether or not the location is considered civilized. A civilized location is one which forbids
+  # the spawning of any creatures.
   def civilized?
     not can_have_creatures?
   end
 
+  # Marks the location as non-water, which is the default. Swimming creatures cannot move onto dry land.
   def mark_as_dry
     @water_mode = nil
   end
 
+  # Marks the location as being by the seaside. A shore location will allow water and land creatures onto it.
   def mark_as_shore
     @water_mode = :shore
   end
 
+  # Marks the location as being a sea. A sea location will not allow land creatures, including the player, to
+  # traverse it.
   def mark_as_sea
     @water_mode = :sea
   end
 
+  # Marks the water mode to one of +nil+, +:shore+, or +:sea+. If an invalid argument is provided, the water
+  # mode is not set.
   def mark_water(water_mode)
     case water_mode
     when nil then mark_as_dry
@@ -165,14 +202,19 @@ class Location
     end
   end
 
+  # Counts the number of items in the location matching +type+, which should respond to #===.
   def count_items(type = Item)
     self.count { |x| x.kind_of? type }
   end
 
+  # Returns an unspecified object which can be serialized using #to_sxp and stores the information
+  # regarding which creatures are valid in the location.
   def valid_creatures_wrapper
     ValidityWrapper.new @valid_creatures
   end
 
+  # Returns an unspecified object which can be serialized using #to_sxp and stores the information
+  # regarding which plants are valid in the location.
   def valid_plants_wrapper
     ValidityWrapper.new @valid_plants
   end

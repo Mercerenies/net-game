@@ -6,8 +6,8 @@ class ForestNode < StructureNode
     super builder, @name
     @number = number
     mark_as_exit if number == 1
-    @creatures = LandBasedAnimals.new
-    @plants = Plants[:tree, :plant, :bush, :grass, :flower]
+    @creatures = LandBasedValidator.new
+    @plants = PlantTypesValidator[:tree, :plant, :bush, :grass, :flower]
   end
 
   def expand

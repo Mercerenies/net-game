@@ -141,22 +141,3 @@ class ReloadedAnimal < Animal
   end
 
 end
-
-# TODO We really need to get these "qualifier" objects a superclass and stop using class names
-#      for them ///// (In the process of transitioning this)
-# TODO Sea creatures can still chase the player off the lake areas; they need to be incapable of doing so
-class LandBasedAnimals
-
-  def ===(obj)
-    obj.kind_of? Animal and not obj.sea?
-  end
-
-end
-
-class AnyAnimals
-
-  def ===(obj)
-    obj.kind_of? Animal
-  end
-
-end

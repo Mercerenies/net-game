@@ -40,7 +40,11 @@ class Reloader
       :plant => Plant,
       :food => Food,
       :'knowledge-base' => KnowledgeBase,
-      :'npc-brain' => NPCBrain
+      :'npc-brain' => NPCBrain,
+      :'land-only' => LandBasedValidator,
+      :'any-animal' => AnimalValidator,
+      :plants => PlantTypesValidator,
+      :'no-validator' => EmptyValidator
     }
   end
 

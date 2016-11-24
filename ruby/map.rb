@@ -51,7 +51,7 @@ class Map
     block = proc { true } unless block
     weight = Proc.new { |x| 1 / (x.count_items(type) + 1) }
     total = select( &block ).map( &weight ).reduce(:+)
-    total = 1.0 if total <= 0
+    total = 1.0 if total.nil?
     num = Random.rand total
     result = detect do |x|
       next unless block.call x
@@ -91,8 +91,8 @@ class Location
     @generic_name = generic_name
     @contents = []
     @links = []
-    @valid_creatures = valid_creatures
-    @valid_plants = valid_plants
+    @valid_creatures = (valid_creatures || EmptyValidator.new)
+    @valid_plants = (valid_plants || EmptyValidator.new)
     @water_mode = nil
   end
 
@@ -104,9 +104,9 @@ class Location
   # Given a plant or animal, returns whether or not the location is allowed to house that plant or
   # animal.
   def can_have?(x)
-    case x
-    when @valid_creatures then true
-    when @valid_plants then true
+    case
+    when (@valid_creatures.include? x) then true
+    when (@valid_plants.include? x) then true
     else false
     end
   end
@@ -172,8 +172,8 @@ class Location
     civilized = [:':civilized', civilized?]
     water = [:':water', water_mode]
     meta = [:':meta', MetaData.new(:':generic-name' => generic_name,
-                                   :':creatures' => valid_creatures_wrapper,
-                                   :':plants' => valid_plants_wrapper)]
+                                   :':creatures' => valid_creatures,
+                                   :':plants' => valid_plants)]
     (prefix + country + links + contents + civilized + water + meta).to_sxp
   end
 
@@ -196,8 +196,8 @@ class Location
         when :':meta'
           meta = Reloader.load v
           loc.generic_name = meta[:':generic-name']
-          loc.valid_creatures = Reloader.load(meta[:':creatures']).data
-          loc.valid_plants = Reloader.load(meta[:':plants']).data
+          loc.valid_creatures = Reloader.load(meta[:':creatures'])
+          loc.valid_plants = Reloader.load(meta[:':plants'])
         end
       end
     end
@@ -210,14 +210,14 @@ class Location
 
   # Returns an unspecified object which can be serialized using #to_sxp and stores the information
   # regarding which creatures are valid in the location.
-  def valid_creatures_wrapper
-    ValidityWrapper.new @valid_creatures
+  def valid_creatures
+    @valid_creatures
   end
 
   # Returns an unspecified object which can be serialized using #to_sxp and stores the information
   # regarding which plants are valid in the location.
-  def valid_plants_wrapper
-    ValidityWrapper.new @valid_plants
+  def valid_plants
+    @valid_plants
   end
 
 end

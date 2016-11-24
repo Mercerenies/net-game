@@ -111,27 +111,3 @@ class ReloadedPlant < Plant
   end
 
 end
-
-class Plants
-
-  def initialize(ary)
-    @ary = ary
-  end
-
-  def self.[](*args)
-    Plants.new args
-  end
-
-  def to_ary
-    @ary
-  end
-
-  def to_a
-    to_ary
-  end
-
-  def ===(obj)
-    obj.respond_to? :plant_type and @ary.include? obj.plant_type
-  end
-
-end

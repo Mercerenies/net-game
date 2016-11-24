@@ -20,6 +20,8 @@ class ValidityWrapper
       [:validity, :plants, @inst.to_ary].to_sxp
     when LandBasedAnimals
       [:validity, :'land-only', nil].to_sxp
+    when AnyAnimals
+      [:validity, :'any-animal'].to_sxp
     when nil
       [:validity, :none, nil].to_sxp
     else
@@ -36,6 +38,8 @@ class ValidityWrapper
       ValidityWrapper.new(Plants[*parm.to_a])
     when :'land-only'
       ValidityWrapper.new(LandBasedAnimals.new)
+    when :'any-animal'
+      ValidityWrapper.new(AnyAnimals.new)
     when :none
       ValidityWrapper.new(nil)
     end

@@ -5,7 +5,7 @@ class LakeNode < StructureNode
     @name = builder.get_a_name
     super builder, @name
     @number_left = number_left
-    @creatures = Animal
+    @creatures = AnyAnimals.new
     @plants = Plants[:tree, :plant, :bush, :grass, :flower]
   end
 

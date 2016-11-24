@@ -158,10 +158,23 @@
     ; Otherwise, desirable.
     (t)))
 
-; TODO User-friendly description
 (defmethod do-action ((act (eql 'examine)) (obj animal) preps)
   (declare (ignore preps))
-  (format t "An animal~%"))
+  ; TODO Better observation with a level up
+  ;      Ideally, the player would have an "observation" stat which allows him to better
+  ;      detect when an animal is stalking them
+  (format t "A ~[~;tiny ~;small ~;~;large ~;enormous ~]~(~A~) ~
+             ~[flying through the air ~;in the sea ~:;wandering by ~]~
+             ~[casually~:;glaring at you~].~%"
+          (anim-size (anim-data obj))
+          (get-name obj)
+          (cond
+            ((anim-air obj) 0)
+            ((anim-sea obj) 1)
+            (t 2))
+          (case (anim-attitude obj)
+            ((passive sneaky stalking) 0)
+            (t 1))))
 
 (defmethod system-keys append ((obj animal))
   `((anim-mood "Current Mood" ,(anim-mood obj))
@@ -171,4 +184,5 @@
     (anim-sea "Swimming" ,(anim-sea obj))
     (anim-pack "Pack Mentality" ,(anim-pack (anim-data obj)))
     (anim-speed "Speed" ,(anim-speed (anim-data obj)))
+    (anim-size "Size" ,(anim-size (anim-data obj)))
     (anim-threat "Threat" ,(anim-threat (anim-data obj)))))

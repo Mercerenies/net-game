@@ -23,12 +23,12 @@
 
 (defgeneric choose-spawn-point (spawner))
 
-; Uses *world*
 (defmethod choose-spawn-point ((spawner spawner))
+  (check-type *world* hash-table)
   (gethash (choose (spawner-area spawner)) *world*))
 
-; Uses *creatures*
 (defun do-spawn (spawner) ; TODO Localize the spawning
+  (check-type *creatures* list)
   (unless (and (spawner-creature-instance spawner)
                (get-loc (spawner-creature-instance spawner)))
     (let ((loc (choose-spawn-point spawner))

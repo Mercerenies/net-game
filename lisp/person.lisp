@@ -48,9 +48,9 @@
     (person-old-job-name "Prior Occupation Name" ,(person-old-job-name obj))
     (get-quest-list "Quest List" ,(get-quest-list (get-id obj)))))
 
-; Uses *player*
 (defmethod do-action ((type (eql 'talk)) (obj person) preps)
   (declare (ignore preps))
+  (check-type *player* player)
   (npc-talk obj))
 
 (defun npc-talk (npc)

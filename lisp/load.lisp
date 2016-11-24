@@ -175,8 +175,8 @@
         finally (let ((plant (make-plant name :type type :food food :growth-time growth-time)))
                   (move-object plant node))))
 
-; Uses *world*
 (defun halo (node &optional (n 1) &key (self t))
+  (check-type *world* hash-table)
   (if (not (plusp n))
       (list node)
       (loop for exit in (location-exits node)

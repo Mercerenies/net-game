@@ -11,6 +11,8 @@
 
 ; TODO If a noun is a prefix of another noun, the longer one is inaccessible
 (defun scan-sentence (words sentence)
+  (check-type words list "a list of words")
+  (check-type sentence string)
   (loop with vec = (make-array 15
                                :fill-pointer 0
                                :element-type 'character
@@ -30,6 +32,11 @@
 (defun parse-sentence (phrase &key
                                 (nouns nil) (verbs nil)
                                 (preps nil) (arts '("a" "an" "the")))
+  (check-type phrase list "a list from SCAN-SENTENCE")
+  (check-type nouns list)
+  (check-type verbs list)
+  (check-type preps list)
+  (check-type arts list)
   (loop with state = 'verb
         with verb = nil
         with noun = nil
@@ -73,8 +80,11 @@
                        (getf keys :preps) (getf keys :arts) nil)))
     (apply #'scan-then-parse words sentence keys)))
 
-; Uses *player*, *world*, (indirectly) *numerical*
 (defun parse-default (sentence)
+  (check-type *world* hash-table)
+  (check-type *player* player)
+  (check-type *numerical* list "an associative list")
+  (check-type sentence string)
   (let ((nouns (append (get-formatted-numbers)
                        (mapcar #'get-name (location-contents (get-loc *player*)))
                        (mapcar #'get-name (inv-items *player*))
@@ -88,8 +98,10 @@
                       :preps '("with")
                       :arts '("the" "a" "an"))))
 
-; Uses *player*, *world*
 (defun enhanced-parse (sentence)
+  (check-type *world* hash-table)
+  (check-type *player* player)
+  (check-type sentence string)
   (flet ((translate-noun (noun)
            (and noun
                 (or (find noun (append (location-contents (get-loc *player*))

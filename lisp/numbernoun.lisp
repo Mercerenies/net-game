@@ -2,11 +2,11 @@
 
 (defparameter *numerical* nil)
 
-; Uses *numerical*
 (defun assign-numbers (&rest lists)
   "Assigns numbers to every element in each of the lists. Sets the
    global *numerical* variable to be an alist of numbers associated
    with objects."
+  (check-type *numerical* list "an associative list")
   (setf *numerical*
         (loop for elem in (apply #'concatenate 'list lists)
               for i upfrom 1

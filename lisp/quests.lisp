@@ -127,21 +127,23 @@
          (cmd (cdr (assoc trigger triggers :test #'equal))))
     cmd))
 
-; Uses *player*; triggers for all active quests (do not use this for 'initiate)
+; Triggers for all active quests (do not use this for 'initiate)
 (defun do-trigger (trigger)
+  (check-type *player* player)
   (mapc (lambda (q) (do-quest-trigger q trigger))
         (active-quests *player*)))
 
-; Uses *player*; triggers for the first active quest which has the appropriate trigger
+; Triggers for the first active quest which has the appropriate trigger
 (defun do-first-trigger (trigger)
+  (check-type *player* player)
   (loop for q in (active-quests *player*)
         when (quest-has-trigger q trigger)
             do (do-quest-trigger q trigger)
             and return t
         finally (return nil)))
 
-; Uses *player*
 (defun has-trigger (trigger)
+  (check-type *player* player)
   (some (lambda (q) (quest-has-trigger q trigger))
         (active-quests *player*)))
 
@@ -149,18 +151,18 @@
   (let ((temp (make-quest-instance quest-data)))
     (do-quest-trigger temp 'initiate)))
 
-; Uses *player*
 (defun quest-accept (quest state)
+  (check-type *player* player)
   (unless (has-started-quest (get-id quest))
     (quest-goto quest state)
     (push quest (active-quests *player*))))
 
-; Uses *quests*
 (defun get-quest-data (qid)
+  (check-type *quests* hash-table)
   (gethash qid *quests*))
 
-; Uses *quests*
 (defun add-quest (data)
+  (check-type *quests* hash-table)
   (setf (gethash (get-id data) *quests*) data))
 
 (defun make-quest-instance (data)
@@ -190,28 +192,30 @@
   (and (has-started-quest quest-id)
        (is-quest-completed (find quest-id (active-quests *player*) :key #'get-id))))
 
-; Uses *quests*
 (defun total-quest-count ()
+  (check-type *quests* hash-table)
   (hash-table-count *quests*))
 
-; Uses *player*
 (defun started-quests ()
   ; Returns quests which have been started, including those that are completed
+  (check-type *player* player)
   (active-quests *player*))
 
-; Uses *player* indirectly
 (defun finished-quests ()
+  (check-type *player* player)
   (remove-if (complement #'is-quest-completed)
              (started-quests)))
 
-; Uses *player*, *quests*
 (defun percent-started-quests ()
+  (check-type *player* player)
+  (check-type *quests* hash-table)
   (if (zerop (total-quest-count))
       1
       (/ (length (started-quests)) (total-quest-count))))
 
-; Uses *player*, *quests*
 (defun percent-finished-quests ()
+  (check-type *player* player)
+  (check-type *quests* hash-table)
   (if (zerop (total-quest-count))
       1
       (/ (length (finished-quests)) (total-quest-count))))

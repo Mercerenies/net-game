@@ -8,9 +8,9 @@
             :initarg :answers
             :initform nil)))
 
-; `prompt` is a string
-; `answers` is an alist associating strings with 0-ary lambdas
-(defun make-dialogue-state (&key prompt answers)
+(defun make-dialogue-state (&key (prompt "") (answers nil))
+  (check-type prompt string)
+  (check-type answers list "an associative list")
   (make-instance 'dialogue-state
                  :prompt prompt
                  :answers answers))
@@ -35,10 +35,11 @@
         (format t "Invalid answer.~%"))))
 
 (defun speak-line (text)
+  (check-type text string)
   (format t "\"~A\"~%" text))
 
-; `answers` is an alist matching the format specified in `make-dialogue-state`
 (defun speak-branch (prompt &rest answers)
+  (check-type answers list "an associative list")
   (format t "\"~A\"~%" prompt)
   (push (make-dialogue-state :prompt prompt
                              :answers answers)

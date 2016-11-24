@@ -11,7 +11,7 @@
                 nil)
             (get-name obj))))
 
-(defclass location (identifiable named flagged)
+(defclass location (identifiable named flagged loaded)
   ((exits :accessor location-exits
           :initform nil
           :type list)

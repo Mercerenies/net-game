@@ -19,7 +19,7 @@ class Spider:
     a crawl.
     """
 
-    def __init__(self, selector = None, depth = 5, max_tries = 3):
+    def __init__(self, selector = None, depth = 5, max_tries = 3, max_aborts = 1):
         """
         Initializes the Spider. The selector should be either None (in which case it will default to
         a BasicLinkSelector) or a LinkSelector object. The depth and max_tries should be positive
@@ -31,6 +31,7 @@ class Spider:
         self.depth = depth
         self.max_tries = max_tries
         self.selector = selector
+        self.max_aborts = max_aborts
 
     def finished(self):
         """A callback indicating that the user is done using the Spider and, by extension, the LinkSelector."""
@@ -73,16 +74,28 @@ class Spider:
         self.selector.end_crawl(bool(result))
         return result
 
-    def safely_call(self, func): # TODO We need to handle "connection aborted" ConnectionResetError too.
-        """A convenience function which calls the 0-ary function supplied, while handling Wikipedia errors."""
-        try:
-            return func()
-        except wikipedia.PageError as e:
-            echo("Found red link", e)
-            return None
-        except wikipedia.DisambiguationError as e:
-            echo("Ambiguous article found", e)
-            return None
+    def safely_call(self, func):
+        """
+        A convenience function which calls the 0-ary function supplied, while handling Wikipedia and network
+        errors.
+        """
+        def _safely_call(n):
+            try:
+                return func()
+            except wikipedia.PageError as e:
+                echo("Found red link", e)
+                return None
+            except wikipedia.DisambiguationError as e:
+                echo("Ambiguous article found", e)
+                return None
+            except ConnectionResetError as e:
+                if n < self.max_aborts:
+                    echo("Connection reset", e, "...", "retrying")
+                    return _safely_call(n + 1)
+                else:
+                    echo("Connection reset", e, "...", "aborting")
+                    return None
+        return _safely_call(0)
 
     def crawl_times(self, base, match_function):
         """

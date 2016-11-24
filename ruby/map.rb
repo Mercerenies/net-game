@@ -6,6 +6,7 @@ require 'sxp'
 class Map
   extend Forwardable
   include Enumerable
+  include DeltaAble
 
   def_delegators :@ary, :each, :push
 
@@ -13,6 +14,10 @@ class Map
   # list. If provided, the argument should be a collection of Location objects which responds to #to_a.
   def initialize(ary = [])
     @ary = ary.to_a
+  end
+
+  def to_delta
+    DeltaMap.new self
   end
 
   # Returns the underlying list structure. The individual elements of the returned list can be modified, but
@@ -73,6 +78,7 @@ end
 class Location
   extend Forwardable
   include Enumerable
+  include DeltaAble
 
   attr_reader :id, :name, :country_name, :generic_name, :water_mode
 
@@ -94,6 +100,10 @@ class Location
     @valid_creatures = (valid_creatures || EmptyValidator.new)
     @valid_plants = (valid_plants || EmptyValidator.new)
     @water_mode = nil
+  end
+
+  def to_delta
+    DeltaLocation.new self
   end
 
   # Returns whether or not the location is allowed to have any creatures.

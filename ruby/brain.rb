@@ -5,12 +5,16 @@ require 'forwardable'
 # when it is necessary to search for a specific person, the knowledge base is searched. A KnowledgeBase
 # instance stores a collection of NPCBrain objects.
 class KnowledgeBase
-  extend Forwardable
+  include DeltaAble
 
   attr_reader :data
 
   def initialize
     @data = {}
+  end
+
+  def to_delta
+    DeltaKnowledgeBase.new self
   end
 
   # Iterates over the entries in the knowledge base.
@@ -67,6 +71,10 @@ class NPCBrain
     @name = name
     @job = job
     @quests = []
+  end
+
+  def to_delta
+    DeltaNPCBrain.new self
   end
 
   def each(&block)

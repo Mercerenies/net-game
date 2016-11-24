@@ -1,5 +1,7 @@
 
 class GData
+  include DeltaAble
+
   attr_reader :node, :map, :knowledge_base
 
   def initialize(everything)
@@ -11,6 +13,10 @@ class GData
     @spawners = SpawnerSet.new
     @quests = QuestSet.new
     @knowledge_base = KnowledgeBase.new
+  end
+
+  def to_delta
+    DeltaGData.new self, each.to_a
   end
 
   # Assigns the singular node
@@ -38,6 +44,11 @@ class GData
   # Adds bridges to the list of available bridges
   def add_bridges(*bridges)
     @bridges.push(*bridges)
+  end
+
+  # Iterates over each element in the data array.
+  def each(&block)
+    @arr.each &block
   end
 
   # Iterates over the data in the array. The block should return

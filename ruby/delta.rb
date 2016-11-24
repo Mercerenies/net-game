@@ -10,5 +10,4 @@ end
 # should have a 0-ary #to_delta method which returns a corresponding +Delta+ object.
 module DeltaAble
   # Implementors of DeltaAble are expected to have a to_delta 0-ary method which returns a Delta object.
-  # TODO Start using this; it's not used right now.
 end

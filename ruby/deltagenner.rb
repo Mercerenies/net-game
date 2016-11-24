@@ -1,5 +1,5 @@
 
-class DeltaGenner < Genner # TODO Should we `include Delta' here?
+class DeltaGenner < Genner
   attr_reader :data
 
   def initialize(everything, alpha)

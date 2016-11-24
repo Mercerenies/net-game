@@ -164,7 +164,7 @@
   ;      Ideally, the player would have an "observation" stat which allows him to better
   ;      detect when an animal is stalking them
   (format t "A ~[~;tiny ~;small ~;~;large ~;enormous ~]~(~A~) ~
-             ~[flying through the air ~;in the sea ~:;wandering by ~]~
+             ~[flying through the air ~;swimming in the sea ~:;wandering by ~]~
              ~[casually~:;glaring at you~].~%"
           (anim-size (anim-data obj))
           (get-name obj)

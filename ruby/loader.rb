@@ -1,6 +1,14 @@
 #!/usr/bin/ruby
 
-class PersonPage
+class Page
+
+  def to_json(options = {})
+    "{}"
+  end
+
+end
+
+class PersonPage < Page
   attr_reader :name, :gender, :occupations
 
   def initialize(json)
@@ -21,7 +29,7 @@ class PersonPage
 
 end
 
-class PlacePage
+class PlacePage < Page
   attr_reader :name
 
   def initialize(json)
@@ -52,7 +60,7 @@ class PlacePage
 
 end
 
-class WeaponPage
+class WeaponPage < Page
   attr_reader :name, :type, :keyword
 
   def initialize(json)
@@ -83,7 +91,7 @@ class WeaponPage
 
 end
 
-class AnimalPage
+class AnimalPage < Page
   attr_reader :name, :pack, :speed, :sea, :air, :threat, :size
 
   def initialize(json)
@@ -113,7 +121,7 @@ class AnimalPage
 
 end
 
-class FoodPage
+class FoodPage < Page
   attr_reader :name, :full_name, :plant, :nutrition, :poison
 
   def initialize(json)

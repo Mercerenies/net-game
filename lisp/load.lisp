@@ -1,5 +1,8 @@
 (in-package #:net-game)
 
+(defparameter *origin*
+  "???")
+
 (defmethod print-object ((obj named) stream)
   (print-unreadable-object (obj stream :type t :identity t)
     (format stream "~S ~S"
@@ -30,7 +33,7 @@
                  :name name
                  :short-name short-name))
 
-(defclass warp-point (named located)
+(defclass warp-point (named located loaded)
   ((active :accessor warp-active
            :initform nil
            :type boolean))

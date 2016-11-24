@@ -1,6 +1,6 @@
 (in-package #:net-game)
 
-(defclass person (identifiable named located)
+(defclass person (identifiable named located loaded)
   ((short-name :accessor person-nickname
                :initform ""
                :initarg :short-name

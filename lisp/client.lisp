@@ -68,8 +68,9 @@
 (defun check-for-updates ()
   (loop for (sym delta sentinel) in *client-pending*
         when (probe-file sentinel)
-            do (with-open-file (file delta)
-                 (load-delta :file file))
+            do (let ((*origin* delta))
+                 (with-open-file (file delta)
+                   (load-delta :file file)))
             and collect sym into removing
         finally (loop for rr in removing
                       do (setf *client-pending*

@@ -1,6 +1,6 @@
 (in-package #:net-game)
 
-(defclass food-data (named)
+(defclass food-data (named loaded)
   ((full-name :accessor food-full-name
               :initform ""
               :initarg :full-name
@@ -18,7 +18,7 @@
                   :initarg :poison-chance
                   :type number)))
 
-(defclass plant (named located)
+(defclass plant (named located loaded)
   ((type :accessor plant-type
          :initform nil
          :initarg :type
@@ -35,7 +35,7 @@
                 :initarg :growth-time
                 :type integer)))
 
-(defclass food (item)
+(defclass food (item loaded)
   ((data :accessor food-data
          :initform nil
          :initarg :data
@@ -44,6 +44,9 @@
             :initform 0
             :initarg :health
             :type number)))
+
+(defmethod get-origin ((obj food))
+  (get-origin (food-data obj)))
 
 (defmethod food-full-name ((obj food))
   (food-full-name (food-data obj)))

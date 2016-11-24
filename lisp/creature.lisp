@@ -1,6 +1,6 @@
 (in-package #:net-game)
 
-(defclass animal-data (identifiable named)
+(defclass animal-data (identifiable named loaded)
   ((pack :accessor anim-pack
          :initform 1
          :initarg :pack)
@@ -48,7 +48,7 @@
  | * Hunting - Moves to Hunting mood when a player is spotted.
  | * Stalking - Moves to Sneaky mood when a player moves away.
  |#
-(defclass animal (creature damageable)
+(defclass animal (creature damageable loaded)
   ((data :accessor anim-data
          :initform nil
          :initarg :data)
@@ -99,6 +99,10 @@
                         (5 (+ 0.29 (random 0.30))))
                  :sea (anim-sea data)
                  :air (anim-air data)))
+
+
+(defmethod get-origin ((obj animal))
+  (get-origin (anim-data obj)))
 
 (defmethod entity-turn ((obj animal))
 ;  (format t "The ~A (~A / ~A) at ~A is going to go now.~%"

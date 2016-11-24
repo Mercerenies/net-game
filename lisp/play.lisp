@@ -2,7 +2,7 @@
 
 ; TODO We need some more check-type calls; they're nice and self-documenting
 
-(defclass player (named located damageable carrying)
+(defclass player (named located damageable carrying loaded)
   ((active-quests :accessor active-quests
                   :initarg :active-quests
                   :initform nil
@@ -56,8 +56,9 @@
    itself makes no effort to interact with external servers, such as the Lua interface. If such
    interaction is desired, it should be implemented as a hook on do-action or a similar method."
   (multiple-value-bind (*world* *creatures* *spawners* *quests* *knowledge-base*)
-      (with-open-file (file filename)
-        (load-data :file file))
+      (let ((*origin* filename))
+        (with-open-file (file filename)
+          (load-data :file file)))
     (let ((*player* (loop for loc being the hash-values in *world*
                           for player = (find-if (lambda (y) (typep y 'player))
                                                 (location-contents loc))

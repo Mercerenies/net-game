@@ -1,6 +1,6 @@
 (in-package #:net-game)
 
-(defclass item (named located flagged)
+(defclass item (named located flagged loaded)
   ((weight :accessor item-weight
            :initarg :weight
            :initform 1

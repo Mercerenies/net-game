@@ -51,7 +51,15 @@
   (:documentation "A base class for objects, such as items, which have flags. The list of flags should
                    be a list of symbols. In general, flag symbols should be interned, although this is
                    not explicitly required. Flags can be more easily interacted with using add-flag
-                   and check-flag"))
+                   and check-flag."))
+
+(defclass loaded ()
+  ((origin :accessor get-origin
+           :initarg :origin
+           :initform *origin*
+           :type string))
+  (:documentation "A base class for objects which were loaded from the data files. A loaded instance
+                   maintains the file from which it was loaded, to help with debugging."))
 
 (defgeneric add-flag (flag obj))
 
@@ -75,3 +83,6 @@
 
 (defmethod system-keys append ((obj flagged))
   `((get-flags "Flags" ,(get-flags obj))))
+
+(defmethod system-keys append ((obj loaded))
+  `((get-origin "Origin" ,(get-origin obj))))

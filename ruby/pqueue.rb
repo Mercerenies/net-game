@@ -1,6 +1,4 @@
 
-# ///// Test this
-
 # A (minimum) priority queue class, for storing things and then popping them in some priority order.
 class PriorityQueue
 
@@ -32,6 +30,11 @@ class PriorityQueue
   # An infix operator form that calls #add.
   def <<(elem)
     self.add elem
+  end
+
+  # Enumerate each element of the underlying array in order
+  def each(&block)
+    @arr.each &block
   end
 
   # Pops the item with the lowest priority out of the list and returns it, returning +nil+

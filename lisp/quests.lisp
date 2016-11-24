@@ -30,7 +30,7 @@
  |  * (talk-to! <npc-id>) - This is the more "urgent" version of the talk-to trigger. If the player talks with
  |    the NPC with ID <npc-id>, this trigger is tripped immediately and, if it exists, overrides the normal
  |    NPC menu. This trigger should be used sparingly, for if there are multiple talk-to! triggers from
- |    different quests, the order of precedence is arbitrary. ; ///// talk-to! doesn't work
+ |    different quests, the order of precedence is arbitrary.
  |#
 (defparameter *quest-triggers*
   '((initiate . 0)

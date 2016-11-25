@@ -22,8 +22,7 @@ def get_weapon_base():
 
 def get_monster_base():
     """Selects and returns a starting page for monster crawling."""
-    letter = random.choice(string.ascii_uppercase)
-    return "List of legendary creatures ({})".format(letter)
+    return "List of legendary creatures by type"
 
 def get_animal_base():
     """Returns a starting page for animal crawling."""

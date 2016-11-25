@@ -54,9 +54,9 @@ class Spider:
         """
         def _crawl_once(page, depth_):
             self.wait()
-            echo("Trying", escape(page.title), "at", depth_, flush = True)
+            echo(" Trying: ", escape(page.title), " (", depth_, ")", sep = '', flush = True)
             if match_function(page):
-                echo("Taking", escape(page.title))
+                echo("  Accepted:", escape(page.title))
                 return page
             elif depth_ >= self.depth:
                 return None
@@ -103,11 +103,16 @@ class Spider:
         been made.
         """
         if type(base) is str:
+            echo("Basis:", escape(base))
             base = wikipedia.page(base)
+        else:
+            echo("Basis:", escape(base.title))
         for i in range(0, self.max_tries):
             res = self.crawl_once(base, match_function)
             if res:
                 return res
+            else:
+                echo("  Rejected")
 
 def nearby(x):
     """Locates and returns any Wikipedia page whose physical location is near that of the page supplied."""

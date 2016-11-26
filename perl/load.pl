@@ -5,7 +5,7 @@ use perl::datafile;
 use perl::set;
 
 my(%occu, @mwords, @fwords, %placenames, %weapons, %animals, @foodprefixes, @foodblacklist, @foodsuffixes,
-   %foodtrees, @foodnegatives, @foodnutrition, @foodpoison, @foodsections);
+   %foodtrees, @foodnegatives, @foodnutrition, @foodpoison, @foodsections, %monsters);
 my $fh;
 
 open $fh, '<', './data/occupations.txt' or die("$!");
@@ -75,6 +75,10 @@ while (<$fh>) {
 }
 close $fh;
 
+open $fh, '<', './data/monsters.txt' or die("$!");
+%monsters = load_two_column_file($fh, 'monsters.txt');
+close $fh;
+
 (
  'occu' => \%occu,
  'mwords' => \@mwords,
@@ -89,5 +93,6 @@ close $fh;
  'foodtrees' => \%foodtrees,
  'foodnutrition' => \@foodnutrition,
  'foodpoison' => \@foodpoison,
- 'foodsections' => \@foodsections
+ 'foodsections' => \@foodsections,
+ 'monsters' => \%monsters
 );

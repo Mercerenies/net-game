@@ -83,9 +83,25 @@ sub read_weapon {
     return \%curr;
 }
 
-# Monsters
+=head2 read_monster($xml, $xdata)
+
+Given the XML data for a monster page, parses the page to compute information about the monster, returning
+a hashref containing any information that could be deduced. Un-identifiable fields are filled with undef.
+
+=cut
+
 sub read_monster {
-    # TODO Monster Reading
+    my $xml = $_[0];
+    my $xdata = $_[1];
+    my $name = page_title($xml);
+    my $summary = page_summary($xml);
+    my $type = find_monster_type($name, $summary, $xdata);
+    my %curr = (
+        nature => 'Monster',
+        name => unparen($name),
+        type => $type
+        );
+    return \%curr;
 }
 
 =head2 read_animal($xml, $xdata)

@@ -1,0 +1,6 @@
+hominid  humanoid
+giant    giant
+deity    deity
+god      diety
+goddess  diety
+monster  monster

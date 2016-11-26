@@ -96,7 +96,8 @@ sub compute_gender {
 
 Given the name and summary text of a location, determines the nature of the location, as an expression
 of the form C<["keyword", "friendly_name"]>. If no location nature can be determined, an array ref to
-an empty array C<[]> is returned.
+an empty array C<[]> is returned. If natures could be determined, an array of possible natures is
+returned.
 
 =cut
 
@@ -413,5 +414,62 @@ sub get_nutrition_information {
     }
     return \%result;
 }
+
+
+=head2 find_monster_type($title, $summary, $xdata)
+
+Given the name and summary text of a monster, determines the type of creature the monster constitutes,
+returning an expression of the form C<["keyword", "friendly_name"]>. If no type can be determined, an
+array ref to an empty array C<[]> is returned. Otherwise, an array of possible monster types is returned.
+
+=cut
+
+sub find_monster_type {
+    my $title = $_[0];
+    my $summary = $_[1];
+    my $xdata = $_[2];
+    my %monsters = $xdata->monster_types();
+    my @titles = apply_filters(
+        [
+         \&Filters::trailing_comma_phrase,
+         \&Filters::paren_expr,
+        ],
+        $title
+        );
+    my @summaries = apply_filters(
+        [
+         \&Filters::paren_expr,
+         \&Filters::slash_phrase,
+         \&Filters::appositive_phrase
+        ],
+        $summary
+        );
+    Filters::consecutive_spaces(@titles);
+    Filters::consecutive_spaces(@summaries);
+    my @res = ();
+    my $ptn;
+  PATTERN: foreach $ptn (keys %monsters) {
+      foreach my $titlevar (@titles) {
+          my $expr = simple_linked_sentence($titlevar, $ptn, {MoreRenameClauses => 1});
+          foreach my $summaryvar (@summaries) {
+              if ($summaryvar =~ $expr) {
+                  push @res, [$monsters{$ptn}, $ptn];
+                  next PATTERN;
+              }
+          }
+      }
+  }
+  PATTERN: foreach $ptn (keys %monsters) {
+      foreach my $titlevar (@titles) {
+          if ($titlevar =~ /\b$ptn\b/i && not $titlevar =~ /^$ptn$/i) {
+              push @res, [$monsters{$ptn}, $ptn];
+              next PATTERN;
+          }
+      }
+  }
+    return \@res;
+}
+
+# ///// Determine monster affinity (light/dark, chaotic/civilized) using a keyword search, then go back to quests
 
 1;

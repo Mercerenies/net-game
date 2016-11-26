@@ -43,7 +43,8 @@ package OData {
                       -foodtrees => undef,
                       -foodnutrition => undef,
                       -foodpoison => undef,
-                      -foodsections => undef}, $class);
+                      -foodsections => undef,
+                      -monsters => undef}, $class);
     }
 
     sub occupations {
@@ -116,6 +117,11 @@ package OData {
         return %{$self->{-foodtrees}};
     }
 
+    sub monster_types {
+        my $self = shift;
+        return %{$self->{-monsters}};
+    }
+
 }
 
 sub data_compile {
@@ -135,6 +141,7 @@ sub data_compile {
     $result->{-foodnutrition} = $data{'foodnutrition'};
     $result->{-foodpoison} = $data{'foodpoison'};
     $result->{-foodsections} = $data{'foodsections'};
+    $result->{-monsters} = $data{'monsters'};
     return $result;
 }
 

@@ -21,7 +21,7 @@ The %options argument can contain the following elements.
 =item * MoreRenameClauses (default: false)
 
 If this value is truthy, the extended rename clauses will be used, allowing any word in $RENAME to
-introduce a rename clause. By default, other the word "or" introduces a rename clause.
+introduce a rename clause. By default, only the word "or" introduces a rename clause.
 
 =item * StrictSkimWords (default: false)
 

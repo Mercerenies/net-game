@@ -1,6 +1,19 @@
-hominid  humanoid
-giant    giant
-deity    deity
-god      diety
-goddess  diety
-monster  monster
+hominid             humanoid
+giant               giant
+deity               deity
+god                 deity
+goddess             deity
+monster             monster
+hybrid animal       monster
+plant species       plant
+mythical animal     monster
+lord being          deity
+lord beings         deity
+snake-like being    dragon
+dragon              dragon
+follower            nymph
+followers           nymph
+legendary creature  monster
+humanoid            humanoid
+bird                bird
+goddesses           deity

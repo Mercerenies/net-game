@@ -26,6 +26,38 @@ sub load_two_column_file {
     return %result;
 }
 
+=head2 load_keyword_search_file($fh, $fname)
+
+Loads the file using a keyword attribute format. Each line of the file should be a keyword, followed by
+the numerical stats that it influences and by how much it influences them. For example,
+
+ keyword-here: attribute1 +2, attribute2 -2
+
+In this exampe, every instance of the keyword "keyword-here" would add two points to attribute1 and subtract
+two points from attribute2.
+
+=cut
+
+sub load_keyword_search_file {
+    local $_;
+    my $fh = $_[0];
+    my $fname = $_[1];
+    my %result;
+    while (<$fh>) {
+        chomp;
+        /^([\w\- ]+)+: (.*)$/ or die("Illegal line in $fname at line $.");
+        my $key = $1;
+        my @rest = split(/,/, $2);
+        my %stats;
+        foreach my $token (@rest) {
+            $token =~ /\b(\w+) *([-+]\d+)/ or die("Illegal line in $fname at line $.");
+            $stats{$1} = 0+ $2;
+        }
+        $result{$key} = \%stats;
+    }
+    return %result;
+}
+
 package OData {
 
     sub new {
@@ -122,6 +154,11 @@ package OData {
         return %{$self->{-monsters}};
     }
 
+    sub monster_affinities {
+        my $self = shift;
+        return %{$self->{-monstertypes}};
+    }
+
 }
 
 sub data_compile {
@@ -142,6 +179,7 @@ sub data_compile {
     $result->{-foodpoison} = $data{'foodpoison'};
     $result->{-foodsections} = $data{'foodsections'};
     $result->{-monsters} = $data{'monsters'};
+    $result->{-monstertypes} = $data{'monstertypes'};
     return $result;
 }
 

@@ -69,6 +69,7 @@ musket
 projectile weapon
 :: monsters
 legendary creature
+legendary creatures
 legendary mammal
 fictional creature
 dragon
@@ -78,8 +79,12 @@ demon
 vampire
 undead
 mythic animal
+mythic animals
 deities
 deity
+mythic plant
+mythic plants
+fantasy creature
 :: animals
 rodent
 mollusc

@@ -1,0 +1,43 @@
+cannibal: civil -2, light -2
+cannibalism: civil -2, light -2
+murder: civil -1, light -2
+greed: civil +1, light -2
+deity: civil +2
+watchman: civil +1
+servant: civil +1, light +1
+monster: civil -1
+spirit: civil +1
+evil: light -2
+supreme: light +1
+divinity: civil +1, light +1
+cryptid: civil -1
+animal: civil -1
+plant: civil -1
+poisonous: light -1
+unverified: civil -1, light -1
+serpent: civil -1, light -1
+leopard: civil -1
+creature: civil -1
+lord: civil +1, light +1
+benevolent: light +2
+demon: light -2, civil +1
+demons: light -2, civil +1
+enemy: light -1
+ogre: light -1
+ogres: light -1
+ghost: civil +1
+ghosts: civil +1
+snake: civil -1, light -1
+venom: light -1
+alcohol: light -1
+typhoon: civil -1
+typhoons: civil -1
+worm: light -1
+worship: light +1
+follower: civil +1, light +1
+followers: civil +1, light +1
+wine: light -1
+malevolent: light -2
+intoxication: light -1
+dancing: civil +1, light +1
+snakes: civil -1, light -1

@@ -234,7 +234,7 @@ sub deduce_animal_stats {
             my $coef = $animals{$keyword}->{$stat};
             $stats{$stat} += $coef * $constant;
         }
-   }
+    }
     return \%stats;
 }
 
@@ -242,7 +242,7 @@ sub deduce_animal_stats {
 
 Given the output from C<deduce_animal_stats>, normalizes the stats to be on a scale from 1 to 5 (integer
 values), with the "boolean-ish" quantities such as air-based and sea-based determinations normalized to
-true or false (here, 1 or 0). The hashref that is passed in is not modified; a new hashref is returned.
+true or false (here, 1 or 0). The hashref that is passed in is not modified; a new hash is returned.
 
 =cut
 
@@ -433,14 +433,19 @@ sub find_monster_type {
         [
          \&Filters::trailing_comma_phrase,
          \&Filters::paren_expr,
+         sub { for (@_) { s/$/s/; } }
         ],
         $title
         );
+    # This phrase seems to be ubiquitous on pages, so go ahead and snip it off
+    $summary =~ s/^\n*In \w+ mythology, ?//i;
     my @summaries = apply_filters(
         [
          \&Filters::paren_expr,
          \&Filters::slash_phrase,
-         \&Filters::appositive_phrase
+         \&Filters::appositive_phrase, # ///// All the foreign characters are throwing this filter off
+         sub { for (@_) { s/"//g; } },
+         sub { for (@_) { s/,//g; } }
         ],
         $summary
         );
@@ -470,6 +475,55 @@ sub find_monster_type {
     return \@res;
 }
 
-# ///// Determine monster affinity (light/dark, chaotic/civilized) using a keyword search, then go back to quests
+
+=head2 deduce_monster_affinity($title, $summary, $xdata)
+
+Counts up the number of appearances of miscellaneous keywords used to determine the nature and affinity
+of monsters from the summary and title of the given page. A hashref containing the resulting stats is
+returned.
+
+=cut
+
+sub deduce_monster_affinity {
+    my $title = $_[0];
+    my $summary = $_[1];
+    my $xdata = $_[2];
+    my %affinities = $xdata->monster_affinities();
+    my %stats;
+    foreach my $keyword (keys %affinities) {
+        my $constant;
+        if ($title =~ /\b$keyword\b/i) {
+            $constant = 4;
+        } else {
+            $constant = @{[ $summary =~ /\b$keyword\b/gi ]};
+        }
+        $stats{'matches'} += $constant;
+        get_logger()->echo(2, "Monster $title has $keyword match $constant times") if $constant > 0;
+        foreach my $stat (keys %{$affinities{$keyword}}) {
+            my $coef = $affinities{$keyword}->{$stat};
+            $stats{$stat} += $coef * $constant;
+        }
+    }
+    return \%stats;
+}
+
+=head2 interpret_monster_affinity(%stats)
+
+Given the return value from C<deduce_monster_affinity>, determines the chaos (chaotic / neutral / civilized)
+and affinity (light / neutral / dark) of the monster, returning a hashref of the results.
+
+=cut
+
+sub interpret_monster_affinity {
+    my %stats = %{$_[0]};
+    my %result = (chaos => 'neutral',
+                  affinity => 'neutral');
+    my $sensitivity = 3; # TODO Make this configurable
+    $result{'affinity'} = 'dark'      if $stats{'light'} <= - $sensitivity;
+    $result{'affinity'} = 'light'     if $stats{'light'} >=   $sensitivity;
+    $result{'chaos'   } = 'chaotic'   if $stats{'civil'} <= - $sensitivity;
+    $result{'chaos'   } = 'civilized' if $stats{'civil'} >=   $sensitivity;
+    return \%result;
+}
 
 1;

@@ -60,8 +60,6 @@ class Validator
 
 end
 
-# TODO We really need to get these "qualifier" objects a superclass and stop using class names
-#      for them ///// (In the process of transitioning this)
 # TODO Sea creatures can still chase the player off the lake areas; they need to be incapable of doing so
 class LandBasedValidator < Validator
 

@@ -1,6 +1,11 @@
 
 use Data::Dumper;
 
+use 5.016;
+use strict;
+use warnings;
+use feature 'unicode_strings';
+
 local $_;
 
 # _flatten_sections($name, %page, $prefix)
@@ -135,6 +140,24 @@ sub full_page_text {
         $text .= "$key\n$sects{$key}\n";
     }
     return $text;
+}
+
+=head2 select_sections($xml, $regex)
+
+Returns a hash consisting of all of the sections (with corresponding text) whose headers match the given
+regular expression.
+
+=cut
+
+sub select_sections {
+    my $xml = shift;
+    my $regex = shift;
+    my %sections = %{nonhierarchical_sections $xml};
+    my %result;
+    for my $key (keys %sections) {
+        $result{$key} = $sections{$key} if $key =~ $regex;
+    }
+    return %result;
 }
 
 1;

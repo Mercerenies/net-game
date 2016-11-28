@@ -85,6 +85,8 @@ deity
 mythic plant
 mythic plants
 fantasy creature
+river god
+river gods
 :: animals
 rodent
 mollusc

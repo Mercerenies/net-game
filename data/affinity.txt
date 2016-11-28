@@ -34,6 +34,7 @@ typhoon: civil -1
 typhoons: civil -1
 worm: light -1
 worship: light +1
+worshipped: light +1
 follower: civil +1, light +1
 followers: civil +1, light +1
 wine: light -1
@@ -41,3 +42,29 @@ malevolent: light -2
 intoxication: light -1
 dancing: civil +1, light +1
 snakes: civil -1, light -1
+goddess: civil +1, light +1
+goddesses: civil +1, light +1
+fairy: light +2
+wilderness: civil -1
+heaven: civil +1, light +1
+heavenly: civil +1, light +1
+paradise: light +2
+virginity: light +1
+humanity: civil +1
+rainbow: light +2
+underworld: light -1
+friendly: civil +1, light +1
+helpful: civil +1, light +1
+god: civil +1
+medieval: civil -1
+kill: civil -1, light -1
+kills: civil -1, light -1
+stag: civil -1
+bird: civil -1
+mermaid: civil +1
+fish: civil -1
+sacred: light +2
+royal: civil +1
+undead: civil -1, light -1
+blood: light -1
+vampire: light -2

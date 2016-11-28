@@ -477,7 +477,7 @@ sub find_monster_type {
 }
 
 
-=head2 deduce_monster_affinity($title, $summary, $xdata)
+=head2 deduce_monster_affinity($xml, $xdata)
 
 Counts up the number of appearances of miscellaneous keywords used to determine the nature and affinity
 of monsters from the summary and title of the given page. A hashref containing the resulting stats is
@@ -486,9 +486,9 @@ returned.
 =cut
 
 sub deduce_monster_affinity {
-    my $title = $_[0];
-    my $summary = $_[1];
-    my $xdata = $_[2];
+    my $xml = $_[0];
+    my $xdata = $_[1];
+    my $title = page_title($xml);
     my %affinities = $xdata->monster_affinities();
     my %stats;
     foreach my $keyword (keys %affinities) {
@@ -496,7 +496,11 @@ sub deduce_monster_affinity {
         if ($title =~ /\b$keyword\b/i) {
             $constant = 4;
         } else {
-            $constant = @{[ $summary =~ /\b$keyword\b/gi ]};
+            $constant = 0; # TODO Do this same select_sections thing with deduce_animal_stats
+            my %sections = select_sections($xml, qr/$title|Overview|Mythology/i); # ///// Still perfecting monsters
+            for (values %sections) {
+                $constant += @{[ /\b$keyword\b/gi ]};
+            }
         }
         $stats{'matches'} += $constant;
         get_logger()->echo(2, "Monster $title has $keyword match $constant times") if $constant > 0;
@@ -519,7 +523,7 @@ sub interpret_monster_affinity {
     my %stats = %{$_[0]};
     my %result = (chaos => 'neutral',
                   affinity => 'neutral');
-    my $sensitivity = 3; # TODO Make this configurable
+    my $sensitivity = 2; # TODO Make this configurable
     $result{'affinity'} = 'dark'      if $stats{'light'} <= - $sensitivity;
     $result{'affinity'} = 'light'     if $stats{'light'} >=   $sensitivity;
     $result{'chaos'   } = 'chaotic'   if $stats{'civil'} <= - $sensitivity;

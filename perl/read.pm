@@ -96,7 +96,7 @@ sub read_monster {
     my $name = page_title($xml);
     my $summary = page_summary($xml);
     my $type = find_monster_type($name, $summary, $xdata);
-    my %affinity = %{interpret_monster_affinity deduce_monster_affinity($name, $summary, $xdata)};
+    my %affinity = %{interpret_monster_affinity deduce_monster_affinity($xml, $xdata)};
     my %curr = (
         nature => 'Monster',
         name => unparen($name),

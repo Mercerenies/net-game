@@ -17,3 +17,11 @@ legendary creature  monster
 humanoid            humanoid
 bird                bird
 goddesses           deity
+gods                deity
+nymph               nymph
+nymphs              nymph
+mermaid             nymph
+merman              nymph
+ghost               spirit
+spirit              spirit
+undead creature     undead

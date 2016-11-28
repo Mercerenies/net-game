@@ -3,6 +3,7 @@ use perl::filters;
 use perl::sentence;
 use perl::navigation;
 
+use feature 'unicode_strings';
 use Data::Dumper;
 
 my $LINKVERB = "(?:is|was|are|were)";
@@ -443,7 +444,7 @@ sub find_monster_type {
         [
          \&Filters::paren_expr,
          \&Filters::slash_phrase,
-         \&Filters::appositive_phrase, # ///// All the foreign characters are throwing this filter off
+         \&Filters::appositive_phrase,
          sub { for (@_) { s/"//g; } },
          sub { for (@_) { s/,//g; } }
         ],

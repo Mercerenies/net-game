@@ -2,6 +2,7 @@
 local $_;
 
 use Data::Dumper;
+use feature 'unicode_strings';
 
 my $LINKVERB = "(?:is|was|are|were)";
 my $ARTICLE = "(?:an?|the)"; # Unused currently; we'll see if we can do something about that at some point

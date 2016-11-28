@@ -1,6 +1,11 @@
 
 local $_;
 
+use 5.016;
+use strict;
+use warnings;
+use feature 'unicode_strings';
+
 use perl::datafile;
 use perl::set;
 

@@ -1,4 +1,9 @@
 
+use 5.016;
+use strict;
+use warnings;
+use feature 'unicode_strings';
+
 =head2 Filters
 
 This package is dedicated to several simple regex filters, to be applied to names and texts using apply_filter
@@ -34,13 +39,13 @@ package Filters {
 
     sub appositive_phrase {
         for (@_) {
-            s/,[A-Za-z0-9:\-' _"]*,//g;
+            s/,[\w:\-' "]*,//g;
         }
     }
 
     sub quoted_phrase {
         for (@_) {
-            s/"[A-Za-z0-9:\-' _,.]*"//g;
+            s/"[\w:\-' ,.]*"//g;
         }
     }
 

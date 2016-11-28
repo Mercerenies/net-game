@@ -34,7 +34,7 @@ Note that Python, Perl, and Ruby are expected to be in /usr/bin. The Lisp implem
 * Wikipedia module (`pip install wikipedia`)
 
 ###### Perl
-* Perl 5.10 or newer
+* Perl 5.16 or newer
 * JSON::PP (usually comes with Perl implementations)
 * XML::Simple (some people have a problem loading this; make sure libxml is on your path, especially on Windows)
 

@@ -5,9 +5,10 @@ use perl::script;
 use perl::read;
 use perl::navigation;
 
+use 5.016;
 use strict;
-use 5.010;
 use warnings;
+use feature 'unicode_strings';
 
 use Data::Dumper;
 use JSON::PP;

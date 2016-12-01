@@ -2,6 +2,8 @@
 
 load './ruby/everything.rb'
 
+debug_level = ARGV.shift.to_i # TODO This value is currently unused
+
 data = if ARGV.empty?
          Loader.load JSON.parse(STDIN.read)
        else

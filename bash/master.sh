@@ -110,7 +110,7 @@ if [ -n "$stage2" ]; then
     $stage2 <"./temp/${prefix}1.txt" >"./temp/${prefix}2.txt"
 fi
 if [ -n "$stage3" ]; then
-    $stage3 <"./temp/${prefix}2.txt" >"./temp/system.txt"
+    $stage3 "$debug" <"./temp/${prefix}2.txt" >"./temp/system.txt"
 fi
 if [ -n "$stage4" ]; then
     $stage4

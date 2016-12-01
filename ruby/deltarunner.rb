@@ -11,6 +11,8 @@ if ARGV.length < 2
   exit 1
 end
 
+debug_level = ARGV.shift.to_i # TODO This value is currently unused
+
 filename = ARGV.shift
 deltafile = ARGV.shift
 excess = ARGV.shift

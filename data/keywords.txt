@@ -109,6 +109,7 @@ lizard
 dinosaur
 rabbit
 gruidae
+insects
 :: foods
 berries
 fruit

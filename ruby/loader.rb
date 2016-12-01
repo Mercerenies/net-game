@@ -61,7 +61,7 @@ class PlacePage < Page
 end
 
 class WeaponPage < Page
-  attr_reader :name, :type, :keyword
+  attr_reader :name
 
   def initialize(json)
     @name = json['name']
@@ -87,6 +87,31 @@ class WeaponPage < Page
       'name' => @name,
       'info' => @info.map { |k, v| [v, k] }
     }.to_json options
+  end
+
+end
+
+class MonsterPage < Page
+  attr_reader :name, :chaos, :affinity
+
+  def initialize(json)
+    @name = json['name']
+    @info = json['type']
+    @chaos = json['chaos'].intern
+    @affinity = json['affinity'].intern
+  end
+
+  def type
+    key = keyword
+    key and @info[key]
+  end
+
+  def keyword
+    freq = @info.each_with_object(Hash.new(0)) do |(key, val), hash|
+      hash[val] += 1
+    end
+    mode = freq.max_by { |k, v| v }
+    mode and @info.detect { |k, v| v == mode[0] }[0]
   end
 
 end
@@ -149,7 +174,7 @@ end
 module Loader
 
   def self.whitelist
-    [PersonPage, PlacePage, WeaponPage, AnimalPage, FoodPage]
+    [PersonPage, PlacePage, WeaponPage, AnimalPage, FoodPage, MonsterPage]
   end
 
   def self.load(json)

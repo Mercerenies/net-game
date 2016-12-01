@@ -4,8 +4,18 @@
 
 # A stage of the generation process. The Stage class itself is intended as an abstract base class.
 class Stage
+
+  # Returns the name of the stage. This name shall only be displayed in debug logs; it shan't be
+  # exposed to the user.
+  def name
+    self.class.name
+  end
+
+  # Runs this stage of the generator process, given a GData instance. This should always be
+  # overriden by child classes.
   def run(data)
   end
+
 end
 
 # \Stage 1 of the generation process generates the main nodal structure.

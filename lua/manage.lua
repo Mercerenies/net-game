@@ -1,5 +1,6 @@
 
 local util = require 'lua/util'
+local logger = require 'lua/logger'
 local gensema = require 'lua/gensema'
 local filenamer = require 'lua/filenamer'
 local query = require 'lua/query'
@@ -25,6 +26,11 @@ local socket = require 'socket'
 local conn = nil
 
 function setup_and_run()
+
+   logger.set_debug_level(tonumber(arg[2]))
+
+   logger.echo(2, "Debugger is running")
+
    local server = socket.tcp()
    server:bind('localhost', arg[1])
    server:listen()
@@ -44,6 +50,7 @@ function setup_and_run()
          io.stderr:write("WARNING: Unknown message '" .. tokens[1] .. "' received!\n")
       end
    end
+
 end
 
 function checkin()

@@ -55,6 +55,7 @@ local function run_ruby(query)
    alpha = new_a_fn
    excess = new_e_fn
    local cmd = './bash/stage3.sh'
+   cmd = cmd .. ' -d ' .. logger.get_debug_level()
    cmd = cmd .. ' -D ' .. new_d_fn .. ' -0 ' .. old_a_fn .. ' -E ' .. new_e_fn
    cmd = cmd .. ' -- ' .. old_e_fn .. ' ' .. prior_excess .. ' >' .. new_a_fn
    cmd = cmd .. ' ; touch ' .. new_exit_fn

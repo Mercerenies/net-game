@@ -27,7 +27,7 @@ package Logger {
         my $self = shift;
         my $level = shift;
         my $str = shift;
-        print STDERR "$str\n" if $level <= $self->{-level};
+        print STDERR "$$ [2] $str\n" if $level <= $self->{-level};
     }
 
 }

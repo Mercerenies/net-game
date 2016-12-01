@@ -12,4 +12,4 @@ fi
 
 # TODO The debug level argument is not used right now
 
-lua ./lua/manage.lua "$1"
+lua ./lua/manage.lua "$1" "$2"

@@ -11,7 +11,8 @@ if ARGV.length < 2
   exit 1
 end
 
-debug_level = ARGV.shift.to_i # TODO This value is currently unused
+debug_level = ARGV.shift.to_i
+Logger.instance.debug_level = debug_level
 
 filename = ARGV.shift
 deltafile = ARGV.shift
@@ -24,10 +25,14 @@ data = if ARGV.empty?
        end
 alpha = GData.from_sxp SXP::Reader::Scheme.read_file filename
 gen = DeltaGenner.new data, alpha
-puts gen.generate.to_sxp
+gen.generate
+Logger.echo 1, "Outputting alpha structure to STDOUT"
+puts gen.alpha_structure.to_sxp
 File.open(deltafile, 'w') do |file|
+  Logger.echo 1, "Outputting delta structure to #{deltafile}"
   file.write gen.delta_structure.to_dsxp
 end
 File.open(excess, 'w') do |file|
+  Logger.echo 1, "Outputting excess to #{excess}"
   file.write gen.data.excess_to_json
 end

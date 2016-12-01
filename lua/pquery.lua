@@ -8,12 +8,13 @@ local PQuery = P.PQuery
 
 setmetatable(P.PQuery, {__index = query.Query})
 
-local para_cmd = '(./bash/stage1.sh %s | ./bash/stage2.sh >%s ; touch %s)&'
+local para_cmd = '(./bash/stage1.sh -d %d %s | ./bash/stage2.sh %d >%s ; touch %s)&'
 
 local function spawn_parallel(argument)
    local rname = filenamer.get_filename()
    local sname = filenamer.get_filename()
-   local cmd = string.format(para_cmd, argument, rname, sname)
+   local lvl = logger.get_debug_level()
+   local cmd = string.format(para_cmd, lvl, argument, lvl, rname, sname)
    os.execute(cmd)
    return rname, sname
 end

@@ -58,7 +58,7 @@ end
 function Query:req()
    local fn0 = filenamer.get_filename()
    local fn1 = filenamer.get_filename()
-   local cmd = './bash/stage1.sh'
+   local cmd = './bash/stage1.sh -d ' .. logger.get_debug_level()
    if self._people then
       cmd = cmd .. ' -p ' .. self._people
    end
@@ -80,7 +80,7 @@ function Query:req()
    if self._foods then
       cmd = cmd .. ' -f ' .. self._foods
    end
-   cmd = cmd .. ' | ./bash/stage2.sh >' .. fn0 .. ' ; touch ' .. fn1
+   cmd = cmd .. ' | ./bash/stage2.sh ' .. logger.get_debug_level() .. ' >' .. fn0 .. ' ; touch ' .. fn1
    cmd = '(' .. cmd .. ')&'
    os.execute(cmd)
    self._resultname = fn0

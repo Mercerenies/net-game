@@ -54,7 +54,7 @@ class Spider:
         """
         def _crawl_once(page, depth_):
             self.wait()
-            echo(" Trying: ", escape(page.title), " (", depth_, ")", sep = '', flush = True)
+            echo(" Trying:", escape(page.title), "(" + str(depth_) + ")", flush = True)
             if match_function(page):
                 echo("  Accepted:", escape(page.title))
                 return page

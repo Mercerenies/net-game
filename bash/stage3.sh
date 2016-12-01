@@ -15,7 +15,7 @@ afile=''
 efile=''
 debug='0'
 
-while getopts 'D:0:E:' opt; do
+while getopts 'D:0:E:d:' opt; do
     case "$opt" in
         D)
             dfile="$OPTARG"

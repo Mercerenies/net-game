@@ -1,7 +1,7 @@
 #!/bin/bash
 
-debug=""
-debugl=""
+debug="-d 0"
+debugl="0"
 
 if [ "$1" == "--help" ]; then
     >&2 echo "Usage: ./client.sh [-d debug_level]"

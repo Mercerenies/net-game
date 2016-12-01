@@ -1,5 +1,6 @@
 
 from sys import stderr
+import os
 
 class Logger:
     """A logger class to control output to STDERR."""
@@ -13,7 +14,7 @@ class Logger:
         flush argument is true, the output is flushed immediately.
         """
         if self.debug_level >= level:
-            print(*args, file = stderr, **key)
+            print(os.getpid(), "[1]", *args, file = stderr)
             if flush:
                 stderr.flush()
     @staticmethod
@@ -26,6 +27,6 @@ def set_global_debug_level(lvl):
     """Sets the debug level of the default logger provided in Logger."""
     Logger.get().debug_level = lvl
 
-def echo(*args, level = 1, flush = False, **key):
+def echo(*args, level = 1, flush = False):
     """Echoes to the default logger."""
-    Logger.get().echo(*args, level = level, flush = flush, **key)
+    Logger.get().echo(*args, level = level, flush = flush)

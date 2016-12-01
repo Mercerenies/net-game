@@ -15,7 +15,12 @@ class Genner
 
   # Runs each stage of the generator, returning the resulting structure.
   def generate
-    @stages.each { |stage| stage.run @data }
+    Logger.echo 1, "Beginning world generation"
+    @stages.each do |stage|
+      Logger.echo 2, "Running #{stage.name}"
+      stage.run @data
+    end
+    Logger.echo 1, "World generation complete"
     # Return result
     @data.result_structure
   end

@@ -96,7 +96,7 @@ class MonsterPage < Page
 
   def initialize(json)
     @name = json['name']
-    @info = json['type']
+    @info = json['type'].map { |xx| [xx[1], xx[0].intern] }.to_h
     @chaos = json['chaos'].intern
     @affinity = json['affinity'].intern
   end
@@ -112,6 +112,16 @@ class MonsterPage < Page
     end
     mode = freq.max_by { |k, v| v }
     mode and @info.detect { |k, v| v == mode[0] }[0]
+  end
+
+  def to_json(options = {})
+    {
+      'nature' => 'Monster',
+      'name' => @name,
+      'info' => @info.map { |k, v| [v, k] },
+      'chaos' => @chaos,
+      'affinity' => @affinity
+    }.to_json options
   end
 
 end

@@ -1,5 +1,7 @@
 (in-package #:net-game)
 
+; ///// Should we refactor the load system and unify it?
+
 (defparameter *origin*
   "???")
 

@@ -29,8 +29,6 @@ function setup_and_run()
 
    logger.set_debug_level(tonumber(arg[2]))
 
-   logger.echo(2, "Debugger is running")
-
    local server = socket.tcp()
    server:bind('localhost', arg[1])
    server:listen()

@@ -123,8 +123,6 @@ sub read_animal {
     my $summary = page_summary($xml);
     my %stats = %{deduce_animal_stats($name, $summary, $xdata)};
     my %norm = normalize_animal_stats(\%stats);
-    #get_logger()->echo(2, "Animal $name has the following stats:");
-    #get_logger()->echo_obj(2, \%stats); # TODO echo_obj was broken; write a working version
     my %curr = (
         nature => 'Animal',
         name => unparen($name),

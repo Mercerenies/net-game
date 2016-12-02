@@ -10,6 +10,4 @@ if [ -z "$1" ] || [ -z "$2" ]; then
     exit 1
 fi
 
-# TODO The debug level argument is not used right now
-
 lua ./lua/manage.lua "$1" "$2"

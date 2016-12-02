@@ -87,7 +87,7 @@ class Node
   # Small nodes will always receive TrivialBridge bridges, which simply connect the nodes together.
   # Larger nodes, such as countries, will recieve nontrivial bridges, either from real world data or
   # using Bridge#create_random to generate a sufficiently large bridge for the situation.
-  def expand_to_map(existing: nil, country: nil, gdata:) # TODO Should the country: arg be required?
+  def expand_to_map(existing: nil, country: nil, gdata:)
     if @contents.empty?
       Array[Location.new id, name, country, generic_name: country || "Map"]
     else

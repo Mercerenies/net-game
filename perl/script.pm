@@ -497,7 +497,7 @@ sub deduce_monster_affinity {
             $constant = 4;
         } else {
             $constant = 0; # TODO Do this same select_sections thing with deduce_animal_stats
-            my %sections = select_sections($xml, qr/$title|Overview|Mythology/i); # ///// Still perfecting monsters
+            my %sections = select_sections($xml, qr/$title|Overview|Mythology/i);
             for (values %sections) {
                 $constant += @{[ /\b$keyword\b/gi ]};
             }

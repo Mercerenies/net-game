@@ -64,7 +64,7 @@ end
 # A single brain for an NPC. The brain instance keeps track of the NPC's basic information, as well as
 # any quests that that NPC initiates.
 class NPCBrain
-  attr_accessor :id, :name, :job # TODO Move this accessor to a ReloadedNPCBrain child
+  attr_reader :id, :name, :job
 
   def initialize(id, name, job)
     @id = id
@@ -103,7 +103,7 @@ class NPCBrain
 
   def self.from_sxp(arg)
     arr = Reloader.assert_first :'npc-brain', arg
-    NPCBrain.new(0, "", nil).tap do |brain|
+    ReloadedNPCBrain.new(0, "", nil).tap do |brain|
       Reloader.hash_like(arr) do |k, v|
         case k
         when :':quests'
@@ -118,4 +118,8 @@ class NPCBrain
     end
   end
 
+end
+
+class ReloadedNPCBrain < NPCBrain
+  attr_writer :id, :name, :job
 end

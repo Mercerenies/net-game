@@ -3,6 +3,29 @@
 (defparameter *origin*
   "???")
 
+; load-formatted is the general macro for loading S-expression data (alpha or delta) from the Ruby layer.
+; Syntax:
+;  (load-formatted data-value symbol . clauses)
+;  clauses ::= (normal-clause* epilogue)
+;  normal-clause ::= (var-name . exprs)
+;  epilogue ::= keyword-clause* | rest-clause
+;  keyword-clause ::= (:keyword var-name . exprs)
+;  rest-clause ::= ((var-name) . exprs)
+; The value returned at the end is the data value that was passed in. Note also that the rest clause, if
+; supplied, may be called multiple times, once for each additional argument.
+; Examples:
+; (setq value (location id name :data (1 2 3) :string "abc"))
+; (setq value1 (creature-set (blah) (blah) (blah)))
+; (setq value2 (data))
+; (load-formatted value 'location
+;                 (id do-stuff)
+;                 (name do-stuff)
+;                 (:string value do-stuff)
+;                 (:data value do-stuff)
+;                 (:arg value do-stuff))
+; (load-formatted value1 'creature-set
+;                 ((rest) do-stuff))
+; (load-formatted value2 'data)
 (defmacro load-formatted (var sym &rest clauses)
   (let ((ptr (gensym))
         (pos clauses)
@@ -81,10 +104,10 @@
     inst))
 
 (defun load-with (data func header)
-  (unless (eq (first data) header)
-    (error "Flawed data - ~(~S~)" header))
-  (loop for dd in (rest data)
-        collect (apply func dd)))
+  (let ((list nil))
+    (load-formatted data header
+                    ((extra) (push (apply func extra) list)))
+    list))
 
 ; Returns (values map creatures spawners quests kb)
 (defun load-data (&key (file *standard-input*))

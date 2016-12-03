@@ -44,7 +44,7 @@ class KnowledgeBase
   end
 
   def to_sxp
-    arr = each.to_a.flatten 1
+    arr = to_h.values
     ([:'knowledge-base'] + arr).to_sxp
   end
 
@@ -55,7 +55,7 @@ class KnowledgeBase
   def self.from_sxp(arg)
     arr = Reloader.assert_first :'knowledge-base', arg
     KnowledgeBase.new.tap do |kb|
-      Reloader.hash_like(arr) { |k, v| kb.data[k] = Reloader.instance.load v }
+      Reloader.list_like(arr) { |v| kb.data[v.id] = v }
     end
   end
 
@@ -83,7 +83,7 @@ class NPCBrain
 
   def to_sxp
     meta = MetaData.new(:':id' => id, :':job' => job, :':name' => name)
-    [:'npc-brain', :':quests', each.to_a, :':meta', meta].to_sxp
+    [:'npc-brain', id, :':quests', each.to_a, :':meta', meta].to_sxp
   end
 
   # Adds the quest identifier given to the NPC's quest list
@@ -102,8 +102,8 @@ class NPCBrain
   end
 
   def self.from_sxp(arg)
-    arr = Reloader.assert_first :'npc-brain', arg
-    ReloadedNPCBrain.new(0, "", nil).tap do |brain|
+    id_, *arr = Reloader.assert_first :'npc-brain', arg
+    ReloadedNPCBrain.new(id_, "", nil).tap do |brain|
       Reloader.hash_like(arr) do |k, v|
         case k
         when :':quests'

@@ -53,10 +53,9 @@
   "Runs the game in full, loading the world data from the given file. Note that the run-game function
    itself makes no effort to interact with external servers, such as the Lua interface. If such
    interaction is desired, it should be implemented as a hook on do-action or a similar method."
-  (multiple-value-bind (*world* *creatures* *spawners* *quests* *knowledge-base*)
-      (let ((*origin* filename))
-        (with-open-file (file filename)
-          (load-data :file file)))
+  (alpha-bind (let ((*origin* filename))
+                (with-open-file (file filename)
+                  (load-data :file file)))
     (let ((*player* (loop for loc being the hash-values in *world*
                           for player = (find-if (lambda (y) (typep y 'player))
                                                 (location-contents loc))

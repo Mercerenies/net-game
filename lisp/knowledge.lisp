@@ -3,41 +3,40 @@
 (defparameter *knowledge-base* nil)
 
 (defstruct (human-knowledge (:conc-name know-))
+  id
   quests)
 
 (defun delta-load-knowledge-base (data)
-  (unless (eq (car data) 'knowledge-base) (error "Flawed data - knowledge-base"))
-  (loop for arg = (cdr data) then (cddr arg)
-        for key = (first arg)
-        for value = (second arg)
-        while arg
-        do (case key
-             (:new (loop for dd = value then (cddr dd)
-                         while dd
-                         do (setf (gethash (first dd) *knowledge-base*) (load-brain (second dd)))))
-             (:mod (loop for dd = value then (cddr dd)
-                         for dkey = (first dd)
-                         for dval = (second dd)
-                         while dd
-                         unless (eq (car dval) 'npc-brain) do (error "flawed data - npc-brain")
-                         do (let ((knowledge (gethash dkey *knowledge-base*)))
-                              (setf (know-quests knowledge)
-                                    (append (know-quests knowledge) (cdr dval) nil))))))))
+  (load-formatted data 'knowledge-base
+                  (:new values (loop for dd in values
+                                     for loaded = (load-brain dd)
+                                     do (setf (gethash (know-id loaded) *knowledge-base*)
+                                              loaded)))
+                  (:mod values (loop for dd in values
+                                     for loaded = (load-brain dd)
+                                     do (merge-into (gethash (know-id loaded) *knowledge-base*)
+                                                    loaded)))))
 
 (defun load-brain (data)
-  (unless (eq (car data) 'npc-brain) (error "Flawed data - npc-brain"))
-  (let* ((args (cdr data))
-         (quests (getf args :quests)))
-    (make-human-knowledge :quests quests)))
+  (let ((brain (make-human-knowledge :quests nil)))
+    (load-formatted data 'npc-brain
+                    (id (setf (know-id brain) id))
+                    (:quests quests (setf (know-quests brain) quests))
+                    (:meta meta))
+    brain))
+
+(defun merge-into (dest src)
+  (check-type dest human-knowledge)
+  (check-type src human-knowledge)
+  (loop for quest in (know-quests src)
+        do (push quest (know-quests dest))))
 
 (defun load-knowledge-base (data)
-  (loop with hash = (make-hash-table)
-        for dd = data then (cddr dd)
-        for key = (first dd)
-        for value = (second dd)
-        while dd
-        do (setf (gethash key hash) (load-brain value))
-        finally (return hash)))
+  (let ((hash (make-hash-table)))
+    (load-formatted data 'knowledge-base
+                    ((entry) (let ((brain (load-brain entry)))
+                               (setf (gethash (know-id brain) hash) brain))))
+    hash))
 
 (defun get-quest-list (id)
   (know-quests (gethash id *knowledge-base*)))

@@ -1,5 +1,7 @@
 (in-package #:net-game)
 
+; ///// Migrating to load-formatted
+
 (defparameter *origin*
   "???")
 
@@ -83,6 +85,32 @@
                      ,@keyword-clause
                      ,@final-check)))))))))
 
+(defclass alpha-load (loaded)
+  ((world :accessor alpha-world
+          :initform nil)
+   (creatures :accessor alpha-creatures
+              :initform nil)
+   (spawners :accessor alpha-spawners
+             :initform nil)
+   (quests :accessor alpha-quests
+           :initform nil)
+   (knowledge :accessor alpha-knowledge
+              :initform nil)))
+
+(defun make-alpha ()
+  (make-instance 'alpha-load))
+
+; The argument to this should be an alpha-load object
+(defmacro alpha-bind (alpha &body body)
+  (let ((temp (gensym)))
+    `(let ((,temp ,alpha))
+       (let ((*world* (alpha-world ,temp))
+             (*creatures* (alpha-creatures ,temp))
+             (*spawners* (alpha-spawners ,temp))
+             (*quests* (alpha-quests ,temp))
+             (*knowledge-base* (alpha-knowledge ,temp)))
+         ,@body))))
+
 (defun load-loc (loc)
   (let ((inst (make-location nil "")))
     (load-formatted loc 'location
@@ -103,39 +131,41 @@
                     (:meta meta)) ; Ignored
     inst))
 
+(defun load-map (data)
+  (let ((hash (make-hash-table)))
+    (load-formatted data 'map
+                    ((loc) (let ((loc-node (load-loc loc)))
+                             (setf (gethash (get-id loc-node) hash)
+                                   loc-node))))
+    hash))
+
+(defun load-quests (data)
+  (let ((*quests* (make-hash-table)))
+    (load-formatted data 'quest-set
+                    ((quest) (let ((quest-data (apply #'load-quest quest)))
+                               (add-quest quest-data))))
+    *quests*))
+
 (defun load-with (data func header)
   (let ((list nil))
     (load-formatted data header
                     ((extra) (push (apply func extra) list)))
-    list))
+    (reverse list))) ; TODO Can we avoid the reverse while maintaining the order?
 
-; Returns (values map creatures spawners quests kb)
+; Returns an alpha-load instance
 (defun load-data (&key (file *standard-input*))
-  (let ((data (with-scheme-notation (read file))))
-    ; Note that the sixth element of data is meta and is intentionally ignored by this segment of the program
-    (unless (eq (first data) 'alpha)
-      (error "Flawed data - alpha"))
-    (let ((*world* (destructuring-bind (map-sym . locs) (second data)
-                     (unless (eq map-sym 'map) (error "Flawed data - map"))
-                     (loop with hash = (make-hash-table)
-                           for loc in locs
-                           for loc-node = (load-loc loc)
-                           do (setf (gethash (get-id loc-node) hash)
-                                    loc-node)
-                           finally (return hash)))))
-      (values
-       *world*
-       (destructuring-bind anims (third data)
-         (load-with anims #'load-creature 'creature-set))
-       (destructuring-bind spawners (fourth data)
-         (load-with spawners #'load-spawner 'spawner-set))
-       (destructuring-bind quests (fifth data)
-         (let ((*quests* (make-hash-table)))
-           (mapc #'add-quest (load-with quests #'load-quest 'quest-set))
-           *quests*))
-       (destructuring-bind (kb-sym . kb) (sixth data)
-         (unless (eq kb-sym 'knowledge-base) (error "Flawed data - knowledge-base"))
-         (load-knowledge-base kb))))))
+  (let ((data (with-scheme-notation (read file)))
+        (alpha (make-alpha))
+        (*world* nil))
+    (load-formatted data 'alpha
+                    (world (setf *world* (load-map world))
+                           (setf (alpha-world alpha) *world*))
+                    (creatures (setf (alpha-creatures alpha) (load-with creatures #'load-creature 'creature-set)))
+                    (spawners (setf (alpha-spawners alpha) (load-with spawners #'load-spawner 'spawner-set)))
+                    (quests (setf (alpha-quests alpha) (load-quests quests)))
+                    (knowledge (setf (alpha-knowledge alpha) (load-knowledge-base knowledge)))
+                    (meta))
+    alpha))
 
 (defun load-object (node obj)
   (apply #'load-object-with-type node (car obj) (cdr obj)))

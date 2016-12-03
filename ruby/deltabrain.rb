@@ -38,9 +38,13 @@ class DeltaKnowledgeBase < KnowledgeBase
     end
   end
 
+  def to_h
+    @old.merge @new
+  end
+
   def to_dsxp
-    arr = @old.collect_concat { |k, dat| [k, dat.to_dsxp] }
-    arr_new = @new.to_a.flatten 1
+    arr = @old.collect { |k, dat| dat.to_dsxp }
+    arr_new = @new.values
     [:'knowledge-base', :':new', arr_new, :':mod', arr]
   end
 
@@ -72,7 +76,7 @@ class DeltaNPCBrain < NPCBrain
   end
 
   def to_dsxp
-    ([:'npc-brain'] + @new_quests)
+    [:'npc-brain', id, :':quests', @new_quests]
   end
 
 end

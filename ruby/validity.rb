@@ -58,6 +58,10 @@ class Validator
     false
   end
 
+  def empty?
+    false
+  end
+
 end
 
 # TODO Sea creatures can still chase the player off the lake areas; they need to be incapable of doing so
@@ -141,6 +145,10 @@ class EmptyValidator < Validator
   def self.from_sxp(arg)
     Reloader.assert_first :'no-validator', arg
     EmptyValidator.new
+  end
+
+  def empty?
+    true
   end
 
 end

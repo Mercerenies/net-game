@@ -47,7 +47,7 @@ class Map
   end
 
   # Places +obj+ somewhere on the map. The block and type arguments are both optional. This method
-  # will weight the locations when choosing a random position so that locations which have objects
+  # will weigh the locations when choosing a random position so that locations which have objects
   # already in them are less likely to be chosen. If +type+ is provided, it should be a class type
   # (or other object which responds to #===) which restricts the object which are considered when
   # counting the existing objects in the world. If the block is provided, it should take one
@@ -108,7 +108,7 @@ class Location
 
   # Returns whether or not the location is allowed to have any creatures.
   def can_have_creatures?
-    not @valid_creatures.nil?
+    not @valid_creatures.empty?
   end
 
   # Given a plant or animal, returns whether or not the location is allowed to house that plant or

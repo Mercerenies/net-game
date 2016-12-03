@@ -61,6 +61,28 @@
   (:documentation "A base class for objects which were loaded from the data files. A loaded instance
                    maintains the file from which it was loaded, to help with debugging."))
 
+(defclass location (identifiable named flagged loaded)
+  ((exits :accessor location-exits
+          :initform nil
+          :type list)
+   (contents :accessor location-contents
+             :initform nil
+             :type list)
+   (short-name :accessor location-short-name
+               :initarg :short-name
+               :initform ""
+               :type string)
+   (flags :accessor location-flags
+          :initarg :flags
+          :initform nil
+          :type list)))
+
+(defun make-location (id name &key short-name)
+  (make-instance 'location
+                 :id id
+                 :name name
+                 :short-name short-name))
+
 (defgeneric add-flag (flag obj))
 
 (defmethod add-flag ((flag symbol) (obj flagged))
@@ -70,6 +92,41 @@
 
 (defmethod check-flag (flag (obj flagged)) ; Non-symbols will not be found and will simply return nil
   (member flag (get-flags obj)))
+
+(defgeneric move-object (obj new-loc))
+
+(defmethod move-object ((obj located) (new-loc location))
+  (let ((old-loc (get-loc obj)))
+    (when old-loc
+      (setf (location-contents old-loc)
+            (remove obj (location-contents old-loc))))
+    (setf (get-loc obj) new-loc)
+    (push obj (location-contents new-loc))))
+
+(defmethod move-object ((obj located) (new-loc null))
+  (let ((old-loc (get-loc obj)))
+    (when old-loc
+      (setf (location-contents old-loc)
+            (remove obj (location-contents old-loc))))
+    (setf (get-loc obj) new-loc)))
+
+(defun halo (node &optional (n 1) &key (self t))
+  (check-type *world* hash-table)
+  (if (not (plusp n))
+      (list node)
+      (loop for exit in (location-exits node)
+            append (halo (gethash exit *world*) (1- n)) into result
+            finally (if self
+                        (return (remove-duplicates (cons node result)))
+                        (return (remove-duplicates result))))))
+
+(defmethod print-object ((obj named) stream)
+  (print-unreadable-object (obj stream :type t :identity t)
+    (format stream "~S ~S"
+            (if (typep obj 'identifiable)
+                (get-id obj)
+                nil)
+            (get-name obj))))
 
 ; Returns a list of elements of the form (key-name friendly-name value)
 (defgeneric system-keys (obj)

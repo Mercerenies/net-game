@@ -26,6 +26,7 @@
 (load "./lisp/knowledge.lisp")
 
 (load "./lisp/inventory.lisp")
+(load "./lisp/warp.lisp")
 (load "./lisp/item.lisp")
 (load "./lisp/creature.lisp")
 (load "./lisp/food.lisp")

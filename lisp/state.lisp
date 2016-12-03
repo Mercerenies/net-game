@@ -3,6 +3,8 @@
 (defconstant +active-radius+
   5)
 
+(defgeneric entity-turn (obj))
+
 (defgeneric do-command (state arg))
 
 (defgeneric mode-name (state))
@@ -14,6 +16,10 @@
 
 (defmethod mode-text ((state t))
   "")
+
+(defmethod entity-turn ((obj t))
+  ; By default, do nothing
+  nil)
 
 (defmethod do-command ((state (eql 'global)) arg)
   (let ((parse (enhanced-parse arg)))
@@ -28,30 +34,3 @@
             do (mapc #'entity-turn (location-contents loc)))
       (loop for spawner in *spawners*
             do (do-spawn spawner)))))
-
-(defmethod mode-text ((state (eql 'warp)))
-  (let ((nums (loop for e in *warps*
-                    for i upfrom 1
-                    collect i)))
-    (format nil "Choose a warp point:~%~{~A. ~A~%~}0. Cancel~%"
-            (mapcan (lambda (x y) (list x (location-short-name (get-loc y))))
-                    nums *warps*))))
-
-(defmethod do-command ((state (eql 'warp)) arg)
-  (let* ((int (parse-integer arg :junk-allowed t))
-         (match (find arg *warps*
-                      :key (lambda (x) (location-short-name (get-loc x)))
-                      :test #'string-equal))
-         (opt (cond ((and int (zerop int)) 'cancel)
-                    ((and int
-                          (typep int
-                                 `(integer 1 ,(length *warps*))))(nth (1- int) *warps*))
-                    (match match)
-                    ((string-equal arg "cancel") 'cancel)
-                    (t nil))))
-    (etypecase opt
-      (null (format t "Invalid warp point.~%"))
-      ((eql cancel) (pop *state*))
-      (warp-point (format t "Warping!~%")
-                  (move-object *player* (get-loc opt))
-                  (pop *state*)))))

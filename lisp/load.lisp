@@ -1,87 +1,84 @@
 (in-package #:net-game)
 
-; ///// Should we refactor the load system and unify it?
-
 (defparameter *origin*
   "???")
 
-(defmethod print-object ((obj named) stream)
-  (print-unreadable-object (obj stream :type t :identity t)
-    (format stream "~S ~S"
-            (if (typep obj 'identifiable)
-                (get-id obj)
-                nil)
-            (get-name obj))))
-
-(defclass location (identifiable named flagged loaded)
-  ((exits :accessor location-exits
-          :initform nil
-          :type list)
-   (contents :accessor location-contents
-             :initform nil
-             :type list)
-   (short-name :accessor location-short-name
-               :initarg :short-name
-               :initform ""
-               :type string)
-   (flags :accessor location-flags
-          :initarg :flags
-          :initform nil
-          :type list)))
-
-(defun make-location (id name &key short-name)
-  (make-instance 'location
-                 :id id
-                 :name name
-                 :short-name short-name))
-
-(defclass warp-point (named located loaded)
-  ((active :accessor warp-active
-           :initform nil
-           :type boolean))
-  (:default-initargs :name "Warp Point"))
-
-(defun make-warp-point ()
-  (make-instance 'warp-point))
-
-(defgeneric move-object (obj new-loc))
-
-(defmethod move-object ((obj located) (new-loc location))
-  (let ((old-loc (get-loc obj)))
-    (when old-loc
-      (setf (location-contents old-loc)
-            (remove obj (location-contents old-loc))))
-    (setf (get-loc obj) new-loc)
-    (push obj (location-contents new-loc))))
-
-(defmethod move-object ((obj located) (new-loc null))
-  (let ((old-loc (get-loc obj)))
-    (when old-loc
-      (setf (location-contents old-loc)
-            (remove obj (location-contents old-loc))))
-    (setf (get-loc obj) new-loc)))
+(defmacro load-formatted (var sym &rest clauses)
+  (let ((ptr (gensym))
+        (pos clauses)
+        (seq nil))
+    (flet ((err (spec) `(error "Flawed data (~S): ~A" ,sym ,spec)))
+      ; Regular arguments
+      (let ((next `(setf ,ptr (cdr ,ptr)))
+            (prologue `((setf ,ptr ,var)
+                        (unless (eq (car ,ptr) ,sym)
+                          ,(err "wrong header")))))
+        (multiple-value-bind (named len)
+            (loop while (and pos
+                             (not (listp (caar pos)))
+                             (not (keywordp (caar pos))))
+                  append `(,next
+                           (let ((,(caar pos) (car ,ptr)))
+                             ,@(cdar pos))) into named-clause
+                  count t into length-part
+                  do (setf pos (cdr pos))
+                  finally (return (values named-clause length-part)))
+          (let ((named-check `((unless (>= (length ,ptr) ,(1+ len))
+                                 ,(err "not enough normal arguments")))))
+            (if (listp (caar pos))
+                ; Rest arguments
+                (let* ((rest-var (caaar pos))
+                       (rest-clause `(,next
+                                      (loop for ,rest-var in ,ptr
+                                            do (progn ,@(cdar pos)))))
+                       (final-return `(,var)))
+                  `(let ((,ptr nil))
+                     ,@prologue
+                     ,@named-check
+                     ,@named
+                     ,@rest-clause
+                     ,@final-return))
+                ; Keyword arguments
+                (let* ((case-clauses (loop for elem in pos
+                                           collect `(,(car elem) (let ((,(cadr elem) (second ,ptr)))
+                                                                   ,@(cddr elem)))))
+                       (keyword-clause `((loop until (or (null ,ptr) (null (cdr ,ptr)))
+                                               do ,next
+                                               do (case (first ,ptr)
+                                                    ,@case-clauses
+                                                    (t ,(err `(format nil "unrecognized keyword ~S"
+                                                                      (first ,ptr)))))
+                                               do ,next)))
+                       (final-check `(,next
+                                      (unless (null ,ptr)
+                                        ,(err "garbage at end of data"))
+                                      ,var)))
+                  `(let ((,ptr nil))
+                     ,@prologue
+                     ,@named-check
+                     ,@named
+                     ,@keyword-clause
+                     ,@final-check)))))))))
 
 (defun load-loc (loc)
-  (destructuring-bind (loc id name . rst) loc
-    (let ((inst (make-location id name :short-name name)))
-      (loop for elems = rst then (cdr (cdr elems))
-            for key = (first elems)
-            for value = (second elems)
-            while elems
-            do (case key
-                 (:country (setf (get-name inst) (format nil "~A, ~A"
-                                                         (get-name inst)
-                                                         value)))
-                 (:links (setf (location-exits inst) value))
-                 (:contents (mapc #'(lambda (x) (load-object inst x)) value))
-                 (:civilized (when value
-                               (add-flag 'civilized inst)))
-                 (:water (case value
-                           ((nil))
-                           ((sea) (add-flag 'sea inst))
-                           ((shore) (add-flag 'shore inst))))
-                 (:meta))) ; Explicitly ignore this case
-      inst)))
+  (let ((inst (make-location nil "")))
+    (load-formatted loc 'location
+                    (id (setf (get-id inst) id))
+                    (name (setf (get-name inst) name)
+                          (setf (location-short-name inst) name))
+                    (:country country (setf (get-name inst) (format nil "~A, ~A"
+                                                                    (get-name inst)
+                                                                    country)))
+                    (:links links (setf (location-exits inst) links))
+                    (:contents contents (mapc #'(lambda (x) (load-object inst x)) contents))
+                    (:civilized civilized (when civilized
+                                            (add-flag 'civilized inst)))
+                    (:water water (case water
+                                    ((nil))
+                                    ((sea) (add-flag 'sea inst))
+                                    ((shore) (add-flag 'shore inst))))
+                    (:meta meta)) ; Ignored
+    inst))
 
 (defun load-with (data func header)
   (unless (eq (first data) header)
@@ -119,12 +116,6 @@
 
 (defun load-object (node obj)
   (apply #'load-object-with-type node (car obj) (cdr obj)))
-
-(defgeneric entity-turn (obj))
-
-(defmethod entity-turn ((obj t))
-  ; By default, do nothing
-  nil)
 
 (defgeneric load-object-with-type (node type &rest args))
 
@@ -179,13 +170,3 @@
              (:growth-time (setf growth-time value)))
         finally (let ((plant (make-plant name :type type :food food :growth-time growth-time)))
                   (move-object plant node))))
-
-(defun halo (node &optional (n 1) &key (self t))
-  (check-type *world* hash-table)
-  (if (not (plusp n))
-      (list node)
-      (loop for exit in (location-exits node)
-            append (halo (gethash exit *world*) (1- n)) into result
-            finally (if self
-                        (return (remove-duplicates (cons node result)))
-                        (return (remove-duplicates result))))))

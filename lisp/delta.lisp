@@ -10,7 +10,7 @@
         while arg
         do (case key
              (:new (loop for elem in value
-                         for loc = (load-loc elem)
+                         for loc = (load-object 'location elem)
                          do (setf (gethash (get-id loc) *world*) loc)))
              (:mod (loop for elem in value
                          do (delta-modify elem))))))
@@ -30,7 +30,9 @@
                                     (remove value (location-exits loc))))
                (:add-links (setf (location-exits loc)
                                  (append value (location-exits loc))))
-               (:add-contents (mapc #'(lambda (x) (load-object loc x)) value))))))
+               (:add-contents (mapc #'(lambda (x) (load-map-object loc x)) value))))))
+
+(defgeneric delta-load-object (header data))
 
 ; Directly modifies the game world; call at the appropriate time
 (defun load-delta (&key (file *standard-input*))
@@ -45,4 +47,4 @@
     (setf *spawners*
           (append (load-with spawners #'load-spawner 'spawner-set) *spawners*))
     (mapc #'add-quest (load-with quests #'load-quest 'quest-set))
-    (delta-load-knowledge-base kb)))
+    (delta-load-object 'knowledge-base kb)))

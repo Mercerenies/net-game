@@ -111,9 +111,15 @@
              (*knowledge-base* (alpha-knowledge ,temp)))
          ,@body))))
 
-(defun load-loc (loc)
+; NOTE: Eventually, we would like all of the load-* and delta-load-* functions to be converted to
+;       load-object and delta-load-object calls with the appropriate first parameter. This will be
+;       a slow process but it should result in a more organized codebase at the end. Some of
+;       the "dispatch" loaders like load-creature should be modified to have a whitelist for security.
+(defgeneric load-object (header data))
+
+(defmethod load-object ((header (eql 'location)) data)
   (let ((inst (make-location nil "")))
-    (load-formatted loc 'location
+    (load-formatted data 'location
                     (id (setf (get-id inst) id))
                     (name (setf (get-name inst) name)
                           (setf (location-short-name inst) name))
@@ -121,7 +127,7 @@
                                                                     (get-name inst)
                                                                     country)))
                     (:links links (setf (location-exits inst) links))
-                    (:contents contents (mapc #'(lambda (x) (load-object inst x)) contents))
+                    (:contents contents (mapc #'(lambda (x) (load-map-object inst x)) contents))
                     (:civilized civilized (when civilized
                                             (add-flag 'civilized inst)))
                     (:water water (case water
@@ -131,15 +137,15 @@
                     (:meta meta)) ; Ignored
     inst))
 
-(defun load-map (data)
+(defmethod load-object ((header (eql 'map)) data)
   (let ((hash (make-hash-table)))
     (load-formatted data 'map
-                    ((loc) (let ((loc-node (load-loc loc)))
+                    ((loc) (let ((loc-node (load-object 'location loc)))
                              (setf (gethash (get-id loc-node) hash)
                                    loc-node))))
     hash))
 
-(defun load-quests (data)
+(defmethod load-object ((header (eql 'quest-set)) data)
   (let ((*quests* (make-hash-table)))
     (load-formatted data 'quest-set
                     ((quest) (let ((quest-data (apply #'load-quest quest)))
@@ -158,16 +164,16 @@
         (alpha (make-alpha))
         (*world* nil))
     (load-formatted data 'alpha
-                    (world (setf *world* (load-map world))
+                    (world (setf *world* (load-object 'map world))
                            (setf (alpha-world alpha) *world*))
                     (creatures (setf (alpha-creatures alpha) (load-with creatures #'load-creature 'creature-set)))
                     (spawners (setf (alpha-spawners alpha) (load-with spawners #'load-spawner 'spawner-set)))
-                    (quests (setf (alpha-quests alpha) (load-quests quests)))
-                    (knowledge (setf (alpha-knowledge alpha) (load-knowledge-base knowledge)))
+                    (quests (setf (alpha-quests alpha) (load-object 'quest-set quests)))
+                    (knowledge (setf (alpha-knowledge alpha) (load-object 'knowledge-base knowledge)))
                     (meta))
     alpha))
 
-(defun load-object (node obj)
+(defun load-map-object (node obj)
   (apply #'load-object-with-type node (car obj) (cdr obj)))
 
 (defgeneric load-object-with-type (node type &rest args))

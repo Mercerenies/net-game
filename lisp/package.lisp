@@ -13,6 +13,7 @@
 (load "./lisp/util.lisp")
 (load "./lisp/base.lisp")
 (load "./lisp/load.lisp")
+(load "./lisp/delta.lisp")
 (load "./lisp/numbernoun.lisp")
 (load "./lisp/parser.lisp")
 
@@ -35,6 +36,5 @@
 (load "./lisp/combat.lisp")
 
 (load "./lisp/updates.lisp")
-(load "./lisp/delta.lisp")
 (load "./lisp/godmode.lisp")
 (load "./lisp/play.lisp")

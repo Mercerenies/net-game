@@ -2,6 +2,8 @@
 require 'forwardable'
 require 'sxp'
 
+# ///// Use the fitness parameters when generating the world
+
 # The map contains a collection of Location instances, which are interconnected with one another.
 class Map
   extend Forwardable
@@ -37,7 +39,7 @@ class Map
   end
 
   def self.from_sxp(arg)
-    arr = Reloader.assert_first:map, arg
+    arr = Reloader.assert_first :map, arg
     Map.new Reloader.list_like(arr)
   end
 
@@ -80,7 +82,7 @@ class Location
   include Enumerable
   include DeltaAble
 
-  attr_reader :id, :name, :country_name, :generic_name, :water_mode
+  attr_reader :id, :name, :country_name, :generic_name, :water_mode, :fitness
 
   def_delegators :@contents, :each, :push, :delete
   def_delegator :@links, :each, :each_link
@@ -90,7 +92,11 @@ class Location
   # country name. The +valid_creatures+ and +valid_plants+ arguments restrict which animals and plants
   # can spawn in this location, respectively. If not provided, no creatures or animals are allowed at
   # the position.
-  def initialize(id, name, country_name, generic_name: nil, valid_creatures: nil, valid_plants: nil)
+  def initialize(id, name, country_name,
+                 generic_name: nil,
+                 valid_creatures: nil,
+                 valid_plants: nil,
+                 fitness: Fitness.null)
     @id = id
     @name = name
     @country_name = country_name
@@ -100,6 +106,7 @@ class Location
     @valid_creatures = (valid_creatures || EmptyValidator.new)
     @valid_plants = (valid_plants || EmptyValidator.new)
     @water_mode = nil
+    @fitness = fitness
   end
 
   def to_delta
@@ -181,10 +188,11 @@ class Location
     contents = [:':contents', each.to_a]
     civilized = [:':civilized', civilized?]
     water = [:':water', water_mode]
+    fitness_key = [:':fitness', fitness]
     meta = [:':meta', MetaData.new(:':generic-name' => generic_name,
                                    :':creatures' => valid_creatures,
                                    :':plants' => valid_plants)]
-    (prefix + country + links + contents + civilized + water + meta).to_sxp
+    (prefix + country + links + contents + civilized + water + fitness_key + meta).to_sxp
   end
 
   def self.from_sxp(arg)
@@ -203,6 +211,8 @@ class Location
           # Ignore this arg; we'll get the necessary info from :meta
         when :':water'
           loc.mark_water v
+        when :':fitness'
+          loc.fitness = Reloader.load v
         when :':meta'
           meta = Reloader.load v
           loc.generic_name = meta[:':generic-name']
@@ -233,7 +243,7 @@ class Location
 end
 
 class ReloadedLocation < Location
-  attr_writer :country_name, :generic_name, :valid_creatures, :valid_plants
+  attr_writer :country_name, :generic_name, :valid_creatures, :valid_plants, :fitness
 
   def initialize(id, name, country_name, generic_name: nil, valid_creatures: nil, valid_plants: nil)
     super

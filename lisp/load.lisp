@@ -130,6 +130,7 @@
                     (:contents contents (mapc #'(lambda (x) (load-map-object inst x)) contents))
                     (:civilized civilized (when civilized
                                             (add-flag 'civilized inst)))
+                    (:fitness fitness (setf (location-fitness inst) (load-object 'fitness fitness)))
                     (:water water (case water
                                     ((nil))
                                     ((sea) (add-flag 'sea inst))
@@ -151,6 +152,13 @@
                     ((quest) (let ((quest-data (apply #'load-quest quest)))
                                (add-quest quest-data))))
     *quests*))
+
+(defmethod load-object ((header (eql 'fitness)) data)
+  (let ((plist nil))
+    (load-formatted data 'fitness
+                    (treasure (setf (getf plist :treasure) treasure))
+                    (monster (setf (getf plist :monster) monster)))
+    plist))
 
 (defun load-with (data func header)
   (let ((list nil))

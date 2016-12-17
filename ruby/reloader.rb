@@ -44,7 +44,8 @@ class Reloader
       :'land-only' => LandBasedValidator,
       :'any-animal' => AnimalValidator,
       :plants => PlantTypesValidator,
-      :'no-validator' => EmptyValidator
+      :'no-validator' => EmptyValidator,
+      :fitness => Fitness
     }
   end
 

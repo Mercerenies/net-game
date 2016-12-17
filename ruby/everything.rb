@@ -10,6 +10,7 @@ load './ruby/logger.rb'
 load './ruby/affix.rb'
 load './ruby/namer.rb'
 
+load './ruby/fitness.rb'
 load './ruby/delta.rb'
 load './ruby/level.rb'
 load './ruby/node.rb'

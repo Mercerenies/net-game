@@ -71,7 +71,11 @@
    (short-name :accessor location-short-name
                :initarg :short-name
                :initform ""
-               :type string)))
+               :type string)
+   (fitness :accessor location-fitness
+            :initarg :fitness
+            :initform nil ; This will be a plist
+            :type list)))
 
 (defun make-location (id name &key short-name)
   (check-type name string)
@@ -82,6 +86,10 @@
                  :id id
                  :name name
                  :short-name short-name))
+
+(defun location-fitness-for (loc parm)
+  (or (getf (location-fitness loc) parm)
+      0.0))
 
 ; TODO Consider altering flags to be hierarchical (so they can be lists instead of just symbols)
 
@@ -147,3 +155,6 @@
 
 (defmethod system-keys append ((obj loaded))
   `((get-origin "Origin" ,(get-origin obj))))
+
+(defmethod system-keys append ((obj location))
+  `((location-fitness "Fitness" ,(location-fitness obj))))

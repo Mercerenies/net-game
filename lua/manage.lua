@@ -29,6 +29,10 @@ function setup_and_run()
 
    logger.set_debug_level(tonumber(arg[2]))
 
+   if tonumber(arg[3]) > 0 then
+      pquery.use_reinforcement()
+   end
+
    local server = socket.tcp()
    server:bind('localhost', arg[1])
    server:listen()

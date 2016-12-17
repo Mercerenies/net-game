@@ -8,13 +8,15 @@ local PQuery = P.PQuery
 
 setmetatable(P.PQuery, {__index = query.Query})
 
-local para_cmd = '(./bash/stage1.sh -d %d %s | ./bash/stage2.sh %d >%s ; touch %s)&'
+local para_cmd = '(./bash/stage1.sh %s -d %d %s | ./bash/stage2.sh %d >%s ; touch %s)&'
+
+local rein = ""
 
 local function spawn_parallel(argument)
    local rname = filenamer.get_filename()
    local sname = filenamer.get_filename()
    local lvl = logger.get_debug_level()
-   local cmd = string.format(para_cmd, lvl, argument, lvl, rname, sname)
+   local cmd = string.format(para_cmd, rein, lvl, argument, lvl, rname, sname)
    os.execute(cmd)
    return rname, sname
 end
@@ -23,6 +25,10 @@ local function spawn_and_store(qobj, argm)
    local rname, sname = spawn_parallel(argm)
    table.insert(qobj._resultnames, rname)
    table.insert(qobj._checknames, sname)
+end
+
+function P.use_reinforcement()
+   rein = "-r"
 end
 
 function PQuery.new()

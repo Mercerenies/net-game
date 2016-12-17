@@ -71,17 +71,19 @@
    (short-name :accessor location-short-name
                :initarg :short-name
                :initform ""
-               :type string)
-   (flags :accessor location-flags
-          :initarg :flags
-          :initform nil
-          :type list)))
+               :type string)))
 
 (defun make-location (id name &key short-name)
+  (check-type name string)
+  (check-type short-name (or string null))
+  (when (null short-name)
+    (setf short-name name))
   (make-instance 'location
                  :id id
                  :name name
                  :short-name short-name))
+
+; TODO Consider altering flags to be hierarchical (so they can be lists instead of just symbols)
 
 (defgeneric add-flag (flag obj))
 
@@ -91,6 +93,7 @@
 (defgeneric check-flag (flag obj))
 
 (defmethod check-flag (flag (obj flagged)) ; Non-symbols will not be found and will simply return nil
+  (check-type flag symbol)
   (member flag (get-flags obj)))
 
 (defgeneric move-object (obj new-loc))
@@ -112,6 +115,7 @@
 
 (defun halo (node &optional (n 1) &key (self t))
   (check-type *world* hash-table)
+  (check-type node location)
   (if (not (plusp n))
       (list node)
       (loop for exit in (location-exits node)

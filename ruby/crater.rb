@@ -40,14 +40,21 @@ class CraterBuilder < StructureBuilder
 
 end
 
+# A Crater consists of a pair of locations: a CraterEdgeNode which will be placed in the intersection between
+# two other nodes and a CraterNode which will connect to the edge node and serve as the actual site of the
+# crater.
 class Crater < Building
 
+  # A crater can be loaded from a PlacePage whose HasInfoField#type has been identified as +:crater+.
   def load(data)
     structure = CraterBuilder.new(data.name, data.keyword).tap(&:construct).to_loc
     @nodes = structure.nodes
     @exits = structure.exits
   end
 
+  # A crater integrates in a slightly unusual way. It selects a pair of adjacent locations in the map and
+  # severs the connection between them, replacing it with the crater in the middle. This technique emulates
+  # how a crater would come about in the real world, destroying a connection between two existing locations.
   def integrate_with(map)
     node1 = map.to_ary.sample
     node2 = map[ node1.each_link.to_a.sample ]

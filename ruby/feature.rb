@@ -11,7 +11,9 @@ class Feature
     @exits = []
   end
 
-  # Given a data instance from a page, loads the structure from the information on the page.
+  # Given a data instance from a page, loads the structure from the information on the page. Note that,
+  # unless otherwise stated, none of the loading preconditions are checked here. Any checking to verify
+  # that the page is valid for this purpose should be done by the caller.
   def load(data)
   end
 

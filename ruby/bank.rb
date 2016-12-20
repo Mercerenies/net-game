@@ -1,4 +1,5 @@
 
+# The main central node of the Bank structure.
 class BankMainNode < StructureNode
 
   include PredefFitness
@@ -11,6 +12,7 @@ class BankMainNode < StructureNode
 
 end
 
+# A trivial builder for a Bank.
 class BankBuilder < StructureBuilder
 
   def initialize(name)
@@ -24,6 +26,8 @@ class BankBuilder < StructureBuilder
 
 end
 
+# A bank is a relatively simple building, with one main room that is marked by the fitness system as
+# a safekeeping location.
 class Bank < Building
 
   def can_integrate_with?(node)

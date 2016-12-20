@@ -1,12 +1,15 @@
 
 class LakeNode < StructureNode
 
+  include PredefFitness
+
   def initialize(builder, number_left)
     @name = builder.get_a_name
     super builder, @name
     @number_left = number_left
     @creatures = AnimalValidator.new
     @plants = PlantTypesValidator[:tree, :plant, :bush, :grass, :flower]
+    self.fitness = Uncivilized + Outdoors
   end
 
   def expand

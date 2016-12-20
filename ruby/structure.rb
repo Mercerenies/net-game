@@ -9,6 +9,7 @@ class StructureNode
   extend Forwardable
 
   attr_reader :id
+  attr_accessor :fitness
 
   def_delegators :@builder, :make_node, :connect, :add_names, :get_a_name, :sample_node, :sample_nodes,
                             :core_name=, :core_name, :each_node, :select_nodes, :each_exit
@@ -21,6 +22,7 @@ class StructureNode
     @exit = false
     @creatures = nil
     @plants = nil
+    @fitness = Fitness.null
   end
 
   # Called during recursive expansion of the structure node to define the expansion for the individual node.
@@ -29,7 +31,13 @@ class StructureNode
 
   # Constructs a #Location instance from the structure node.
   def to_loc
-    Location.new @id, @name, nil, generic_name: core_name, valid_creatures: @creatures, valid_plants: @plants
+    Location.new(@id,
+                 @name,
+                 nil,
+                 generic_name: core_name,
+                 valid_creatures: @creatures,
+                 valid_plants: @plants,
+                 fitness: fitness)
   end
 
   # Returns whether the node is intended as an exit.

@@ -1,9 +1,12 @@
 
 class BankMainNode < StructureNode
 
+  include PredefFitness
+
   def initialize(builder)
     super builder, "#{builder.core_name} Lobby"
     mark_as_exit
+    self.fitness = Safekeeping
   end
 
 end

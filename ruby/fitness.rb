@@ -21,7 +21,7 @@ class Fitness
   end
 
   def to_sxp
-    [:fitness, @treasure, @monster].to_sxp
+    [:fitness, treasure, monster].to_sxp
   end
 
   def self.from_sxp(arg)
@@ -32,7 +32,7 @@ class Fitness
 end
 
 # A combined fitness parameter, which merges together the effects of two other fitness parameters.
-class CompositeFitness
+class CompositeFitness < Fitness
 
   def initialize(a, b)
     @first = a
@@ -55,9 +55,11 @@ module PredefFitness
   Uncivilized = Fitness.new 1.0, 1.0
   Outdoors = Fitness.new 1.0, 1.5
   HardToReach = Fitness.new 2.5, 2.5
+  Safekeeping = Fitness.new 1.5, 0.0
+  VeryHardToReach = Fitness.new 2.5, 2.5
 
-  def predefFitnessFlags
-    [:Uncivilized, :Outdoors, :HardToReach]
+  def self.predefFitnessFlags
+    [:Uncivilized, :Outdoors, :HardToReach, :Safekeeping, :VeryHardToReach]
   end
 
   def self.included(base)

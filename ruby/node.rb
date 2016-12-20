@@ -6,6 +6,7 @@ require 'forwardable'
 class Node
   extend Forwardable
   include Enumerable
+  include PredefFitness
 
   attr_reader :id, :name, :level, :contents
 
@@ -61,7 +62,7 @@ class Node
   # Runs the waterfall algorithm on the node. The waterfall algorithm is designed to take a node with
   # no children but whose Level instance claims that it should have children and "fills in" the node's
   # children with randomly generated nodes, which it then recursively runs the waterfall algorithm on.
-  # Any existing children on the node are eliminated when #waterfall is run. 
+  # Any existing children on the node are eliminated when #waterfall is run.
   def waterfall
     children = @level.make_children
     names = if children.all? { |x| x.is_a? LevelZero }
@@ -89,7 +90,7 @@ class Node
   # using Bridge#create_random to generate a sufficiently large bridge for the situation.
   def expand_to_map(existing: nil, country: nil, gdata:)
     if @contents.empty?
-      Array[Location.new id, name, country, generic_name: country || "Map"]
+      Array[Location.new id, name, country, generic_name: country || "Map", fitness: Outdoors]
     else
       links = @contents.size.times.collect { [] }
       connected = []

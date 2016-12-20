@@ -1,6 +1,8 @@
 
 class ForestNode < StructureNode
 
+  include PredefFitness
+
   def initialize(builder, number)
     @name = builder.get_a_name
     super builder, @name
@@ -8,6 +10,7 @@ class ForestNode < StructureNode
     mark_as_exit if number == 1
     @creatures = LandBasedValidator.new
     @plants = PlantTypesValidator[:tree, :plant, :bush, :grass, :flower]
+    self.fitness = Uncivilized + Outdoors
   end
 
   def expand

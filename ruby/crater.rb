@@ -1,5 +1,6 @@
 
 class CraterNode < StructureNode
+  include PredefFitness
 
   def initialize(builder, kw = "Crater")
     nickname = builder.core_name
@@ -7,6 +8,7 @@ class CraterNode < StructureNode
       nickname = "#{builder.core_name} #{Util.titlecase kw}"
     end
     super builder, "#{nickname}"
+    self.fitness = Uncivilized + Outdoors
   end
 
   def expand
@@ -20,6 +22,7 @@ class CraterEdgeNode < StructureNode
   def initialize(builder)
     super builder, "#{builder.core_name} Site"
     mark_as_exit
+    self.fitness = Uncivilized + Outdoors
   end
 end
 

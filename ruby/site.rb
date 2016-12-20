@@ -1,9 +1,12 @@
 
 class SiteNode < StructureNode
 
+  include PredefFitness
+
   def initialize(builder)
     super builder, builder.core_name
     mark_as_exit
+    self.fitness = Outdoors
   end
 
 end

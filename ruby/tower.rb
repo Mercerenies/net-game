@@ -1,10 +1,15 @@
 
 class TowerNode < StructureNode
 
+  include PredefFitness
+
   def initialize(builder, number)
     super builder, "#{builder.core_name} Floor #{Numeral.to_numeral number}"
     @number = number
     mark_as_exit if number == 1
+    self.fitness = Uncivilized
+    self.fitness += HardToReach if @number > 3
+    self.fitness += VeryHardToReach if @number > 6
   end
 
   def expand

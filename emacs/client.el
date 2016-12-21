@@ -11,13 +11,37 @@
 ;; * EMACS 25 AND NEWER ONLY! This uses some very new features of Emacs and will not work in anything before
 ;;   Emacs 25.0
 
+(defvar net-game--font-lock-keywords
+  (list '("^\\w+:" . font-lock-string-face)
+        '("\\[[[:digit:]]+\\]" . font-lock-type-face)
+        '("[[:digit:]]+\\(\\.[[:digit:]]+\\)?" . font-lock-constant-face)))
+
+(define-minor-mode net-game-mode nil
+  :init-value nil
+  :lighter " net-game"
+  (if net-game-mode
+      (net-game-mode-add-keywords)
+    (net-game-mode-remove-keywords))
+  (if (fboundp 'font-lock-flush)
+      (font-lock-flush)
+    (with-no-warnings
+      (font-lock-fontify-buffer))))
+
+(defun net-game-mode-add-keywords ()
+  (font-lock-add-keywords nil net-game--font-lock-keywords 'append))
+
+(defun net-game-mode-remove-keywords ()
+  (font-lock-remove-keywords nil net-game--font-lock-keywords))
+
 (defun net-game-spawn (cmd)
   (let ((buffer (get-buffer-create "*net-game*"))
         (err-buffer (get-buffer-create "*net-game-log*")))
     (with-current-buffer buffer
-      (comint-mode))
+      (comint-mode)
+      (net-game-mode))
     (with-current-buffer err-buffer
-      (special-mode))
+      (special-mode)
+      (net-game-mode))
     (make-process :name "net-game"
                   :buffer buffer
                   :command cmd

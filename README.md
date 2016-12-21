@@ -53,6 +53,9 @@ Note that Python, Perl, and Ruby are expected to be in /usr/bin. The Lisp implem
 * Bash (any reasonably modern version should suffice)
 * `flock` (only required for the reinforcement learning engine)
 
+##### Emacs
+* Emacs 25 or newer (only necessary if you wish to use the Emacs integrated debugger)
+
 # Client Mode
 
 Client Mode allows the game to communicate with its own internal server and modify itself to make gameplay last longer. Client Mode requires a recent Lua implementation, as well as GNU CLISP (other CLISP implementations may work with some amount of effort; see above).

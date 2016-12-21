@@ -61,6 +61,10 @@ To run the game in Client Mode, use `./bash/client.sh` (no arguments). The game 
 
 If you use Client Mode, take note of this. There is a known bug in which the Lua system will occasionally leave behind "garbage" files in the temp directory. If your game isn't working, look in the temp directory for any files prefixed with "dat" or "dfile" and delete them.
 
+# Emacs Integration (NEW!)
+
+The `./emacs/client.el` file provides some very primitive and very experimental support for integrating with Emacs. In order to use it, you need Emacs 25 or newer. Simply load the file and then use `M-x net-game-run` from the base directory of the project. See the comments at the top of the `./emacs/client.el` file for details.
+
 # Legacy Mode
 
 There are several scripts in the `./bash/` directory, but (aside from the initial `./bash/check.sh` script) the entrypoint to all of these is `./bash/master.sh`. Running the script with `--help` as the only option will print a summary of the command line flags available.

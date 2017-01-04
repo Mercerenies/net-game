@@ -100,6 +100,9 @@
           (get-name obj)
           (floor (/ (- (plant-growth-moment obj) (plant-growth-time obj)) 2))))
 
+(defmethod object-nature ((obj plant))
+    'entity)
+
 (defmethod system-keys append ((obj plant))
   (let ((food (plant-food obj)))
     `((food-full-name "Full Name" ,(food-full-name food))

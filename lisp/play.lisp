@@ -36,6 +36,9 @@
   (format t "~%** GAME OVER **~%You have died.~%~%")
   (funcall *do-exit*))
 
+(defmethod object-nature ((obj player))
+    'person)
+
 (defmethod system-keys append ((obj player))
            `((nil "Percent Explored" ,(if (plusp (hash-table-count *world*))
                                           (* 100.0 (/ (visited-count *player*) (hash-table-count *world*)))

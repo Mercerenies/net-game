@@ -180,6 +180,9 @@
             ((passive sneaky stalking) 0)
             (t 1))))
 
+(defmethod object-nature ((obj creature))
+    'creature)
+
 (defmethod system-keys append ((obj animal))
   `((anim-mood "Current Mood" ,(anim-mood obj))
     (anim-attitude "Attitude" ,(anim-attitude obj))

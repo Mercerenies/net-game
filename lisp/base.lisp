@@ -145,12 +145,23 @@
                 nil)
             (get-name obj))))
 
+; Returns the "nature" of an object; this will only be used for debugging purposes
+;  (entity person item creature location unknown) are a few recommended values for
+;  object-nature, but any interned, non-keyword symbol can be returned.
+(defgeneric object-nature (obj))
+
+(defmethod object-nature ((obj t))
+  'unknown)
+
+(defmethod object-nature ((obj location))
+  'location)
+
 ; Returns a list of elements of the form (key-name friendly-name value)
 (defgeneric system-keys (obj)
   (:method-combination append))
 
 (defmethod system-keys append ((obj t))
-  nil)
+  `((object-nature "Nature" ,(object-nature obj))))
 
 (defmethod system-keys append ((obj damageable))
   `((hp "Health" ,(* 100 (hp obj)))))

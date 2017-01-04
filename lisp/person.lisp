@@ -39,6 +39,9 @@
     (male (format t "An ordinary guy.~%"))
     (female (format t "An ordinary woman.~%"))))
 
+(defmethod object-nature ((obj person))
+    'person)
+
 (defmethod system-keys append ((obj person))
   `((person-nickname "Nickname" ,(person-nickname obj))
     (person-gender "Gender" ,(person-gender obj))

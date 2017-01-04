@@ -17,6 +17,9 @@
              areas of the map. ~:[Must be activated before it can be ~
              used.~;Is currently active.~]~%" (warp-active obj)))
 
+(defmethod object-nature ((obj warp-point))
+    'entity)
+
 (defmethod system-keys append ((obj warp-point))
   `((warp-active "Activated" ,(warp-active obj))))
 

@@ -98,6 +98,9 @@
   (format t "An item weighing about ~A units.~%"
           (item-weight obj)))
 
+(defmethod object-nature ((obj item))
+    'item)
+
 (defmethod system-keys append ((obj item))
   `((item-weight "Weight" ,(item-weight obj))))
 

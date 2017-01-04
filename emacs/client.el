@@ -51,7 +51,7 @@
                                  '((window-height . 0.2)))))
 
 (defun net-game-run (&optional debug) ; TODO Support the reinforcement learning engine (-r)
-  (interactive "P")
+  (interactive "p")
   (setq debug (or debug 3))
   (let ((command `("bash" "./bash/client.sh" "-d" ,(number-to-string debug))))
     (net-game-spawn command)))

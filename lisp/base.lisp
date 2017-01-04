@@ -91,18 +91,23 @@
   (or (getf (location-fitness loc) parm)
       0.0))
 
-; TODO Consider altering flags to be hierarchical (so they can be lists instead of just symbols)
-
 (defgeneric add-flag (flag obj))
 
 (defmethod add-flag ((flag symbol) (obj flagged))
   (push flag (get-flags obj)))
 
+(defmethod add-flag ((flag list) (obj flagged))
+  (loop for x in flag
+        do (check-type x symbol "a hierarchical symbol flag"))
+  (push flag (get-flags obj)))
+
 (defgeneric check-flag (flag obj))
 
-(defmethod check-flag (flag (obj flagged)) ; Non-symbols will not be found and will simply return nil
-  (check-type flag symbol)
+(defmethod check-flag ((flag symbol) (obj flagged))
   (member flag (get-flags obj)))
+
+(defmethod check-flag ((flag list) (obj flagged))
+  (member flag (get-flags obj) :test #'equal))
 
 (defgeneric move-object (obj new-loc))
 

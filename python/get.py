@@ -84,7 +84,7 @@ def unit_run(args):
             selector = links.AbortLinkSelector(),
             max_tries = 1
         )
-    ))
+    ).decode())
 
 if __name__ == '__main__':
     args = dict(getopt(sys.argv[1:], "c:p:P:w:m:a:f:d:ru:")[0])

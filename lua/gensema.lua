@@ -60,7 +60,7 @@ local function run_ruby(query)
    cmd = cmd .. ' -- ' .. old_e_fn .. ' ' .. prior_excess .. ' >' .. new_a_fn
    cmd = cmd .. ' ; touch ' .. new_exit_fn
    cmd = '(' .. cmd .. ')&'
-   os.execute(cmd)
+   util.execute(cmd)
 end
 
 function P.genner_lock(query)

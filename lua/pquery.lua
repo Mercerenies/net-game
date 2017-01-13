@@ -17,7 +17,7 @@ local function spawn_parallel(argument)
    local sname = filenamer.get_filename()
    local lvl = logger.get_debug_level()
    local cmd = string.format(para_cmd, rein, lvl, argument, lvl, rname, sname)
-   os.execute(cmd)
+   util.execute(cmd)
    return rname, sname
 end
 

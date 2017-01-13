@@ -24,4 +24,9 @@ function P.pid()
    return pid_cache
 end
 
+function P.execute(cmd)
+   logger.echo(1, "Running: " .. cmd)
+   os.execute(cmd)
+end
+
 return P

@@ -36,8 +36,8 @@ function setup_and_run()
    local server = socket.tcp()
    server:bind('localhost', arg[1])
    server:listen()
-
    conn = assert( server:accept() )
+
    local data
    while true do
       data = assert( conn:receive '*l' )
@@ -66,7 +66,7 @@ function checkin()
    local done = {}
    for i, v in ipairs(allqueries) do
       if v._finished then
-         os.execute("touch " .. v._finalname)
+         util.execute("touch " .. v._finalname)
          table.insert(done, i)
       end
    end

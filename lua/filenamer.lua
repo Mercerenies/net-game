@@ -21,11 +21,12 @@ function P.get_filename()
 end
 
 function P.cleanup()
+   logger.echo(1, "Terminating processes...")
    for i = 0, n do
       local name = generate_name(i)
       os.remove(name)
    end
-   os.execute 'kill -TERM -- -$(ps | awk \'$1 ~ /\\<\'"$$"\'\\>/ { print $3; }\')'
+   util.execute 'kill -TERM -- -$(ps | awk \'$1 ~ /\\<\'"$$"\'\\>/ { print $3; }\')'
 end
 
 return P

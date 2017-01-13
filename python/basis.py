@@ -115,6 +115,12 @@ class Basis:
         self.get_base = base
         self.is_page = pred
 
+    def with_page(self, base):
+        return Basis(base, self.is_page)
+
+    def with_predicate(self, pred):
+        return Basis(self.get_base, pred)
+
 Basis.celebrity = Basis(get_celebrity_base, is_person_page )
 Basis.person    = Basis(get_person_base   , is_person_page )
 Basis.place     = Basis(get_place_base    , is_place_page  )

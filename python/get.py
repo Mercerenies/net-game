@@ -41,8 +41,12 @@ def make_sel(keyword, rein):
     else:
         return links.NoDupLinkSelector()
 
-if __name__ == '__main__':
-    args = dict(getopt(sys.argv[1:], "c:p:P:w:m:a:f:d:r")[0])
+def produce_result(args, mod = (lambda x: x), selector = None, **key):
+    """
+    Runs all of the algorithms given in the args dict, using the basis modifier to augment each
+    basis. The basis modifier should be a 1-argument callable which takes a basis and returns
+    a new basis, and it should be side-effect free.
+    """
     celebs = int(args.get("-c", "0"))
     people = int(args.get("-p", "0"))
     places = int(args.get("-P", "0"))
@@ -50,16 +54,43 @@ if __name__ == '__main__':
     monsters = int(args.get("-m", "0"))
     animals = int(args.get("-a", "0"))
     foods = int(args.get("-f", "0"))
+    rein = "-r" in args
+
+    parts = {
+        'celebs':   do_search(mod(Basis.celebrity), celebs  , selector or make_sel('people',   rein ), **key),
+        'people':   do_search(mod(Basis.person   ), people  , selector or make_sel('people',   rein ), **key),
+        'places':   do_search(mod(Basis.place    ), places  , selector or make_sel('places',   rein ), **key),
+        'weapons':  do_search(mod(Basis.weapon   ), weapons , selector or make_sel('weapons',  rein ), **key),
+        'monsters': do_search(mod(Basis.monster  ), monsters, selector or make_sel('monsters', rein ), **key),
+        'animals':  do_search(mod(Basis.animal   ), animals , selector or make_sel('animals',  False), **key),
+        'foods':    do_search(mod(Basis.food     ), foods   , selector or make_sel('foods',    False), **key),
+    }
+    return xmlify.xmlify(parts)
+
+
+def standard_run(args):
+    print(ET.tostring(produce_result(args)).decode())
+
+def unit_run(args):
+    unit = args.get("-u", "").strip()
+
+    def basis_transformer(b):
+        return b.with_page(lambda: unit)
+
+    print(ET.tostring(
+        produce_result(
+            args,
+            mod = basis_transformer,
+            selector = links.AbortLinkSelector(),
+            max_tries = 1
+        )
+    ))
+
+if __name__ == '__main__':
+    args = dict(getopt(sys.argv[1:], "c:p:P:w:m:a:f:d:ru:")[0])
     debug = int(args.get("-d", "0"))
     logger.set_global_debug_level(debug)
-    rein = "-r" in args
-    parts = {
-        'celebs':    do_search(Basis.celebrity, celebs  , make_sel('people',   rein)),
-        'people':    do_search(Basis.person   , people  , make_sel('people',   rein)),
-        'places':    do_search(Basis.place    , places  , make_sel('places',   rein)),
-        'weapons':   do_search(Basis.weapon   , weapons , make_sel('weapons',  rein)),
-        'monsters':  do_search(Basis.monster  , monsters, make_sel('monsters', rein)),
-        'animals':   do_search(Basis.animal   , animals , make_sel('animals',  False)),
-        'foods':     do_search(Basis.food     , foods   , make_sel('foods',    False)),
-    }
-    print(ET.tostring(xmlify.xmlify(parts)).decode())
+    if '-u' in args:
+        unit_run(args)
+    else:
+        standard_run(args)

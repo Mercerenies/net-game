@@ -10,6 +10,7 @@ foods=""
 debug=""
 debugl=""
 rein=""
+upage=""
 stage1=""
 stage2=""
 stage3=""
@@ -35,15 +36,18 @@ if [ $1 == "--help" ]; then
     >&2 echo " -f Number of foods"
     >&2 echo " -d Debug level"
     >&2 echo " -r Use the reinforcement learning engine (experimental)"
+    >&2 echo " -u Crawl only the specified page"
     >&2 echo " -1 Run Stage 1 (Python / Site Crawling)"
     >&2 echo " -2 Run Stage 2 (Perl / Page Parsing)"
     >&2 echo " -3 Run Stage 3 (Ruby / World Generation)"
     >&2 echo " -4 Run Stage 4 (Common Lisp / Gameplay)"
     >&2 echo " -l Use the given Common Lisp implementation"
+    >&2 echo " ** For detailed information about any of these flags, consult the"
+    >&2 echo "    documentation for ./stageN.sh, where N is the relevant stage."
     exit
 fi
 
-while getopts 'c:p:P:w:m:a:f:d:r1234l:' opt; do
+while getopts 'c:p:P:w:m:a:f:d:r1234l:u:' opt; do
     case "$opt" in
         c) # Celebrities
             celebs="-c $OPTARG"
@@ -88,6 +92,9 @@ while getopts 'c:p:P:w:m:a:f:d:r1234l:' opt; do
         l) # CLisp
             clisp="$OPTARG"
             ;;
+        u) # Unit Page
+            upage="-u $OPTARG"
+            ;;
     esac
 done
 
@@ -104,7 +111,7 @@ if [ -n "$stage4" ]; then
 fi
 
 if [ -n "$stage1" ]; then
-    $stage1 >"./temp/${prefix}1.txt"
+    $stage1 "$upage" >"./temp/${prefix}1.txt"
 fi
 if [ -n "$stage2" ]; then
     $stage2 <"./temp/${prefix}1.txt" >"./temp/${prefix}2.txt"

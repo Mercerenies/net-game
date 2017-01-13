@@ -55,3 +55,12 @@ class NoDupLinkSelector(LinkSelector):
             return rnd(links)
         else:
             return None
+
+class AbortLinkSelector(LinkSelector):
+    """
+    A trivial link selector that never actually selects a link and simply aborts any attempt to do so.
+    The resulting effect is that crawls using AbortLinkSelector will always parse only the first page
+    given and nothing more.
+    """
+    def select_link(self, state):
+        return None

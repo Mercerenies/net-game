@@ -89,7 +89,8 @@
                        (mapcar #'get-name (location-contents (get-loc *player*)))
                        (mapcar #'get-name (inv-items *player*))
                        (mapcar #'location-short-name (halo (get-loc *player*) 1))
-                       '("fists" "here" "golden apple"))))
+                       (if *god-mode* (mapcar #'car +summonable-items+) nil)
+                       '("fists" "here"))))
     (parse-with-words sentence
                       :nouns nouns
                       :verbs '("go" "examine" "use" "activate" "collect"
@@ -98,6 +99,8 @@
                       :preps '("with")
                       :arts '("the" "a" "an"))))
 
+; TODO Factor out translate-noun into something that can be modified from the outside.
+;      That is, we don't want to have to change enhanced-parse to add translation rules.
 (defun enhanced-parse (sentence)
   (check-type *world* hash-table)
   (check-type *player* player)
@@ -113,6 +116,7 @@
                                        (location-short-name x)
                                        (get-name x))))
                     (get-numerical-object noun)
+                    (and *god-mode* (cdr (assoc noun +summonable-items+ :test #'string-equal)))
                     (and (equalp noun "here") (get-loc *player*))
                     (intern-upcase noun)))))
     (let ((parse (parse-default sentence)))

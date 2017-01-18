@@ -41,6 +41,16 @@
                    +~0@*~V@{-~}+~%"
                 total-length top-line new-keys)))))
 
+(defstruct (summonable-item (:constructor make-summonable (behavior)))
+  (behavior (lambda () ())))
+
+(defun summon-item (summonable)
+  (check-type summonable summonable-item "a summonable item")
+  (funcall (summonable-item-behavior summonable)))
+
+(defconstant +summonable-items+
+  `(("Golden Apple" . ,(make-summonable (lambda () (make-food +god-apple+))))))
+
 (defconstant +god-apple+
   (make-food-data "Golden Apple"
                   :full-name "Divine Fruit"
@@ -48,13 +58,14 @@
                   :nutritional-value 999.0
                   :poison-chance 0.0))
 
-(defmethod do-action ((act (eql 'summon)) (obj symbol) preps)
+(defmethod do-action ((act (eql 'summon)) (obj summonable-item) preps)
   (declare (ignore preps))
-  (let ((entity (case obj
-                  (|GOLDEN APPLE| (make-food +god-apple+)))))
-    (if entity
-        (progn (format t "A ~A fell from the sky.~%" (get-name entity))
-               (move-object entity (get-loc *player*)))
-        (format t "Unrecognized entity. You can summon the following:~@
-                   ~{ * ~A~%~}"
-                '("Golden Apple")))))
+  (let ((entity (summon-item obj)))
+    (format t "A ~A fell from the sky.~%" (get-name entity))
+    (move-object entity (get-loc *player*))))
+
+(defmethod do-action ((act (eql 'summon)) (obj t) preps)
+  (declare (ignore preps))
+  (format t "You can summon the following:~@
+             ~{ * ~A~%~}"
+          (mapcar #'car +summonable-items+)))

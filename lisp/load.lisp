@@ -149,9 +149,19 @@
 (defmethod load-object ((header (eql 'quest-set)) data)
   (let ((*quests* (make-hash-table)))
     (load-formatted data 'quest-set
-                    ((quest) (let ((quest-data (apply #'load-quest quest)))
+                    ((quest) (let ((quest-data (funcall (whitelisted-load-1 #'load-object +quest-types+) quest)))
                                (add-quest quest-data))))
     *quests*))
+
+(defmethod load-object ((header (eql 'creature-set)) data)
+  (load-with data
+             (whitelisted-load-1 #'load-object +creature-types+)
+             'creature-set))
+
+(defmethod load-object ((header (eql 'spawner-set)) data)
+  (load-with data
+             (whitelisted-load-1 #'load-object +spawner-types+)
+             'spawner-set))
 
 (defmethod load-object ((header (eql 'fitness)) data)
   (let ((plist nil))
@@ -176,14 +186,6 @@
 (defun load-with (data func header)
   (let ((list nil))
     (load-formatted data header
-                    ((extra) (push (apply func extra) list)))
-    (reverse list))) ; TODO Can we avoid the reverse while maintaining the order?
-
-; NOTE: This is a temporary shim layer while transitioning. Eventually, this will supersede the old function
-; and load-with will be eliminated. As such, the old load-with function should be considered deprecated
-(defun load-with-1 (data func header)
-  (let ((list nil))
-    (load-formatted data header
                     ((extra) (push (funcall func extra) list)))
     (reverse list))) ; TODO Can we avoid the reverse while maintaining the order?
 
@@ -195,11 +197,8 @@
     (load-formatted data 'alpha
                     (world (setf *world* (load-object 'map world))
                            (setf (alpha-world alpha) *world*))
-                    (creatures (setf (alpha-creatures alpha)
-                                     (load-with-1 creatures
-                                                  (whitelisted-load-1 #'load-object +creature-types+)
-                                                  'creature-set)))
-                    (spawners (setf (alpha-spawners alpha) (load-with spawners #'load-spawner 'spawner-set)))
+                    (creatures (setf (alpha-creatures alpha) (load-object 'creature-set creatures)))
+                    (spawners (setf (alpha-spawners alpha) (load-object 'spawner-set spawners)))
                     (quests (setf (alpha-quests alpha) (load-object 'quest-set quests)))
                     (knowledge (setf (alpha-knowledge alpha) (load-object 'knowledge-base knowledge)))
                     (meta))

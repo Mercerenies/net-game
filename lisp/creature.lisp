@@ -26,7 +26,7 @@
 (defun make-animal-data (id name &rest keys &key &allow-other-keys)
   (apply #'make-instance 'animal-data :id id :name name keys))
 
-(defmethod load-object ((type (eql 'animal)) data)
+(defmethod load-object ((header (eql 'animal)) data)
   (destructuring-bind (anim-sym id name . rest) data
     (apply #'make-animal-data id name rest)))
 

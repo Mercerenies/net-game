@@ -43,11 +43,16 @@
     (delta-map dmap)
     ;; Lists
     (setf *creatures*
-          (append (load-with-1 creatures
-                               (whitelisted-load-1 #'load-object +creature-types+)
-                               'creature-set)
+          (append (load-with creatures
+                             (whitelisted-load-1 #'load-object +creature-types+)
+                             'creature-set)
                   *creatures*))
     (setf *spawners*
-          (append (load-with spawners #'load-spawner 'spawner-set) *spawners*))
-    (mapc #'add-quest (load-with quests #'load-quest 'quest-set))
+          (append (load-with spawners
+                             (whitelisted-load-1 #'load-object +spawner-types+)
+                             'spawner-set)
+                  *spawners*))
+    (mapc #'add-quest (load-with quests
+                                 (whitelisted-load-1 #'load-object +quest-types+)
+                                 'quest-set))
     (delta-load-object 'knowledge-base kb)))

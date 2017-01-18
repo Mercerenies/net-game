@@ -3,6 +3,9 @@
 (defparameter *quests*
   nil)
 
+(defconstant +quest-types+
+  '(quest))
+
 ; TODO Quests should reward the player upon completion; currently they just sort of... finish
 
 #|
@@ -170,10 +173,8 @@
                  :id (get-id data)
                  :name (get-name data)))
 
-(defgeneric load-quest (type &rest data))
-
-(defmethod load-quest ((type (eql 'quest)) &rest data)
-  (destructuring-bind (id name . args) data
+(defmethod load-object ((header (eql 'quest)) data)
+  (destructuring-bind (quest-sym id name . args) data
     (make-instance 'quest-data
                    :id id
                    :name name

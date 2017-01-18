@@ -1,4 +1,18 @@
 
+# A GData instance for the DeltaGenner object. While regular GData objects can be used to create AlphaStructure
+# instances, DeltaGData objects can create either AlphaStructure objects or DeltaStructure objects, by calling
+# the appropriate method.
+#
+# There are a few important things to note about the delta format as a whole.
+# * The map can be modified fairly freely. The documentation of DeltaMap details which parts of the
+#   map can be modified.
+# * New creatures, spawners, quests, and any global list-based entity can be added and modified freely,
+#   but the pre-existing ones shall not be modified.
+# * Knowledge base entries can be modified in limited ways. The documentation of DeltaKnowledgeBase details
+#   this.
+# It is infeasible to check many of these conditions, so it is the programmer's responsibility to modify
+# the delta structure responsibly. Failure to satisfy the above rules may result in inaccurate data being
+# produced.
 class DeltaGData < GData
   include Delta
 
@@ -85,14 +99,8 @@ class DeltaGData < GData
     AlphaStructure.new map, creatures, spawners, quests, @knowledge_base, get_meta_data
   end
 
+  # Returns a DeltaStructure object representing the changed properties of the DeltaGData.
   def delta_structure
-    # A couple of notes about the delta system and what is/isn't read-only.
-    #  - The map can be modified, for the most part. Check DeltaMap's documentation
-    #    for specifics.
-    #  - New creatures, spawners, and quests can be added and modified freely, but
-    #    the pre-existing ones should be left unmodified.
-    # These conditions are NOT checked; if you violate them, a potentially
-    # inaccurate delta file will be produced.
     DeltaStructure.new map, @new_creatures, @new_spawners, @new_quests, @knowledge_base
   end
 

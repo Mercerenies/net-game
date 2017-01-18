@@ -1,4 +1,7 @@
 
+# The persistent data available to the generator. A Genner object will use and modify the GData
+# information in order to produce a coherent world. At the end, #result_structure should be called,
+# which will yield the resulting data structure in the form of an AlphaStructure.
 class GData
   include DeltaAble
 
@@ -19,7 +22,7 @@ class GData
     DeltaGData.new self, each.to_a
   end
 
-  # Assigns the singular node
+  # Assigns the singular node.
   def node=(val)
     case val
     when Node, NilClass
@@ -27,12 +30,12 @@ class GData
     end
   end
 
-  # Checks if the list of bridges is non-empty
+  # Checks if the list of bridges is non-empty.
   def has_bridge?
     not @bridges.empty?
   end
 
-  # Gets (and removes) a bridge, if available
+  # Gets (and removes) a bridge, if available.
   def get_a_bridge
     if has_bridge?
       result = @bridges.sample
@@ -41,7 +44,7 @@ class GData
     end
   end
 
-  # Adds bridges to the list of available bridges
+  # Adds bridges to the list of available bridges.
   def add_bridges(*bridges)
     @bridges.push(*bridges)
   end
@@ -53,57 +56,57 @@ class GData
 
   # Iterates over the data in the array. The block should return
   # truthy if it "consumes" the element, in which case the element
-  # will be removed
+  # will be removed.
   def consume_each(&block)
     @arr = @arr.reject(&block)
   end
 
-  # Loads a creature into the CreatureSet, using load_from_page
+  # Loads a creature into the CreatureSet, using load_from_page.
   def load_creature(elem)
     @creatures.load_from_page elem
   end
 
-  # Checks whether we have any creatures
+  # Checks whether we have any creatures.
   def has_creature?
     not @creatures.empty?
   end
 
-  # Iterates over the creatures in the creature set
+  # Iterates over the creatures in the creature set.
   def each_creature(&block)
     @creatures.each(&block)
   end
 
-  # Checks whether we have any spawners
+  # Checks whether we have any spawners.
   def has_spawner?
     not @spawners.empty?
   end
 
-  # Adds one or more spawners to the spawner set
+  # Adds one or more spawners to the spawner set.
   def add_spawners(*elems)
     @spawners.push(*elems)
   end
 
-  # Iterates over the spawners in the spawner set
+  # Iterates over the spawners in the spawner set.
   def each_spawner(&block)
     @spawners.each(&block)
   end
 
-  # Adds one or more quests to the quest set
+  # Adds one or more quests to the quest set.
   def add_quests(*elems)
     @quests.push(*elems)
   end
 
-  # Iterates over the quests in the quest set
+  # Iterates over the quests in the quest set.
   def each_quest(&block)
     @quests.each(&block)
   end
 
-  # Select all nodes on the map for which the predicate returns truthy
+  # Selects all nodes on the map for which the predicate returns truthy.
   def select_nodes(&block)
     @map.select(&block)
   end
 
-  # Convert the node into a map and add the locations to it
+  # Converts the node into a map and add the locations to it.
   def node_to_map
     if map.nil?
       @map = Map.new @node.expand_to_map(gdata: self)
@@ -115,18 +118,18 @@ class GData
     end
   end
 
-  # Return the generator data in an appropriate output list format
+  # Returns the generator data in an appropriate output list format.
   def result_structure
     AlphaStructure.new map, @creatures, @spawners, @quests, @knowledge_base, get_meta_data
   end
 
-  # Return the metadata object that will be stored with the result structure
+  # Returns the metadata object that will be stored with the result structure.
   def get_meta_data
     MetaData.new(:':curr-id' => Node.current_id,
                  :':curr-quest-flag' => QuestMaker.current_quest_flag)
   end
 
-  # JSON-ify the remaining world data
+  # JSON-ifies the remaining world data.
   def excess_to_json
     @arr.to_json
   end
@@ -148,6 +151,7 @@ class GData
 
 end
 
+# An immutable structure consisting of data designed to be the root node of an alpha file.
 class AlphaStructure
 
   def initialize(map, creatures, spawners, quests, kb, meta)

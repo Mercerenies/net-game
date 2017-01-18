@@ -117,7 +117,7 @@
 ; NOTE: Eventually, we would like all of the load-* and delta-load-* functions to be converted to
 ;       load-object and delta-load-object calls with the appropriate first parameter. This will be
 ;       a slow process but it should result in a more organized codebase at the end. Some of
-;       the "dispatch" loaders like load-creature should be modified to have a whitelist for security. (/////)
+;       the "dispatch" loaders like load-creature should be modified to have a whitelist for security.
 (defgeneric load-object (header data))
 
 (defmethod load-object ((header (eql 'location)) data)
@@ -130,7 +130,7 @@
                                                                     (get-name inst)
                                                                     country)))
                     (:links links (setf (location-exits inst) links))
-                    (:contents contents (mapc #'(lambda (x) (load-map-object inst x)) contents))
+                    (:contents contents (mapc #'(lambda (x) (load-then-position x inst)) contents))
                     (:civilized civilized (when civilized
                                             (add-flag 'civilized inst)))
                     (:fitness fitness (setf (location-fitness inst) (load-object 'fitness fitness)))
@@ -207,11 +207,9 @@
                     (meta))
     alpha))
 
-(defun load-map-object (node data)
+(defun load-then-position (data node)
   (let ((loaded (whitelisted-load #'load-object +map-object-types+ data)))
     (move-object loaded node)))
-
-; ///// Remove load-map-object and then make the below load-object's use load-formatted
 
 (defmethod load-object ((header (eql 'player)) data)
   (declare (ignore data))
@@ -222,28 +220,28 @@
   (make-warp-point))
 
 (defmethod load-object ((header (eql 'item)) data)
-  (let* ((name (cadr data))
-         (args (cddr data))
-         (item (apply #'make-item name args)))
+  (let ((item (make-item "")))
+    (load-formatted data 'item
+                    (name (setf (get-name item) name))
+                    (:weight weight (setf (item-weight item) weight))
+                    (:flags flags (setf (get-flags item) flags)))
     item))
 
 (defmethod load-object ((header (eql 'weapon)) data)
-  (loop with name = (second data)
-        with type = nil
-        with mod = nil
-        with flags = nil
-        for rest = (cddr data) then (cddr rest)
-        for key = (first rest)
-        for value = (second rest)
-        while (not (null rest))
-        do (case key
-             (:type (setf type value))
-             (:mod (setf mod value))
-             (:flags (setf flags value)))
-        finally (let ((wpn (make-weapon name type mod)))
-                  (when flags
-                    (setf (get-flags wpn) flags))
-                  (return wpn))))
+  ;; TODO Can we make the weapon up front and apply the modifier later? This is sort of backwards-feeling now.
+  (let ((name nil)
+        (type nil)
+        (mod nil)
+        (flags nil))
+    (load-formatted data 'weapon
+                    (name-1 (setf name name-1))
+                    (:type type-1 (setf type type-1))
+                    (:flags flags-1 (setf flags flags-1)))
+    (let ((wpn (make-weapon name type mod)))
+      (setf (get-flags wpn) flags)
+      (return wpn))))
+
+;; TODO The rest of this file needs to be migrated to load-formatted
 
 (defmethod load-object ((header (eql 'plant)) data)
   (loop with name = (second data)

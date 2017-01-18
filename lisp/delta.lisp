@@ -30,7 +30,7 @@
                                     (remove value (location-exits loc))))
                (:add-links (setf (location-exits loc)
                                  (append value (location-exits loc))))
-               (:add-contents (mapc #'(lambda (x) (load-map-object loc x)) value))))))
+               (:add-contents (mapc #'(lambda (x) (load-then-position x loc)) value))))))
 
 (defgeneric delta-load-object (header data))
 

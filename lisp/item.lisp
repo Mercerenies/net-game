@@ -6,8 +6,8 @@
            :initform 1
            :type integer)))
 
-(defun make-item (name &rest keys &key &allow-other-keys)
-  (apply #'make-instance 'item :name name keys))
+(defun make-item (name)
+  (make-instance 'item :name name))
 
 (defun item-match (match item)
   (typecase match

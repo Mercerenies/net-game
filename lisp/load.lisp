@@ -5,6 +5,9 @@
 (defparameter *origin*
   "???")
 
+(defconstant +map-object-types+
+  '(player warp-point item weapon plant npc))
+
 ; load-formatted is the general macro for loading S-expression data (alpha or delta) from the Ruby layer.
 ; Syntax:
 ;  (load-formatted data-value symbol . clauses)
@@ -204,33 +207,32 @@
                     (meta))
     alpha))
 
-(defun load-map-object (node obj)
-  (apply #'load-object-with-type node (car obj) (cdr obj)))
+(defun load-map-object (node data)
+  (let ((loaded (whitelisted-load #'load-object +map-object-types+ data)))
+    (move-object loaded node)))
 
-(defgeneric load-object-with-type (node type &rest args))
+; ///// Remove load-map-object and then make the below load-object's use load-formatted
 
-(defmethod load-object-with-type (node (type (eql 'player)) &rest args)
-  (declare (ignore args))
-  (let ((obj (make-player)))
-    (move-object obj node)))
+(defmethod load-object ((header (eql 'player)) data)
+  (declare (ignore data))
+  (make-player))
 
-(defmethod load-object-with-type (node (type (eql 'warp-point)) &rest args)
-  (declare (ignore args))
-  (let ((obj (make-warp-point)))
-    (move-object obj node)))
+(defmethod load-object ((header (eql 'warp-point)) data)
+  (declare (ignore data))
+  (make-warp-point))
 
-(defmethod load-object-with-type (node (type (eql 'item)) &rest args)
-  (let* ((name (first args))
-         (args (rest args))
+(defmethod load-object ((header (eql 'item)) data)
+  (let* ((name (cadr data))
+         (args (cddr data))
          (item (apply #'make-item name args)))
-    (move-object item node)))
+    item))
 
-(defmethod load-object-with-type (node (type (eql 'weapon)) &rest args)
-  (loop with name = (first args)
+(defmethod load-object ((header (eql 'weapon)) data)
+  (loop with name = (second data)
         with type = nil
         with mod = nil
         with flags = nil
-        for rest = (cdr args) then (cddr rest)
+        for rest = (cddr data) then (cddr rest)
         for key = (first rest)
         for value = (second rest)
         while (not (null rest))
@@ -241,14 +243,14 @@
         finally (let ((wpn (make-weapon name type mod)))
                   (when flags
                     (setf (get-flags wpn) flags))
-                  (move-object wpn node))))
+                  (return wpn))))
 
-(defmethod load-object-with-type (node (type (eql 'plant)) &rest args)
-  (loop with name = (first args)
+(defmethod load-object ((header (eql 'plant)) data)
+  (loop with name = (second data)
         with type = nil
         with food = nil
         with growth-time = 5
-        for rest = (cdr args) then (cddr rest)
+        for rest = (cddr data) then (cddr rest)
         for key = (first rest)
         for value = (second rest)
         while (not (null rest))
@@ -259,4 +261,7 @@
                       (setf food (apply #'make-food-data (cdr value)))))
              (:growth-time (setf growth-time value)))
         finally (let ((plant (make-plant name :type type :food food :growth-time growth-time)))
-                  (move-object plant node))))
+                  (return plant))))
+
+(defmethod load-object ((header (eql 'npc)) data)
+  (apply #'make-person (cdr data)))

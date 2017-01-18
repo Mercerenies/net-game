@@ -28,10 +28,6 @@
 (defun make-person (id name &rest keys &key &allow-other-keys)
   (apply #'make-instance 'person :id id :name name keys))
 
-(defmethod load-object-with-type (node (type (eql 'npc)) &rest args)
-  (let ((person (apply #'make-person args)))
-    (move-object person node)))
-
 ; TODO More user-friendly text here
 (defmethod do-action ((type (eql 'examine)) (obj person) preps)
   (declare (ignore preps))

@@ -114,7 +114,7 @@
 ; NOTE: Eventually, we would like all of the load-* and delta-load-* functions to be converted to
 ;       load-object and delta-load-object calls with the appropriate first parameter. This will be
 ;       a slow process but it should result in a more organized codebase at the end. Some of
-;       the "dispatch" loaders like load-creature should be modified to have a whitelist for security.
+;       the "dispatch" loaders like load-creature should be modified to have a whitelist for security. (/////)
 (defgeneric load-object (header data))
 
 (defmethod load-object ((header (eql 'location)) data)
@@ -160,10 +160,31 @@
                     (monster (setf (getf plist :monster) monster)))
     plist))
 
+(defun whitelisted-load (method headers data)
+  "Performs the given load method operation on the data using dynamic dispatch, but only if
+   the header of the data matches one of the elements in the headers whitelist."
+  (check-type data cons "a non-empty list")
+  (unless (member (car data) headers)
+    (error "Element ~S does not satisfy the whitelist ~S" (car data) headers))
+  (funcall method (car data) data))
+
+(defun whitelisted-load-1 (method headers)
+  "This is a curried form of whitelisted-load, provided for convenience. The behavior is
+   identical."
+  (lambda (x) (whitelisted-load method headers x)))
+
 (defun load-with (data func header)
   (let ((list nil))
     (load-formatted data header
                     ((extra) (push (apply func extra) list)))
+    (reverse list))) ; TODO Can we avoid the reverse while maintaining the order?
+
+; NOTE: This is a temporary shim layer while transitioning. Eventually, this will supersede the old function
+; and load-with will be eliminated. As such, the old load-with function should be considered deprecated
+(defun load-with-1 (data func header)
+  (let ((list nil))
+    (load-formatted data header
+                    ((extra) (push (funcall func extra) list)))
     (reverse list))) ; TODO Can we avoid the reverse while maintaining the order?
 
 ; Returns an alpha-load instance
@@ -174,7 +195,10 @@
     (load-formatted data 'alpha
                     (world (setf *world* (load-object 'map world))
                            (setf (alpha-world alpha) *world*))
-                    (creatures (setf (alpha-creatures alpha) (load-with creatures #'load-creature 'creature-set)))
+                    (creatures (setf (alpha-creatures alpha)
+                                     (load-with-1 creatures
+                                                  (whitelisted-load-1 #'load-object +creature-types+)
+                                                  'creature-set)))
                     (spawners (setf (alpha-spawners alpha) (load-with spawners #'load-spawner 'spawner-set)))
                     (quests (setf (alpha-quests alpha) (load-object 'quest-set quests)))
                     (knowledge (setf (alpha-knowledge alpha) (load-object 'knowledge-base knowledge)))

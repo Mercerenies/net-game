@@ -35,15 +35,18 @@
 (defgeneric delta-load-object (header data))
 
 ; Directly modifies the game world; call at the appropriate time
-(defun load-delta (&key (file *standard-input*))
+(defun load-and-integrate-delta (&key (file *standard-input*))
   (destructuring-bind (delta-sym dmap creatures spawners quests kb) (with-scheme-notation (read file))
     (unless (eq delta-sym 'delta)
       (error "Flawed data - delta"))
-    ; Map
+    ;; Map
     (delta-map dmap)
-    ; Lists
+    ;; Lists
     (setf *creatures*
-          (append (load-with creatures #'load-creature 'creature-set) *creatures*))
+          (append (load-with-1 creatures
+                               (whitelisted-load-1 #'load-object +creature-types+)
+                               'creature-set)
+                  *creatures*))
     (setf *spawners*
           (append (load-with spawners #'load-spawner 'spawner-set) *spawners*))
     (mapc #'add-quest (load-with quests #'load-quest 'quest-set))

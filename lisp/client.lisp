@@ -70,7 +70,7 @@
         when (probe-file sentinel)
             do (let ((*origin* delta))
                  (with-open-file (file delta)
-                   (load-delta :file file)))
+                   (load-and-integrate-delta :file file)))
             and collect sym into removing
         finally (loop for rr in removing
                       do (setf *client-pending*

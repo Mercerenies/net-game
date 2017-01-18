@@ -1,5 +1,8 @@
 (in-package #:net-game)
 
+(defconstant +creature-types+
+  '(animal))
+
 (defclass animal-data (identifiable named loaded)
   ((pack :accessor anim-pack
          :initform 1
@@ -23,10 +26,8 @@
 (defun make-animal-data (id name &rest keys &key &allow-other-keys)
   (apply #'make-instance 'animal-data :id id :name name keys))
 
-(defgeneric load-creature (type &rest data))
-
-(defmethod load-creature ((type (eql 'animal)) &rest data)
-  (destructuring-bind (id name . rest) data
+(defmethod load-object ((type (eql 'animal)) data)
+  (destructuring-bind (anim-sym id name . rest) data
     (apply #'make-animal-data id name rest)))
 
 (defgeneric make-creature (data))

@@ -49,9 +49,10 @@
           :initform nil
           :type list))
   (:documentation "A base class for objects, such as items, which have flags. The list of flags should
-                   be a list of symbols. In general, flag symbols should be interned, although this is
-                   not explicitly required. Flags can be more easily interacted with using add-flag
-                   and check-flag."))
+                   be a list of lists of symbols or simply symbols. In general, flag symbols should be
+                   interned, although this is not explicitly required. Flags should, in general, not be
+                   referenced directly and should instead be referenced using the add-flag and check-flag
+                   generic functions."))
 
 (defclass loaded ()
   ((origin :accessor get-origin

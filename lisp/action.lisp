@@ -1,6 +1,11 @@
 (in-package #:net-game)
 
 (defun do-action-safely (act obj preps)
+  "Conditionally performs the action given. The arguments should be the same arguments that would
+   be passed to do-action. If the player's permissions are sufficient to perform the action, then
+   do-action will be called, forwarding the arguments exactly. Otherwise, a generic message will
+   be displayed. In general, do-action-safely should be called in place of do-action unless there
+   is a good reason to need to bypass standard security protocols."
   (if (and (is-admin-only act obj preps)
            (not *god-mode*))
       (format t "You don't have permission to do that.~%")

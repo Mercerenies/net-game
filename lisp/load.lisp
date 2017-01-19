@@ -1,37 +1,35 @@
 (in-package #:net-game)
 
-; ///// Migrating to load-formatted
-
 (defparameter *origin*
   "???")
 
 (defconstant +map-object-types+
   '(player warp-point item weapon plant npc))
 
-; load-formatted is the general macro for loading S-expression data (alpha or delta) from the Ruby layer.
-; Syntax:
-;  (load-formatted data-value symbol . clauses)
-;  clauses ::= (normal-clause* epilogue)
-;  normal-clause ::= (var-name . exprs)
-;  epilogue ::= keyword-clause* | rest-clause
-;  keyword-clause ::= (:keyword var-name . exprs)
-;  rest-clause ::= ((var-name) . exprs)
-; The value returned at the end is the data value that was passed in. Note also that the rest clause, if
-; supplied, may be called multiple times, once for each additional argument.
-; Examples:
-; (setq value (location id name :data (1 2 3) :string "abc"))
-; (setq value1 (creature-set (blah) (blah) (blah)))
-; (setq value2 (data))
-; (load-formatted value 'location
-;                 (id do-stuff)
-;                 (name do-stuff)
-;                 (:string value do-stuff)
-;                 (:data value do-stuff)
-;                 (:arg value do-stuff))
-; (load-formatted value1 'creature-set
-;                 ((rest) do-stuff))
-; (load-formatted value2 'data)
 (defmacro load-formatted (var sym &rest clauses)
+  "load-formatted is the general macro for loading S-expression data (alpha or delta) from the Ruby layer.
+    Syntax:
+    (load-formatted data-value symbol . clauses)
+    clauses ::= (normal-clause* epilogue)
+    normal-clause ::= (var-name . exprs)
+    epilogue ::= keyword-clause* | rest-clause
+    keyword-clause ::= (:keyword var-name . exprs)
+    rest-clause ::= ((var-name) . exprs)
+   The value returned at the end is the data value that was passed in. Note also that the rest clause, if
+   supplied, may be called multiple times, once for each additional argument.
+   Examples:
+   (setq value (location id name :data (1 2 3) :string \"abc\"))
+   (setq value1 (creature-set (blah) (blah) (blah)))
+   (setq value2 (data))
+   (load-formatted value 'location
+                   (id do-stuff)
+                   (name do-stuff)
+                   (:string value do-stuff)
+                   (:data value do-stuff)
+                   (:arg value do-stuff))
+   (load-formatted value1 'creature-set
+                   ((rest) do-stuff))
+   (load-formatted value2 'data)"
   (let ((ptr (gensym))
         (pos clauses)
         (seq nil))
@@ -47,7 +45,8 @@
                              (not (keywordp (caar pos))))
                   append `(,next
                            (let ((,(caar pos) (car ,ptr)))
-                             ,@(cdar pos))) into named-clause
+                             ,@(cdar pos)))
+                      into named-clause
                   count t into length-part
                   do (setf pos (cdr pos))
                   finally (return (values named-clause length-part)))
@@ -114,11 +113,14 @@
              (*knowledge-base* (alpha-knowledge ,temp)))
          ,@body))))
 
-; NOTE: Eventually, we would like all of the load-* and delta-load-* functions to be converted to
-;       load-object and delta-load-object calls with the appropriate first parameter. This will be
-;       a slow process but it should result in a more organized codebase at the end. Some of
-;       the "dispatch" loaders like load-creature should be modified to have a whitelist for security.
-(defgeneric load-object (header data))
+(defgeneric load-object (header data)
+  (:documentation "Load the object with the nature given by the header, which should be a symbol and is
+                   often equal to (car data). The data argument should be the actual data to load, including
+                   the header. It is load-object's responsibility to verify that the object being loaded
+                   from data is in fact the object specified by the header symbol; no input validation
+                   need be done by the caller. Assuming the data is valid, load-object should return
+                   an object of the appropriate nature and should not have any observable side effects
+                   on the game world."))
 
 (defmethod load-object ((header (eql 'location)) data)
   (let ((inst (make-location nil "")))

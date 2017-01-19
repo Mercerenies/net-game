@@ -1,5 +1,7 @@
 (in-package #:net-game)
 
+; TODO delta-map and delta-modify should both be delta-load-object with load-formatted inside.
+
 ; Modifies *world*
 (defun delta-map (map)
   (unless (eq (first map) 'map)
@@ -32,7 +34,14 @@
                                  (append value (location-exits loc))))
                (:add-contents (mapc #'(lambda (x) (load-then-position x loc)) value))))))
 
-(defgeneric delta-load-object (header data))
+(defgeneric delta-load-object (header data)
+  (:documentation "Like load-object, delta-load-object validates that the data matches the header and
+                   then loads the data. However, unlike load-object, delta-load-object is allowed to,
+                   and in fact is expected to, carry side effects, as it should integrate the delta
+                   changes into the game world. Note that delta-load-object should only be used for
+                   pre-existing objects which are being modified with new data. Even in the delta
+                   reintegration stage, new objects which are being added to the world should be
+                   loaded with load-object."))
 
 ; Directly modifies the game world; call at the appropriate time
 (defun load-and-integrate-delta (&key (file *standard-input*))

@@ -31,6 +31,10 @@ function P.use_reinforcement()
    rein = "-r"
 end
 
+function P.is_using_reinforcement()
+   return rein == "-r"
+end
+
 function PQuery.new()
    local new = query.Query.new()
    setmetatable(new, {__index = PQuery})

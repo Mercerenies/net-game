@@ -97,7 +97,9 @@
    (quests :accessor alpha-quests
            :initform nil)
    (knowledge :accessor alpha-knowledge
-              :initform nil)))
+              :initform nil)
+   (key :accessor alpha-key
+        :initform nil)))
 
 (defun make-alpha ()
   (make-instance 'alpha-load))
@@ -110,7 +112,8 @@
              (*creatures* (alpha-creatures ,temp))
              (*spawners* (alpha-spawners ,temp))
              (*quests* (alpha-quests ,temp))
-             (*knowledge-base* (alpha-knowledge ,temp)))
+             (*knowledge-base* (alpha-knowledge ,temp))
+             (*key* (alpha-key ,temp)))
          ,@body))))
 
 (defgeneric load-object (header data)
@@ -200,6 +203,7 @@
         (alpha (make-alpha))
         (*world* nil))
     (load-formatted data 'alpha
+                    (key (setf (alpha-key alpha) key))
                     (world (setf *world* (load-object 'map world))
                            (setf (alpha-world alpha) *world*))
                     (creatures (setf (alpha-creatures alpha) (load-object 'creature-set creatures)))

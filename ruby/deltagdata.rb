@@ -26,6 +26,7 @@ class DeltaGData < GData
     @knowledge_base = DeltaKnowledgeBase.new old_data.knowledge_base
     @new_quests = QuestSet.new
     @new_map = DeltaMap.new old_data.map
+    @old_key = old_data.file_key
   end
 
   def map
@@ -92,32 +93,37 @@ class DeltaGData < GData
     @new_map.select(&block)
   end
 
+  def file_key
+    @old_key + 1
+  end
+
   def result_structure
     creatures = ListLikeChain.new @new_creatures, @creatures
     spawners = ListLikeChain.new @new_spawners, @spawners
     quests = ListLikeChain.new @new_quests, @quests
-    AlphaStructure.new map, creatures, spawners, quests, @knowledge_base, get_meta_data
+    AlphaStructure.new map, creatures, spawners, quests, @knowledge_base, file_key, get_meta_data
   end
 
   # Returns a DeltaStructure object representing the changed properties of the DeltaGData.
   def delta_structure
-    DeltaStructure.new map, @new_creatures, @new_spawners, @new_quests, @knowledge_base
+    DeltaStructure.new map, @new_creatures, @new_spawners, @new_quests, @knowledge_base, file_key
   end
 
 end
 
 class DeltaStructure
 
-  def initialize(map, creatures, spawners, quests, knowledge_base)
+  def initialize(map, creatures, spawners, quests, knowledge_base, file_key)
     @map = map
     @creatures = creatures
     @spawners = spawners
     @quests = quests
     @knowledge_base = knowledge_base
+    @file_key = file_key
   end
 
   def to_dsxp
-    [:delta, @map.to_dsxp, @creatures, @spawners, @quests, @knowledge_base.to_dsxp].to_sxp
+    [:delta, @file_key, @map.to_dsxp, @creatures, @spawners, @quests, @knowledge_base.to_dsxp].to_sxp
   end
 
 end

@@ -25,9 +25,27 @@ local allqueries = {}
 local socket = require 'socket'
 local conn = nil
 
+function tokenize(data)
+   local tokens = {}
+   for elem in data:gmatch '%S+' do
+      table.insert(tokens, elem)
+   end
+   return tokens
+end
+
+function dispatch_on(tokens)
+   local func = dispatch[ tokens[1] ]
+   if type(func) == 'function' then
+      func(tokens)
+   else
+      io.stderr:write("WARNING: Unknown message '" .. tokens[1] .. "' received!\n")
+   end
+end
+
 function setup_and_run()
 
    logger.set_debug_level(tonumber(arg[2]))
+   io.stderr:write(logger.get_debug_level())
 
    if tonumber(arg[3]) > 0 then
       pquery.use_reinforcement()
@@ -38,22 +56,25 @@ function setup_and_run()
    server:listen()
    conn = assert( server:accept() )
 
-   local data
+   if arg[4] ~= 'no' then
+      conn:settimeout(tonumber(arg[4]))
+   end
+
+   local data, err
    while true do
-      data = assert( conn:receive '*l' )
-      local tokens = {}
-      for elem in data:gmatch '%S+' do
-         table.insert(tokens, elem)
-      end
-      local func = dispatch[ tokens[1] ]
-      if type(func) == 'function' then
-         func(tokens)
+      data, err = conn:receive '*l'
+      if data then
+         local tokens = tokenize(data)
+         dispatch_on(tokens)
+      elseif err == 'timeout' then
+         -- Timed out; do a routine check and then move on
+         dispatch_on { 'ter' }
       else
-         io.stderr:write("WARNING: Unknown message '" .. tokens[1] .. "' received!\n")
+         error(err)
       end
    end
 
-end
+end -- ///// Testing timeout (still no debug?)
 
 function checkin()
    -- Check in with the semaphore for the generator

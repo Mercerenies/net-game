@@ -5,7 +5,7 @@
 class GData
   include DeltaAble
 
-  attr_reader :node, :map, :knowledge_base
+  attr_reader :node, :map, :knowledge_base, :file_key
 
   def initialize(everything)
     @arr = everything.clone
@@ -16,6 +16,7 @@ class GData
     @spawners = SpawnerSet.new
     @quests = QuestSet.new
     @knowledge_base = KnowledgeBase.new
+    @file_key = 1
   end
 
   def to_delta
@@ -120,7 +121,7 @@ class GData
 
   # Returns the generator data in an appropriate output list format.
   def result_structure
-    AlphaStructure.new map, @creatures, @spawners, @quests, @knowledge_base, get_meta_data
+    AlphaStructure.new map, @creatures, @spawners, @quests, @knowledge_base, file_key, get_meta_data
   end
 
   # Returns the metadata object that will be stored with the result structure.
@@ -135,10 +136,11 @@ class GData
   end
 
   def self.from_sxp(arg)
-    map, creatures, spawners, quests, kb, meta = Reloader.assert_first :alpha, arg
+    fk, map, creatures, spawners, quests, kb, meta = Reloader.assert_first :alpha, arg
     reloader = Reloader.instance
     meta = reloader.load meta
     GData.new([]).tap do |gdata|
+      gdata.instance_variable_set :@file_key, fk
       gdata.instance_variable_set :@map, reloader.load(map)
       gdata.instance_variable_set :@creatures, reloader.load(creatures)
       gdata.instance_variable_set :@spawners, reloader.load(spawners)
@@ -154,17 +156,20 @@ end
 # An immutable structure consisting of data designed to be the root node of an alpha file.
 class AlphaStructure
 
-  def initialize(map, creatures, spawners, quests, kb, meta)
+  def initialize(map, creatures, spawners, quests, kb, file_key, meta)
     @map = map
     @creatures = creatures
     @spawners = spawners
     @quests = quests
     @knowledge_base = kb
+    @file_key = file_key
     @meta = meta
+    # The file key is included as a unique integer to identify which alpha state is associated with which
+    # delta state, to eliminate the possibility of integrating two or more delta files in the wrong order.
   end
 
   def to_sxp
-    [:alpha, @map, @creatures, @spawners, @quests, @knowledge_base, @meta].to_sxp
+    [:alpha, @file_key, @map, @creatures, @spawners, @quests, @knowledge_base, @meta].to_sxp
   end
 
 end

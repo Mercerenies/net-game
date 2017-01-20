@@ -21,6 +21,8 @@
 
 (defparameter *state* (list 'global))
 
+(defparameter *key* nil)
+
 (defun make-player ()
   "Makes an instance of the player object, with no active quests and an empty visited list."
   (make-instance 'player))
@@ -52,10 +54,12 @@
         collect (subseq string start finish)
         until (null finish)))
 
-(defun run-game (&key (filename "./temp/system.txt"))
+(defun run-game (&key (filename "./temp/system.txt") (callback nil))
   "Runs the game in full, loading the world data from the given file. Note that the run-game function
    itself makes no effort to interact with external servers, such as the Lua interface. If such
-   interaction is desired, it should be implemented as a hook on do-action or a similar method."
+   interaction is desired, it should be implemented as a hook on do-action or a similar method.
+   The optional callback argument, if supplied, should be a nullary function which will be called
+   immediately after the world is loaded and before the player begins interaction."
   (alpha-bind (let ((*origin* filename))
                 (with-open-file (file filename)
                   (load-data :file file)))
@@ -67,6 +71,8 @@
         (error "The world is empty."))
       (unless *player*
         (error "The player object does not exist."))
+      (when callback
+        (funcall callback))
       (loop named game-loop
             with *read-eval* = nil
             with *do-exit* = (lambda () (return-from game-loop nil))

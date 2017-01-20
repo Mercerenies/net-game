@@ -20,6 +20,7 @@ function P.get_filename()
    return name
 end
 
+-- TODO Can we kill then delete?
 function P.cleanup()
    logger.echo(1, "Terminating processes...")
    for i = 0, n do

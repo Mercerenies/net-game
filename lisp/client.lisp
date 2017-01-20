@@ -43,7 +43,7 @@
                   (full-exit 1))))
     (with-open-stream (*socket* (ng-os:connect-to-socket *port*))
       (unwind-protect
-           (run-game :filename filename)
+           (run-game :filename filename :callback (lambda () (report-updates)))
         (client-cleanup-fnames)
         (when (open-stream-p *socket*)
           (format *socket* "quit~%"))))))
@@ -66,12 +66,14 @@
   (make-update-requests))
 
 (defun check-for-updates ()
-  (loop for (sym delta sentinel) in *client-pending*
+  (loop with removing = nil
+        for (sym delta sentinel) in *client-pending*
         when (probe-file sentinel)
             do (let ((*origin* delta))
                  (with-open-file (file delta)
-                   (load-and-integrate-delta :file file)))
-            and collect sym into removing
+                   (let ((result (load-and-integrate-delta :file file)))
+                     (when result
+                       (push sym removing)))))
         finally (loop for rr in removing
                       do (setf *client-pending*
                                (remove rr *client-pending* :key #'first)))))

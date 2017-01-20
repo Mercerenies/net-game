@@ -45,9 +45,14 @@
 
 ; Directly modifies the game world; call at the appropriate time
 (defun load-and-integrate-delta (&key (file *standard-input*))
-  (destructuring-bind (delta-sym dmap creatures spawners quests kb) (with-scheme-notation (read file))
+  ;; TODO load-formatted
+  (destructuring-bind (delta-sym key dmap creatures spawners quests kb) (with-scheme-notation (read file))
     (unless (eq delta-sym 'delta)
       (error "Flawed data - delta"))
+    (unless (= key (1+ *key*)) ; Wrong key
+      (return-from load-and-integrate-delta nil))
+    ;; Key
+    (setf *key* key)
     ;; Map
     (delta-map dmap)
     ;; Lists
@@ -64,4 +69,5 @@
     (mapc #'add-quest (load-with quests
                                  (whitelisted-load-1 #'load-object +quest-types+)
                                  'quest-set))
-    (delta-load-object 'knowledge-base kb)))
+    (delta-load-object 'knowledge-base kb)
+    t))

@@ -44,7 +44,8 @@
 (defmethod system-keys append ((obj player))
            `((nil "Percent Explored" ,(if (plusp (hash-table-count *world*))
                                           (* 100.0 (/ (visited-count *player*) (hash-table-count *world*)))
-                                          0.0))))
+                                          0.0))
+             (*key* "File Key" ,*key*)))
 
 (defun word-split (string &optional (token #\SPACE))
   "Splits a string into words, tokenized by the given token, which defaults to #\SPACE. If provided, the

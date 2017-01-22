@@ -74,7 +74,7 @@ function setup_and_run()
       end
    end
 
-end -- ///// Testing timeout (still no debug?)
+end
 
 function checkin()
    -- Check in with the semaphore for the generator

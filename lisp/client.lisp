@@ -74,9 +74,12 @@
                    (let ((result (load-and-integrate-delta :file file)))
                      (when result
                        (push sym removing)))))
-        finally (loop for rr in removing
-                      do (setf *client-pending*
-                               (remove rr *client-pending* :key #'first)))))
+        finally (progn
+                  (loop for rr in removing
+                        do (setf *client-pending*
+                                 (remove rr *client-pending* :key #'first)))
+                  (when removing
+                    (check-for-updates)))))
 
 (defmethod do-action :after (act obj preps)
   (declare (ignore act obj preps))

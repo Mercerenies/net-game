@@ -13,17 +13,27 @@
 (defparameter *client-fname-n* 0)
 
 (defun client-short-fname (n)
+  "Computes the nth \"short name\" of files to use."
   (format nil "dfile~3,'0D" n))
 
 (defun client-long-fname (n)
+  "Computes the nth \"long name\" of files to use. This should be a relative path from the base Net
+   directory."
   (format nil "./temp/~A.txt" (client-short-fname n)))
 
 (defun client-make-fname ()
+  "Uses the global *client-fname-n* counter to construct a unique filename, incrementing the global value
+   afterward. Note that the name returned by this function is only guaranteed to be unique as long as
+   *client-fname-n* has not been tampered with."
+  (check-type *client-fname-n* integer)
   (let ((name (client-long-fname *client-fname-n*)))
     (incf *client-fname-n*)
     name))
 
 (defun client-cleanup-fnames ()
+  "Cleans up any filenames that were produced by this program, from 0 up to *client-fname-n*. If
+   *client-fname-n* has been artificially modified, this may not clean up all of the files."
+  (check-type *client-fname-n* integer)
   (loop for i from 0 below *client-fname-n*
         do (delete-file (client-long-fname i))))
 

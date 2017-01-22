@@ -47,7 +47,7 @@
  |    Remember that the integer 0 is a special state that is reserved for un-accepted quests and should not
  |    be used for anything else.
  |  * (complete) - Complete the current quest. This also sends the quest into the 'completed state. This is
- |    a no-op if the quest has already been accepted.
+ |    a no-op if the quest has already been completed.
  |  * (accept <state>) - Accept the current quest. This is a no-op if the quest has already been accepted.
  |    Since State 0 is reserved for un-accepted quests, this will also send the quest into state <state>.
  |  * (speak <text>) - Causes the given text to be output as though spoken in dialogue.

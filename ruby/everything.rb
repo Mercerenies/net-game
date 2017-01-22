@@ -5,6 +5,7 @@ load './ruby/numeral.rb'
 load './ruby/sampler.rb'
 load './ruby/listlike.rb'
 load './ruby/pqueue.rb'
+load './ruby/breadthfirst.rb'
 
 load './ruby/logger.rb'
 load './ruby/affix.rb'

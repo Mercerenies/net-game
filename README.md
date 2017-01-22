@@ -82,13 +82,17 @@ There are several scripts in the `./bash/` directory, but (aside from the initia
 
    The first several flags control the number of crawls to perform for each type of entity. Note that this is the number of *attempts*, not necessarily the number of results. If you would like five locations, it is often a good idea to run `-P 6` or `-P 7` to be safe, since some of the crawls are likely to fail.
 
+ * `-u` Unit Crawl
+
+   The unit crawl command, primarily for debugging purposes, provides a way to request a single, specific page from the crawling engine, rather than perusing the Internet looking for a valid one. Note that, if `-u` is supplied, the sum of all of the entity type flags, listed above, should be `1`, so that the unit page can be identified correctly.
+
  * `-d` Debug Level
 
    The debug level controls the information printed to STDERR. An absent (or 0) debug level results in nothing being printed to STDERR. At debug level 1, the Python engine will print all of the pages it visits during its crawl. At level 2, the reinforcement engine will print whether or not it is in "exploration mode".
 
  * `-r` Reinforcement Engine
 
-   The reinforcement learning engine is an experimental learning machine encoded into the Wikipedia crawling algorithm. As it is highly experimental, it is disabled by default but can be enabled with this flag. The engine will remember past crawls and use them to improve its ability to search through the Internet. Note that, even with this flag, some types of crawls will not use the reinforcement engine anyway, as it is not necessary in all cases.
+   Rather than crawling Wikipedia randomly, this flag will instruct the engine to use a reinforcement learning algorithm to intelligently browse the Web, when it makes sense to do so. The engine will remember past crawls and use them to improve its ability to search through the Internet. Note, in the dependencies section, that the `flock` Bash command must be available in order to use the reinforcement learning algorithm.
 
  * `-1` Site Crawling
  * `-2` Page Parsing

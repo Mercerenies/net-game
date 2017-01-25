@@ -10,7 +10,7 @@
                (> (percent-finished-quests) 0.35))
       (client-request 'quests 'q1))
     ; Few Quests Remaining Trigger
-    (when (< (- (length (finished-quests)) (total-quest-count)) 5) ; TODO Probably increase this number
+    (when (< (- (length (finished-quests)) (total-quest-count)) 20)
       (client-request 'quests 'q2))
     ; No Active Spawner Trigger
     (when (and (member-if #'(lambda (x) (not (check-flag 'civilized x)))

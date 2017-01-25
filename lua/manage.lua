@@ -13,7 +13,7 @@ local dispatch = {
 }
 
 local req_objs = {
-   quests    = function () return pquery.PQuery.new():people(1):celebs(1) end,
+   quests    = function () return pquery.PQuery.new():people(3):celebs(3) end,
    map       = function () return pquery.PQuery.new():places(3) end,
    wildlife  = function () return pquery.PQuery.new():animals(2) end,
    foliage   = function () return pquery.PQuery.new():foods(2) end,

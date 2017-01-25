@@ -13,9 +13,9 @@ class PriorityQueue
     @ordering = (block || :<.to_proc)
   end
 
-  # Constructs a priority queue, according to #initialize, and then places elements into it immediately.
-  def self.[](*elems, &block)
-    PriorityQueue.new(&block).tap do |pq|
+  # Constructs a priority queue with the default ordering and then places elements into it immediately.
+  def self.[](*elems)
+    PriorityQueue.new.tap do |pq|
       elems.each { |e| pq.add e }
     end
   end

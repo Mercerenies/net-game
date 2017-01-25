@@ -55,3 +55,42 @@ module QuestMaker
   end
 
 end
+
+# A provider of ID values and flags for quest instances. Some of the methods in this class delegate to the
+# QuestMaker module, but QuestProvider provides some additional, localized functionality that is not available
+# globally.
+class QuestProvider
+
+  def initialize
+    @numbers = 0
+    @prefixes = {}
+  end
+
+  def quest_empty_stage
+    0
+  end
+
+  def quest_finished_state
+    :completed
+  end
+
+  def make_quest_flag
+    QuestMaker.make_quest_flag
+  end
+
+  def make_quest_state(prefix = nil)
+    if prefix
+      key = prefix.to_s.upcase
+      if @prefixes.include? key
+        @prefixes[key] += 1
+      else
+        @prefixes[key] = 1
+      end
+      (key + @prefixes[key].to_s).intern
+    else
+      @numbers += 1
+      @numbers
+    end
+  end
+
+end

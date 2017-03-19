@@ -17,6 +17,7 @@ load './ruby/level.rb'
 load './ruby/node.rb'
 load './ruby/map.rb'
 load './ruby/deltamap.rb'
+load './ruby/navigation.rb'
 
 load './ruby/questbuilder.rb'
 load './ruby/queststub.rb'

@@ -43,6 +43,15 @@
                    not be directly mutated, in most cases. Instead, the move-object generic function
                    should be used."))
 
+(defclass hideable ()
+  ((hidden :accessor is-hidden
+           :initarg :hidden
+           :initform t
+           :type boolean))
+  (:documentation "A base class for objects which can be hidden from the player's view. A hidden instance
+                   for which is-hidden yields true will not be shown in the location contents list and
+                   will not be directly interact-able."))
+
 (defclass flagged ()
   ((flags :accessor get-flags
           :initarg :flags
@@ -175,3 +184,9 @@
 
 (defmethod system-keys append ((obj location))
   `((location-fitness "Fitness" ,(location-fitness obj))))
+
+(defmethod system-keys append ((obj hideable))
+  `((is-hidden "Hidden" ,(is-hidden obj))))
+
+(defun remove-hidden (lst)
+  (remove-if (lambda (x) (and (typep x 'hideable) (is-hidden x))) lst))

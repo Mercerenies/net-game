@@ -86,7 +86,7 @@
   (check-type *numerical* list "an associative list")
   (check-type sentence string)
   (let ((nouns (append (get-formatted-numbers)
-                       (mapcar #'get-name (location-contents (get-loc *player*)))
+                       (mapcar #'get-name (remove-hidden (location-contents (get-loc *player*))))
                        (mapcar #'get-name (inv-items *player*))
                        (mapcar #'location-short-name (halo (get-loc *player*) 1))
                        (if *god-mode* (mapcar #'car +summonable-items+) nil)
@@ -107,7 +107,7 @@
   (check-type sentence string)
   (flet ((translate-noun (noun)
            (and noun
-                (or (find noun (append (location-contents (get-loc *player*))
+                (or (find noun (append (remove-hidden (location-contents (get-loc *player*)))
                                        (inv-items *player*)
                                        (halo (get-loc *player*) 1))
                           :test #'string-equal

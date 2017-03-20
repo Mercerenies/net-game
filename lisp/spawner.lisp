@@ -28,7 +28,7 @@
   (check-type *world* hash-table)
   (gethash (choose (spawner-area spawner)) *world*))
 
-(defun do-spawn (spawner) ; TODO Localize the spawning
+(defun do-spawn (spawner) ; TODO Localize the spawning /////
   (check-type *creatures* list)
   (unless (and (spawner-creature-instance spawner)
                (get-loc (spawner-creature-instance spawner)))

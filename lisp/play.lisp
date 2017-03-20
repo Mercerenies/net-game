@@ -82,7 +82,7 @@
             with acmd = nil
             do (assign-numbers (mapcar (lambda (x) (gethash x *world*))
                                        (location-exits (get-loc *player*)))
-                               (location-contents (get-loc *player*))
+                               (remove-hidden (location-contents (get-loc *player*)))
                                (inv-items *player*))
             do (progn
                  (format t "~%=== ~A ===~%~
@@ -100,8 +100,9 @@
                          (mapcar (lambda (x)
                                    (get-numbered-name (gethash x *world*)))
                                  (location-exits (get-loc *player*)))
-                         (mapcar #'get-numbered-name (remove-if-not #'(lambda (x) (typep x 'named))
-                                                                    (location-contents (get-loc *player*))))
+                         (mapcar #'get-numbered-name
+                                 (remove-if-not #'(lambda (x) (typep x 'named))
+                                                (remove-hidden (location-contents (get-loc *player*)))))
                          (mapcar #'get-numbered-name (inv-items *player*))
                          (inv-current-weight *player*)
                          (inv-max-weight *player*)

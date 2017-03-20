@@ -42,12 +42,44 @@ class NavLocationLens
     NavLocationLens.new @nav, (self.to_a + arr.to_a)
   end
 
+  def within(n)
+    if n < 0
+      NavLocationLens.new @nav, []
+    elsif n == 0
+      self
+    else
+      self.surrounding.within(n - 1).prune
+    end
+  end
+
   def prune
     NavLocationLens.new @nav, @locs.uniq
   end
 
+  def contents
+    objs = @locs.flat_map { |x| x.each.to_a }
+    NavContentsLens.new @nav, objs
+  end
+
   def to_a
     @locs.dup
+  end
+
+end
+
+class NavContentsLens
+
+  def initialize(nav, arr)
+    @nav = nav
+    @objs = arr
+  end
+
+  def prune
+    NavContentsLens.new @nav, @objs.uniq
+  end
+
+  def to_a
+    @objs.dup
   end
 
 end

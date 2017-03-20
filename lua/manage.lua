@@ -45,7 +45,6 @@ end
 function setup_and_run()
 
    logger.set_debug_level(tonumber(arg[2]))
-   io.stderr:write(logger.get_debug_level())
 
    if tonumber(arg[3]) > 0 then
       pquery.use_reinforcement()

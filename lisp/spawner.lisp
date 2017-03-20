@@ -28,7 +28,7 @@
   (check-type *world* hash-table)
   (gethash (choose (spawner-area spawner)) *world*))
 
-(defun do-spawn (spawner) ; TODO Localize the spawning /////
+(defun do-spawn (spawner)
   (check-type *creatures* list)
   (unless (and (spawner-creature-instance spawner)
                (get-loc (spawner-creature-instance spawner)))
@@ -46,3 +46,41 @@
         for spawner in *spawners*
         when (not (null (intersection nearby (spawner-area spawner))))
             collect spawner))
+
+; ///// We want to turn spawner instances into neo-spawner instances since they exist in the game world physically
+(defclass neo-spawner (locatable hideable)
+  ((creature :accessor neo-spawner-creature
+             :initform nil
+             :initarg :creature)
+   (alive :accessor neo-spawner-creature-instance
+          :initform nil
+          :type (or null creature))
+   (counter :accessor neo-spawner-counter
+            :initform 0
+            :type integer)
+   (time :accessor neo-spawner-time
+         :initform 0
+         :type integer))
+  (:default-initargs :hidden t))
+
+(defmethod entity-turn ((obj neo-spawner))
+  (with-accessors ((creature neo-spawner-creature)
+                   (instance neo-spawner-creature-instance)
+                   (counter neo-spawner-counter)
+                   (time neo-spawner-time)
+                   (loc get-loc))
+      obj
+    (unless (and instance (get-loc instance))
+      (if (<= counter 0)
+          (let ((new-inst (make-creature (find creature *creatures* :key #'get-id))))
+            (setf counter time)
+            (setf instance new-inst)
+            (move-object new-inst loc))
+          (decf counter)))))
+
+;; It's an invisible object; examination probably won't appear but still
+(defmethod do-action ((act (eql 'examine)) (obj neo-spawner) preps)
+  (declare (ignore preps))
+  (format t "A spawner that creates creatures."))
+
+;; TODO System keys for neo-spawner

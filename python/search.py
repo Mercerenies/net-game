@@ -35,3 +35,5 @@ class BasicSearch(Search):
                 arr.append(curr)
         spider.finished()
         return arr
+
+# ///// Search using a user-provided directive string

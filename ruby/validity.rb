@@ -126,7 +126,7 @@ class PlantTypesValidator < Validator
   end
 
   def self.from_sxp(arg)
-    ary = Reloader.assert_first :plants, arg
+    ary, = Reloader.assert_first :plants, arg
     PlantTypesValidator.new ary.dup
   end
 

@@ -70,4 +70,6 @@
                                  (whitelisted-load-1 #'load-object +quest-types+)
                                  'quest-set))
     (delta-load-object 'knowledge-base kb)
+    ;; Neo Spawner Migration
+    (do-neo-spawner-migration)
     t))

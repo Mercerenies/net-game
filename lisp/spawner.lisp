@@ -47,8 +47,20 @@
         when (not (null (intersection nearby (spawner-area spawner))))
             collect spawner))
 
+;; This function is temporary and acts as a shim while moving the old spawner interface over to the new one
+(defun do-neo-spawner-migration ()
+  (check-type *world* hash-table)
+  (check-type *spawners* list)
+  (loop for sp in *spawners*
+        do (loop for loc in (spawner-area sp)
+                 for inst = (make-instance 'neo-spawner
+                                           :creature (spawner-creature sp)
+                                           :time 5) ; TODO Pick this intelligently
+                 do (move-object inst (gethash loc *world*))))
+  (setf *spawners* nil))
+
 ; ///// We want to turn spawner instances into neo-spawner instances since they exist in the game world physically
-(defclass neo-spawner (locatable hideable)
+(defclass neo-spawner (located hideable)
   ((creature :accessor neo-spawner-creature
              :initform nil
              :initarg :creature)
@@ -56,9 +68,11 @@
           :initform nil
           :type (or null creature))
    (counter :accessor neo-spawner-counter
+            :initarg :counter
             :initform 0
             :type integer)
    (time :accessor neo-spawner-time
+         :initarg :time
          :initform 0
          :type integer))
   (:default-initargs :hidden t))

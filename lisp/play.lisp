@@ -68,6 +68,7 @@
                           for player = (find-if (lambda (y) (typep y 'player))
                                                 (location-contents loc))
                           when player return player)))
+      (do-neo-spawner-migration)
       (unless (plusp (hash-table-count *world*))
         (error "The world is empty."))
       (unless *player*

@@ -255,7 +255,6 @@
         (type nil)
         (food nil)
         (time 5))
-    (format t "YO!~%YO!~%YO!~%")
     (load-formatted data 'plant
                     (name-1 (setf name name-1))
                     (:type type-1 (setf type type-1))

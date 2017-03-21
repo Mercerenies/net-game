@@ -5,8 +5,8 @@
               :initform (make-inventory)
               :type inventory)))
 
-; `inventory` objects act like `carrying` objects so that the inventory-modification methods
-; can be written once and will behave correctly given an inventory OR a carrying instance.
+;; `inventory` objects act like `carrying` objects so that the inventory-modification methods
+;; can be written once and will behave correctly given an inventory OR a carrying instance.
 (defclass inventory (carrying)
   ((items :accessor inv-items
           :initarg :items

@@ -17,8 +17,8 @@
   (declare (ignore act preps))
   (format t "Nothing happened...~%"))
 
-;(defmethod do-action :before (act obj preps)
-;  (format t " >>> ~A ~A ~A <<< " act obj preps))
+;;(defmethod do-action :before (act obj preps)
+;;  (format t " >>> ~A ~A ~A <<< " act obj preps))
 
 (defmethod do-action ((act (eql 'go)) (obj location) preps)
   (declare (ignore preps))

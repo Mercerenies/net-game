@@ -1,15 +1,15 @@
 (in-package #:net-game)
 
-; <command> ::= <verb> [ <noun-phrase> ] { <prep-phrase> }
-; <noun-phrase> ::= [ <noun> ]
-; <prep-phrase> ::= <prep> <noun>
+;; <command> ::= <verb> [ <noun-phrase> ] { <prep-phrase> }
+;; <noun-phrase> ::= [ <noun> ]
+;; <prep-phrase> ::= <prep> <noun>
 
 (defstruct (sentence :named (:type vector))
   (verb nil)
   (noun nil)
   (preps nil))
 
-; TODO If a noun is a prefix of another noun, the longer one is inaccessible
+;; TODO If a noun is a prefix of another noun, the longer one is inaccessible
 (defun scan-sentence (words sentence)
   (check-type words list "a list of words")
   (check-type sentence string)
@@ -27,8 +27,8 @@
         finally (unless (zerop (length vec))
                   (return nil))))
 
-; The first argument should be the output from scan-sentence
-; Returns (verb noun &rest preps) where preps is a plist
+;; The first argument should be the output from scan-sentence
+;; Returns (verb noun &rest preps) where preps is a plist
 (defun parse-sentence (phrase &key
                                 (nouns nil) (verbs nil)
                                 (preps nil) (arts '("a" "an" "the")))
@@ -99,8 +99,8 @@
                       :preps '("with")
                       :arts '("the" "a" "an"))))
 
-; TODO Factor out translate-noun into something that can be modified from the outside.
-;      That is, we don't want to have to change enhanced-parse to add translation rules.
+;; TODO Factor out translate-noun into something that can be modified from the outside.
+;;      That is, we don't want to have to change enhanced-parse to add translation rules.
 (defun enhanced-parse (sentence)
   (check-type *world* hash-table)
   (check-type *player* player)

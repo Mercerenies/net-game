@@ -18,7 +18,7 @@
   "")
 
 (defmethod entity-turn ((obj t))
-  ; By default, do nothing
+  ;; By default, do nothing
   nil)
 
 (defmethod do-command ((state (eql 'global)) arg)

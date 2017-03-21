@@ -106,8 +106,8 @@
   (get-origin (anim-data obj)))
 
 (defmethod entity-turn ((obj animal))
-;  (format t "The ~A (~A / ~A) at ~A is going to go now.~%"
-;          (get-name obj) (anim-mood obj) (anim-attitude obj) (get-name (get-loc obj)))
+  ;;(format t "The ~A (~A / ~A) at ~A is going to go now.~%"
+  ;;        (get-name obj) (anim-mood obj) (anim-attitude obj) (get-name (get-loc obj)))
   (if (not (is-desirable-square obj (get-loc obj)))
       (move-object obj (choose (halo (get-loc obj) 1)))
       (case (anim-mood obj)
@@ -151,23 +151,23 @@
 
 (defmethod is-desirable-square ((obj animal) (loc location))
   (cond
-    ; If sea-based and location is a land tile, undesirable.
+    ;; If sea-based and location is a land tile, undesirable.
     ((and (anim-sea obj)
           (not (or (check-flag 'shore loc)
                    (check-flag 'sea loc)))) nil)
-    ; If passive attitude, civilized tile, and not a passive bird, then undesirable.
+    ;; If passive attitude, civilized tile, and not a passive bird, then undesirable.
     ((and (eql (anim-mood obj) 'passive)
           (check-flag 'civilized loc)
           (not (and (anim-air obj)
                     (eql (anim-attitude obj) 'passive)))) nil)
-    ; Otherwise, desirable.
+    ;; Otherwise, desirable.
     (t)))
 
 (defmethod do-action ((act (eql 'examine)) (obj animal) preps)
   (declare (ignore preps))
-  ; TODO Better observation with a level up
-  ;      Ideally, the player would have an "observation" stat which allows him to better
-  ;      detect when an animal is stalking them
+  ;; TODO Better observation with a level up
+  ;;      Ideally, the player would have an "observation" stat which allows him to better
+  ;;      detect when an animal is stalking them
   (format t "A ~[~;tiny ~;small ~;~;large ~;enormous ~]~(~A~) ~
              ~[flying through the air ~;swimming in the sea ~:;wandering by ~]~
              ~[casually~:;glaring at you~].~%"

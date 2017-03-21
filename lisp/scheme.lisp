@@ -1,8 +1,8 @@
 (in-package #:net-game)
 
-; Ruby outputs S-expressions in Scheme notation, so it is necessary to define
-; a couple of dispatch macros to deal with the differences when loading the
-; expressions from Ruby.
+;; Ruby outputs S-expressions in Scheme notation, so it is necessary to define
+;; a couple of dispatch macros to deal with the differences when loading the
+;; expressions from Ruby.
 
 (defmacro with-scheme-notation (&body body)
   "Ruby outputs S-expressions in Scheme notation, so it is necessary to define

@@ -1,8 +1,8 @@
 (in-package #:net-game)
 
-; TODO delta-map and delta-modify should both be delta-load-object with load-formatted inside.
+;; TODO delta-map and delta-modify should both be delta-load-object with load-formatted inside.
 
-; Modifies *world*
+;; Modifies *world*
 (defun delta-map (map)
   (unless (eq (first map) 'map)
     (error "Flawed data - map"))
@@ -43,7 +43,7 @@
                    reintegration stage, new objects which are being added to the world should be
                    loaded with load-object."))
 
-; Directly modifies the game world; call at the appropriate time
+;; Directly modifies the game world; call at the appropriate time
 (defun load-and-integrate-delta (&key (file *standard-input*))
   ;; TODO load-formatted
   (destructuring-bind (delta-sym key dmap creatures spawners quests kb) (with-scheme-notation (read file))

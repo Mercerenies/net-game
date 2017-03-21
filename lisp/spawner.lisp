@@ -77,7 +77,7 @@
          :type integer))
   (:default-initargs :hidden t))
 
-; TODO Spawns waaaaaaaay too often compared to the old system
+;; TODO Spawns waaaaaaaay too often compared to the old system
 (defmethod entity-turn ((obj neo-spawner))
   (with-accessors ((creature neo-spawner-creature)
                    (instance neo-spawner-creature-instance)

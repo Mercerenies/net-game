@@ -34,7 +34,7 @@
         (pos clauses)
         (seq nil))
     (flet ((err (spec) `(error "Flawed data (~S): ~A" ,sym ,spec)))
-      ; Regular arguments
+      ;; Regular arguments
       (let ((next `(setf ,ptr (cdr ,ptr)))
             (prologue `((setf ,ptr ,var)
                         (unless (eq (car ,ptr) ,sym)
@@ -53,7 +53,7 @@
           (let ((named-check `((unless (>= (length ,ptr) ,(1+ len))
                                  ,(err "not enough normal arguments")))))
             (if (listp (caar pos))
-                ; Rest arguments
+                ;; Rest arguments
                 (let* ((rest-var (caaar pos))
                        (rest-clause `(,next
                                       (loop for ,rest-var in ,ptr
@@ -65,7 +65,7 @@
                      ,@named
                      ,@rest-clause
                      ,@final-return))
-                ; Keyword arguments
+                ;; Keyword arguments
                 (let* ((case-clauses (loop for elem in pos
                                            collect `(,(car elem) (let ((,(cadr elem) (second ,ptr)))
                                                                    ,@(cddr elem)))))
@@ -104,7 +104,7 @@
 (defun make-alpha ()
   (make-instance 'alpha-load))
 
-; The argument to this should be an alpha-load object
+;; The argument to this should be an alpha-load object
 (defmacro alpha-bind (alpha &body body)
   (let ((temp (gensym)))
     `(let ((,temp ,alpha))
@@ -197,7 +197,7 @@
                     ((extra) (push (funcall func extra) list)))
     (reverse list))) ; TODO Can we avoid the reverse while maintaining the order?
 
-; Returns an alpha-load instance
+;; Returns an alpha-load instance
 (defun load-data (&key (file *standard-input*))
   (let ((data (with-scheme-notation (read file)))
         (alpha (make-alpha))

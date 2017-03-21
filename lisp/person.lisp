@@ -28,7 +28,7 @@
 (defun make-person (id name &rest keys &key &allow-other-keys)
   (apply #'make-instance 'person :id id :name name keys))
 
-; TODO More user-friendly text here
+;; TODO More user-friendly text here
 (defmethod do-action ((type (eql 'examine)) (obj person) preps)
   (declare (ignore preps))
   (case (person-gender obj)

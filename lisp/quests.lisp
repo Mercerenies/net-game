@@ -6,7 +6,7 @@
 (defconstant +quest-types+
   '(quest))
 
-; TODO Quests should reward the player upon completion; currently they just sort of... finish
+;; TODO Quests should reward the player upon completion; currently they just sort of... finish
 
 #|
  | A quest consists of a collection (alist) of states, indexed by integers or symbols. Each state
@@ -81,13 +81,13 @@
 
 (defgeneric run-quest-command (quest cmd))
 
-; These are the read-only objects that are stored in *quests*
+;; These are the read-only objects that are stored in *quests*
 (defclass quest-data (identifiable named)
   ((states :accessor quest-states
            :initarg :states
            :initform (make-hash-table))))
 
-; These are the mutable structures that the player modifies locally
+;; These are the mutable structures that the player modifies locally
 (defclass quest-instance (identifiable named)
   ((state :accessor quest-state
           :initarg :state
@@ -103,7 +103,7 @@
       (error "Malformed quest command - ~S" cmd))
     (apply func recurse quest (cdr cmd))))
 
-; No-op if trying to go to State 0, since that state is reserved
+;; No-op if trying to go to State 0, since that state is reserved
 (defun quest-goto (quest state)
   (check-type state (or integer symbol) "a state identifer (symbol / integer)")
   (unless (eql state 0)
@@ -114,7 +114,7 @@
     (setf (is-quest-completed quest) t)
     (quest-goto quest 'completed)))
 
-; TODO Make it so triggers can be "matched" in more sophisticated ways than equality (here and quest-has-trigger)
+;; TODO Make it so triggers can be "matched" in more sophisticated ways than equality (here and quest-has-trigger)
 (defun do-quest-trigger (quest trigger)
   (let* ((quest-data (get-quest-data (get-id quest)))
          (state (quest-state quest))
@@ -130,13 +130,13 @@
          (cmd (cdr (assoc trigger triggers :test #'equal))))
     cmd))
 
-; Triggers for all active quests (do not use this for 'initiate)
+;; Triggers for all active quests (do not use this for 'initiate)
 (defun do-trigger (trigger)
   (check-type *player* player)
   (mapc (lambda (q) (do-quest-trigger q trigger))
         (active-quests *player*)))
 
-; Triggers for the first active quest which has the appropriate trigger
+;; Triggers for the first active quest which has the appropriate trigger
 (defun do-first-trigger (trigger)
   (check-type *player* player)
   (loop for q in (active-quests *player*)
@@ -198,7 +198,7 @@
   (hash-table-count *quests*))
 
 (defun started-quests ()
-  ; Returns quests which have been started, including those that are completed
+  ;; Returns quests which have been started, including those that are completed
   (check-type *player* player)
   (active-quests *player*))
 

@@ -92,7 +92,7 @@
         (move-object obj (get-loc *player*)))
       (format t "But you're not holding the ~A...~%" (get-name obj))))
 
-; TODO More user-friendly text
+;; TODO More user-friendly text
 (defmethod do-action ((act (eql 'examine)) (obj item) preps)
   (declare (ignore preps))
   (format t "An item weighing about ~A units.~%"
@@ -104,7 +104,7 @@
 (defmethod system-keys append ((obj item))
   `((item-weight "Weight" ,(item-weight obj))))
 
-; TODO More user-friendly text
+;; TODO More user-friendly text
 (defmethod do-action ((act (eql 'examine)) (obj weapon) preps)
   (declare (ignore preps))
   (format t "A weapon weighing about ~A units.~%"

@@ -59,7 +59,6 @@
                  do (move-object inst (gethash loc *world*))))
   (setf *spawners* nil))
 
-; ///// We want to turn spawner instances into neo-spawner instances since they exist in the game world physically
 (defclass neo-spawner (located hideable)
   ((creature :accessor neo-spawner-creature
              :initform nil
@@ -77,6 +76,7 @@
          :type integer))
   (:default-initargs :hidden t))
 
+; TODO Spawns waaaaaaaay too often compared to the old system
 (defmethod entity-turn ((obj neo-spawner))
   (with-accessors ((creature neo-spawner-creature)
                    (instance neo-spawner-creature-instance)

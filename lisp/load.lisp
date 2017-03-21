@@ -18,9 +18,9 @@
    The value returned at the end is the data value that was passed in. Note also that the rest clause, if
    supplied, may be called multiple times, once for each additional argument.
    Examples:
-   (setq value (location id name :data (1 2 3) :string \"abc\"))
-   (setq value1 (creature-set (blah) (blah) (blah)))
-   (setq value2 (data))
+   (setq value '(location id name :data (1 2 3) :string \"abc\"))
+   (setq value1 '(creature-set (blah) (blah) (blah)))
+   (setq value2 '(data))
    (load-formatted value 'location
                    (id do-stuff)
                    (name do-stuff)
@@ -250,22 +250,31 @@
 ;; TODO The rest of this file needs to be migrated to load-formatted
 
 (defmethod load-object ((header (eql 'plant)) data)
-  (loop with name = (second data)
-        with type = nil
-        with food = nil
-        with growth-time = 5
-        for rest = (cddr data) then (cddr rest)
-        for key = (first rest)
-        for value = (second rest)
-        while (not (null rest))
-        do (case key
-             (:type (setf type value))
-             (:food (progn
-                      (unless (eq (car value) 'food) (error "Flawed data - food"))
-                      (setf food (apply #'make-food-data (cdr value)))))
-             (:growth-time (setf growth-time value)))
-        finally (let ((plant (make-plant name :type type :food food :growth-time growth-time)))
-                  (return plant))))
+  ;; TODO See the note for weapon's load-object above; same thing applies here
+  (let ((name nil)
+        (type nil)
+        (food nil)
+        (time 5))
+    (format t "YO!~%YO!~%YO!~%")
+    (load-formatted data 'plant
+                    (name-1 (setf name name-1))
+                    (:type type-1 (setf type type-1))
+                    (:food food-1 (progn
+                                    (unless (eq (car food-1) 'food) (error "Flawed data - food"))
+                                    (setf food (apply #'make-food-data (cdr food-1))))) ; TODO load-formatted
+                    (:growth-time time-1 (setf time time-1)))
+    (make-plant name :type type :food food :growth-time time)))
 
 (defmethod load-object ((header (eql 'npc)) data)
-  (apply #'make-person (cdr data)))
+  (let ((person (make-person nil "")))
+    (load-formatted data 'npc
+                    (id (setf (get-id person) id))
+                    (name (setf (get-name person) name))
+                    (:short-name x (setf (person-nickname person) x))
+                    (:gender x (setf (person-gender person) x))
+                    (:job x (setf (person-job person) x))
+                    (:job-name x (setf (person-job-name person) x))
+                    (:old-job x (setf (person-old-job person) x))
+                    (:old-job-name x (setf (person-old-job-name person) x))
+                    (:casual-dialogue x (setf (person-casual-dialogue person) x)))
+    person))

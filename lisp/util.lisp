@@ -19,3 +19,9 @@
   (check-type lower number)
   (check-type upper number)
   (+ (* lower (- 1 value)) (* upper value)))
+
+(defmacro addf (place n)
+  `(setf ,place (+ ,place ,n)))
+
+(defmacro subf (place n)
+  `(setf ,place (- ,place ,n)))

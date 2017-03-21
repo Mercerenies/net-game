@@ -247,8 +247,6 @@
       (setf (get-flags wpn) flags)
       (return wpn))))
 
-;; TODO The rest of this file needs to be migrated to load-formatted
-
 ;; ///// load-object for neo-spawner next
 
 (defmethod load-object ((header (eql 'plant)) data)

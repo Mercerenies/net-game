@@ -190,3 +190,7 @@
 
 (defun remove-hidden (lst)
   (remove-if (lambda (x) (and (typep x 'hideable) (is-hidden x))) lst))
+
+(defun find-by-id (elem list)
+  (check-type list list)
+  (find elem list :key #'get-id))

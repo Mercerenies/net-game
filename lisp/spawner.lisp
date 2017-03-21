@@ -33,8 +33,7 @@
   (unless (and (spawner-creature-instance spawner)
                (get-loc (spawner-creature-instance spawner)))
     (let ((loc (choose-spawn-point spawner))
-          (inst (make-creature (find (spawner-creature spawner) *creatures*
-                                     :key #'get-id))))
+          (inst (make-creature (find-by-id (spawner-creature spawner) *creatures*))))
       (when inst
         (setf (spawner-creature-instance spawner) inst)
         (move-object inst loc)))))
@@ -87,7 +86,7 @@
       obj
     (unless (and instance (get-loc instance))
       (if (<= counter 0)
-          (let ((new-inst (make-creature (find creature *creatures* :key #'get-id))))
+          (let ((new-inst (make-creature (find-by-id creature *creatures*))))
             (setf counter time)
             (setf instance new-inst)
             (move-object new-inst loc))

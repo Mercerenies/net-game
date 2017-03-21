@@ -69,12 +69,12 @@
                              :weight (choose '(4 5 5 6 6 6 7 7 8))))
         (restore (lerp (/ (1- (food-nutrition data)) 2) 3.0 20.0))
         (poisoned (< (random 1.0) (food-poison-chance data))))
-    (setf restore (+ (random 10.0) restore -5))
+    (addf restore (+ (random 10.0) -5))
     (when (<= restore 1.0)
       (setf restore 1.0))
     (when (< (random 1.0) 0.05)
       (add-flag 'food-fresh food)
-      (setf restore (+ 10 restore))) ; 5% chance of boosted restore power
+      (addf restore 10)) ; 5% chance of boosted restore power
     (setf (food-health food)
           (if poisoned
               (/ restore -2)
@@ -134,7 +134,7 @@
   (format t "~:[Gained~;Lost~] ~D HP~%"
           (minusp (food-health obj))
           (abs (food-health obj)))
-  (setf (hp *player*) (+ (hp *player*) (/ (food-health obj) 100)))
+  (addf (hp *player*) (/ (food-health obj) 100))
   (when (> (hp *player*) 1.00)
     (setf (hp *player*) 1.00))
   (move-object obj nil)

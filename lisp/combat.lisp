@@ -1,7 +1,7 @@
 (in-package #:net-game)
 
 (defun do-attack (obj &key (target *player*) (atk (atk obj)))
-  (setf (hp target) (- (hp target) atk)))
+  (subf (hp target) atk))
 
 (defmethod do-action ((act (eql 'attack)) (obj animal) preps)
   (typecase (getf preps 'with)

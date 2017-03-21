@@ -191,7 +191,7 @@
 
 (defun has-finished-quest (quest-id &key ((:player *player*) *player*))
   (and (has-started-quest quest-id)
-       (is-quest-completed (find quest-id (active-quests *player*) :key #'get-id))))
+       (is-quest-completed (find-by-id quest-id (active-quests *player*)))))
 
 (defun total-quest-count ()
   (check-type *quests* hash-table)

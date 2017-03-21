@@ -55,7 +55,8 @@
         do (loop for loc in (spawner-area sp)
                  for inst = (make-instance 'neo-spawner
                                            :creature (spawner-creature sp)
-                                           :time 5) ; TODO Pick this intelligently
+                                           :time 5
+                                           :counter 5) ; TODO Pick time/counter intelligently
                  do (move-object inst (gethash loc *world*))))
   (setf *spawners* nil))
 

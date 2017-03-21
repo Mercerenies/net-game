@@ -249,6 +249,8 @@
 
 ;; TODO The rest of this file needs to be migrated to load-formatted
 
+;; ///// load-object for neo-spawner next
+
 (defmethod load-object ((header (eql 'plant)) data)
   ;; TODO See the note for weapon's load-object above; same thing applies here
   (let ((name nil)

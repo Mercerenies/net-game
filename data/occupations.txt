@@ -120,3 +120,5 @@ Internet personality   actor
 equestrian rider       athlete
 economist              scientist
 sergeant               soldier
+nationalist            activist
+rapper                 musician

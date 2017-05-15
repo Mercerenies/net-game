@@ -8,6 +8,14 @@ check_flock=0
 check_lua=0
 lisp=''
 
+if [ "$1" == "--help" ]; then
+    >&2 echo "Usage: ./check.sh [-rein] [-client] [lisp]"
+    >&2 echo " -rein Include the reinforcement learning engine in the checks"
+    >&2 echo " -client Include the self-updating client in the checks"
+    >&2 echo " (NOTE: Providing a custom Lisp implementation may result in some minor modifications being necessary)"
+    exit
+fi
+
 case "$1" in
     -*)
         ;;

@@ -20,14 +20,22 @@ function P.get_filename()
    return name
 end
 
--- TODO Can we kill then delete?
 function P.cleanup()
    logger.echo(1, "Terminating processes...")
+   local pid = util.pid()
+   local pgid = util.pgid()
+   local ps = 'ps xao pid,ppid,pgid | '
+   local awk = 'awk \'($3 ~ /' .. pgid .. '/) && ($1 !~ /' .. pid .. '/) { print $1; }\' | '
+   local kill = 'xargs kill -15'
+   util.execute(ps .. awk .. kill)
+   logger.echo(1, "Processes ended.")
+   logger.echo(1, "Cleaning up files...")
    for i = 0, n do
       local name = generate_name(i)
       os.remove(name)
    end
-   util.execute 'kill -TERM -- -$(ps | awk \'$1 ~ /\\<\'"$$"\'\\>/ { print $3; }\')'
+   logger.echo(1, "Files cleaned up.")
+   logger.echo(1, "Have a nice day.")
 end
 
 return P

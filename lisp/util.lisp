@@ -21,7 +21,9 @@
   (+ (* lower (- 1 value)) (* upper value)))
 
 (defmacro addf (place n)
+  "Perform in-place addition. (addf place n) is equivalent to (setf place (+ place n))."
   `(setf ,place (+ ,place ,n)))
 
 (defmacro subf (place n)
+  "Perform in-place subtraction. (subf place n) is equivalent to (setf place (- place n))."
   `(setf ,place (- ,place ,n)))

@@ -136,7 +136,7 @@ class GData
   end
 
   def self.from_sxp(arg)
-    fk, map, creatures, spawners, quests, kb, meta = Reloader.assert_first :alpha, arg
+    fk, map, creatures, spawners, quests, kb, debug, meta = Reloader.assert_first :alpha, arg
     reloader = Reloader.instance
     meta = reloader.load meta
     GData.new([]).tap do |gdata|

@@ -27,3 +27,27 @@
 (defmacro subf (place n)
   "Perform in-place subtraction. (subf place n) is equivalent to (setf place (- place n))."
   `(setf ,place (- ,place ,n)))
+
+(defmacro collecting (&body body)
+  "Accumulate values into a list by pushing onto the front or the back, returning the resulting
+   list at the end."
+  (let ((head (gensym))
+        (tail (gensym))
+        (values (gensym))
+        (value (gensym))
+        (temp (gensym)))
+    `(let* ((,head nil)
+            (,tail nil))
+       (flet ((push-front (&rest ,values)
+                (setf ,head (append ,values ,head))
+                (when (null ,tail)
+                  (setf ,tail (last ,head))))
+              (push-back (&rest ,values)
+                (loop for ,value in ,values
+                      do (let ((,temp (cons ,value nil)))
+                           (if ,tail
+                             (setf (cdr ,tail) ,temp)
+                             (setf ,head ,temp))
+                           (setf ,tail ,temp)))))
+         ,@body
+         ,head))))

@@ -195,10 +195,9 @@
   (lambda (x) (whitelisted-load method headers x)))
 
 (defun load-with (data func header)
-  (let ((list nil))
-    (load-formatted data header
-                    ((extra) (push (funcall func extra) list)))
-    (reverse list))) ; TODO Can we avoid the reverse while maintaining the order?
+  (collecting
+   (load-formatted data header
+                   ((extra) (push-back (funcall func extra))))))
 
 ;; Returns an alpha-load instance
 (defun load-data (&key (file *standard-input*))

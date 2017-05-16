@@ -99,7 +99,9 @@
    (knowledge :accessor alpha-knowledge
               :initform nil)
    (key :accessor alpha-key
-        :initform nil)))
+        :initform nil)
+   (debug :accessor alpha-debug
+          :initform 0)))
 
 (defun make-alpha ()
   (make-instance 'alpha-load))
@@ -113,7 +115,8 @@
              (*spawners* (alpha-spawners ,temp))
              (*quests* (alpha-quests ,temp))
              (*knowledge-base* (alpha-knowledge ,temp))
-             (*key* (alpha-key ,temp)))
+             (*key* (alpha-key ,temp))
+             (*debug-level* (alpha-debug ,temp)))
          ,@body))))
 
 (defgeneric load-object (header data)
@@ -210,6 +213,7 @@
                     (spawners (setf (alpha-spawners alpha) (load-object 'spawner-set spawners)))
                     (quests (setf (alpha-quests alpha) (load-object 'quest-set quests)))
                     (knowledge (setf (alpha-knowledge alpha) (load-object 'knowledge-base knowledge)))
+                    (debug (setf (alpha-debug alpha) debug))
                     (meta))
     alpha))
 

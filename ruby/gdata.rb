@@ -169,7 +169,7 @@ class AlphaStructure
   end
 
   def to_sxp
-    [:alpha, @file_key, @map, @creatures, @spawners, @quests, @knowledge_base, @meta].to_sxp
+    [:alpha, @file_key, @map, @creatures, @spawners, @quests, @knowledge_base, Logger.instance.debug_level, @meta].to_sxp
   end
 
 end

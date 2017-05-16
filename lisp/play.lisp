@@ -23,6 +23,8 @@
 
 (defparameter *key* nil)
 
+(defparameter *debug-level* 0)
+
 (defun make-player ()
   "Makes an instance of the player object, with no active quests and an empty visited list."
   (make-instance 'player))

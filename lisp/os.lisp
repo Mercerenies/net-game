@@ -3,6 +3,7 @@
   (:use :common-lisp)
   (:nicknames :ng-os)
   (:export :argv
+           :pid
            :full-exit
            :connect-to-socket))
 (in-package #:net-game-os)
@@ -19,6 +20,11 @@
   (or #+clisp (return-from argv ext:*args*)
       (error "Unsupported CL - argv")))
 
+(defun pid ()
+  "Returns the process identifier (pid) for the running CLISP process."
+  (or #+clisp (return-from pid (os:process-id))
+      (error "Unsupported CL - pid")))
+
 (defun full-exit (status)
   "Fully exits the program immediately, using the given status value as the exit status of the program."
   (check-type status integer)
@@ -31,4 +37,3 @@
   (check-type port integer)
   (or #+clisp (socket:socket-connect port)
       (error "Unsupported CL - connect-to-socket")))
-

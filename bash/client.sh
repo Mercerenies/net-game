@@ -31,5 +31,4 @@ echo "[]" | ./bash/stage3.sh "$debug" >./temp/alpha.txt # Alpha Stage
 echo "[]" >./temp/excess.txt # Prepare an empty excess file
 
 ./bash/stage0.sh -p 9321 $debug $rein $timeout &
-# TODO Pass debug level to Lisp (probably through the alpha file)
 ./bash/stage4.sh -C 9321 -f ./temp/alpha.txt

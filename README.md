@@ -27,7 +27,7 @@ For full details on the master script, run `./bash/master.sh --help` or see the 
 
 # Dependencies
 
-Note that Python, Perl, and Ruby are expected to be in /usr/bin. The Lisp implementation must be on the path. Windows users are strongly urged to run this game in Cygwin or some other Unix-like shell. The game is being developed using Cygwin on Windows 7, so I can vouch for the fact that it should work like that. Note that the script `./bash/check.sh` will check for the necessary languages and modules and report what is missing.
+Note that Python, Perl, and Ruby are expected to be in /usr/bin. The Lisp implementation must be on the path. This program is designed to be run in a Unix environment. I believe Cygwin should suffice for Windows users, but I cannot guarantee complete compatibility. Note that the script `./bash/check.sh` will check for the necessary languages and modules and report what is missing.
 
 ###### Python
 * Python 3

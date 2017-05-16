@@ -110,6 +110,7 @@ dinosaur
 rabbit
 gruidae
 insects
+rolling animal
 :: foods
 berries
 fruit

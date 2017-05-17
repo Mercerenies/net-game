@@ -45,15 +45,15 @@ Note that Python, Perl, and Ruby are expected to be in /usr/bin. The Lisp implem
 ###### Common Lisp
 * GNU CLISP (if you wish to use another implementation, you merely need to write a small shim inside of `./lisp/os.lisp` to bridge the gap)
 
-##### Lua
+###### Lua
 * Lua 5.2 or newer
 * LuaSocket module
 
-##### Bash
+###### Bash
 * Bash (any reasonably modern version should suffice)
 * `flock` (only required for the reinforcement learning engine)
 
-##### Emacs
+###### Emacs
 * Emacs 25 or newer (only necessary if you wish to use the Emacs integrated debugger)
 
 # Client Mode

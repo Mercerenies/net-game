@@ -51,6 +51,8 @@
       (error "Flawed data - delta"))
     (unless (= key (1+ *key*)) ; Wrong key
       (return-from load-and-integrate-delta nil))
+    ;; Report the integration
+    (echo 1 "Integrating... (key: ~D)" key)
     ;; Key
     (setf *key* key)
     ;; Map

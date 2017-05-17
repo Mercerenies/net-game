@@ -75,6 +75,7 @@
   (unless (client-waiting-on name)
     (let ((worldname (client-make-fname))
           (donename (client-make-fname)))
+      (echo 2 "Making update request for ~A...~@[~* (name: ~A)~]" sym (not (eq sym name)) name)
       (format *socket* "need ~(~A~) ~A ~A~%" sym worldname donename)
       (push (list name worldname donename) *client-pending*))))
 

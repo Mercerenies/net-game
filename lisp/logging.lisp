@@ -2,6 +2,6 @@
 
 (defparameter *debug-level* 0)
 
-(defun echo (level text)
+(defun echo (level text &rest format)
   (when (>= *debug-level* level)
-    (format *error-output* "~D [4] ~A~%" (ng-os:pid) text)))
+    (format *error-output* "~D [4] ~?~%" (ng-os:pid) text format)))

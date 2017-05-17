@@ -45,6 +45,7 @@ end
 function setup_and_run()
 
    logger.set_debug_level(tonumber(arg[2]))
+   logger.echo(1, "Debug level set to " .. logger.get_debug_level())
 
    if tonumber(arg[3]) > 0 then
       pquery.use_reinforcement()

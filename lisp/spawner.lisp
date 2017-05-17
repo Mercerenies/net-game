@@ -76,6 +76,15 @@
          :type integer))
   (:default-initargs :hidden t))
 
+(defmethod load-object ((header (eql 'neo-spawner)) data)
+  (let ((inst (make-instance 'neo-spawner :time 5 :counter 5)))
+    (load-formatted data 'neo-spawner
+                    (creature (setf (neo-spawner-creature inst) creature))
+                    (:time time
+                           (setf (neo-spawner-time inst) time)
+                           (setf (neo-spawner-counter inst) time)))
+    inst))
+
 ;; TODO Spawns waaaaaaaay too often compared to the old system
 (defmethod entity-turn ((obj neo-spawner))
   (with-accessors ((creature neo-spawner-creature)

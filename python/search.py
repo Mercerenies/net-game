@@ -36,4 +36,4 @@ class BasicSearch(Search):
         spider.finished()
         return arr
 
-# ///// Search using a user-provided directive string
+# TODO Search using a user-provided directive string

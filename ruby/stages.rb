@@ -63,8 +63,10 @@ class NodeStage < Stage
         when :state then nodes << generate_node(elem, Level.state)
         when :country then nodes << generate_node(elem, Level.country)
         when :district then nodes << generate_node(elem, Level.district)
-        when :bank, :tower, :estate, :library, :castle, :forest, :garden then nil
-        when :landform, :moon, :museum, :park, :plain, :river, :village then nil
+        when :bank, :tower, :estate then nil
+        when :library, :castle, :forest, :garden then nil
+        when :landform, :moon, :museum, :park then nil
+        when :plain, :river, :village then nil
         when :street, :waterfall then nil
         end
       end
@@ -80,15 +82,16 @@ class NodeStage < Stage
 
 end
 
-# The first stage of the delta generation process is identical to the standard NodeStage except that the
-# default node is not generated.
+# The first stage of the delta generation process is identical to the
+# standard NodeStage except that the default node is not generated.
 class DeltaNodeStage < NodeStage
   def make_default_node
     nil
   end
 end
 
-# \Stage 2 of the generation process pre-generates any bridges that can be made from the data.
+# \Stage 2 of the generation process pre-generates any bridges that can be made
+# from the data.
 class BridgeStage < Stage
   def run(data)
     bridges = []
@@ -102,7 +105,8 @@ class BridgeStage < Stage
   end
 end
 
-# \Stage 3 converts the nodal structure generated in NodeStage into a coherent map.
+# \Stage 3 converts the nodal structure generated in NodeStage into a coherent
+# map.
 class MapStage < Stage
   def run(data)
     data.node_to_map
@@ -126,35 +130,42 @@ class BuildingStage < Stage
   end
 end
 
-# \Stage 5 constructs a list of creatures and puts generators for them in places on the map.
+# \Stage 5 constructs a list of creatures and puts generators for them in places
+# on the map.
 class CreatureStage < Stage
   def run(data)
+    halo_size = 3
+    nav = data.map.navigator
     # Identify and set up valid creatures
     data.consume_each { |elem| data.load_creature elem }
     all_creatures = data.each_creature.to_a
     creatures = all_creatures.shuffle.cycle
     return unless data.has_creature?
-    spawner_nodes = data.each_spawner.flat_map(&:node_ids)
     # Now identify all of the "dangerous" nodes, that is
     # anywhere that should have a creature in it
-    needed = data.select_nodes(&:can_have_creatures?).to_a
+    needed = data.select_nodes(&:can_have_creatures?).to_a # TODO Efficiency here...?
     # Now put animals / creatures in those spots
     until needed.empty?
       node = needed.first
       if all_creatures.select { |x| node.can_have? x }.empty?
-        # If none of the creatures will agree with the node, don't bother looking for one
+        # If none of the creatures will agree with the node, don't bother
+        # looking for one
         needed.delete node
         next
       end
-      if spawner_nodes.include? node.id and rand < 0.8
-        # If the node already has a creature, high probability of skipping it
+      if nav.node(node).within(halo_size).contents.has?(NeoSpawner)
+        # If the node already has a spawner nearby, skip over it
+        # TODO With exponentially decreasing probability, go ahead and place one here anyway
         needed.delete node
         next
       end
-      spawner = Spawner.new creatures.next, data.map, node, [2, 2, 2, 3].sample
-      area = spawner.node_ids.map { |id| data.map[id] }
-      needed = needed.reject { |loc| area.include? loc }
-      data.add_spawners spawner
+      creature = creatures.next until node.can_have? creature
+      node.push NeoSpawner.new(creature.id)
+      needed.delete node
+      #spawner = Spawner.new creatures.next, data.map, node, [2, 2, 2, 3].sample
+      #area = spawner.node_ids.map { |id| data.map[id] }
+      #needed = needed.reject { |loc| area.include? loc }
+      #data.add_spawners spawner
     end
   end
 end

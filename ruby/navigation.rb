@@ -78,6 +78,14 @@ class NavContentsLens
     NavContentsLens.new @nav, @objs.uniq
   end
 
+  def detect(&block)
+    @objs.detect &block
+  end
+
+  def has?(obj)
+    detect { |x| case x when obj then x end }
+  end
+
   def to_a
     @objs.dup
   end

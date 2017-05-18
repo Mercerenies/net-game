@@ -5,9 +5,9 @@
 class NeoSpawner
   attr_accessor :creature_id
 
-  def initialize(creature)
+  def initialize(creature_id)
     @time = nil
-    @creature_id = creature.id
+    @creature_id = creature_id
   end
 
   def time

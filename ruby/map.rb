@@ -52,6 +52,11 @@ class Map
     to_ary.find { |x| x.id == val }
   end
 
+  # Returns a Navigator instance associated with this map.
+  def navigator
+    Navigator.new(self)
+  end
+
   # Places +obj+ somewhere on the map. The block and type arguments are both optional. This method
   # will weigh the locations when choosing a random position so that locations which have objects
   # already in them are less likely to be chosen. If +type+ is provided, it should be a class type

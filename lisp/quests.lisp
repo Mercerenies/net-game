@@ -22,18 +22,19 @@
  |    (Note that most quest triggers are lists; some special ones, such as 'initiate, are symbols)
  |    (Note also that triggers only trip if the quest has been accepted; 'initiate is the one and only
  |     exception to this rule)
- |  * initiate - When an un-accepted quest is in the knowledge base for an NPC and the player talks to that
- |    NPC and asks if he/she can help with anything ("requests a quest", in a sense), The initiate trigger is
- |    tripped, usually introducing the quest and allowing the player to accept it voluntarily. Note that
- |    initiate will ONLY trigger in State 0 and only if the *knowledge-base* associates the NPC with the
- |    quest in question.
- |  * (talk-to <npc-id> <prompt>) - When the player talks to the NPC with ID <npc-id>, in the NPC's menu,
- |    there will be an option with the text <prompt>. If the player chooses this option, the trigger will
- |    trip.
- |  * (talk-to! <npc-id>) - This is the more "urgent" version of the talk-to trigger. If the player talks with
- |    the NPC with ID <npc-id>, this trigger is tripped immediately and, if it exists, overrides the normal
- |    NPC menu. This trigger should be used sparingly, for if there are multiple talk-to! triggers from
- |    different quests, the order of precedence is arbitrary.
+ |  * initiate - When an un-accepted quest is in the knowledge base for an NPC and the player talks
+ |    to that NPC and asks if he/she can help with anything ("requests a quest", in a sense), The
+ |    initiate trigger is tripped, usually introducing the quest and allowing the player to accept
+ |    it voluntarily. Note that initiate will ONLY trigger in State 0 and only if the
+ |    *knowledge-base* associates the NPC with the quest in question.
+ |  * (talk-to <npc-id> <prompt>) - When the player talks to the NPC with ID <npc-id>, in the
+ |    NPC's menu, there will be an option with the text <prompt>. If the player chooses this
+ |    option, the trigger will trip.
+ |  * (talk-to! <npc-id>) - This is the more "urgent" version of the talk-to trigger. If the
+ |    player talks with the NPC with ID <npc-id>, this trigger is tripped immediately and, if
+ |    it exists, overrides the normal NPC menu. This trigger should be used sparingly, for if
+ |    there are multiple talk-to! triggers from different quests, the order of precedence is
+ |    arbitrary.
  |#
 (defparameter *quest-triggers*
   '((initiate . 0)
@@ -43,22 +44,25 @@
 #|
  | Quest commands:
  |  * (begin &rest <commands>) - Execute the commands in order.
- |  * (goto <state>) - Change the current quest state to <state>, which should be either a symbol or an integer.
- |    Remember that the integer 0 is a special state that is reserved for un-accepted quests and should not
- |    be used for anything else.
- |  * (complete) - Complete the current quest. This also sends the quest into the 'completed state. This is
- |    a no-op if the quest has already been completed.
- |  * (accept <state>) - Accept the current quest. This is a no-op if the quest has already been accepted.
- |    Since State 0 is reserved for un-accepted quests, this will also send the quest into state <state>.
+ |  * (goto <state>) - Change the current quest state to <state>, which should be either a symbol
+ |    or an integer. Remember that the integer 0 is a special state that is reserved for un-accepted
+ |    quests and should not be used for anything else.
+ |  * (complete) - Complete the current quest. This also sends the quest into the 'completed state.
+ |    This is a no-op if the quest has already been completed.
+ |  * (accept <state>) - Accept the current quest. This is a no-op if the quest has already
+ |    been accepted. Since State 0 is reserved for un-accepted quests, this will also send the
+ |    quest into state <state>.
  |  * (speak <text>) - Causes the given text to be output as though spoken in dialogue.
- |  * (branch <prompt> &rest <text> <command>) - Display a branching dialogue choice, executing the given
- |    command based on the response given by the player.
- |  * (if-has-item <item-match> <true> <false>) - Checks whether the player has an item matching <item-match>.
- |    If he/she does, execute the <true> branch. Otherwise, execute the <false> branch.
- |  * (remove-item <item-match>) - Remove the first item matching <item-match> from the player's inventory,
- |    or no items if none match.
+ |  * (branch <prompt> &rest <text> <command>) - Display a branching dialogue choice, executing
+ |    the given command based on the response given by the player.
+ |  * (if-has-item <item-match> <true> <false>) - Checks whether the player has an item
+ |    matching <item-match>. If he/she does, execute the <true> branch. Otherwise, execute
+ |    the <false> branch.
+ |  * (remove-item <item-match>) - Remove the first item matching <item-match> from the
+ |    player's inventory, or no items if none match.
  |#
-(defparameter *quest-commands* ; Implementation Note: q is a temporarily created object for un-accepted quests
+(defparameter *quest-commands*
+  ;; Implementation Note: q is a temporarily created object for un-accepted quests
   `((begin . ,(lambda (g q &rest commands) (mapc g commands)))
     (goto . ,(lambda (g q state) (quest-goto q state)))
     (complete . ,(lambda (g q) (quest-mark-complete q)))
@@ -114,7 +118,8 @@
     (setf (is-quest-completed quest) t)
     (quest-goto quest 'completed)))
 
-;; TODO Make it so triggers can be "matched" in more sophisticated ways than equality (here and quest-has-trigger)
+;; TODO Make it so triggers can be "matched" in more sophisticated ways than equality
+;; (here and quest-has-trigger)
 (defun do-quest-trigger (quest trigger)
   (let* ((quest-data (get-quest-data (get-id quest)))
          (state (quest-state quest))

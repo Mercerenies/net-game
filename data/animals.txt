@@ -112,3 +112,7 @@ aquatic: sea +1, air -1
 platypus: air -1, size -1, threat -1
 molluscan: air -1, sea +1
 nautiloids: sea +1
+insect: size -1, speed +1
+insects: size -1, speed +1
+pest: size -1, threat +1
+pests: size -1, threat +1

@@ -5,9 +5,9 @@
 class Fitness
   attr_reader :treasure, :monster
 
-  def initialize(tr, mo)
-    @treasure = tr
-    @monster = mo
+  def initialize(treasure:, monster:)
+    @treasure = treasure
+    @monster = monster
   end
 
   # Combines two fitness parameters together.
@@ -17,7 +17,7 @@ class Fitness
 
   # The #+ operation forms a commutative (?) monoid with this object as the identity.
   def self.null
-    @@nullFitness ||= Fitness.new 0.0, 0.0
+    @@nullFitness ||= Fitness.new treasure: 0.0, monster: 0.0
   end
 
   def to_sxp
@@ -26,7 +26,7 @@ class Fitness
 
   def self.from_sxp(arg)
     tr, mo = Reloader.assert_first :fitness, arg
-    Fitness.new tr, mo
+    Fitness.new treasure: tr, monster: mo
   end
 
 end
@@ -49,14 +49,14 @@ class CompositeFitness < Fitness
 
 end
 
-# This module consists of several useful predefined fitness parameters. While there is no issue with creating
-# custom parameters, these are often sufficient for most cases.
+# This module consists of several useful predefined fitness parameters. While there is no issue
+# with creating custom parameters, these are often sufficient for most cases.
 module PredefFitness
-  Uncivilized = Fitness.new 1.0, 1.0
-  Outdoors = Fitness.new 1.0, 1.5
-  HardToReach = Fitness.new 2.5, 2.5
-  Safekeeping = Fitness.new 1.5, 0.0
-  VeryHardToReach = Fitness.new 2.5, 2.5
+  Uncivilized = Fitness.new treasure: 1.0, monster: 1.0
+  Outdoors = Fitness.new treasure: 1.0, monster: 1.5
+  HardToReach = Fitness.new treasure: 2.5, monster: 2.5
+  Safekeeping = Fitness.new treasure: 1.5, monster: 0.0
+  VeryHardToReach = Fitness.new treasure: 2.5, monster: 2.5
 
   def self.predefFitnessFlags
     [:Uncivilized, :Outdoors, :HardToReach, :Safekeeping, :VeryHardToReach]

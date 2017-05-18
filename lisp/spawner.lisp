@@ -7,6 +7,8 @@
 (defconstant +spawner-types+
   '(spawner))
 
+;; TODO Rebrand the "old" spawner as a "global spawner" and remove the do-neo-spawner-migration shim
+
 (defclass spawner ()
   ((creature :accessor spawner-creature
              :initform nil

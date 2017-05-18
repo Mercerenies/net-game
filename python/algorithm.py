@@ -6,6 +6,7 @@ from links import BasicLinkSelector
 import time
 from logger import echo
 from links import LinkState
+import werror
 
 DELAY = 0.5
 
@@ -87,10 +88,10 @@ class Spider:
             try:
                 return func()
             except wikipedia.PageError as e:
-                echo("Found red link", e)
+                echo("Found red link:", werror.wrap(e))
                 return None
             except wikipedia.DisambiguationError as e:
-                echo("Ambiguous article found", e)
+                echo("Ambiguous article found:", werror.wrap(e))
                 return None
             except ConnectionResetError as e:
                 if n < self.max_aborts:

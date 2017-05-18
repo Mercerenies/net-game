@@ -46,7 +46,8 @@
         when (not (null (intersection nearby (spawner-area spawner))))
             collect spawner))
 
-;; This function is temporary and acts as a shim while moving the old spawner interface over to the new one
+;; This function is temporary and acts as a shim while moving the old spawner interface over to the
+;; new one
 (defun do-neo-spawner-migration ()
   (check-type *world* hash-table)
   (check-type *spawners* list)
@@ -56,7 +57,8 @@
                                            :creature (spawner-creature sp)
                                            :time 5
                                            :counter 5) ; TODO Pick time/counter intelligently
-                 do (move-object inst (gethash loc *world*))))
+                 do (move-object inst (gethash loc *world*))
+                 do (echo 1 "Warning! Old-style spawner detected...")))
   (setf *spawners* nil))
 
 (defclass neo-spawner (located hideable)

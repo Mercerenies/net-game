@@ -15,8 +15,8 @@ class SExprLoadError < StandardError
   end
 end
 
-# The reloader singleton is responsible for reloading existing world data from an alpha file that was produced
-# by this program earlier in execution.
+# The reloader singleton is responsible for reloading existing world data from an alpha file that was
+# produced by this program earlier in execution.
 class Reloader
   include Singleton
 
@@ -45,7 +45,8 @@ class Reloader
       :'any-animal' => AnimalValidator,
       :plants => PlantTypesValidator,
       :'no-validator' => EmptyValidator,
-      :fitness => Fitness
+      :fitness => Fitness,
+      :'neo-spawner' => NeoSpawner
     }
   end
 

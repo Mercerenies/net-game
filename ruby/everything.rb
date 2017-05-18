@@ -43,6 +43,7 @@ load './ruby/objs.rb'
 load './ruby/weapon.rb'
 load './ruby/person.rb'
 load './ruby/food.rb'
+load './ruby/neospawner.rb'
 
 load './ruby/spawner.rb'
 load './ruby/creatures.rb'

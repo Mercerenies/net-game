@@ -19,6 +19,10 @@ class DeltaMap < Map
     end
   end
 
+  def each_new_node(&block)
+    @new_ary.each(&block)
+  end
+
   def push(*args)
     @new_ary.push(*args)
   end
@@ -40,10 +44,10 @@ class DeltaLocation < Location
   extend Forwardable
 
   def_delegators :@new_contents, :push
-  def_delegators :@old_node, :id, :name, :country_name, :generic_name, :can_have_creatures?,
-                             :can_have?, :valid_creatures, :valid_plants,
-                             :water_mode, :mark_as_dry, :mark_as_sea, :mark_as_shore,
-                             :fitness
+  def_delegators :@old_node, :id, :name, :country_name, :generic_name,
+                             :can_have_creatures?, :can_have?, :valid_creatures,
+                             :valid_plants, :water_mode, :mark_as_dry,
+                             :mark_as_sea, :mark_as_shore, :fitness
 
   def initialize(old)
     @old_node = old
@@ -103,13 +107,17 @@ class DeltaLocation < Location
   end
 
   def to_dsxp
-    # This is the delta interface to old, reloaded nodes. The following rules should
-    # be followed when modifying delta nodes.
+    # This is the delta interface to old, reloaded nodes. The following rules
+    # should be followed when modifying delta nodes.
     #  - Links can be added and removed freely, even pre-existing links.
-    #  - New objects can be added. Old objects should not be removed or modified in
-    #    any way.
-    #  - Basic node properties, such as name and allowable creatures, are read-only.
-    [:location, id, :':remove-links', @sans_links, :':add-links', @new_links, :':add-contents', @new_contents]
+    #  - New objects can be added. Old objects should not be removed or modified
+    #    in any way.
+    #  - Basic node properties, such as name and allowable creatures, are
+    #    read-only.
+    [:location, id,
+     :':remove-links', @sans_links,
+     :':add-links', @new_links,
+     :':add-contents', @new_contents]
   end
 
 end

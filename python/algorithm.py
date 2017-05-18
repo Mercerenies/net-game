@@ -14,9 +14,9 @@ DELAY = 0.5
 
 class Spider:
     """
-    The Spider class is responsible for the actual crawling of the Internet and stores state information
-    such as the link selector being used, as well as the depth and number of attempts to make during
-    a crawl.
+    The Spider class is responsible for the actual crawling of the Internet and stores state
+    information such as the link selector being used, as well as the depth and number of
+    attempts to make during a crawl.
     """
 
     def __init__(self, selector = None, depth = 5, max_tries = 3, max_aborts = 1):
@@ -34,7 +34,10 @@ class Spider:
         self.max_aborts = max_aborts
 
     def finished(self):
-        """A callback indicating that the user is done using the Spider and, by extension, the LinkSelector."""
+        """
+        A callback indicating that the user is done using the Spider and, by extension,
+        the LinkSelector.
+        """
         self.selector.finished()
 
     def wait(self, delay = DELAY):
@@ -43,13 +46,14 @@ class Spider:
 
     def crawl_once(self, base, match_function):
         """
-        Makes a single crawl, using the Spider's link selector and parameters with the supplied matching
-        function. A single crawl will start at the base page supplied and, using the link selector, follow
-        links until it finds a match (according to the supplied match_function) or until it has gone
-        self.depth layers deep and gives up. The match function should be a function of one argument,
-        the page, and the base page should be either a string name or a page object. The result is
-        the final page object or None. Note that a direct caller of this method should take care
-        to inform the LinkSelector of the start and end of the crawl, as this method only performs
+        Makes a single crawl, using the Spider's link selector and parameters with the
+        supplied matching function. A single crawl will start at the base page supplied and,
+        using the link selector, follow links until it finds a match (according to the
+        supplied match_function) or until it has gone self.depth layers deep and gives up.
+        The match function should be a function of one argument, the page, and the base page
+        should be either a string name or a page object. The result is the final page
+        object or None. Note that a direct caller of this method should take care to inform
+        the LinkSelector of the start and end of the crawl, as this method only performs
         the actual crawl.
         """
         def _crawl_once(page, depth_):

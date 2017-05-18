@@ -18,6 +18,10 @@ class Map
     @ary = ary.to_a
   end
 
+  def each_new_node(&block)
+    @ary.each(&block)
+  end
+
   def to_delta
     DeltaMap.new self
   end
@@ -75,8 +79,8 @@ class Map
 
 end
 
-# A location on the map. Locations keep track of what is allowed to spawn in them, as well as what other
-# locations they are connected to.
+# A location on the map. Locations keep track of what is allowed to spawn in them, as well as what
+# other locations they are connected to.
 class Location
   extend Forwardable
   include Enumerable
@@ -149,30 +153,32 @@ class Location
     @links.delete x
   end
 
-  # Returns whether or not the location is considered civilized. A civilized location is one which forbids
-  # the spawning of any creatures.
+  # Returns whether or not the location is considered civilized. A civilized location is
+  # one which forbids the spawning of any creatures.
   def civilized?
     not can_have_creatures?
   end
 
-  # Marks the location as non-water, which is the default. Swimming creatures cannot move onto dry land.
+  # Marks the location as non-water, which is the default. Swimming creatures cannot move onto
+  # dry land.
   def mark_as_dry
     @water_mode = nil
   end
 
-  # Marks the location as being by the seaside. A shore location will allow water and land creatures onto it.
+  # Marks the location as being by the seaside. A shore location will allow water and
+  # land creatures onto it.
   def mark_as_shore
     @water_mode = :shore
   end
 
-  # Marks the location as being a sea. A sea location will not allow land creatures, including the player, to
-  # traverse it.
+  # Marks the location as being a sea. A sea location will not allow land creatures,
+  # including the player, to traverse it.
   def mark_as_sea
     @water_mode = :sea
   end
 
-  # Marks the water mode to one of +nil+, +:shore+, or +:sea+. If an invalid argument is provided, the water
-  # mode is not set.
+  # Marks the water mode to one of +nil+, +:shore+, or +:sea+. If an invalid argument is
+  # provided, the water mode is not set.
   def mark_water(water_mode)
     case water_mode
     when nil then mark_as_dry

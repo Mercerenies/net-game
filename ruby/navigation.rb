@@ -8,13 +8,13 @@ class Navigator
     @map = map
   end
 
-  # Returns a navigation object centered around a specific location. Note that +loc+ should be a Location
-  # instance which belongs to the navigator's map, or an ID corresponding to a Location instance in the
-  # map.
+  # Returns a navigation object centered around a specific location. Note that +loc+ should be
+  # a Location instance which belongs to the navigator's map, or an ID corresponding to a
+  # Location instance in the map.
   def node(loc)
-    # This looks a little bit redundant, but it does its job. If you pass in an ID, loc1 is a no-op and loc2
-    # retrieves the location. If you pass in a Location, loc1/loc2 cancel each other off but will check if
-    # the location node is actually in the map.
+    # This looks a little bit redundant, but it does its job. If you pass in an ID, loc1 is a
+    # no-op and loc2 retrieves the location. If you pass in a Location, loc1/loc2 cancel each
+    # other off but will check if the location node is actually in the map.
     loc1 = if loc.is_a? Location then loc.id else loc end
     loc2 = @map[loc1]
     unless loc2

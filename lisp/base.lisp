@@ -14,7 +14,8 @@
     (move-object obj nil)))
 
 (defmethod (setf hp) :after (val (obj damageable))
-  "Whenever the object's HP is altered, if the object is damageable then check-for-death is run automatically."
+  "Whenever the object's HP is altered, if the object is damageable then check-for-death is run
+   automatically."
   (check-for-death obj))
 
 (defclass named ()
@@ -22,35 +23,36 @@
          :initarg :name
          :initform ""
          :type string))
-  (:documentation "A base class for objects which have a name. Many display functions assume the arguments
-                   are named objects."))
+  (:documentation "A base class for objects which have a name. Many display functions assume
+                   the arguments are named objects."))
 
 (defclass identifiable ()
   ((id :accessor get-id
        :initarg :id
        :initform nil
        :type t))
-  (:documentation "A base class for objects which have an ID. The ID should be eql-comparable and unique
-                   within the context of the program. In some cases, ID values of integers are preferred
-                   or even required. As such, it is recommended that IDs be integers whenever possible."))
+  (:documentation "A base class for objects which have an ID. The ID should be eql-comparable
+                   and unique within the context of the program. In some cases, ID values of
+                   integers are preferred or even required. As such, it is recommended that
+                   IDs be integers whenever possible."))
 
 (defclass located ()
   ((loc :accessor get-loc
         :initarg :loc
         :initform nil
         :type (or null location)))
-  (:documentation "A base class for objects which have a position in the game world. The location should
-                   not be directly mutated, in most cases. Instead, the move-object generic function
-                   should be used."))
+  (:documentation "A base class for objects which have a position in the game world. The location
+                   should not be directly mutated, in most cases. Instead, the move-object generic
+                   function should be used."))
 
 (defclass hideable ()
   ((hidden :accessor is-hidden
            :initarg :hidden
            :initform t
            :type boolean))
-  (:documentation "A base class for objects which can be hidden from the player's view. A hidden instance
-                   for which is-hidden yields true will not be shown in the location contents list and
-                   will not be directly interact-able."))
+  (:documentation "A base class for objects which can be hidden from the player's view. A hidden
+                   instance for which is-hidden yields true will not be shown in the location
+                   contents list and will not be directly interact-able."))
 
 (defclass flagged ()
   ((flags :accessor get-flags
@@ -60,8 +62,8 @@
   (:documentation "A base class for objects, such as items, which have flags. The list of flags should
                    be a list of lists of symbols or simply symbols. In general, flag symbols should be
                    interned, although this is not explicitly required. Flags should, in general, not be
-                   referenced directly and should instead be referenced using the add-flag and check-flag
-                   generic functions."))
+                   referenced directly and should instead be referenced using the add-flag
+                   and check-flag generic functions."))
 
 (defclass loaded ()
   ((origin :accessor get-origin

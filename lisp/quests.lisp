@@ -22,6 +22,7 @@
  |    (Note that most quest triggers are lists; some special ones, such as 'initiate, are symbols)
  |    (Note also that triggers only trip if the quest has been accepted; 'initiate is the one and only
  |     exception to this rule)
+ |    (This alist associates each quest trigger with its arity)
  |  * initiate - When an un-accepted quest is in the knowledge base for an NPC and the player talks
  |    to that NPC and asks if he/she can help with anything ("requests a quest", in a sense), The
  |    initiate trigger is tripped, usually introducing the quest and allowing the player to accept

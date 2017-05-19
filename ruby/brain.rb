@@ -1,9 +1,9 @@
 
 require 'forwardable'
 
-# For efficiency reasons, it is undesirable to iterate over all of the locations in the world map. Thus,
-# when it is necessary to search for a specific person, the knowledge base is searched. A KnowledgeBase
-# instance stores a collection of NPCBrain objects.
+# For efficiency reasons, it is undesirable to iterate over all of the locations in the world map.
+# Thus, when it is necessary to search for a specific person, the knowledge base is searched. A
+# KnowledgeBase instance stores a collection of NPCBrain objects.
 class KnowledgeBase
   include DeltaAble
 
@@ -26,7 +26,7 @@ class KnowledgeBase
   # Accesses the brain of the given person object, constructing an empty brain if it does
   # not exist.
   def [](person)
-    unless @data.include? person
+    unless @data.include? person.id
       @data[person.id] = NPCBrain.new(person.id, person.name, person.job)
     end
     @data[person.id]

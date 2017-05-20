@@ -122,3 +122,5 @@ economist              scientist
 sergeant               soldier
 nationalist            activist
 rapper                 musician
+astronaut              scientist
+cosmonaut              scientist

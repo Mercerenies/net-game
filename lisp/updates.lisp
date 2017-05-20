@@ -1,7 +1,6 @@
 (in-package #:net-game)
 
 ;; TODO This file depends on client.lisp, which may not be loaded; make that dependency neater and more obvious
-;; TODO Consider a weapon trigger; weapons probably won't randomly spawn in the top-level anymore
 
 (defun make-update-requests ()
   (let ((active-halo (halo (get-loc *player*) +active-radius+)))
@@ -27,4 +26,7 @@
                                                             (location-contents loc)))))
                        active-halo)
              2)
-      (client-request 'foliage))))
+      (client-request 'foliage))
+    ;; Not Enough Weapons Trigger
+    (when (< (pool-count (lambda (x) (typep x 'weapon))) 10)
+      (client-request 'equipment))))

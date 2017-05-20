@@ -16,6 +16,10 @@
   (check-type *object-pool* list)
   (remove-if-not pred *object-pool*))
 
+(defun pool-count (pred)
+  (check-type *object-pool* list)
+  (count-if pred *object-pool*))
+
 (defun pool-remove (obj)
   (check-type *object-pool* list)
   (setf *object-pool* (delete obj *object-pool*)))

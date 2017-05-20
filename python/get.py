@@ -26,6 +26,8 @@ def produce_result(args, mod = (lambda x: x), selector = None, **key):
 
     parts = {}
     for arg in args.standard_sequence():
+        if arg.count <= 0:
+            continue
         sel = selector or make_sel(arg.selector, rein and arg.rein)
         searcher = search.BasicSearch(basis = mod(arg.basis), number = arg.count, selector = sel, keys = key)
         parts[arg.key] = searcher.run()

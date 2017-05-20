@@ -46,7 +46,8 @@
 ;; Directly modifies the game world; call at the appropriate time
 (defun load-and-integrate-delta (&key (file *standard-input*))
   ;; TODO load-formatted
-  (destructuring-bind (delta-sym key dmap creatures spawners quests kb) (with-scheme-notation (read file))
+  (destructuring-bind (delta-sym key dmap creatures spawners quests kb pool)
+      (with-scheme-notation (read file))
     (unless (eq delta-sym 'delta)
       (error "Flawed data - delta"))
     (unless (= key (1+ *key*)) ; Wrong key
@@ -74,4 +75,8 @@
     (delta-load-object 'knowledge-base kb)
     ;; Neo Spawner Migration
     (do-neo-spawner-migration)
+    ;; Object pool
+    (pool-add-list (load-with pool
+                              (whitelisted-load-1 #'load-object +map-object-types+)
+                              'pool))
     t))

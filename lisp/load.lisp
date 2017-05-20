@@ -7,7 +7,8 @@
   '(player warp-point item weapon plant npc neo-spawner))
 
 (defmacro load-formatted (var sym &rest clauses)
-  "load-formatted is the general macro for loading S-expression data (alpha or delta) from the Ruby layer.
+  "load-formatted is the general macro for loading S-expression data (alpha or delta) from the
+   Ruby layer.
     Syntax:
     (load-formatted data-value symbol . clauses)
     clauses ::= (normal-clause* epilogue)
@@ -15,8 +16,8 @@
     epilogue ::= keyword-clause* | rest-clause
     keyword-clause ::= (:keyword var-name . exprs)
     rest-clause ::= ((var-name) . exprs)
-   The value returned at the end is the data value that was passed in. Note also that the rest clause, if
-   supplied, may be called multiple times, once for each additional argument.
+   The value returned at the end is the data value that was passed in. Note also that the rest
+   clause, if supplied, may be called multiple times, once for each additional argument.
    Examples:
    (setq value '(location id name :data (1 2 3) :string \"abc\"))
    (setq value1 '(creature-set (blah) (blah) (blah)))
@@ -100,6 +101,8 @@
               :initform nil)
    (key :accessor alpha-key
         :initform nil)
+   (pool :accessor alpha-pool
+         :initform nil)
    (debug :accessor alpha-debug
           :initform 0)))
 
@@ -116,17 +119,18 @@
              (*quests* (alpha-quests ,temp))
              (*knowledge-base* (alpha-knowledge ,temp))
              (*key* (alpha-key ,temp))
-             (*debug-level* (alpha-debug ,temp)))
+             (*debug-level* (alpha-debug ,temp))
+             (*object-pool* (alpha-pool ,temp)))
          ,@body))))
 
 (defgeneric load-object (header data)
   (:documentation "Load the object with the nature given by the header, which should be a symbol and is
-                   often equal to (car data). The data argument should be the actual data to load, including
-                   the header. It is load-object's responsibility to verify that the object being loaded
-                   from data is in fact the object specified by the header symbol; no input validation
-                   need be done by the caller. Assuming the data is valid, load-object should return
-                   an object of the appropriate nature and should not have any observable side effects
-                   on the game world."))
+                   often equal to (car data). The data argument should be the actual data to load,
+                   including the header. It is load-object's responsibility to verify that the
+                   object being loaded from data is in fact the object specified by the header
+                   symbol; no input validation need be done by the caller. Assuming the data
+                   is valid, load-object should return an object of the appropriate nature and
+                   should not have any observable side effects on the game world."))
 
 (defmethod load-object ((header (eql 'location)) data)
   (let ((inst (make-location nil "")))
@@ -212,6 +216,10 @@
                     (spawners (setf (alpha-spawners alpha) (load-object 'spawner-set spawners)))
                     (quests (setf (alpha-quests alpha) (load-object 'quest-set quests)))
                     (knowledge (setf (alpha-knowledge alpha) (load-object 'knowledge-base knowledge)))
+                    (pool (setf (alpha-pool alpha)
+                                (load-with pool
+                                           (whitelisted-load-1 #'load-object +map-object-types+)
+                                           'pool)))
                     (debug (setf (alpha-debug alpha) debug))
                     (meta))
     alpha))
@@ -244,11 +252,12 @@
         (flags nil))
     (load-formatted data 'weapon
                     (name-1 (setf name name-1))
+                    (:mod mod-1 (setf mod mod-1))
                     (:type type-1 (setf type type-1))
                     (:flags flags-1 (setf flags flags-1)))
     (let ((wpn (make-weapon name type mod)))
       (setf (get-flags wpn) flags)
-      (return wpn))))
+      wpn)))
 
 (defmethod load-object ((header (eql 'plant)) data)
   ;; TODO See the note for weapon's load-object above; same thing applies here

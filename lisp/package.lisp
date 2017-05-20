@@ -24,6 +24,7 @@
 (load "./lisp/speech.lisp")
 (load "./lisp/console.lisp")
 
+(load "./lisp/pool.lisp")
 (load "./lisp/quests.lisp")
 (load "./lisp/brain.lisp")
 (load "./lisp/knowledge.lisp")

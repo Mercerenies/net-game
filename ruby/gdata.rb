@@ -5,7 +5,7 @@
 class GData
   include DeltaAble
 
-  attr_reader :node, :map, :knowledge_base, :file_key
+  attr_reader :node, :map, :knowledge_base, :file_key, :pool
 
   def initialize(everything)
     @arr = everything.clone
@@ -16,6 +16,7 @@ class GData
     @spawners = SpawnerSet.new
     @quests = QuestSet.new
     @knowledge_base = KnowledgeBase.new
+    @pool = []
     @file_key = 1
   end
 
@@ -121,7 +122,7 @@ class GData
 
   # Returns the generator data in an appropriate output list format.
   def result_structure
-    AlphaStructure.new map, @creatures, @spawners, @quests, @knowledge_base, file_key, get_meta_data
+    AlphaStructure.new map, @creatures, @spawners, @quests, @knowledge_base, pool, file_key, get_meta_data
   end
 
   # Returns the metadata object that will be stored with the result structure.
@@ -130,13 +131,17 @@ class GData
                  :':curr-quest-flag' => QuestMaker.current_quest_flag)
   end
 
+  def push_to_pool(*args)
+    @pool.push(*args)
+  end
+
   # JSON-ifies the remaining world data.
   def excess_to_json
     @arr.to_json
   end
 
   def self.from_sxp(arg)
-    fk, map, creatures, spawners, quests, kb, debug, meta = Reloader.assert_first :alpha, arg
+    fk, map, creatures, spawners, quests, kb, pool, debug, meta = Reloader.assert_first :alpha, arg
     reloader = Reloader.instance
     meta = reloader.load meta
     GData.new([]).tap do |gdata|
@@ -146,6 +151,7 @@ class GData
       gdata.instance_variable_set :@spawners, reloader.load(spawners)
       gdata.instance_variable_set :@quests, reloader.load(quests)
       gdata.instance_variable_set :@knowledge_base, reloader.load(kb)
+      gdata.instance_variable_set :@pool, pool.drop(1).collect { |x| reloader.load(x) }
       Node.current_id = meta[:':curr-id']
       QuestMaker.current_quest_flag = meta[:':curr-quest-flag']
     end
@@ -156,20 +162,23 @@ end
 # An immutable structure consisting of data designed to be the root node of an alpha file.
 class AlphaStructure
 
-  def initialize(map, creatures, spawners, quests, kb, file_key, meta)
+  def initialize(map, creatures, spawners, quests, kb, pool, file_key, meta)
     @map = map
     @creatures = creatures
     @spawners = spawners
     @quests = quests
     @knowledge_base = kb
+    @pool = pool
     @file_key = file_key
     @meta = meta
-    # The file key is included as a unique integer to identify which alpha state is associated with which
-    # delta state, to eliminate the possibility of integrating two or more delta files in the wrong order.
+    # The file key is included as a unique integer to identify which alpha state is associated
+    # with which delta state, to eliminate the possibility of integrating two or more delta files
+    # in the wrong order.
   end
 
   def to_sxp
-    [:alpha, @file_key, @map, @creatures, @spawners, @quests, @knowledge_base, Logger.instance.debug_level, @meta].to_sxp
+    pool_data = [:pool] + @pool
+    [:alpha, @file_key, @map, @creatures, @spawners, @quests, @knowledge_base, pool_data, Logger.instance.debug_level, @meta].to_sxp
   end
 
 end

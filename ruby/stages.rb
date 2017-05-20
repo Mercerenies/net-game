@@ -170,13 +170,13 @@ class CreatureStage < Stage
   end
 end
 
-# \Stage 6 generates items and puts them into the map.
+# \Stage 6 generates items and puts them into the object pool
 class ItemStage < Stage
   def run(data)
     data.consume_each do |elem|
       case elem
       when WeaponPage
-        data.map.put_somewhere(Weapon.new elem.name, elem.type) if elem.type
+        data.push_to_pool Weapon.new(elem.name, elem.type) if elem.type
       end
     end
   end

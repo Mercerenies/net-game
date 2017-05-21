@@ -104,11 +104,12 @@ def is_food_page(page):
 
 class Basis:
     """
-    A class grouping basis page functions with match predicates. The basis function should be a function or
-    other callable object of zero arguments which returns the name (as a string) of a page to start a crawl
-    on. Often, the basis function will either be a constant function or one that uses random numbers to
-    determine the base page. The predicate function should be a 1-ary function or callable object which
-    returns True if the page matches the given category and False otherwise.
+    A class grouping basis page functions with match predicates. The basis function should be a
+    function or other callable object of zero arguments which returns the name (as a string) of a
+    page to start a crawl on. Often, the basis function will either be a constant function or one
+    that uses random numbers to determine the base page. The predicate function should be a 1-ary
+    function or callable object which returns True if the page matches the given category and
+    False otherwise.
     """
 
     def __init__(self, base, pred):

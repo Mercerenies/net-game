@@ -81,8 +81,8 @@ class Spider:
 
     def safely_call(self, func):
         """
-        A convenience function which calls the 0-ary function supplied, while handling Wikipedia and network
-        errors.
+        A convenience function which calls the 0-ary function supplied, while handling Wikipedia
+        and network errors.
         """
         def _safely_call(n):
             try:
@@ -120,7 +120,9 @@ class Spider:
                 echo("  Rejected")
 
 def nearby(x):
-    """Locates and returns any Wikipedia page whose physical location is near that of the page supplied."""
+    """
+    Locates and returns any Wikipedia page whose physical location is near that of the page supplied.
+    """
     try:
         (lat, lon) = x.coordinates
         return wikipedia.geosearch(lat, lon, radius=10000)

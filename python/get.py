@@ -52,7 +52,7 @@ def unit_run(args):
         )
     ).decode())
 
-if __name__ == '__main__':
+if __name__ == '__main__':)
     args = Arguments(sys.argv[1:])
     logger.set_global_debug_level(args.debug())
     if args.unit():

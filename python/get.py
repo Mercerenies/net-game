@@ -8,6 +8,8 @@ import links
 import reinforcement
 import logger
 import search
+import command
+from tokenize import TokenizeError
 
 def make_sel(keyword, rein):
     """Constructs a simple selector or reinforcement learning selector, depending on arguments."""
@@ -52,10 +54,27 @@ def unit_run(args):
         )
     ).decode())
 
+def expr_run(args):
+    try:
+        exprs = command.read(args.expr())
+        parts = {}
+        for expr in exprs:
+            expr.execute(parts)
+        print(ET.tostring(xmlify.xmlify(parts)))
+    except TokenizeError as e:
+        logger.echo(str(e))
+        print("<data />")
+
 if __name__ == '__main__':
     args = Arguments(sys.argv[1:])
     logger.set_global_debug_level(args.debug())
     if args.unit():
         unit_run(args)
+    elif args.expr():
+        logger.echo("error: expression commands not yet supported", level = 0)
+        sys.exit(1)
+        # ///// Interpolation problems between master.sh -> stage1.sh -> get.py
+        #       Try running: ./bash/master.sh -1 -d 2 -e 'crawl base: * page: *'
+        expr_run(args)
     else:
         standard_run(args)

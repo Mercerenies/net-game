@@ -9,7 +9,8 @@ class Arguments:
     """
 
     def __init__(self, argv):
-        self._args = dict(getopt(argv, "c:p:P:w:m:a:f:d:ru:")[0])
+        # TODO Catch whatever error getopt throws (getopt.GetoptError, I think) and print to screen
+        self._args = dict(getopt(argv, "c:p:P:w:m:a:f:d:ru:e:")[0])
 
     def celebs(self):
         return int(self._args.get("-c", "0"))
@@ -40,6 +41,9 @@ class Arguments:
 
     def unit(self):
         return self._args.get("-u", None)
+
+    def expr(self):
+        return self._args.get("-e", None)
 
     def standard_sequence(self):
         return [

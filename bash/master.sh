@@ -11,6 +11,7 @@ debug=""
 debugl=""
 rein=""
 upage=""
+expr=""
 stage1=""
 stage2=""
 stage3=""
@@ -37,6 +38,7 @@ if [ $1 == "--help" ]; then
     >&2 echo " -d Debug level"
     >&2 echo " -r Use the reinforcement learning engine (experimental)"
     >&2 echo " -u Crawl only the specified page"
+    >&2 echo " -e Crawl using the given command(s)"
     >&2 echo " -1 Run Stage 1 (Python / Site Crawling)"
     >&2 echo " -2 Run Stage 2 (Perl / Page Parsing)"
     >&2 echo " -3 Run Stage 3 (Ruby / World Generation)"
@@ -47,7 +49,7 @@ if [ $1 == "--help" ]; then
     exit
 fi
 
-while getopts 'c:p:P:w:m:a:f:d:r1234l:u:' opt; do
+while getopts 'c:p:P:w:m:a:f:d:r1234l:u:e:' opt; do
     case "$opt" in
         c) # Celebrities
             celebs="-c $OPTARG"
@@ -95,6 +97,9 @@ while getopts 'c:p:P:w:m:a:f:d:r1234l:u:' opt; do
         u) # Unit Page
             upage="-u $OPTARG"
             ;;
+        e) # Expression
+            expr="-e $OPTARG"
+            ;;
     esac
 done
 
@@ -111,7 +116,7 @@ if [ -n "$stage4" ]; then
 fi
 
 if [ -n "$stage1" ]; then
-    $stage1 "$upage" >"./temp/${prefix}1.txt"
+    $stage1 $upage $expr >"./temp/${prefix}1.txt"
 fi
 if [ -n "$stage2" ]; then
     $stage2 <"./temp/${prefix}1.txt" >"./temp/${prefix}2.txt"

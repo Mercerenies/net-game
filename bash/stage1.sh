@@ -10,6 +10,7 @@ foods=""
 debug=""
 rein=""
 upage=""
+expr=""
 
 if [ $# -eq 0 ] || [ "$1" == "--help" ]; then
     >&2 echo "Usage: ./stage1.sh <args>"
@@ -23,10 +24,11 @@ if [ $# -eq 0 ] || [ "$1" == "--help" ]; then
     >&2 echo " -d Debug level"
     >&2 echo " -r Use the reinforcement learning engine (experimental)"
     >&2 echo " -u Crawl only the specified page"
+    >&2 echo " -e Perform the commands given in the expression"
     exit
 fi
 
-while getopts 'c:p:P:w:m:a:f:d:ru:' opt; do
+while getopts 'c:p:P:w:m:a:f:d:ru:e:' opt; do
     case "$opt" in
         c) # Celebrities
             celebs="-c $OPTARG"
@@ -58,7 +60,10 @@ while getopts 'c:p:P:w:m:a:f:d:ru:' opt; do
         u) # Unit Page
             upage="-u $OPTARG"
             ;;
+        e) # Expression
+            expr="-e $OPTARG"
+            ;;
     esac
 done
 
-./python/get.py $celebs $people $places $weapons $monsters $animals $foods $debug $rein "$upage"
+./python/get.py $celebs $people $places $weapons $monsters $animals $foods $debug $rein $upage $expr

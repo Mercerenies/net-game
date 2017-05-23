@@ -30,7 +30,7 @@ def _resolve_basetype(b, t):
         raise TokenizeError("Tokenizer Error: Query type expected to be a symbol")
     return b, t
 
-def _crawl_cmd(**kwargs):
+def _crawl_cmd(parts, **kwargs):
     # Required and allowed keywords
     allowed = {'depth:', 'tries:', 'count:', 'type:', 'base:'}
     required = {'type:', 'base:'}
@@ -47,15 +47,17 @@ def _crawl_cmd(**kwargs):
     assert_type(tries, int)
     assert_type(count, int)
     # Resolve bases and types
-    base, type_ = _resolve_basetype(base, type_)
+    base, type1 = _resolve_basetype(base, type_)
     # Construct the spider
     spider = Spider(depth = depth, max_tries = tries)
     # Crawl
-    results = [spider.crawl_times(base(), type_) for i in range(0, count)]
-    return list(filter(lambda x: x is not None, results))
+    results = [spider.crawl_times(base(), type1) for i in range(0, count)]
+    parts[type_] = parts.get(type_, [])
+    parts += list(filter(lambda x: x is not None, results))
+    # TODO Should we have a return value here? Maybe just report success?
 
 _builtin = {
-    'crawl': _crawl_cmd
+    'CRAWL': _crawl_cmd
 }
 
 class Command:
@@ -69,13 +71,16 @@ class Command:
         expr[:0] = [self.head]
         return ' '.join(map(str, expr))
 
-    def execute(self):
-        cmd = _builtin[self.head]
-        return cmd(**self.args)
+    def execute(self, parts):
+        cmd = _builtin.get(self.head, None)
+        if not cmd:
+            raise TokenizeError("Tokenizer Error: Unknown command " + str(self.head))
+        return cmd(parts, **self.args)
 
 def parse(symbols):
     symbols_ = iter(symbols)
     commands = []
+    cmd = None
     try:
         while True:
             head = next(symbols_)
@@ -90,6 +95,8 @@ def parse(symbols):
             commands.append(cmd)
     except StopIteration:
         pass
+    if cmd:
+        commands.append(cmd)
     return commands
 
 def read(string):

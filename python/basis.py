@@ -149,3 +149,13 @@ Basis.query = {
     'animal' : is_animal_page ,
     'food'   : is_food_page   ,
 }
+
+Basis.plural = {
+    'celeb'  : 'celebs'  ,
+    'person' : 'people'  ,
+    'place'  : 'places'  ,
+    'weapon' : 'weapons' ,
+    'monster': 'monsters',
+    'animal' : 'animals' ,
+    'food'   : 'foods'   ,
+}

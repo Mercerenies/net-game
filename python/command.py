@@ -6,6 +6,28 @@ from algorithm import Spider
 
 # TODO Support reinforcement learning here
 
+def check_arglist(args, *, allowed, required):
+    keys = args.keys()
+    if not required <= keys and not keys <= allowed:
+        raise TokenizeError(
+            "Tokenizer Error: Expected additional argument(s) {} and not {}".format(
+                required - keys,
+                keys - allowed
+            )
+        )
+    if not required <= keys:
+        raise TokenizeError(
+            "Tokenizer Error: Expected additional argument(s) {}".format(
+                required - keys
+            )
+        )
+    if not keys <= allowed:
+        raise TokenizeError(
+            "Tokenizer Error: Unexpected argument(s) {}".format(
+                keys - allowed
+            )
+        )
+
 def _resolve_basetype(b, t):
     # At most one of base: or type: is allowed to be a wildcard
     if is_wildcard(b) and is_wildcard(t):
@@ -34,8 +56,7 @@ def _crawl_cmd(parts, **kwargs):
     # Required and allowed keywords
     allowed = {'DEPTH:', 'TRIES:', 'COUNT:', 'TYPE:', 'BASE:'}
     required = {'TYPE:', 'BASE:'}
-    if not required <= kwargs.keys() <= allowed:
-        raise TokenizeError("Tokenizer Error: Invalid argument list {}".format(list(kwargs.keys())))
+    check_arglist(kwargs, allowed = allowed, required = required)
     # Load the keywords, with appropriate defaults
     depth = kwargs.get('DEPTH:', 5)
     tries = kwargs.get('TRIES:', 3)
@@ -46,9 +67,12 @@ def _crawl_cmd(parts, **kwargs):
     token_assert(depth, int)
     token_assert(tries, int)
     token_assert(count, int)
-    # Resolve bases and types
-    base, type1 = _resolve_basetype(base, type_)
-    type2 = Basis.plural[type_.lower()]
+    try:
+        # Resolve bases and types
+        base, type1 = _resolve_basetype(base, type_)
+        type2 = Basis.plural[type_.lower()]
+    except KeyError as e:
+        raise TokenizeError("Tokenizer Error: Unknown keyword " + str(e))
     # Construct the spider
     spider = Spider(depth = depth, max_tries = tries)
     # Crawl

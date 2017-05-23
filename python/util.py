@@ -22,3 +22,11 @@ def clamp(x, a, b):
         return b
     else:
         return x
+
+def dict_to_list(dct):
+    """
+    Flattens a list into a dictionary in the same way that Ruby or Perl would. The result is what
+    Lisp would call a plist. The first element is a key, and the second is the corresponding value,
+    then the third is another key, the fourth the next value, and so on.
+    """
+    return [item for pair in dct.items() for item in pair]

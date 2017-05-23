@@ -1,13 +1,30 @@
 
+from command import Command
+from singleton import Singleton
+from util import group_into
+from itertools import takewhile
+
 class Symbol(str):
 
     def __new__(cls, contents):
         return super().__new__(cls, contents.upper())
 
-_separator = object()
+class TokenizeError(Exception):
 
-def separator():
-    return _separator
+    def __init__(self, *args, **key):
+        super().__init__(*args, **key)
+
+class Separator(metaclass = Singleton):
+
+    def __str__(self):
+        return "Separator()"
+
+    def __repr__(self):
+        return "Separator()"
+
+def token_assert(obj, type_):
+    if not isinstance(obj, type_):
+        raise TokenizeError("Tokenizer Error: Expected {}, got {}".format(type_, type(obj)))
 
 def tokenize(string):
     # Tokenizer states:
@@ -52,7 +69,7 @@ def scan(tokens):
     for token in tokens:
         if token == ';':
             # Separators are parsed as simple semicolons
-            yield separator()
+            yield Separator()
         elif token[0] == '[' and token[-1] == ']':
             # Strings are enclosed in brackets []
             yield token[1:-1]
@@ -63,4 +80,24 @@ def scan(tokens):
             # Symbols are any other sequence of non-space characters
             yield Symbol(token)
 
-# ///// Next step: parse as a command to perform an action
+def parse(symbols):
+    symbols_ = iter(symbols)
+    commands = []
+    try:
+        while True:
+            head = next(symbols_)
+            token_assert(head, Symbol)
+            cmd = Command(str(head))
+            for kv in group_into(takewhile(lambda x: x is not Separator(), symbols_), 2):
+                if len(kv) < 2:
+                    raise TokenizeError("Tokenizer Error: Keyword lists should have even length")
+                k, v = kv
+                token_assert(k, Symbol)
+                cmd.args[str(k)] = v
+            commands.append(cmd)
+    except StopIteration:
+        pass
+    return commands
+
+def read(string):
+    return parse(scan(tokenize(string)))

@@ -1,6 +1,7 @@
 
 import random
 import math
+import itertools
 
 def escape(str_):
     """Escapes a string which might contain unprintable characters in a format suitable for output to a console."""
@@ -30,3 +31,16 @@ def dict_to_list(dct):
     then the third is another key, the fourth the next value, and so on.
     """
     return [item for pair in dct.items() for item in pair]
+
+def group_into(iterable, n):
+    """
+    Groups elements of the iterable into groups of n elements each. The new iterator returned
+    is semi-lazy, in that it will not compute the whole result in advance but does force each
+    group when requested.
+    """
+    it = iter(iterable)
+    while True:
+        curr = (*itertools.islice(it, n),)
+        if curr is ():
+            break
+        yield curr

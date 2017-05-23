@@ -129,3 +129,23 @@ Basis.weapon    = Basis(get_weapon_base   , is_weapon_page )
 Basis.monster   = Basis(get_monster_base  , is_monster_page)
 Basis.animal    = Basis(get_animal_base   , is_animal_page )
 Basis.food      = Basis(get_food_base     , is_food_page   )
+
+Basis.basis = {
+    'celeb'  : get_celebrity_base,
+    'person' : get_person_base   ,
+    'place'  : get_place_base    ,
+    'weapon' : get_weapon_base   ,
+    'monster': get_monster_base  ,
+    'animal' : get_animal_base   ,
+    'food'   : get_food_base     ,
+}
+
+Basis.query = {
+    'celeb'  : is_person_page ,
+    'person' : is_person_page ,
+    'place'  : is_place_page  ,
+    'weapon' : is_weapon_page ,
+    'monster': is_monster_page,
+    'animal' : is_animal_page ,
+    'food'   : is_food_page   ,
+}

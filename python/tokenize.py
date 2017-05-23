@@ -26,10 +26,10 @@ def token_assert(obj, type_):
         raise TokenizeError("Tokenizer Error: Expected {}, got {}".format(type_, type(obj)))
 
 def is_wildcard(obj):
-    return is_instance(obj, Symbol) and obj == '*'
+    return isinstance(obj, Symbol) and obj == '*'
 
 def is_symbol(obj):
-    return is_instance(obj, Symbol)
+    return isinstance(obj, Symbol)
 
 def is_simple_symbol(obj):
     return is_symbol(obj) and not is_wildcard(obj)

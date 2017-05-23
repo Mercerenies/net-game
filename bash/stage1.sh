@@ -61,9 +61,9 @@ while getopts 'c:p:P:w:m:a:f:d:ru:e:' opt; do
             upage="-u $OPTARG"
             ;;
         e) # Expression
-            expr="-e $OPTARG"
+            expr="$OPTARG"
             ;;
     esac
 done
 
-./python/get.py $celebs $people $places $weapons $monsters $animals $foods $debug $rein $upage $expr
+./python/get.py $celebs $people $places $weapons $monsters $animals $foods $debug $rein $upage -e "$expr"

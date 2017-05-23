@@ -12,6 +12,7 @@ debugl=""
 rein=""
 upage=""
 expr=""
+expr1=""
 stage1=""
 stage2=""
 stage3=""
@@ -98,7 +99,7 @@ while getopts 'c:p:P:w:m:a:f:d:r1234l:u:e:' opt; do
             upage="-u $OPTARG"
             ;;
         e) # Expression
-            expr="-e $OPTARG"
+            expr="$OPTARG"
             ;;
     esac
 done
@@ -116,7 +117,7 @@ if [ -n "$stage4" ]; then
 fi
 
 if [ -n "$stage1" ]; then
-    $stage1 $upage $expr >"./temp/${prefix}1.txt"
+    $stage1 $upage -e "$expr" >"./temp/${prefix}1.txt"
 fi
 if [ -n "$stage2" ]; then
     $stage2 <"./temp/${prefix}1.txt" >"./temp/${prefix}2.txt"

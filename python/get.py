@@ -60,7 +60,7 @@ def expr_run(args):
         parts = {}
         for expr in exprs:
             expr.execute(parts)
-        print(ET.tostring(xmlify.xmlify(parts)))
+        print(ET.tostring(xmlify.xmlify(parts)).decode())
     except TokenizeError as e:
         logger.echo(str(e))
         print("<data />")
@@ -68,13 +68,11 @@ def expr_run(args):
 if __name__ == '__main__':
     args = Arguments(sys.argv[1:])
     logger.set_global_debug_level(args.debug())
+    # TODO We should report an error if two or more of unit, expr, or legacy arguments are provided.
+    # So if -u and legacy, -u and -e, or -e and legacy, err.
     if args.unit():
         unit_run(args)
     elif args.expr():
-        logger.echo("error: expression commands not yet supported", level = 0)
-        sys.exit(1)
-        # ///// Interpolation problems between master.sh -> stage1.sh -> get.py
-        #       Try running: ./bash/master.sh -1 -d 2 -e 'crawl base: * page: *'
         expr_run(args)
     else:
         standard_run(args)

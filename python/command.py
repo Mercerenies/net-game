@@ -17,43 +17,44 @@ def _resolve_basetype(b, t):
         t = b
     # Resolve the base page first
     if is_simple_symbol(b):
-        b = Basis.basis[b]
+        b = Basis.basis[b.lower()]
     elif isinstance(b, str):
         _tmp1 = b
         b = lambda: _tmp1
     else:
         raise TokenizeError("Tokenizer Error: Base page expected to be string or symbol")
     # Then resolve the type
-    if is_simple_symbol(b):
-        t = Basis.query[t]
+    if is_simple_symbol(t):
+        t = Basis.query[t.lower()]
     else:
         raise TokenizeError("Tokenizer Error: Query type expected to be a symbol")
     return b, t
 
 def _crawl_cmd(parts, **kwargs):
     # Required and allowed keywords
-    allowed = {'depth:', 'tries:', 'count:', 'type:', 'base:'}
-    required = {'type:', 'base:'}
+    allowed = {'DEPTH:', 'TRIES:', 'COUNT:', 'TYPE:', 'BASE:'}
+    required = {'TYPE:', 'BASE:'}
     if not required <= kwargs.keys() <= allowed:
         raise TokenizeError("Tokenizer Error: Invalid argument list {}".format(list(kwargs.keys())))
     # Load the keywords, with appropriate defaults
-    depth = kwargs.get('depth:', 5)
-    tries = kwargs.get('tries:', 3)
-    count = kwargs.get('count:', 1)
-    type_ = kwargs['type:']
-    base  = kwargs['base:']
+    depth = kwargs.get('DEPTH:', 5)
+    tries = kwargs.get('TRIES:', 3)
+    count = kwargs.get('COUNT:', 1)
+    type_ = kwargs['TYPE:']
+    base  = kwargs['BASE:']
     # Check types where necessary
-    assert_type(depth, int)
-    assert_type(tries, int)
-    assert_type(count, int)
+    token_assert(depth, int)
+    token_assert(tries, int)
+    token_assert(count, int)
     # Resolve bases and types
     base, type1 = _resolve_basetype(base, type_)
+    type2 = Basis.plural[type_.lower()]
     # Construct the spider
     spider = Spider(depth = depth, max_tries = tries)
     # Crawl
     results = [spider.crawl_times(base(), type1) for i in range(0, count)]
-    parts[type_] = parts.get(type_, [])
-    parts += list(filter(lambda x: x is not None, results))
+    parts[type2] = parts.get(type2, [])
+    parts[type2] += list(filter(lambda x: x is not None, results))
     # TODO Should we have a return value here? Maybe just report success?
 
 _builtin = {
@@ -83,6 +84,7 @@ def parse(symbols):
     cmd = None
     try:
         while True:
+            cmd = None
             head = next(symbols_)
             token_assert(head, Symbol)
             cmd = Command(str(head))

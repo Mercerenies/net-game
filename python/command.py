@@ -1,6 +1,6 @@
 
 from util import dict_to_list
-from tokenize import TokenizeError, token_assert, is_wildcard, is_simple_symbol, is_symbol
+from tokenize import *
 from basis import Basis
 from algorithm import Spider
 
@@ -73,3 +73,24 @@ class Command:
         cmd = _builtin[self.head]
         return cmd(**self.args)
 
+def parse(symbols):
+    symbols_ = iter(symbols)
+    commands = []
+    try:
+        while True:
+            head = next(symbols_)
+            token_assert(head, Symbol)
+            cmd = Command(str(head))
+            for kv in group_into(takewhile(lambda x: x is not Separator(), symbols_), 2):
+                if len(kv) < 2:
+                    raise TokenizeError("Tokenizer Error: Keyword lists should have even length")
+                k, v = kv
+                token_assert(k, Symbol)
+                cmd.args[str(k)] = v
+            commands.append(cmd)
+    except StopIteration:
+        pass
+    return commands
+
+def read(string):
+    return parse(scan(tokenize(string)))

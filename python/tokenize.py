@@ -1,5 +1,4 @@
 
-from command import Command
 from singleton import Singleton
 from util import group_into
 from itertools import takewhile
@@ -88,25 +87,3 @@ def scan(tokens):
         else:
             # Symbols are any other sequence of non-space characters
             yield Symbol(token)
-
-def parse(symbols):
-    symbols_ = iter(symbols)
-    commands = []
-    try:
-        while True:
-            head = next(symbols_)
-            token_assert(head, Symbol)
-            cmd = Command(str(head))
-            for kv in group_into(takewhile(lambda x: x is not Separator(), symbols_), 2):
-                if len(kv) < 2:
-                    raise TokenizeError("Tokenizer Error: Keyword lists should have even length")
-                k, v = kv
-                token_assert(k, Symbol)
-                cmd.args[str(k)] = v
-            commands.append(cmd)
-    except StopIteration:
-        pass
-    return commands
-
-def read(string):
-    return parse(scan(tokenize(string)))

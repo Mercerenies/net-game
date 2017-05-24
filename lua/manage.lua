@@ -7,7 +7,7 @@ local query = require 'lua/query'
 local pquery = require 'lua/pquery'
 
 local dispatch = {
-   quit = function (_) filenamer.cleanup() os.exit(1) end,
+   quit = function (_) filenamer.cleanup() os.exit(0) end,
    ter = function (_) checkin() end,
    need = function (x) request(x[2], x[3], x[4]) end
 }

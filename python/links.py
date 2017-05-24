@@ -22,8 +22,9 @@ class LinkState:
 
 class LinkSelector:
     """
-    LinkSelector is an abstract class for selecting links on a page. Children of this class must override
-    select_link. The other methods are called at the appropriate times and can be overriden but are optional.
+    LinkSelector is an abstract class for selecting links on a page. Children of this class must
+    override select_link. The other methods are called at the appropriate times and can be overriden
+    but are optional.
     """
     def finished(self):
         pass

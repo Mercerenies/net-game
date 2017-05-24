@@ -4,16 +4,33 @@ from util import group_into
 from itertools import takewhile
 
 class Symbol(str):
+    """
+    A crude symbol class designed simply to distinguish between symbols and straight strings.
+    Every symbol has all of the functionality of a Python string but also identifies as a
+    symbol itself. Following the Common Lisp precedent, symbols are always converted to uppercase
+    when constructed.
+    """
 
     def __new__(cls, contents):
         return super().__new__(cls, contents.upper())
 
 class TokenizeError(Exception):
+    """
+    A class for any errors in the tokenization and command execution process. Any errors
+    occurring from invalid or syntactically incorrect commands should be handled using this
+    exception class or a child thereof. Any errors or mistakes in the code itself should
+    still use standard Python exceptions and should not use this class.
+    """
 
     def __init__(self, *args, **key):
         super().__init__(*args, **key)
 
 class Separator(metaclass = Singleton):
+    """
+    A singleton for a separator in the tokenized string. Separators are either semicolons or
+    newlines. This class does not distinguish between semicolons and newlines; they are
+    treated as synonymous constructs.
+    """
 
     def __str__(self):
         return "Separator()"
@@ -22,19 +39,41 @@ class Separator(metaclass = Singleton):
         return "Separator()"
 
 def token_assert(obj, type_):
+    """
+    Verifies that the given object is an instance of the specified type. If it is, this function
+    does not do anything further. If it does not, a TokenizeError is raised.
+    """
     if not isinstance(obj, type_):
         raise TokenizeError("Tokenizer Error: Expected {}, got {}".format(type_, type(obj)))
 
 def is_wildcard(obj):
+    """
+    Returns whether or not the object is a wildcard. That is, whether or not the object is an
+    instance of Symbol whose string value is exactly equal to the '*' character.
+    """
     return isinstance(obj, Symbol) and obj == '*'
 
 def is_symbol(obj):
+    """
+    Returns whether or not the object is an instance of the Symbol class. is_symbol(obj) is
+    equivalent to isinstance(obj, Symbol).
+    """
     return isinstance(obj, Symbol)
 
 def is_simple_symbol(obj):
+    """Returns true if and only if the object is a symbol which is not a wildcard symbol."""
     return is_symbol(obj) and not is_wildcard(obj)
 
 def tokenize(string):
+    """
+    Converts a string into a list of substrings, broken by the token separation rules. This function
+    does not examine the individual substrings, nor does it make Symbol instances; it merely returns
+    a list of appropriately separated substrings. The string is separated at any point containing at
+    least one space character, except inside of strings delimited by square brackets []. In square
+    brackets, no tokenization is performed, but escaping of backslash sequences is performed instead.
+    An opening bracket always begins a new token, and a newline or semicolon always acts as an
+    independent token, except in strings.
+    """
     # Tokenizer states:
     # 0 - Standard state; parsing token
     # 1 - String state; parsing string
@@ -74,6 +113,13 @@ def tokenize(string):
     return tokens
 
 def scan(tokens):
+    """
+    Given an iterable of strings, such as those produced by tokenize(), convert each
+    element to its appropriate command form. Elements equal to a semicolon are scanned
+    into the Separator() instance. Elements surrounded by [] will be left as strings
+    without the outside [] characters. Elements which consist only of decimal digits
+    are parsed into integers, and all other elements are converted to Symbol instances..
+    """
     for token in tokens:
         if token == ';':
             # Separators are parsed as simple semicolons

@@ -7,6 +7,14 @@ from algorithm import Spider
 # TODO Support reinforcement learning here
 
 def check_arglist(args, *, allowed, required):
+    """
+    Verifies that the arglist, which should be a dict, contains keys corresponding to the
+    specification. The two keyword arguments should be set-like objects with required <= allowed.
+    An appropriate error of type TokenizeError will be raised if required <= keys <= allowed is
+    not true, where keys is the set of keys in the argument list provided. All of the keys in the
+    argument list should be hashable objects, as should all of the elements in both provided sets.
+    If the specifications are satisfied and no error is raised, the function will return silently.
+    """
     keys = args.keys()
     if not required <= keys and not keys <= allowed:
         raise TokenizeError(
@@ -40,7 +48,7 @@ def _resolve_basetype(b, t):
     # Resolve the base page first
     if is_simple_symbol(b):
         b = Basis.basis[b.lower()]
-    elif isinstance(b, str):
+    elif isinstance(b, str): # TODO Write a is_string which distinguishes between str and Symbol
         _tmp1 = b
         b = lambda: _tmp1
     else:
@@ -86,23 +94,45 @@ _builtin = {
 }
 
 class Command:
+    """
+    A command consists of a head, or the name of the function, together with a single dictionary
+    of named arguments. The head, as well as all keys in the dictionary, should be simple strings.
+    """
 
     def __init__(self, head, **args):
+        """Creates a command with the given head and argument list."""
         self.head = head
         self.args = args
 
     def __str__(self):
+        """
+        Converts the command to a canonical form close to that which was parsed in originally.
+        """
+        # TODO Make strings map to bracketed expressions so that the str/parse relationship holds.
         expr = dict_to_list(self.args)
         expr[:0] = [self.head]
         return ' '.join(map(str, expr))
 
     def execute(self, parts):
+        """
+        Executes the command, where the head is a built-in command name and the argument list
+        is appropriate for the command. If the head does not exist as a command or the argument
+        list is incorrect, a TokenizeError will be raised. If a different kind of error, brought
+        on by a wrongly formatted command, occurs then a TokenizeError should also be raised.
+        """
         cmd = _builtin.get(self.head, None)
         if not cmd:
             raise TokenizeError("Tokenizer Error: Unknown command " + str(self.head))
         return cmd(parts, **self.args)
 
 def parse(symbols):
+    """
+    Takes an iterable of tokens, such as the one produced by scan(), and produces a list of
+    commands. The iterable is separated into lists separated by Separator() tokens. Each list
+    will be read as the name of the command (a Symbol instance) followed by one or more
+    key-value pairs. Each key should be a symbol and each value should be a symbol, string, or
+    number. Violation of any of these conditions results in a TokenizeError.
+    """
     symbols_ = iter(symbols)
     commands = []
     cmd = None
@@ -126,4 +156,8 @@ def parse(symbols):
     return commands
 
 def read(string):
+    """
+    read() is a convenience function which performs tokenize(), then scan(), then parse(), in
+    sequence.
+    """
     return parse(scan(tokenize(string)))

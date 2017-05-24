@@ -120,7 +120,7 @@ def _legacy_crawl_cmd(parts, **kwargs):
     # Parse the argument list
     args = kwargs['ARGS:']
     token_assert(args, str)
-    args_obj = Arguments(list(filter(lambda x: x, args.split(' '))))
+    args_obj = Arguments(list(filter(lambda x: x, args.split(' '))), limited_set = True)
     for arg in args_obj.standard_sequence():
         if arg.count <= 0:
             continue

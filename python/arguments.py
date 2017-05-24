@@ -9,9 +9,10 @@ class Arguments:
     Stage 1 program is expected to be able to handle.
     """
 
-    def __init__(self, argv):
+    def __init__(self, argv, limited_set = False):
         try:
-            self._args = dict(getopt(argv, "c:p:P:w:m:a:f:d:ru:e:")[0])
+            arglist = "c:p:P:w:m:a:f:r" if limited_set else "c:p:P:w:m:a:f:d:ru:e:"
+            self._args = dict(getopt(argv, arglist)[0])
         except GetoptError as e:
             self._args = {}
             echo("Error in arguments:", e)

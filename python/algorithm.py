@@ -7,6 +7,7 @@ import time
 from logger import echo
 from links import LinkState
 import werror
+import requests
 
 DELAY = 0.5
 
@@ -100,6 +101,9 @@ class Spider:
                 else:
                     echo("Connection reset", e, "...", "aborting")
                     return None
+            except requests.exceptions.ConnectionError as e:
+                echo("Aborting because of connection error", e)
+                return None
         return _safely_call(0)
 
     def crawl_times(self, base, match_function):
@@ -109,7 +113,9 @@ class Spider:
         """
         if type(base) is str:
             echo("Basis:", escape(base))
-            base = wikipedia.page(base)
+            base = self.safely_call(lambda: wikipedia.page(base))
+            if not base:
+                return None
         else:
             echo("Basis:", escape(base.title))
         for i in range(0, self.max_tries):

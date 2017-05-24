@@ -3,6 +3,8 @@ from util import dict_to_list
 from tokenize import *
 from basis import Basis
 from algorithm import Spider
+import links
+import reinforcement
 
 # TODO Support reinforcement learning here
 
@@ -41,6 +43,7 @@ def _resolve_basetype(b, t):
     if is_wildcard(b) and is_wildcard(t):
         raise TokenizeError("Tokenizer Error: Type and base cannot both be wildcards")
     # If either one is a wildcard, resolve it now
+    import sys
     if is_wildcard(b):
         b = t
     if is_wildcard(t):
@@ -62,29 +65,37 @@ def _resolve_basetype(b, t):
 
 def _crawl_cmd(parts, **kwargs):
     # Required and allowed keywords
-    allowed = {'DEPTH:', 'TRIES:', 'COUNT:', 'TYPE:', 'BASE:'}
+    allowed = {'DEPTH:', 'TRIES:', 'COUNT:', 'TYPE:', 'BASE:', 'REIN:'}
     required = {'TYPE:', 'BASE:'}
     check_arglist(kwargs, allowed = allowed, required = required)
     # Load the keywords, with appropriate defaults
     depth = kwargs.get('DEPTH:', 5)
     tries = kwargs.get('TRIES:', 3)
     count = kwargs.get('COUNT:', 1)
+    rein  = kwargs.get('REIN:', False)
     type_ = kwargs['TYPE:']
     base  = kwargs['BASE:']
     # Check types where necessary
     token_assert(depth, int)
     token_assert(tries, int)
     token_assert(count, int)
+    token_assert(rein, bool)
     try:
         # Resolve bases and types
-        base, type1 = _resolve_basetype(base, type_)
-        type2 = Basis.plural[type_.lower()]
+        base1, type1 = _resolve_basetype(base, type_)
+        # TODO This next line is very disorganized and hard to follow
+        type2 = Basis.plural[base.lower() if is_wildcard(type_) else type_.lower()]
     except KeyError as e:
         raise TokenizeError("Tokenizer Error: Unknown keyword " + str(e))
     # Construct the spider
-    spider = Spider(depth = depth, max_tries = tries)
+    if rein:
+        selector = reinforcement.ReinLinkSelector(type2)
+    else:
+        selector = links.NoDupLinkSelector()
+    spider = Spider(depth = depth, max_tries = tries, selector = selector)
     # Crawl
-    results = [spider.crawl_times(base(), type1) for i in range(0, count)]
+    results = [spider.crawl_times(base1(), type1) for i in range(0, count)]
+    spider.finished()
     parts[type2] = parts.get(type2, [])
     parts[type2] += list(filter(lambda x: x is not None, results))
     # TODO Should we have a return value here? Maybe just report success?

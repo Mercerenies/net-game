@@ -137,6 +137,12 @@ def scan(tokens):
         elif token.isdigit(): # TODO This allows some Unicode characters we don't want allowed here
             # Integers consist of digits; currently there is no support for negative integers
             yield int(token)
+        elif token.upper() == 'YES':
+            # The Boolean true value is the text "YES" (case insensitive)
+            yield True
+        elif token.upper() == 'NO':
+            # The Boolean false value is the text "NO" (case insensitive)
+            yield False
         else:
             # Symbols are any other sequence of non-space characters
             yield Symbol(token)

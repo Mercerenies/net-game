@@ -186,7 +186,7 @@ class ReinLinkSelector(links.LinkSelector):
         numer = state.depth_left()
         denom = state.total_depth()
         cap = 1 - numer / (denom + 1)
-        #echo("Explore cap", cap, level = 2)
+        echo("  Explore cap {:.2%}".format(cap), level = 3)
         res = random.random() < cap
         if res:
             self.already_exploring = True
@@ -201,10 +201,10 @@ class ReinLinkSelector(links.LinkSelector):
         pages = map(lambda x: (x, float(self.db.get_score(x))), pages)
         pages = list(pages)
         if not pages or self.should_explore(state):
-            echo("Exploring", level = 2)
+            echo("  Exploring", level = 2)
             result = self.explore.select_link(state)
         else:
-            echo("Using prior knowledge", level = 2)
+            echo("  Using prior knowledge", level = 2)
             result = self._weighted_random(pages)
         if result:
             self.pages.append(result)

@@ -1,6 +1,6 @@
 
 from util import dict_to_list
-from tokenize import *
+from tokenizer import *
 from basis import Basis
 from algorithm import Spider
 import links
@@ -101,7 +101,7 @@ def _crawl_cmd(parts, **kwargs):
     # TODO Should we have a return value here? Maybe just report success?
 
 _builtin = {
-    'CRAWL': _crawl_cmd
+    'CRAWL': _crawl_cmd,
 }
 
 class Command:

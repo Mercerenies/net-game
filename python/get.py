@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+# ///// Wouldn't it be nice if we could (from Lisp with godmode on) request pages using the expression syntax?
+
 import sys
 import xml.etree.ElementTree as ET
 from arguments import Arguments
@@ -9,7 +11,7 @@ import reinforcement
 import logger
 import search
 import command
-from tokenize import TokenizeError
+from tokenizer import TokenizeError
 
 def make_sel(keyword, rein):
     """Constructs a simple selector or reinforcement learning selector, depending on arguments."""

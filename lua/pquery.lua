@@ -12,6 +12,9 @@ local para_cmd =
    '(./bash/stage1.sh %s -d %d -e \'legacy-crawl args: [%s]\' | ' ..
    './bash/stage2.sh %d >%s ; touch %s)&'
 
+local full_cmd =
+   '(./bash/stage1.sh %s -d %d -e %s | ./bash/stage2.sh %d >%s ; touch %s)&'
+
 local rein = ""
 
 local function spawn_parallel(argument)
@@ -29,6 +32,24 @@ local function spawn_and_store(qobj, argm)
    table.insert(qobj._checknames, sname)
 end
 
+local function spawn_parallel_full(expr)
+   local rname = filenamer.get_filename()
+   local sname = filenamer.get_filename()
+   local lvl = logger.get_debug_level()
+   expr = expr:gsub([[']], [['"'"']])
+   expr = "'" .. expr .. "'"
+   -- logger.echo(1, "*** " .. expr .. " ***")
+   local cmd = string.format(full_cmd, rein, lvl, expr, lvl, rname, sname)
+   util.execute(cmd)
+   return rname, sname
+end
+
+local function spawn_and_store_full(qobj, expr)
+   local rname, sname = spawn_parallel_full(expr)
+   table.insert(qobj._resultnames, rname)
+   table.insert(qobj._checknames, sname)
+end
+
 function P.use_reinforcement()
    rein = "-r"
 end
@@ -40,6 +61,7 @@ end
 function PQuery.new()
    local new = query.Query.new()
    setmetatable(new, {__index = PQuery})
+   new.customs = {}
    return new
 end
 
@@ -67,7 +89,15 @@ function PQuery:req()
    for i = 1, (self._foods or 0) do
       spawn_and_store(self, '-f 1')
    end
+   for i, v in ipairs(self.customs) do
+      spawn_and_store_full(self, v)
+   end
    self._process = 1
+   return self
+end
+
+function PQuery:custom(expr)
+   self.customs[#self.customs + 1] = expr
    return self
 end
 

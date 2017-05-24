@@ -7,9 +7,21 @@ local query = require 'lua/query'
 local pquery = require 'lua/pquery'
 
 local dispatch = {
-   quit = function (_) filenamer.cleanup() os.exit(0) end,
-   ter = function (_) checkin() end,
-   need = function (x) request(x[2], x[3], x[4]) end
+   quit = function (_)
+      filenamer.cleanup()
+      os.exit(0)
+   end,
+   ter = function (_)
+      checkin()
+   end,
+   need = function (x)
+      y = tokenize(x)
+      request(y[1], y[2], y[3])
+   end,
+   goget = function (x)
+      wname, dname, expr = string.match(x, "(%S+)%s+(%S+)%s+(.+)")
+      request_custom(expr, wname, dname)
+   end
 }
 
 local req_objs = {
@@ -33,10 +45,17 @@ function tokenize(data)
    return tokens
 end
 
-function dispatch_on(tokens)
-   local func = dispatch[ tokens[1] ]
+function name_and_args(data)
+   name = data:match "%S+"
+   args = data:match "%s.+" or ""
+   args = string.sub(args, 2)
+   return name, args
+end
+
+function dispatch_on(name, args)
+   local func = dispatch[name]
    if type(func) == 'function' then
-      func(tokens)
+      func(args)
    else
       io.stderr:write("WARNING: Unknown message '" .. tokens[1] .. "' received!\n")
    end
@@ -64,11 +83,11 @@ function setup_and_run()
    while true do
       data, err = conn:receive '*l'
       if data then
-         local tokens = tokenize(data)
-         dispatch_on(tokens)
+         local name, args = name_and_args(data)
+         dispatch_on(name, args)
       elseif err == 'timeout' then
          -- Timed out; do a routine check and then move on
-         dispatch_on { 'ter' }
+         dispatch_on('ter', '')
       else
          error(err)
       end
@@ -108,6 +127,15 @@ function request(type_, wname, dname)
    else
       io.stderr:write("WARNING: Unknown request type '" .. type_ .. "'!\n")
    end
+end
+
+function request_custom(expr, wname, dname)
+   result = pquery.PQuery.new()
+   result._worldname = wname
+   result._finalname = dname
+   result:custom(expr)
+   result:req()
+   table.insert(allqueries, result)
 end
 
 pcall(setup_and_run)

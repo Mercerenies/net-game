@@ -3,8 +3,10 @@ from util import dict_to_list
 from tokenizer import *
 from basis import Basis
 from algorithm import Spider
+from arguments import Arguments
 import links
 import reinforcement
+import search
 
 # TODO Support reinforcement learning here
 
@@ -105,13 +107,33 @@ def _basic_crawl_cmd(parts, **kwargs):
     allowed = set()
     required = set()
     check_arglist(kwargs, allowed = allowed, required = required)
+    # Perform the corresponding crawl commands
     _crawl_cmd(parts, **{'TYPE:': Symbol('person'), 'BASE:': Symbol('*'), 'COUNT:': 2})
     _crawl_cmd(parts, **{'TYPE:': Symbol('place'), 'BASE:': Symbol('*'), 'COUNT:': 3})
     _crawl_cmd(parts, **{'TYPE:': Symbol('animal'), 'BASE:': Symbol('*'), 'COUNT:': 3})
 
+def _legacy_crawl_cmd(parts, **kwargs):
+    # Required and allowed keywords
+    allowed = {'ARGS:'}
+    required = {'ARGS:'}
+    check_arglist(kwargs, allowed = allowed, required = required)
+    # Parse the argument list
+    args = kwargs['ARGS:']
+    token_assert(args, str)
+    args_obj = Arguments(list(filter(lambda x: x, args.split(' '))))
+    for arg in args_obj.standard_sequence():
+        if arg.count <= 0:
+            continue
+        use_rein = args_obj.rein() and arg.rein
+        sel = reinforcement.ReinLinkSelector(arg.selector) if use_rein else links.NoDupLinkSelector()
+        searcher = search.BasicSearch(basis = arg.basis, number = arg.count, selector = sel, keys = {})
+        parts[arg.key] = parts.get(arg.key, [])
+        parts[arg.key] += searcher.run()
+
 _builtin = {
     'CRAWL': _crawl_cmd,
     'BASIC_CRAWL': _basic_crawl_cmd,
+    'LEGACY_CRAWL': _legacy_crawl_cmd,
 }
 
 class Command:

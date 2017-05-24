@@ -72,31 +72,13 @@ The `./emacs/client.el` file provides some very primitive and very experimental 
 
 There are several scripts in the `./bash/` directory, but (aside from the initial `./bash/check.sh` script) the entrypoint to all of these is `./bash/master.sh`. Running the script with `--help` as the only option will print a summary of the command line flags available.
 
- * `-c` Celebrities
- * `-p` People
- * `-P` Places
- * `-w` Weapons
- * `-m` Monsters
- * `-a` Animals
- * `-f` Foods
-
-   The first several flags control the number of crawls to perform for each type of entity. Note that this is the number of *attempts*, not necessarily the number of results. If you would like five locations, it is often a good idea to run `-P 6` or `-P 7` to be safe, since some of the crawls are likely to fail.
-
- * `-u` Unit Crawl
-
-   The unit crawl command, primarily for debugging purposes, provides a way to request a single, specific page from the crawling engine, rather than perusing the Internet looking for a valid one. Note that, if `-u` is supplied, the sum of all of the entity type flags, listed above, should be `1`, so that the unit page can be identified correctly.
-
  * `-d` Debug Level
 
-   The debug level controls the information printed to STDERR. An absent (or 0) debug level results in nothing being printed to STDERR. At debug level 1, the Python engine will print all of the pages it visits during its crawl. At level 2, the reinforcement engine will print whether or not it is in "exploration mode".
+   The debug level controls the information printed to STDERR. An absent (or 0) debug level results in nothing being printed to STDERR. At debug level 1, basic information will be printed about processes. At debug level 2, more detailed useful information will be printed as things happen. At debug level 3, almost everything that occurs will be reported verbosely. In general, debug level 2 suffices for most tasks.
 
- * `-r` Reinforcement Engine
+ * `-e` Crawl Expression
 
-   Rather than crawling Wikipedia randomly, this flag will instruct the engine to use a reinforcement learning algorithm to intelligently browse the Web, when it makes sense to do so. The engine will remember past crawls and use them to improve its ability to search through the Internet. Note, in the dependencies section, that the `flock` Bash command must be available in order to use the reinforcement learning algorithm.
-
- * `-e` Expression Syntax
-
-   As an improvement to the argument-oriented system of directing Internet crawls, a statement-based system is being developed. By providing an expression, you are given more control over the nature, extent, and goal of the parse. Note that `-e` and `-u` are mutually exclusive, and `-r` is ignored if `-e` is supplied (the reinforcement learning system can be enabled in expression mode with an additional argument to the crawl command).
+   The expression provided here should be a sequence of commands, delimited by semicolons, which will direct the Web crawling engine in its path. For full documentation on the expression syntax, see `./docs/commands.md`.
 
  * `-1` Site Crawling
  * `-2` Page Parsing

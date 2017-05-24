@@ -94,6 +94,10 @@ There are several scripts in the `./bash/` directory, but (aside from the initia
 
    Rather than crawling Wikipedia randomly, this flag will instruct the engine to use a reinforcement learning algorithm to intelligently browse the Web, when it makes sense to do so. The engine will remember past crawls and use them to improve its ability to search through the Internet. Note, in the dependencies section, that the `flock` Bash command must be available in order to use the reinforcement learning algorithm.
 
+ * `-e` Expression Syntax
+
+   As an improvement to the argument-oriented system of directing Internet crawls, a statement-based system is being developed. By providing an expression, you are given more control over the nature, extent, and goal of the parse. Note that `-e` and `-u` are mutually exclusive, and `-r` is ignored if `-e` is supplied (the reinforcement learning system can be enabled in expression mode with an additional argument to the crawl command).
+
  * `-1` Site Crawling
  * `-2` Page Parsing
  * `-3` World Generation

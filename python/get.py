@@ -68,8 +68,7 @@ def expr_run(args):
 if __name__ == '__main__':
     args = Arguments(sys.argv[1:])
     logger.set_global_debug_level(args.debug())
-    # TODO We should report an error if two or more of unit, expr, or legacy arguments are provided.
-    # So if -u and legacy, -u and -e, or -e and legacy, err.
+    # TODO We should report an error if -u and -e are both supplied, probably.
     if args.unit():
         unit_run(args)
     elif args.expr():

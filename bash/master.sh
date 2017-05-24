@@ -37,7 +37,7 @@ if [ $1 == "--help" ]; then
     >&2 echo " -a Number of animals"
     >&2 echo " -f Number of foods"
     >&2 echo " -d Debug level"
-    >&2 echo " -r Use the reinforcement learning engine (experimental)"
+    >&2 echo " -r Use the reinforcement learning engine (ignored if -e or -u is passed)"
     >&2 echo " -u Crawl only the specified page"
     >&2 echo " -e Crawl using the given command(s)"
     >&2 echo " -1 Run Stage 1 (Python / Site Crawling)"

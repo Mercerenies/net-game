@@ -140,6 +140,8 @@ def parse(symbols):
         while True:
             cmd = None
             head = next(symbols_)
+            if head is Separator():
+                continue
             token_assert(head, Symbol)
             cmd = Command(str(head))
             for kv in group_into(takewhile(lambda x: x is not Separator(), symbols_), 2):

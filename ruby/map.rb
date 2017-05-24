@@ -67,7 +67,7 @@ class Map
     block = proc { true } unless block
     weight = Proc.new { |x| 1 / (x.count_items(type) + 1) }
     total = select( &block ).map( &weight ).reduce(:+)
-    total = 1.0 if total.nil?
+    total = 1.0 if total.nil? or total <= 0
     num = Random.rand total
     result = detect do |x|
       next unless block.call x

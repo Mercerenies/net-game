@@ -19,7 +19,7 @@ upage=""
 expr=""
 
 if [ $# -eq 0 ] || [ "$1" == "--help" ]; then
-    >&2 echo "Usage: ./stage1.sh <args>"
+    >&2 echo "Usage: ./legacy_stage1.sh <args>"
     >&2 echo " -c Number of celebrities"
     >&2 echo " -p Number of people"
     >&2 echo " -P Number of places"
@@ -29,12 +29,10 @@ if [ $# -eq 0 ] || [ "$1" == "--help" ]; then
     >&2 echo " -f Number of foods"
     >&2 echo " -d Debug level"
     >&2 echo " -r Use the reinforcement learning engine (ignored if -e or -u is passed)"
-    >&2 echo " -u Crawl only the specified page"
-    >&2 echo " -e Perform the commands given in the expression"
     exit
 fi
 
-while getopts 'c:p:P:w:m:a:f:d:ru:e:' opt; do
+while getopts 'c:p:P:w:m:a:f:d:r' opt; do
     case "$opt" in
         c) # Celebrities
             celebs="-c $OPTARG"
@@ -63,13 +61,9 @@ while getopts 'c:p:P:w:m:a:f:d:ru:e:' opt; do
         r) # Reinforcement Engine
             rein="-r"
             ;;
-        u) # Unit Page
-            upage="-u $OPTARG"
-            ;;
-        e) # Expression
-            expr="$OPTARG"
-            ;;
     esac
 done
 
-./python/get.py $celebs $people $places $weapons $monsters $animals $foods $debug $rein $upage -e "$expr"
+expr="legacy-crawl args: [$celebs $people $places $weapons $monsters $animals $foods]"
+
+./python/get.py -e "$expr" $debug $rein

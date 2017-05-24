@@ -1,8 +1,15 @@
 #!/bin/bash
 
+celebs=""
+people=""
+places=""
+weapons=""
+monsters=""
+animals=""
+foods=""
 debug=""
 debugl=""
-expr=""
+rein=""
 stage1=""
 stage2=""
 stage3=""
@@ -12,14 +19,23 @@ clisp="clisp"
 prefix="net"
 
 if [ $# -eq 0 ]; then
-    >&2 echo "Usage: ./master.sh <args>"
-    >&2 echo "For detailed help with instructions, try \`./master.sh --help\`"
+    >&2 echo "Usage: ./legacy_master.sh <args>"
+    >&2 echo "For detailed help with instructions, try \`./legacy_master.sh --help\`"
     exit
 fi
 
 if [ $1 == "--help" ]; then
-    >&2 echo "Usage: ./master.sh <args>"
+    >&2 echo "Usage: ./legacy_master.sh <args>"
+    >&2 echo " -c Number of celebrities"
+    >&2 echo " -p Number of people"
+    >&2 echo " -P Number of places"
+    >&2 echo " -w Number of weapons"
+    >&2 echo " -m Number of monsters"
+    >&2 echo " -a Number of animals"
+    >&2 echo " -f Number of foods"
     >&2 echo " -d Debug level"
+    >&2 echo " -r Use the reinforcement learning engine (ignored if -e or -u is passed)"
+    >&2 echo " -u Crawl only the specified page"
     >&2 echo " -e Crawl using the given command(s)"
     >&2 echo " -1 Run Stage 1 (Python / Site Crawling)"
     >&2 echo " -2 Run Stage 2 (Perl / Page Parsing)"
@@ -28,17 +44,42 @@ if [ $1 == "--help" ]; then
     >&2 echo " -l Use the given Common Lisp implementation"
     >&2 echo " ** For detailed information about any of these flags, consult the"
     >&2 echo "    documentation for ./stageN.sh, where N is the relevant stage."
+    >&2 echo " ** Note that ./legacy_master.sh calls ./legacy_stage1.sh, NOT ./stage1.sh"
     exit
 fi
 
-while getopts 'd:1234l:e:' opt; do
+while getopts 'c:p:P:w:m:a:f:d:r1234l:' opt; do
     case "$opt" in
+        c) # Celebrities
+            celebs="-c $OPTARG"
+            ;;
+        p) # People
+            people="-p $OPTARG"
+            ;;
+        P) # Places
+            places="-P $OPTARG"
+            ;;
+        w) # Weapons
+            weapons="-w $OPTARG"
+            ;;
+        m) # Monsters
+            monsters="-m $OPTARG"
+            ;;
+        a) # Animals
+            animals="-a $OPTARG"
+            ;;
+        f) # Foods
+            foods="-f $OPTARG"
+            ;;
         d) # Debug Mode
             debug="-d $OPTARG"
             debugl="$OPTARG"
             ;;
+        r) # Reinforcement Engine
+            rein="-r"
+            ;;
         1) # Stage 1
-            stage1="./bash/stage1.sh"
+            stage1="./bash/legacy_stage1.sh"
             ;;
         2) # Stage 2
             stage2="./bash/stage2.sh"
@@ -52,14 +93,11 @@ while getopts 'd:1234l:e:' opt; do
         l) # CLisp
             clisp="$OPTARG"
             ;;
-        e) # Expression
-            expr="$OPTARG"
-            ;;
     esac
 done
 
 if [ -n "$stage1" ]; then
-    stage1="$stage1 $debug $rein"
+    stage1="$stage1 $celebs $people $places $weapons $monsters $animals $foods $debug $rein"
 fi
 
 if [ -n "$stage2" ]; then
@@ -71,7 +109,7 @@ if [ -n "$stage4" ]; then
 fi
 
 if [ -n "$stage1" ]; then
-    $stage1 -e "$expr" >"./temp/${prefix}1.txt"
+    $stage1 >"./temp/${prefix}1.txt"
 fi
 if [ -n "$stage2" ]; then
     $stage2 <"./temp/${prefix}1.txt" >"./temp/${prefix}2.txt"

@@ -9,9 +9,14 @@ class Arguments:
     Stage 1 program is expected to be able to handle.
     """
 
-    def __init__(self, argv, limited_set = False):
+    def __init__(self, argv, arg_set):
+        """
+        Parses the argument list using getopt. The specific allowable arguments should be
+        passed as the second argument, as a value of the form ArgSet.TOPLEVEL or
+        ArgSet.LEGACY.
+        """
         try:
-            arglist = "c:p:P:w:m:a:f:r" if limited_set else "c:p:P:w:m:a:f:d:ru:e:"
+            arglist = "c:p:P:w:m:a:f:r" if arg_set is ArgSet.LEGACY else "d:e:"
             self._args = dict(getopt(argv, arglist)[0])
         except GetoptError as e:
             self._args = {}
@@ -69,3 +74,7 @@ class ArgEntry:
         self.count = count
         self.selector = selector or self.key
         self.rein = rein
+
+class ArgSet:
+    TOPLEVEL = object()
+    LEGACY   = object()

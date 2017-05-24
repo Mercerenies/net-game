@@ -3,12 +3,12 @@ from util import dict_to_list
 from tokenizer import *
 from basis import Basis
 from algorithm import Spider
-from arguments import Arguments
+from arguments import Arguments, ArgSet
 import links
 import reinforcement
 import search
 
-# TODO Support reinforcement learning here
+# TODO Make Symbol not a subclass of str, so that typechecks are more straightforward
 
 def check_arglist(args, *, allowed, required):
     """
@@ -120,7 +120,7 @@ def _legacy_crawl_cmd(parts, **kwargs):
     # Parse the argument list
     args = kwargs['ARGS:']
     token_assert(args, str)
-    args_obj = Arguments(list(filter(lambda x: x, args.split(' '))), limited_set = True)
+    args_obj = Arguments(list(filter(lambda x: x, args.split(' '))), ArgSet.LEGACY)
     for arg in args_obj.standard_sequence():
         if arg.count <= 0:
             continue

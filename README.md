@@ -17,9 +17,9 @@ Once you've cloned this repository, you'll want to run `./bash/check.sh` to dete
 
 There are currently two different ways to play the game: Master Mode and Client Mode. Client Mode requires additional dependencies such as the Lua programming language but has the added benefit of being self-modifying. Master Mode is still fully supported through `./bash/master.sh`. The following command is a good initial play.
 
-    $ ./bash/master.sh -P 3 -w 4 -a 4 -1 -2 -3 -4
+    $ ./bash/master.sh -e 'basic-crawl' -1 -2 -3 -4
 
-The `-P`, `-w`, and `-a` arguments tell the system to find places, weapons, and animals (the numbers correspond to the number of attempts). The `-1 -2 -3 -4` specifies that all four stages of the pipeline should be run.
+The `-1 -2 -3 -4` specifies that all four stages of the pipeline should be run. The `-e` portion supplies an expression directing the crawling engine. The `basic-crawl` command is a simple built-in command designed to make it easy for new users to get started playing. When you're moderately comfortable with the system, you may consider looking at the documentation for `crawl`, the full-fledged crawling command, which has more capabilities but is also more unwieldy.
 
 Note that, if you lose the game and would like to try again with the same world data, simply leave off the `-1 -2 -3` and the system will only run the Common Lisp portion of the pipeline. Likewise, if you want to keep the pages but randomly generate a new world with the same information, use `-3 -4` to only run the latter two stages of the pipeline.
 

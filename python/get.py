@@ -4,7 +4,7 @@
 
 import sys
 import xml.etree.ElementTree as ET
-from arguments import Arguments
+from arguments import Arguments, ArgSet
 import xmlify
 import links
 import reinforcement
@@ -68,7 +68,7 @@ def expr_run(args):
         print("<data />")
 
 if __name__ == '__main__':
-    args = Arguments(sys.argv[1:])
+    args = Arguments(sys.argv[1:], ArgSet.TOPLEVEL)
     logger.set_global_debug_level(args.debug())
     # TODO We should report an error if -u and -e are both supplied, probably.
     if args.unit():

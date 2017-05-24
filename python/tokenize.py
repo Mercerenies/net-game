@@ -110,6 +110,13 @@ def tokenize(string):
         handler = handlers.get((state, char), None) or handlers[(state, '')]
         handler(char)
     push()
+    if state != 1:
+        if state == 2 or state == 3:
+            raise TokenizeError("Tokenizer Error: Unclosed string literal")
+        else:
+            # If this case occurs, we forgot to account for a new state here. If that
+            # happens, fix it!
+            raise TokenizeError("Tokenizer Error: Parse ended in state {}, not 1".format(state))
     return tokens
 
 def scan(tokens):

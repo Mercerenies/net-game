@@ -64,6 +64,6 @@ while getopts 'c:p:P:w:m:a:f:d:r' opt; do
     esac
 done
 
-expr="legacy-crawl args: [$celebs $people $places $weapons $monsters $animals $foods]"
+expr="legacy-crawl args: [$celebs $people $places $weapons $monsters $animals $foods $rein]"
 
-./python/get.py -e "$expr" $debug $rein
+./python/get.py -e "$expr" $debug

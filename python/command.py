@@ -132,8 +132,8 @@ def _legacy_crawl_cmd(parts, **kwargs):
 
 _builtin = {
     'CRAWL': _crawl_cmd,
-    'BASIC_CRAWL': _basic_crawl_cmd,
-    'LEGACY_CRAWL': _legacy_crawl_cmd,
+    'BASIC-CRAWL': _basic_crawl_cmd,
+    'LEGACY-CRAWL': _legacy_crawl_cmd,
 }
 
 class Command:

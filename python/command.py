@@ -100,8 +100,18 @@ def _crawl_cmd(parts, **kwargs):
     parts[type2] += list(filter(lambda x: x is not None, results))
     # TODO Should we have a return value here? Maybe just report success?
 
+def _basic_crawl_cmd(parts, **kwargs):
+    # Required and allowed keywords
+    allowed = set()
+    required = set()
+    check_arglist(kwargs, allowed = allowed, required = required)
+    _crawl_cmd(parts, **{'TYPE:': Symbol('person'), 'BASE:': Symbol('*'), 'COUNT:': 2})
+    _crawl_cmd(parts, **{'TYPE:': Symbol('place'), 'BASE:': Symbol('*'), 'COUNT:': 3})
+    _crawl_cmd(parts, **{'TYPE:': Symbol('animal'), 'BASE:': Symbol('*'), 'COUNT:': 3})
+
 _builtin = {
     'CRAWL': _crawl_cmd,
+    'BASIC_CRAWL': _basic_crawl_cmd,
 }
 
 class Command:

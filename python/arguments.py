@@ -1,6 +1,7 @@
 
-from getopt import getopt
+from getopt import getopt, GetoptError
 from basis import Basis
+from logger import echo
 
 class Arguments:
     """
@@ -9,8 +10,11 @@ class Arguments:
     """
 
     def __init__(self, argv):
-        # TODO Catch whatever error getopt throws (getopt.GetoptError, I think) and print to screen
-        self._args = dict(getopt(argv, "c:p:P:w:m:a:f:d:ru:e:")[0])
+        try:
+            self._args = dict(getopt(argv, "c:p:P:w:m:a:f:d:ru:e:")[0])
+        except GetoptError as e:
+            self._args = {}
+            echo("Error in arguments:", e)
 
     def celebs(self):
         return int(self._args.get("-c", "0"))

@@ -42,6 +42,7 @@ def standard_run(args):
     print(ET.tostring(produce_result(args)).decode())
 
 def unit_run(args):
+    # TODO This function is pretty much unused. I think we can safely remove it.
     unit = args.unit().strip()
 
     def basis_transformer(b):
@@ -71,9 +72,7 @@ if __name__ == '__main__':
     args = Arguments(sys.argv[1:], ArgSet.TOPLEVEL)
     logger.set_global_debug_level(args.debug())
     # TODO We should report an error if -u and -e are both supplied, probably.
-    if args.unit():
-        unit_run(args)
-    elif args.expr():
+    if args.expr():
         expr_run(args)
     else:
         standard_run(args)

@@ -49,9 +49,6 @@ class Arguments:
     def debug(self):
         return int(self._args.get("-d", "0"))
 
-    def unit(self):
-        return self._args.get("-u", None)
-
     def expr(self):
         return self._args.get("-e", None)
 

@@ -15,7 +15,7 @@ This game (specifically, the Python part) accesses the Internet. Your antivirus 
 
 Once you've cloned this repository, you'll want to run `./bash/check.sh` to determine any dependencies you're missing. Note that all scripts should be run with the top-level project directory as the current directory. The script will not attempt to install any missing dependencies but will simply report them; see the Dependencies section below for details. Once the check script passes, you're ready to play.
 
-There are currently two different ways to play the game: Legacy Mode and Client Mode. Client Mode requires additional dependencies such as the Lua programming language but has the added benefit of being self-modifying. Legacy Mode is still fully supported through `./bash/master.sh`. The following command is a good initial play.
+There are currently two different ways to play the game: Master Mode and Client Mode. Client Mode requires additional dependencies such as the Lua programming language but has the added benefit of being self-modifying. Master Mode is still fully supported through `./bash/master.sh`. The following command is a good initial play.
 
     $ ./bash/master.sh -P 3 -w 4 -a 4 -1 -2 -3 -4
 
@@ -68,7 +68,7 @@ If you use Client Mode, take note of this. There is a known bug in which the Lua
 
 The `./emacs/client.el` file provides some very primitive and very experimental support for integrating with Emacs. In order to use it, you need Emacs 25 or newer. Simply load the file and then use `M-x net-game-run` from the base directory of the project. See the comments at the top of the `./emacs/client.el` file for details.
 
-# Legacy Mode
+# Master Mode
 
 There are several scripts in the `./bash/` directory, but (aside from the initial `./bash/check.sh` script) the entrypoint to all of these is `./bash/master.sh`. Running the script with `--help` as the only option will print a summary of the command line flags available.
 

@@ -164,7 +164,7 @@ if [ "$check_lua" != 0 ]; then
         echo ' No'
         echo 'error: Cannot find Lua.'
         echo '  * Lua is required for the client self-modifying'
-        echo '  * gameplay but unnecessary for the legacy system.'
+        echo '  * gameplay but unnecessary for the master system.'
         exit 1
     fi
     echo ' Yes'

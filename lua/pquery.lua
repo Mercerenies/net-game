@@ -8,7 +8,9 @@ local PQuery = P.PQuery
 
 setmetatable(P.PQuery, {__index = query.Query})
 
-local para_cmd = '(./bash/stage1.sh %s -d %d %s | ./bash/stage2.sh %d >%s ; touch %s)&'
+local para_cmd =
+   '(./bash/stage1.sh %s -d %d -e \'legacy-crawl args: [%s]\' | ' ..
+   './bash/stage2.sh %d >%s ; touch %s)&'
 
 local rein = ""
 

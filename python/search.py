@@ -36,4 +36,19 @@ class BasicSearch(Search):
         spider.finished()
         return arr
 
+class CommandSearch(Search):
+
+    def __init__(self, cmd, parts):
+        self.cmd = cmd
+        self.parts = parts
+
+    def run(self):
+        """
+        Performs a command-based search, following the rules of command.py to do so. Any
+        TokenizeErrors are propogated through unmodified, so the caller should be prepared
+        to handle such errors. This function returns None, as the parts dict which was
+        passed to the constructor of CommandSearch is modified in-place.
+        """
+        self.cmd.execute(self.parts)
+
 # TODO Search using a user-provided directive string

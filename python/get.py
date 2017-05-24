@@ -59,7 +59,7 @@ def expr_run(args):
         exprs = command.read(args.expr())
         parts = {}
         for expr in exprs:
-            expr.execute(parts)
+            search.CommandSearch(expr, parts).run()
         print(ET.tostring(xmlify.xmlify(parts)).decode())
     except TokenizeError as e:
         logger.echo(str(e))

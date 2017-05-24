@@ -34,7 +34,7 @@ def get_food_base():
 
 def is_person_page(page):
     """Determines whether or not the given page object is a person page."""
-    if "list" in page.title.lower():
+    if "list" in page.title.lower(): # TODO This catches "list" as in "journalist", etc.
         return False
     return len([c for c in page.categories
                 if Keywords.check_match("people", c)

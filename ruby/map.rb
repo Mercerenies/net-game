@@ -2,7 +2,7 @@
 require 'forwardable'
 require 'sxp'
 
-# ///// Use the fitness parameters when generating the world
+# TODO Use the fitness parameters when generating the world
 
 # The map contains a collection of Location instances, which are interconnected with one another.
 class Map
@@ -26,14 +26,14 @@ class Map
     DeltaMap.new self
   end
 
-  # Returns the underlying list structure. The individual elements of the returned list can be modified, but
-  # the list itself should be left unmodified.
+  # Returns the underlying list structure. The individual elements of the returned list can be
+  # modified, but the list itself should be left unmodified.
   def to_ary
     @ary
   end
 
-  # Returns the underlying list structure. The individual elements of the returned list can be modified, but
-  # the list itself should be left unmodified.
+  # Returns the underlying list structure. The individual elements of the returned list can be
+  # modified, but the list itself should be left unmodified.
   def to_a
     to_ary
   end

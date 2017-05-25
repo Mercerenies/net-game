@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-# ///// Wouldn't it be nice if we could (from Lisp with godmode on) request pages using the expression syntax?
-
 import sys
 import xml.etree.ElementTree as ET
 from arguments import Arguments, ArgSet

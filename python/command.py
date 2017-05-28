@@ -3,7 +3,7 @@ from util import dict_to_list
 from tokenizer import *
 from basis import Basis
 from algorithm import Spider
-from arguments import Arguments, ArgSet
+from arguments import LegacyArguments
 import links
 import reinforcement
 import search
@@ -120,7 +120,7 @@ def _legacy_crawl_cmd(parts, **kwargs):
     # Parse the argument list
     args = kwargs['ARGS:']
     token_assert(args, str)
-    args_obj = Arguments(list(filter(lambda x: x, args.split(' '))), ArgSet.LEGACY)
+    args_obj = LegacyArguments(list(filter(lambda x: x, args.split(' '))))
     for arg in args_obj.standard_sequence():
         if arg.count <= 0:
             continue

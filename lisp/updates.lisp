@@ -2,6 +2,8 @@
 
 ;; TODO This file depends on client.lisp, which may not be loaded; make that dependency neater and more obvious
 
+;; TODO Based on my thoughts for the quest system now, we should probably not have the people requests depend on the number of completed quests. Change the name and the condition?
+
 (defun make-update-requests ()
   (let ((active-halo (halo (get-loc *player*) +active-radius+)))
     ;; Completed Quests Trigger

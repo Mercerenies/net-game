@@ -51,10 +51,19 @@
   (display-buffer-below-selected err-buffer
                                  '((window-height . 0.2)))))
 
-(defun net-game-run (&optional debug) ; TODO Support the reinforcement learning engine (-r)
+(defgroup net-game nil
+  "Customization options related to the net-game project")
+
+(defcustom net-game-rein-learning nil
+  "Reinforcement learning engine for the net-game project"
+  :type '(boolean))
+
+(defun net-game-run (&optional debug rein)
   (interactive
    (list (if current-prefix-arg
              (prefix-numeric-value current-prefix-arg)
-           3)))
-  (let ((command `("bash" "./bash/client.sh" "-d" ,(number-to-string debug) "-t" "2.0")))
+           3)
+         net-game-rein-learning))
+  (setq rein (and rein '("-r")))
+  (let ((command `("bash" "./bash/client.sh" "-d" ,(number-to-string debug) "-t" "2.0" ,@rein)))
     (net-game-spawn command)))

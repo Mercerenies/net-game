@@ -9,11 +9,11 @@ local PQuery = P.PQuery
 setmetatable(P.PQuery, {__index = query.Query})
 
 local para_cmd =
-   '(./bash/stage1.sh %s -d %d -e \'legacy-crawl args: [%s]\' | ' ..
+   '(./bash/stage1.sh -d %d -e \'legacy-crawl args: [%s %s]\' | ' ..
    './bash/stage2.sh %d >%s ; touch %s)&'
 
 local full_cmd =
-   '(./bash/stage1.sh %s -d %d -e %s | ./bash/stage2.sh %d >%s ; touch %s)&'
+   '(./bash/stage1.sh -d %d -e %s | ./bash/stage2.sh %d >%s ; touch %s)&'
 
 local rein = ""
 
@@ -21,7 +21,7 @@ local function spawn_parallel(argument)
    local rname = filenamer.get_filename()
    local sname = filenamer.get_filename()
    local lvl = logger.get_debug_level()
-   local cmd = string.format(para_cmd, rein, lvl, argument, lvl, rname, sname)
+   local cmd = string.format(para_cmd, lvl, rein, argument, lvl, rname, sname)
    util.execute(cmd)
    return rname, sname
 end
@@ -39,7 +39,7 @@ local function spawn_parallel_full(expr)
    expr = expr:gsub([[']], [['"'"']])
    expr = "'" .. expr .. "'"
    -- logger.echo(1, "*** " .. expr .. " ***")
-   local cmd = string.format(full_cmd, rein, lvl, expr, lvl, rname, sname)
+   local cmd = string.format(full_cmd, lvl, expr, lvl, rname, sname)
    util.execute(cmd)
    return rname, sname
 end

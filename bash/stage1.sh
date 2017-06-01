@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# TODO At some point, I would like to move this to a new file (legacy_stage1.sh, for example)
-#      and redirect the Lua scripts to use that file. The new stage1.sh will only support the
-#      expression syntax, so master.sh will no longer use the old argument form either. Eventually,
-#      I would like to switch Lua completely over to the expression syntax, but that may take some
-#      effort.
 debug=""
 expr=""
 

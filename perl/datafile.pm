@@ -5,9 +5,9 @@ local $_;
 
 =head2 load_two_column_file($fh, $fname)
 
-Loads the file using a two-column format. Each line should be two columns of text, separated by at least
-two consecutive spaces. The text entries should consist of word characters, nonconsecutive spaces, or
-hyphens.
+Loads the file using a two-column format. Each line should be two columns of text, separated by at
+least two consecutive spaces. The text entries should consist of word characters, nonconsecutive
+spaces, or hyphens.
 
 =cut
 
@@ -33,8 +33,8 @@ the numerical stats that it influences and by how much it influences them. For e
 
  keyword-here: attribute1 +2, attribute2 -2
 
-In this exampe, every instance of the keyword "keyword-here" would add two points to attribute1 and subtract
-two points from attribute2.
+In this exampe, every instance of the keyword "keyword-here" would add two points to attribute1 and
+subtract two points from attribute2.
 
 =cut
 

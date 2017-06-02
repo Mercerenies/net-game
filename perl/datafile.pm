@@ -76,7 +76,8 @@ package OData {
                       -foodnutrition => undef,
                       -foodpoison => undef,
                       -foodsections => undef,
-                      -monsters => undef}, $class);
+                      -monsters => undef,
+                      -bignums => undef}, $class);
     }
 
     sub occupations {
@@ -159,6 +160,11 @@ package OData {
         return %{$self->{-monstertypes}};
     }
 
+    sub big_numbers {
+        my $self = shift;
+        return %{$self->{-bignums}};
+    }
+
 }
 
 sub data_compile {
@@ -180,6 +186,7 @@ sub data_compile {
     $result->{-foodsections} = $data{'foodsections'};
     $result->{-monsters} = $data{'monsters'};
     $result->{-monstertypes} = $data{'monstertypes'};
+    $result->{-bignums} = $data{'bignums'};
     return $result;
 }
 

@@ -6,9 +6,8 @@ from itertools import takewhile
 class Symbol:
     """
     A crude symbol class designed simply to distinguish between symbols and straight strings.
-    Every symbol has all of the functionality of a Python string but also identifies as a
-    symbol itself. Following the Common Lisp precedent, symbols are always converted to uppercase
-    when constructed.
+    Following the Common Lisp precedent, symbols are always converted to uppercase when
+    constructed.
     """
 
     def __init__(self, string):

@@ -8,8 +8,6 @@ import links
 import reinforcement
 import search
 
-# TODO Make Symbol not a subclass of str, so that typechecks are more straightforward
-
 def check_arglist(args, *, allowed, required):
     """
     Verifies that the arglist, which should be a dict, contains keys corresponding to the
@@ -52,7 +50,7 @@ def _resolve_basetype(b, t):
         t = b
     # Resolve the base page first
     if is_simple_symbol(b):
-        b = Basis.basis[b.lower()]
+        b = Basis.basis[str(b).lower()]
     elif isinstance(b, str): # TODO Write a is_string which distinguishes between str and Symbol
         _tmp1 = b
         b = lambda: _tmp1
@@ -60,7 +58,7 @@ def _resolve_basetype(b, t):
         raise TokenizeError("Tokenizer Error: Base page expected to be string or symbol")
     # Then resolve the type
     if is_simple_symbol(t):
-        t = Basis.query[t.lower()]
+        t = Basis.query[str(t).lower()]
     else:
         raise TokenizeError("Tokenizer Error: Query type expected to be a symbol")
     return b, t
@@ -86,7 +84,7 @@ def _crawl_cmd(parts, **kwargs):
         # Resolve bases and types
         base1, type1 = _resolve_basetype(base, type_)
         # TODO This next line is very disorganized and hard to follow
-        type2 = Basis.plural[base.lower() if is_wildcard(type_) else type_.lower()]
+        type2 = Basis.plural[str(base).lower() if is_wildcard(type_) else str(type_).lower()]
     except KeyError as e:
         raise TokenizeError("Tokenizer Error: Unknown keyword " + str(e))
     # Construct the spider
@@ -163,7 +161,7 @@ class Command:
         list is incorrect, a TokenizeError will be raised. If a different kind of error, brought
         on by a wrongly formatted command, occurs then a TokenizeError should also be raised.
         """
-        cmd = _builtin.get(self.head, None)
+        cmd = _builtin.get(str(self.head), None)
         if not cmd:
             raise TokenizeError("Tokenizer Error: Unknown command " + str(self.head))
         return cmd(parts, **self.args)

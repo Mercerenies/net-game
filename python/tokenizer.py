@@ -3,7 +3,7 @@ from singleton import Singleton
 from util import group_into
 from itertools import takewhile
 
-class Symbol(str):
+class Symbol:
     """
     A crude symbol class designed simply to distinguish between symbols and straight strings.
     Every symbol has all of the functionality of a Python string but also identifies as a
@@ -11,8 +11,17 @@ class Symbol(str):
     when constructed.
     """
 
-    def __new__(cls, contents):
-        return super().__new__(cls, contents.upper())
+    def __init__(self, string):
+        self.string = string.upper()
+
+    def __str__(self):
+        return self.string
+
+    def __repr__(self):
+        return "Symbol(" + repr(self.string) + ")"
+
+    def __eq__(self, other):
+        return self.string == other.string
 
 class TokenizeError(Exception):
     """
@@ -51,7 +60,7 @@ def is_wildcard(obj):
     Returns whether or not the object is a wildcard. That is, whether or not the object is an
     instance of Symbol whose string value is exactly equal to the '*' character.
     """
-    return isinstance(obj, Symbol) and obj == '*'
+    return isinstance(obj, Symbol) and obj == Symbol('*')
 
 def is_symbol(obj):
     """

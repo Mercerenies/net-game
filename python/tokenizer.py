@@ -22,6 +22,9 @@ class Symbol:
     def __eq__(self, other):
         return self.string == other.string
 
+    def __ne__(self, other):
+        return not (self == other)
+
 class TokenizeError(Exception):
     """
     A class for any errors in the tokenization and command execution process. Any errors

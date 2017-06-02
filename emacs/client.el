@@ -58,12 +58,16 @@
   "Reinforcement learning engine for the net-game project"
   :type '(boolean))
 
-(defun net-game-run (&optional debug rein)
+(defcustom net-game-server-timeout 2
+  "Timeout for the backend server to perform routine checks in the net-game"
+  :type '(choice integer (const nil)))
+
+(defun net-game-run (&optional debug rein timeout)
   (interactive
    (list (if current-prefix-arg
              (prefix-numeric-value current-prefix-arg)
-           3)
-         net-game-rein-learning))
-  (setq rein (and rein '("-r")))
-  (let ((command `("bash" "./bash/client.sh" "-d" ,(number-to-string debug) "-t" "2.0" ,@rein)))
+           3)))
+  (setq rein (and net-game-rein-learning '("-r")))
+  (setq timeout (and net-game-server-timeout `("-t" ,(number-to-string net-game-server-timeout))))
+  (let ((command `("bash" "./bash/client.sh" "-d" ,(number-to-string debug) ,@timeout ,@rein)))
     (net-game-spawn command)))

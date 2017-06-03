@@ -51,6 +51,15 @@ If this value is truthy, the $titlevar argument will be treated as a regular exp
 interpolated without escaping. Without this option, the $titlevar is treated as plaintext
 and interpolated with \Q and \E for safety.
 
+=back
+
+=item * AdditionalLinkingVerbs (default: undef)
+
+If this value is defined, it will be used as a fallback regex for linking verbs, if the default
+linking verb expression fails.
+
+=back
+
 =cut
 
 sub simple_linked_sentence {
@@ -72,6 +81,10 @@ sub simple_linked_sentence {
     my $link_word = qr/(?:$LINKVERB )/i;
     my $skim_clause = qr/(?:(?:$skim_word ){0,$skim_count})/i;
     my $ptn_clause = qr/(?:\b$ptn\b)/i;
+
+    if (defined $options{'AdditionalLinkingVerbs'}) {
+        $link_word = qr/(?:(?:$link_word)|(?:$options{'AdditionalLinkingVerbs'} ))/
+    }
 
     return qr/$title_word $rename_clause? $link_word $skim_clause $ptn_clause/ix;
 }

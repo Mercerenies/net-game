@@ -127,9 +127,9 @@ sub page_links {
 
 =head2 full_page_text($xml)
 
-Returns the full text of the page, leaving headers in as plaintext (without the Wikipedia-style header markdown).
-Note that, as the page sections themselves are hash elements, the order of sections is undefined, but all sections
-will be present.
+Returns the full text of the page, leaving headers in as plaintext (without the Wikipedia-style header
+markdown). Note that, as the page sections themselves are hash elements, the order of sections is
+undefined, but all sections will be present.
 
 =cut
 

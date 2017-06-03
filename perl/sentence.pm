@@ -32,9 +32,9 @@ considered a word for the purposes of skimming.
 
 =item * SkimWordCount (default: 9)
 
-The maximum number of "skim words" allowed between the title and the pattern. More skim words results in
-more false positives but also more correct results. Fewer skim words eliminates results but also eliminates
-false positives.
+The maximum number of "skim words" allowed between the title and the pattern. More skim words results
+in more false positives but also more correct results. Fewer skim words eliminates results but also
+eliminates false positives.
 
 =item * MiddleNameRule (default: false)
 

@@ -9,9 +9,8 @@ use feature 'unicode_strings';
 use perl::datafile;
 use perl::set;
 
-my(%occu, @mwords, @fwords, %placenames, %weapons, %animals, @foodprefixes, @foodblacklist,
-   @foodsuffixes, %foodtrees, @foodnegatives, @foodnutrition, @foodpoison, @foodsections,
-   %monsters, %monstertypes, %bignums);
+my(%occu, @mwords, @fwords, %placenames, %weapons, %animals, @foodprefixes, @foodblacklist, @foodsuffixes,
+   %foodtrees, @foodnegatives, @foodnutrition, @foodpoison, @foodsections, %monsters, %monstertypes);
 my $fh;
 
 open $fh, '<', './data/occupations.txt' or die("$!");
@@ -79,10 +78,6 @@ open $fh, '<', './data/affinity.txt' or die("$!");
 %monstertypes = load_keyword_search_file($fh, 'affinity.txt');
 close $fh;
 
-open $fh, '<', './data/bignums.txt' or die("$!");
-%bignums = load_two_column_file($fh, 'bignums.txt');
-close $fh;
-
 (
  'occu' => \%occu,
  'mwords' => \@mwords,
@@ -99,6 +94,5 @@ close $fh;
  'foodpoison' => \@foodpoison,
  'foodsections' => \@foodsections,
  'monsters' => \%monsters,
- 'monstertypes' => \%monstertypes,
- 'bignums' => \%bignums
+ 'monstertypes' => \%monstertypes
 );

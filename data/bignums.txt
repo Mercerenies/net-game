@@ -1,3 +1,0 @@
-million   6
-billion   9
-trillion  12

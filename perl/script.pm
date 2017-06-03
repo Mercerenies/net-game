@@ -168,7 +168,7 @@ sub determine_population {
     my @pop;
     my $linking = qr/of|was estimated(?: \w+)?|to be/;
     my $adj = qr/(?: over| under)?/;
-    my $ptn = qr/([\d,]+(?:\.\d*)?(?: (?:m|b|tr)illion)?)[^\d,%]/;
+    my $ptn = qr/([\d,]+(?:\.\d*)?(?: (?:m|b|tr)illion)?)(?:(?<=illion)|[^\d,.%])/;
     for my $noun (qr/population/, qr/\d{4} census/) {
         my $expr = simple_linked_sentence($noun, $ptn, {
             SkimWordCount => 1,
@@ -177,6 +177,7 @@ sub determine_population {
             AdditionalLinkingVerbs => qr/$linking$adj/i
         });
         while ($text =~ /$expr/g) {
+            get_logger()->echo(2, "Population match for $title at $1");
             push @pop, evaluate_number($1);
         }
     }

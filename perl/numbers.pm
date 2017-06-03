@@ -17,7 +17,7 @@ sub median {
     sum( ( sort { $a <=> $b } @_ )[ int( $#_/2 ), ceil( $#_/2 ) ] )/2;
 }
 
-=head2 evaluate_number($number, $xdata)
+=head2 evaluate_number($number)
 
 Given a numerical-like string, evaluate the string to produce a number. If the string is already
 a valid integer or floating point number (currently, scientific notation is not supported by this
@@ -30,7 +30,6 @@ be removed in the returned number. Any suffix text that is not a known magnitude
 
 sub evaluate_number {
     my $number = $_[0];
-    my $xdata = $_[1];
 
     state $suffixes = {
         million  => 1e6,

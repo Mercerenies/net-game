@@ -17,8 +17,9 @@ sub unparen {
 
 =head2 read_person($xml, $xdata)
 
-Given the XML data for a person page, parses the page for the person's basic information and returns a hashref
-containing the appropriate information, substituting undef for any values that cannot be determined.
+Given the XML data for a person page, parses the page for the person's basic information and returns a
+hashref containing the appropriate information, substituting undef for any values that cannot be
+determined.
 
 =cut
 
@@ -40,8 +41,8 @@ sub read_person {
 
 =head2 read_place($xml, $xdata)
 
-Given the XML data for a place page, computes the name and basic information about the location, returning
-a hashref containing the results, with undef filled in for any un-identifiable fields.
+Given the XML data for a place page, computes the name and basic information about the location,
+returning a hashref containing the results, with undef filled in for any un-identifiable fields.
 
 =cut
 
@@ -61,8 +62,8 @@ sub read_place {
 
 =head2 read_weapon($xml, $xdata)
 
-Given the XML data for a weapon page, parses the page and computes the basic information about the weapon
-itself, returning a hashref. Any un-identifiable fields are filled in with undef.
+Given the XML data for a weapon page, parses the page and computes the basic information about
+the weapon itself, returning a hashref. Any un-identifiable fields are filled in with undef.
 
 =cut
 
@@ -85,8 +86,9 @@ sub read_weapon {
 
 =head2 read_monster($xml, $xdata)
 
-Given the XML data for a monster page, parses the page to compute information about the monster, returning
-a hashref containing any information that could be deduced. Un-identifiable fields are filled with undef.
+Given the XML data for a monster page, parses the page to compute information about the monster,
+returning a hashref containing any information that could be deduced. Un-identifiable fields are
+filled with undef.
 
 =cut
 
@@ -109,9 +111,9 @@ sub read_monster {
 
 =head2 read_animal($xml, $xdata)
 
-Reads the XML animal page data supplied and returns a hashref containing computed values for the animal's nature
-and attitude, filling in un-identifiable values with undef, or 0 in cases where the value would be computed,
-not parsed.
+Reads the XML animal page data supplied and returns a hashref containing computed values for the
+animal's nature and attitude, filling in un-identifiable values with undef, or 0 in cases where
+the value would be computed, not parsed.
 
 =cut
 
@@ -134,9 +136,9 @@ sub read_animal {
 
 =head2 read_food($xml, $xdata)
 
-Parses the XML food page and determines basic information about the food's name and nutritional value, returning
-a hashref containing the results. The special value undef is used in place of any fields that cannot be
-determined from the data.
+Parses the XML food page and determines basic information about the food's name and nutritional
+value, returning a hashref containing the results. The special value undef is used in place of
+any fields that cannot be determined from the data.
 
 =cut
 

@@ -49,7 +49,9 @@ title consists of less than two words.
 
 If this value is truthy, the $titlevar argument will be treated as a regular expression and
 interpolated without escaping. Without this option, the $titlevar is treated as plaintext
-and interpolated with \Q and \E for safety.
+and interpolated with \Q and \E for safety. Although the behavior is well-defined, it is not
+recommended to use this option in conjunction with MiddleNameRule, as the behavior can be rather
+confusing.
 
 =back
 
@@ -83,7 +85,7 @@ sub simple_linked_sentence {
     my $ptn_clause = qr/(?:\b$ptn\b)/i;
 
     if (defined $options{'AdditionalLinkingVerbs'}) {
-        $link_word = qr/(?:(?:$link_word)|(?:$options{'AdditionalLinkingVerbs'} ))/
+        $link_word = qr/(?:(?:$link_word)|(?:$options{'AdditionalLinkingVerbs'} ))/i;
     }
 
     return qr/$title_word $rename_clause? $link_word $skim_clause $ptn_clause/ix;

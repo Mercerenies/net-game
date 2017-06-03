@@ -68,3 +68,5 @@ sub simple_linked_sentence {
 
     return qr/$title_word $rename_clause? $link_word $skim_clause $ptn_clause/ix;
 }
+
+1;

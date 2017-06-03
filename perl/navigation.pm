@@ -16,7 +16,7 @@ sub _flatten_sections {
     my $new_prefix = $page{'name'} // $name;
     $new_prefix = $prefix . "\0" . $new_prefix unless $prefix eq '';
     my %sections;
-    $sections{$new_prefix} = $page{'content'};
+    $sections{$new_prefix} = $page{'content'} // '';
     for my $section (@{$page{'section'}}) {
         my %curr = %{_flatten_sections($name, $section, $new_prefix)};
         @sections{keys %curr} = values %curr;
@@ -144,8 +144,8 @@ sub full_page_text {
 
 =head2 select_sections($xml, $regex)
 
-Returns a hash consisting of all of the sections (with corresponding text) whose headers match the given
-regular expression.
+Returns a hash consisting of all of the sections (with corresponding text) whose headers match the
+given regular expression.
 
 =cut
 

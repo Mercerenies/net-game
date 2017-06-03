@@ -4,6 +4,8 @@ local $_;
 use Data::Dumper;
 use feature 'unicode_strings';
 use 5.010;
+use List::Util qw(sum);
+use POSIX;
 
 =head2 median(...)
 

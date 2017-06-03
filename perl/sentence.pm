@@ -8,7 +8,7 @@ my $LINKVERB = "(?:is|was|are|were)";
 my $ARTICLE = "(?:an?|the)"; # Unused currently; we'll see if we can do something about that at some point
 my $RENAME = "(?:or|in|of)";
 
-=head2 sentence($titlevar, $ptn, %options)
+=head2 simple_linked_sentence($titlevar, $ptn, %options)
 
 Compiles a regular expression to detect sentences roughly of the form "SOMETHING is SOMETHING_ELSE".
 The $titlevar argument is taken literally, while $ptn will be interpreted as a regex string. This
@@ -45,6 +45,12 @@ title consists of less than two words.
 
 =back
 
+=item * TitleRegexp (default: false)
+
+If this value is truthy, the $titlevar argument will be treated as a regular expression and
+interpolated without escaping. Without this option, the $titlevar is treated as plaintext
+and interpolated with \Q and \E for safety.
+
 =cut
 
 sub simple_linked_sentence {
@@ -56,6 +62,7 @@ sub simple_linked_sentence {
     my $skim_word = $options{'StrictSkimWords'} ? qr/[\w-]+/i : qr/[^ ]+/i;
     my $skim_count = 0+ ($options{'SkimWordCount'} // 9);
     my $title_intermediate = qr/(?:\Q$titlevar\E)/i;
+    $title_intermediate = qr/(?:$titlevar)/i if $options{'TitleRegexp'};
     if ($options{'MiddleNameRule'} && $titlevar =~ /^([\w\"-]+\s)+([\w\"-]+)$/) {
         $title_intermediate = qr/$1(?:[\w"-]+\.? )?$2/i;
     }

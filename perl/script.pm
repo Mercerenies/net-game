@@ -81,8 +81,8 @@ sub compute_gender {
     my $male = 0;
     my $female = 0;
     my $ptn;
-    # TODO Currently this counts the number of distinct pronouns that match; should we change it to count
-    #      all matches? The gender identification works pretty well right now.
+    # TODO Currently this counts the number of distinct pronouns that match; should we change it to
+    #      count all matches? The gender identification works pretty well right now.
     foreach $ptn (@mwords) {
         $male++ if ($summary =~ /\b$ptn\b/i);
     }
@@ -241,9 +241,10 @@ sub deduce_animal_stats {
 
 =head2 normalize_animal_stats(%stats)
 
-Given the output from C<deduce_animal_stats>, normalizes the stats to be on a scale from 1 to 5 (integer
-values), with the "boolean-ish" quantities such as air-based and sea-based determinations normalized to
-true or false (here, 1 or 0). The hashref that is passed in is not modified; a new hash is returned.
+Given the output from C<deduce_animal_stats>, normalizes the stats to be on a scale from 1 to 5
+(integer values), with the "boolean-ish" quantities such as air-based and sea-based determinations
+normalized to true or false (here, 1 or 0). The hashref that is passed in is not modified; a new
+hash is returned.
 
 =cut
 
@@ -286,9 +287,9 @@ sub normalize_animal_stats {
 
 =head2 shortest_food_synonym($title, $summary, $xdata)
 
-Given the title and summary of a food page, attempts to determine a more "user-friendly" synonym, or nickname,
-for the food. The nickname returned from this subroutine is the shortest nickname that is found, or the original
-title if it is shorter than any nickname.
+Given the title and summary of a food page, attempts to determine a more "user-friendly" synonym, or
+nickname, for the food. The nickname returned from this subroutine is the shortest nickname that is
+found, or the original title if it is shorter than any nickname.
 
 =cut
 
@@ -350,9 +351,9 @@ sub shortest_food_synonym {
 
 =head2 get_plant_type($title, $summary, $xdata)
 
-Tries to determine the sort of plant (such as tree, grass, or flower) that the food grows on naturally. If such
-a plant can be determined from the page, a string containing the type of plant is returned. Otherwise, the
-special value undef is returned.
+Tries to determine the sort of plant (such as tree, grass, or flower) that the food grows on
+naturally. If such a plant can be determined from the page, a string containing the type of plant
+is returned. Otherwise, the special value undef is returned.
 
 =cut
 
@@ -362,7 +363,8 @@ sub get_plant_type {
     my $xdata = $_[2];
     my %trees = $xdata->food_trees();
     my $max = undef;
-    my $max_num = 0; # Set a threshold so that if nothing matches, we don't falsely identify as something
+    # Set a threshold so that if nothing matches, we don't falsely identify as something
+    my $max_num = 0;
     foreach my $curr (keys %trees) {
         my $constant = 0;
         foreach my $key (@{$trees{$curr}}) {
@@ -419,9 +421,10 @@ sub get_nutrition_information {
 
 =head2 find_monster_type($title, $summary, $xdata)
 
-Given the name and summary text of a monster, determines the type of creature the monster constitutes,
-returning an expression of the form C<["keyword", "friendly_name"]>. If no type can be determined, an
-array ref to an empty array C<[]> is returned. Otherwise, an array of possible monster types is returned.
+Given the name and summary text of a monster, determines the type of creature the monster
+constitutes, returning an expression of the form C<["keyword", "friendly_name"]>. If no type can
+be determined, an array ref to an empty array C<[]> is returned. Otherwise, an array of possible
+monster types is returned.
 
 =cut
 
@@ -479,9 +482,9 @@ sub find_monster_type {
 
 =head2 deduce_monster_affinity($xml, $xdata)
 
-Counts up the number of appearances of miscellaneous keywords used to determine the nature and affinity
-of monsters from the summary and title of the given page. A hashref containing the resulting stats is
-returned.
+Counts up the number of appearances of miscellaneous keywords used to determine the nature and
+affinity of monsters from the summary and title of the given page. A hashref containing the resulting
+stats is returned.
 
 =cut
 
@@ -514,8 +517,8 @@ sub deduce_monster_affinity {
 
 =head2 interpret_monster_affinity(%stats)
 
-Given the return value from C<deduce_monster_affinity>, determines the chaos (chaotic / neutral / civilized)
-and affinity (light / neutral / dark) of the monster, returning a hashref of the results.
+Given the return value from C<deduce_monster_affinity>, determines the chaos (chaotic / neutral /
+civilized) and affinity (light / neutral / dark) of the monster, returning a hashref of the results.
 
 =cut
 

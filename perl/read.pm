@@ -52,10 +52,12 @@ sub read_place {
     my $name = page_title($xml);
     my $summary = page_summary($xml);
     my $info = find_place_information($name, $summary, $xdata);
+    my $pop = determine_population($xml, $xdata);
     my %curr = (
         nature => 'Place',
         name => unparen($name),
-        info => $info
+        info => $info,
+        population => $pop
         );
     return \%curr;
 }

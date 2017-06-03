@@ -2,6 +2,7 @@
 use perl::filters;
 use perl::sentence;
 use perl::navigation;
+use perl::numbers;
 
 use feature 'unicode_strings';
 use Data::Dumper;
@@ -149,12 +150,45 @@ sub find_place_information {
     return \@res;
 }
 
+=head2 determine_population($xml, $xdata)
+
+Given a page about a location, attempts to determine the approximate population of the area. Note
+that population makes little sense for "structure" locations, like towers and gardens, and tends to
+make more sense for cities and countries. A numerical quantity is returned, or C<undef> if no
+information could be garnered from the page.
+
+=cut
+
+sub determine_population {
+    my $xml = $_[0];
+    my $xdata = $_[1];
+    my $title = page_title($xml);
+    my $text = full_page_text($xml);
+    # TODO We would like to move the keywords here into a ./data/ file and load them through $xdata
+    my @pop;
+    my $linking = qr/of|was estimated(?: \w+)?|to be/;
+    my $adj = qr/(?: over| under)?/;
+    my $ptn = qr/([\d,]+(?:\.\d*)?(?: (?:m|b|tr)illion)?)[^\d,%]/;
+    for my $noun (qr/population/, qr/\d{4} census/) {
+        my $expr = simple_linked_sentence($noun, $ptn, {
+            SkimWordCount => 1,
+            TitleRegexp => 1,
+            MoreRenameClauses => 1,
+            AdditionalLinkingVerbs => qr/$linking$adj/i
+        });
+        while ($text =~ /$expr/g) {
+            push @pop, evaluate_number($1);
+        }
+    }
+    return median @pop;
+}
+
 
 =head2 find_weapon_information($title, $summary, $xdata)
 
-Determines the nature of the weapon whose title and summary are supplied, returning an expression
-of the form C<["keyword", "friendly_name"]>. If no such information can be drawn from the summary,
-the array ref C<[]> is returned.
+Determines the nature of the weapon whose title and summary are supplied, returning a list of
+expressions of the form C<["keyword", "friendly_name"]>. If no such information can be drawn
+from the summary, the array ref C<[]> is returned.
 
 =cut
 

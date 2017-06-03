@@ -81,18 +81,28 @@ end
 
 class PlacePage < Page
   include HasInfoField
+  attr_reader :population
+
+  # ///// Perl or Ruby should determine what populations are "big" (based on sample data).
+  #       Then we want to revamp the city generator to use a city planner rather than randomness.
 
   def initialize(json)
     super json['name']
     initialize_info json['info']
+    @population = json['population']
   end
 
   def to_json(options = {})
     {
       'nature' => 'Place',
       'name' => name,
-      'info' => save_info_field
+      'info' => save_info_field,
+      'population' => population
     }.to_json options
+  end
+
+  def population_count
+    @population or 0
   end
 
 end

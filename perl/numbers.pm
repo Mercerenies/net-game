@@ -5,6 +5,18 @@ use Data::Dumper;
 use feature 'unicode_strings';
 use 5.010;
 
+=head2 median(...)
+
+Computes the median of a list of numbers. Returns C<undef> if the list is empty.
+
+=cut
+
+sub median {
+    return undef unless @_;
+    # Copied from http://www.perlmonks.org/?node_id=474564
+    sum( ( sort { $a <=> $b } @_ )[ int( $#_/2 ), ceil( $#_/2 ) ] )/2;
+}
+
 =head2 evaluate_number($number, $xdata)
 
 Given a numerical-like string, evaluate the string to produce a number. If the string is already

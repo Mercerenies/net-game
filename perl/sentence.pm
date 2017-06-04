@@ -3,10 +3,7 @@ local $_;
 
 use Data::Dumper;
 use feature 'unicode_strings';
-
-my $LINKVERB = "(?:is|was|are|were)";
-my $ARTICLE = "(?:an?|the)"; # Unused currently; we'll see if we can do something about that at some point
-my $RENAME = "(?:or|in|of)";
+use 5.016;
 
 =head2 simple_linked_sentence($titlevar, $ptn, %options)
 
@@ -69,7 +66,12 @@ sub simple_linked_sentence {
     my $ptn = shift;
     my %options = %{+shift};
 
-    my $rename_words = $options{'MoreRenameClauses'} ? $RENAME : 'or';
+    # Articles are currently unused. We'll be using them at some point in the future, ideally.
+    state $linkverb = "(?:is|was|are|were)";
+    state $article = "(?:an?|the)";
+    state $rename = "(?:or|in|of)";
+
+    my $rename_words = $options{'MoreRenameClauses'} ? $rename : 'or';
     my $skim_word = $options{'StrictSkimWords'} ? qr/[\w-]+/i : qr/[^ ]+/i;
     my $skim_count = 0+ ($options{'SkimWordCount'} // 9);
     my $title_intermediate = qr/(?:\Q$titlevar\E)/i;
@@ -80,7 +82,7 @@ sub simple_linked_sentence {
 
     my $rename_clause = qr/(?:$rename_words (?:$skim_word ){1,3})/i;
     my $title_word = qr/(?:$title_intermediate )/i;
-    my $link_word = qr/(?:$LINKVERB )/i;
+    my $link_word = qr/(?:$linkverb )/i;
     my $skim_clause = qr/(?:(?:$skim_word ){0,$skim_count})/i;
     my $ptn_clause = qr/(?:\b$ptn\b)/i;
 

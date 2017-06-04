@@ -2,27 +2,36 @@
 # TODO Document this class and its methods
 # TODO At present, the population boundaries are fixed based on sample data; make them adaptive
 
-# Population contains convenience methods for operating on population sizes.
+# Population contains convenience methods for operating on population sizes. The pre-create
+# instances of this class that are provided are good for most uses.
 class Population
   include Comparable
 
   attr_reader :rank, :begin, :end, :label
 
   # The constructor seldom need be called directly. There are convenience methods provided
-  # to obtain and compare existing population instances.
-  def initialize(r, t1, t2, l)
-    @rank = r
-    @begin = t1
-    @end = t2
-    @label = l
+  # to obtain and compare existing population instances. If it becomes necessary to do so,
+  # the rank of a population determines its ordering. Those with a lower numerical rank value
+  # will be considered "lesser". The begin and end boundaries define the low and high ends of
+  # the interval defined by this population object. The label defines a name, which should be
+  # a symbol, to be used in the printed representation of the population.
+  def initialize(rank, begin_, end_, label)
+    @rank = rank
+    @begin = begin_
+    @end = end_
+    @label = label
   end
 
+  # Determines whether or not the argument falls within the interval defined by this population
+  # object. The interval is always considered to be a closed interval. The argument can be a
+  # real number or +nil+. Note that +nil+ does not fall within any population intervals.
   def include?(size)
     return false unless size
     (self.begin.nil? or self.begin <= size) and
       (self.end.nil? or size <= self.end)
   end
 
+  # Compares the population objects by their rank.
   def <=>(other)
     self.rank <=> other.rank
   end

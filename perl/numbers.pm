@@ -3,7 +3,7 @@ local $_;
 
 use Data::Dumper;
 use feature 'unicode_strings';
-use 5.010;
+use 5.016;
 use List::Util qw(sum);
 use POSIX;
 

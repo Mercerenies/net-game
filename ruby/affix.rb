@@ -69,14 +69,14 @@ class AffixSet
     self.to_h[names.size].sample.zip(names).collect { |a, n| a.decorate n }
   end
 
-  # Applies +number+ different affixes to +name+, returning a list of results. Signals an error if there
-  # is no corresponding affix collection of an appropriate size.
+  # Applies +number+ different affixes to +name+, returning a list of results. Signals an error if
+  # there is no corresponding affix collection of an appropriate size.
   def apply(name, number)
     collate(number.times.collect { name })
   end
 
-  # Applies +number+ different affixes to +name+, in the same way as #apply, but returning a SamplerArray
-  # instance, not a normal array.
+  # Applies +number+ different affixes to +name+, in the same way as #apply, but returning a
+  # SamplerArray instance, not a normal array.
   def sampler(name, number)
     SamplerArray.new apply(name, number)
   end

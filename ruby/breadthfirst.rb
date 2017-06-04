@@ -45,8 +45,8 @@ module BFSBuilder
 
 end
 
-# An instance of BFS::Algorithm that is provided for convenience and intended to be used as the entry-point
-# to the builder.
+# An instance of BFS::Algorithm that is provided for convenience and intended to be used as the
+# entry-point to the builder.
 BFSAlgorithm = BFSBuilder::Algorithm.new(cost: nil, check: nil, branch: nil)
 
 # A breadth-first-search algorithm instance. The BFSBuilder::Algorithm object given to the initializer
@@ -69,12 +69,13 @@ class BFS
   end
 
   # Returns the result of the search, or +nil+ if the search is still running. Note that it is strongly
-  # recommended (though not required) that +nil+ not be in the search space of the algorithm, for #result
-  # will return +nil+ in the following three cases.
+  # recommended (though not required) that +nil+ not be in the search space of the algorithm,
+  # for #result will return +nil+ in the following three cases.
   # * If the search has yet to terminate.
   # * If the search has terminated and failed to find a solution.
   # * If the search has terminated and found +nil+ to be a solution.
-  # The first case can be resolved by checking #terminate?, but the latter two cases are indistinguishable.
+  # The first case can be resolved by checking #terminate?, but the latter two cases are
+  # indistinguishable.
   def result
     if terminated?
       @result
@@ -85,7 +86,7 @@ class BFS
 
   def result=(x)
     @terminated = true
-    result = x
+    @result = x
   end
 
   # Runs one step of the algorithm.
@@ -113,8 +114,8 @@ class BFS
   end
 
   # Runs infinitely many steps of the algorithm, stopping only when the search space is exhausted or a
-  # result has been found. Care should be taken that this method is not called on search spaces which are
-  # infinite and may lack a solution, for this method will infinitely loop in that particular case.
+  # result has been found. Care should be taken that this method is not called on search spaces which
+  # are infinite and may lack a solution, for this method will infinitely loop in that particular case.
   def run_until_done
     loop do
       break if terminated?

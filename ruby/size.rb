@@ -1,5 +1,4 @@
 
-# TODO Document this class and its methods
 # TODO At present, the population boundaries are fixed based on sample data; make them adaptive
 
 # Population contains convenience methods for operating on population sizes. The pre-create

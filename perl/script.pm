@@ -263,7 +263,11 @@ sub deduce_animal_stats {
         if ($title =~ /\b$keyword\b/i) {
             $constant = 4;
         } else {
-            $constant = @{[ $summary =~ /\b$keyword\b/gi ]};
+            $constant = 0;
+            my %sections = select_sections($xml, qr/\Q$title\E|Overview|Behavior|Description/i);
+            for (values %sections) {
+                $constant += @{[ /\b$keyword\b/gi ]};
+            }
         }
         $stats{'matches'} += $constant;
         get_logger()->echo(2, "Animal $title has $keyword match $constant times") if $constant > 0;
@@ -535,8 +539,8 @@ sub deduce_monster_affinity {
         if ($title =~ /\b$keyword\b/i) {
             $constant = 4;
         } else {
-            $constant = 0; # TODO Do this same select_sections thing with deduce_animal_stats
-            my %sections = select_sections($xml, qr/$title|Overview|Mythology/i);
+            $constant = 0;
+            my %sections = select_sections($xml, qr/\Q$title\E|Overview|Mythology/i);
             for (values %sections) {
                 $constant += @{[ /\b$keyword\b/gi ]};
             }

@@ -243,7 +243,7 @@ sub find_weapon_information {
     return \@res;
 }
 
-=head2 deduce_animal_stats($title, $summary, $xdata)
+=head2 deduce_animal_stats($xml, $xdata)
 
 Counts up the number of appearances of miscellaneous keywords used to determine the nature and behavior
 of animals from the summary and title of an animal page. A hashref containing the counted stats is
@@ -252,9 +252,10 @@ returned.
 =cut
 
 sub deduce_animal_stats {
-    my $title = $_[0];
-    my $summary = $_[1];
-    my $xdata = $_[2];
+    my $xml = $_[0];
+    my $xdata = $_[1];
+    my $title = page_title($xml);
+    my $summary = page_summary($xml);
     my %animals = $xdata->animals();
     my %stats;
     foreach my $keyword (keys %animals) {

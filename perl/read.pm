@@ -125,7 +125,7 @@ sub read_animal {
     my $xdata = $_[1];
     my $name = page_title($xml);
     my $summary = page_summary($xml);
-    my %stats = %{deduce_animal_stats($name, $summary, $xdata)};
+    my %stats = %{deduce_animal_stats($xml, $xdata)};
     my %norm = normalize_animal_stats(\%stats);
     my %curr = (
         nature => 'Animal',

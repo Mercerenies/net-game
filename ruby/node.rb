@@ -164,9 +164,9 @@ class Node
     @contents.each { |obj| obj.pretty_print(depth + 1) }
   end
 
-  # Takes the given node and pads it until it is the maximum level. For example, if an "individual" LevelZero
-  # node were provided to this method, this method would return a randomly generated country node, containing
-  # a single randomly generated city node, inside which is the original node instance.
+  # Takes the given node and pads it until it is the maximum level. For example, if an "individual"
+  # LevelZero node were provided to this method, this method would return a randomly generated country
+  # node, containing a single randomly generated city node, inside which is the original node instance.
   def self.node_level_up(node)
     lvl = nil
     loop do

@@ -1,8 +1,8 @@
 
-# A collection of locations that form a cohesive structure when taken together. Note that features are intended
-# to be finalized structures, not modifiable data, which is why there are relatively few editing methods
-# provided in this interface. Features should be built up using #StructureBuilder or similar interfaces
-# and then compiled.
+# A collection of locations that form a cohesive structure when taken together. Note that features are
+# intended to be finalized structures, not modifiable data, which is why there are relatively few
+# editing methods provided in this interface. Features should be built up using #StructureBuilder or
+# similar interfaces and then compiled.
 class Feature
 
   # Constructs an empty feature, consisting of no nodes.
@@ -22,8 +22,8 @@ class Feature
     xs.each { |x| @nodes.push x }
   end
 
-  # Pushes a location onto the exit list of the feature. The exit nodes should always form a subset of the set
-  # of nodes. If #push_exit is passed a node which is not in the node set, it is a no-op.
+  # Pushes a location onto the exit list of the feature. The exit nodes should always form a subset of
+  # the set of nodes. If #push_exit is passed a node which is not in the node set, it is a no-op.
   def push_exit(x)
     @exits.push x if @nodes.find? x
   end

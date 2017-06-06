@@ -105,7 +105,8 @@ class Location
                  generic_name: nil,
                  valid_creatures: nil,
                  valid_plants: nil,
-                 fitness: Fitness.null)
+                 fitness: Fitness.null,
+                 linkage: nil)
     @id = id
     @name = name
     @country_name = country_name
@@ -116,6 +117,7 @@ class Location
     @valid_plants = (valid_plants || EmptyValidator.new)
     @water_mode = nil
     @fitness = fitness
+    @linkage = linkage
   end
 
   def to_delta
@@ -202,7 +204,8 @@ class Location
     fitness_key = [:':fitness', fitness]
     meta = [:':meta', MetaData.new(:':generic-name' => generic_name,
                                    :':creatures' => valid_creatures,
-                                   :':plants' => valid_plants)]
+                                   :':plants' => valid_plants,
+                                   :':linkage' => linkage)]
     (prefix + country + links + contents + civilized + water + fitness_key + meta).to_sxp
   end
 
@@ -229,6 +232,7 @@ class Location
           loc.generic_name = meta[:':generic-name']
           loc.valid_creatures = Reloader.load(meta[:':creatures'])
           loc.valid_plants = Reloader.load(meta[:':plants'])
+          loc.linkage = meta[:':linkage']
         end
       end
     end
@@ -251,12 +255,34 @@ class Location
     @valid_plants
   end
 
+  # Returns the node's linkage. In most cases, the linkage is simply +nil+. If the node is
+  # a city node which lies on the edge of a city and has no external connectors, the node
+  # may be marked as +:city_exit+ to indicate that it might be linked to in the future.
+  def linkage
+    @linkage
+  end
+
+  # Assigns the node's linkage. The argument must either be +nil+ or +:city_exit+.
+  def linkage=(x)
+    # TODO Error checking; we don't want invalid values getting in here
+    @linkage = x
+  end
+
+  # Returns true if and only if the node has linkage marking it as a city exit.
+  def city_exit?
+    @linkage == :city_exit
+  end
+
 end
 
 class ReloadedLocation < Location
-  attr_writer :country_name, :generic_name, :valid_creatures, :valid_plants, :fitness
+  attr_writer :country_name, :generic_name, :valid_creatures, :valid_plants, :fitness, :linkage
 
-  def initialize(id, name, country_name, generic_name: nil, valid_creatures: nil, valid_plants: nil)
+  def initialize(id, name, country_name,
+                 generic_name: nil,
+                 valid_creatures: nil,
+                 valid_plants: nil,
+                 linkage: nil)
     super
   end
 

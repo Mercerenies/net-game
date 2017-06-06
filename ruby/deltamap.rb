@@ -54,6 +54,7 @@ class DeltaLocation < Location
     @new_contents = []
     @new_links = []
     @sans_links = []
+    @new_linkage = old.linkage
   end
 
   def add_link(x)
@@ -104,6 +105,15 @@ class DeltaLocation < Location
     else
       block.call
     end
+  end
+
+  def linkage
+    @new_linkage
+  end
+
+  def linkage=(x)
+    # TODO Error checking, like in map.rb for the same method
+    @new_linkage = x
   end
 
   def to_dsxp

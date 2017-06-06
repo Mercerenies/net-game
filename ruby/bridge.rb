@@ -40,12 +40,17 @@ class Bridge < Feature
   # * If +k+ > +n+, each list of arguments will have one randomly selected node linked to the
   #   corresponding exit. For arguments after the +n+th argument, the exit list will cycle, meaning
   #   that exits may be used multiple times but each argument will be used exactly once.
+  #
+  # This method returns all of the nodes in the argument lists that were used in integration.
   def bridge_on(*nodes)
-    nodes.zip(each_exit.cycle) do |curr, exit|
+    results = []
+    nodes.zip(each_exit.cycle) do |curr, exit_node|
       node = curr.sample
-      node.add_link exit.id
-      exit.add_link node.id
+      node     .add_link exit_node.id
+      exit_node.add_link node     .id
+      results << node
     end
+    results
   end
 
 end
@@ -64,14 +69,18 @@ class TrivialBridge < Bridge
   # of the nodes in a way that the graph is the
   # {complete graph}[https://en.wikipedia.org/wiki/Complete_graph] +K_n+
   def bridge_on(*nodes)
+    results = []
     (0 ... nodes.size).each do |i|
       (i + 1 ... nodes.size).each do |j|
         n0 = nodes[i].sample
         n1 = nodes[j].sample
         n0.add_link n1.id
         n1.add_link n0.id
+        results << n0
+        results << n1
       end
     end
+    results
   end
 
 end

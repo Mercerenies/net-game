@@ -90,7 +90,13 @@ class Node
   # using Bridge#create_random to generate a sufficiently large bridge for the situation.
   def expand_to_map(existing: nil, country: nil, gdata:)
     if @contents.empty?
-      Array[Location.new id, name, country, generic_name: country || "Map", fitness: Outdoors]
+      loc = Location.new(
+        id, name, country,
+        generic_name: country || "Map",
+        fitness: Outdoors,
+        linkage: :city_exit
+      )
+      Array[loc]
     else
       links = @contents.size.times.collect { [] }
       connected = []
@@ -127,7 +133,7 @@ class Node
               bridge = Bridge.create_random
             end
             bridge.each_node { |bridge_node| bridge_nodes << bridge_node }
-            bridge.bridge_on node, nodes[n1]
+            r = bridge.bridge_on node.select(&:city_exit?).to_a, nodes[n1].select(&:city_exit?).to_a
           end
         end
       end

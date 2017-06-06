@@ -28,6 +28,7 @@ load './ruby/quest.rb'
 load './ruby/feature.rb'
 load './ruby/bridge.rb'
 load './ruby/building.rb'
+load './ruby/city.rb'
 
 load './ruby/structure.rb'
 load './ruby/tower.rb'

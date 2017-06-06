@@ -1,10 +1,11 @@
 
 require 'forwardable'
 
-# A node in a structure that is being built. When the structure is ready, #to_loc will return a location
-# instance that can be placed on the map. The StructureNode class is intended to be subclassed and the
-# #expand method overriden to define custom behavior for various structures. For this reason, several
-# of the #StructureBuilder methods are redefined in this class to delegate to the builder object.
+# A node in a structure that is being built. When the structure is ready, #to_loc will return a
+# location instance that can be placed on the map. The StructureNode class is intended to be
+# subclassed and the #expand method overriden to define custom behavior for various structures.
+# For this reason, several of the #StructureBuilder methods are redefined in this class to delegate
+# to the builder object.
 class StructureNode
   extend Forwardable
 
@@ -25,7 +26,8 @@ class StructureNode
     @fitness = Fitness.null
   end
 
-  # Called during recursive expansion of the structure node to define the expansion for the individual node.
+  # Called during recursive expansion of the structure node to define the expansion for the
+  # individual node.
   def expand
   end
 
@@ -70,21 +72,23 @@ class StructureBuilder
     @nodes.push(*nodes)
   end
 
-  # Once a builder is allocated and initialized, #construct is intended to be called. The #construct method
-  # should call the other builder methods to initialize the construction and make the first few #StructureNode
-  # instances, which will then be automatically expanded by the helper methods here.
+  # Once a builder is allocated and initialized, #construct is intended to be called. The
+  # #construct method should call the other builder methods to initialize the construction
+  # and make the first few #StructureNode instances, which will then be automatically expanded
+  # by the helper methods here.
   def construct
   end
 
-  # Transforms the structure builder's internal state into a #StructureResult object, consisting of finalized
-  # locations and marked exit positions.
+  # Transforms the structure builder's internal state into a #StructureResult object, consisting
+  # of finalized locations and marked exit positions.
   def to_loc
     nodes = @nodes.collect(&:to_loc)
     @connections.each do |n0, n1|
       nodes.find { |n| n.id == n0.id }.add_link n1.id
     end
     exits = @nodes.select(&:exit?)
-    exits = exits.map { |e| nodes.find { |n| n.id == e.id } } # Verifies that @exits is a subset of @nodes
+    # Verify that @exits is a subset of @nodes
+    exits = exits.map { |e| nodes.find { |n| n.id == e.id } }
     StructureResult.new nodes, exits
   end
 

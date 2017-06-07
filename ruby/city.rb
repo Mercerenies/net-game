@@ -1,5 +1,6 @@
 
 # ///// TODO Our next step is to make city planning more "creative" instead of making the same city each time
+# TODO With CrossCity, we have the square which has four exits and makes it look really busy; is that okay?
 
 class City < Feature
 end

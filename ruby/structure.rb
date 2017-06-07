@@ -13,13 +13,14 @@ class StructureNode
   attr_accessor :fitness
 
   def_delegators :@builder, :make_node, :connect, :add_names, :get_a_name, :sample_node, :sample_nodes,
-                            :core_name=, :core_name, :each_node, :select_nodes, :each_exit
+                            :core_name=, :core_name, :each_node, :select_nodes, :each_exit, :country
 
   # Initializes a node with a reference back to its builder instance.
   def initialize(builder, name)
     @builder = builder
     @id = Node.get_id
     @name = name
+    @country = nil
     @exit = false
     @creatures = nil
     @plants = nil
@@ -35,7 +36,7 @@ class StructureNode
   def to_loc
     Location.new(@id,
                  @name,
-                 nil,
+                 country,
                  generic_name: core_name,
                  valid_creatures: @creatures,
                  valid_plants: @plants,
@@ -54,10 +55,10 @@ class StructureNode
 
 end
 
-# A builder which consists of #StructureNode instances. Like #StructureNode, #StructureBuilder is intended
-# to be subclassed with #construct overriden to determine how to start the building process.
+# A builder which consists of #StructureNode instances. Like #StructureNode, #StructureBuilder is
+# intended to be subclassed with #construct overriden to determine how to start the building process.
 class StructureBuilder
-  attr_accessor :core_name
+  attr_accessor :core_name, :country
 
   # Initializes an empty structure.
   def initialize
@@ -65,6 +66,7 @@ class StructureBuilder
     @connections = []
     @names = []
     @core_name = nil
+    @country = nil
   end
 
   # Adds nodes to the structure.

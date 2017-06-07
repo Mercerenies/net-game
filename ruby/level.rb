@@ -94,14 +94,14 @@ class LevelOne < Level
     @node_count = node_count
   end
 
-  def make_children
-    count = case @node_count
-            when Integer then @node_count
-            when Range then @node_count.to_a.sample
-            else @node_count.to_i
-            end
-    count.times.collect { Level.individual }
-  end
+  #def make_children
+  #  count = case @node_count
+  #          when Integer then @node_count
+  #          when Range then @node_count.to_a.sample
+  #          else @node_count.to_i
+  #          end
+  #  count.times.collect { Level.individual }
+  #end
 
   def level_up
     Level.country

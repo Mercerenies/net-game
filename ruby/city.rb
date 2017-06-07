@@ -2,11 +2,6 @@
 # ///// TODO Our next step is to make city planning more "creative" instead of making the same city each time
 
 class City < Feature
-
-  def drop_in(map)
-    each_node { |x| map.push x }
-  end
-
 end
 
 class CrossCityEdgeNode < StructureNode
@@ -54,7 +49,7 @@ class CrossCityBuilder < StructureBuilder
   def to_loc
     super().tap do |result|
       # We want to mark each exit as being an exit node for bookkeeping and linkage purposes
-      result.each_exit { |x| x.linkage = :city_exit }
+      result.exits.each { |x| x.linkage = :city_exit }
     end
   end
 
@@ -62,9 +57,13 @@ end
 
 class CrossCity < City
 
-  def load(city_data, country_data)
-    city_name = if city_data then city_data.name else Namer.instance.sample end
-    country_name = if country_data then country_data.name else Namer.instance.sample end
+  def load(data)
+    load_named(data.name, nil)
+  end
+
+  def load_named(city_name, country_name)
+    city_name ||= Namer.instance.sample
+    country_name ||= Namer.instance.sample
     structure = CrossCityBuilder.new(city_name, country_name).tap(&:construct).to_loc
     @nodes = structure.nodes
     @exits = structure.exits

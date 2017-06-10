@@ -32,4 +32,4 @@ if [ -n "$port" ]; then
     file=client
 fi
 
-$cmd ./lisp/$file.lisp $infile
+$cmd ./lisp/$file.lisp $infile $port

@@ -178,6 +178,9 @@
              (whitelisted-load-1 #'load-object +spawner-types+)
              'spawner-set))
 
+(defmethod load-object ((header (eql 'request-set)) data)
+  nil) ; TODO Yeah, this needs to be implemented ////
+
 (defmethod load-object ((header (eql 'fitness)) data)
   (let ((plist nil))
     (load-formatted data 'fitness
@@ -221,6 +224,7 @@
                                            (whitelisted-load-1 #'load-object +map-object-types+)
                                            'pool)))
                     (debug (setf (alpha-debug alpha) debug))
+                    (reqs (load-object 'request-set reqs)) ; ////
                     (meta))
     alpha))
 

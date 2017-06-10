@@ -46,7 +46,7 @@
 ;; Directly modifies the game world; call at the appropriate time
 (defun load-and-integrate-delta (&key (file *standard-input*))
   ;; TODO load-formatted
-  (destructuring-bind (delta-sym key dmap creatures spawners quests kb pool)
+  (destructuring-bind (delta-sym key dmap creatures spawners quests kb pool reqs)
       (with-scheme-notation (read file))
     (unless (eq delta-sym 'delta)
       (error "Flawed data - delta"))
@@ -79,4 +79,6 @@
     (pool-add-list (load-with pool
                               (whitelisted-load-1 #'load-object +map-object-types+)
                               'pool))
+    ;; Request list
+    (load-object 'request-set reqs) ; ////
     t))

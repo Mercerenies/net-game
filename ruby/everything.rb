@@ -11,6 +11,7 @@ load './ruby/size.rb'
 load './ruby/logger.rb'
 load './ruby/affix.rb'
 load './ruby/namer.rb'
+load './ruby/request.rb'
 
 load './ruby/fitness.rb'
 load './ruby/delta.rb'

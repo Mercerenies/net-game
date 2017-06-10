@@ -111,19 +111,19 @@ class DeltaGData < GData
     creatures = ListLikeChain.new @new_creatures, @creatures
     spawners = ListLikeChain.new @new_spawners, @spawners
     quests = ListLikeChain.new @new_quests, @quests
-    AlphaStructure.new map, creatures, spawners, quests, @knowledge_base, pool, file_key, get_meta_data
+    AlphaStructure.new map, creatures, spawners, quests, @knowledge_base, pool, file_key, requests, get_meta_data
   end
 
   # Returns a DeltaStructure object representing the changed properties of the DeltaGData.
   def delta_structure
-    DeltaStructure.new map, @new_creatures, @new_spawners, @new_quests, @knowledge_base, @new_pool, file_key
+    DeltaStructure.new map, @new_creatures, @new_spawners, @new_quests, @knowledge_base, @new_pool, file_key, requests
   end
 
 end
 
 class DeltaStructure
 
-  def initialize(map, creatures, spawners, quests, knowledge_base, new_pool, file_key)
+  def initialize(map, creatures, spawners, quests, knowledge_base, new_pool, file_key, requests)
     @map = map
     @creatures = creatures
     @spawners = spawners
@@ -131,12 +131,13 @@ class DeltaStructure
     @knowledge_base = knowledge_base
     @new_pool = new_pool
     @file_key = file_key
+    @requests = requests
   end
 
   def to_dsxp
     # TODO In here and AlphaStructure, abstract this out like with creature/spawner sets
     pool_data = [:pool] + @new_pool
-    [:delta, @file_key, @map.to_dsxp, @creatures, @spawners, @quests, @knowledge_base.to_dsxp, pool_data].to_sxp
+    [:delta, @file_key, @map.to_dsxp, @creatures, @spawners, @quests, @knowledge_base.to_dsxp, pool_data, @requests].to_sxp
   end
 
 end

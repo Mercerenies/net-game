@@ -5,7 +5,7 @@
 class GData
   include DeltaAble
 
-  attr_reader :node, :map, :knowledge_base, :file_key, :pool
+  attr_reader :node, :map, :knowledge_base, :file_key, :pool, :requests
 
   def initialize(everything)
     @arr = everything.clone
@@ -18,6 +18,7 @@ class GData
     @knowledge_base = KnowledgeBase.new
     @pool = []
     @file_key = 1
+    @requests = RequestSet.new
   end
 
   def to_delta
@@ -122,7 +123,7 @@ class GData
 
   # Returns the generator data in an appropriate output list format.
   def result_structure
-    AlphaStructure.new map, @creatures, @spawners, @quests, @knowledge_base, pool, file_key, get_meta_data
+    AlphaStructure.new map, @creatures, @spawners, @quests, @knowledge_base, pool, file_key, requests, get_meta_data
   end
 
   # Returns the metadata object that will be stored with the result structure.
@@ -141,7 +142,9 @@ class GData
   end
 
   def self.from_sxp(arg)
-    fk, map, creatures, spawners, quests, kb, pool, debug, meta = Reloader.assert_first :alpha, arg
+    # TODO Some keyword arguments here; this is a mess
+    fk, map, creatures, spawners, quests, kb, pool, debug, requests, meta =
+        Reloader.assert_first :alpha, arg
     reloader = Reloader.instance
     meta = reloader.load meta
     GData.new([]).tap do |gdata|
@@ -152,6 +155,7 @@ class GData
       gdata.instance_variable_set :@quests, reloader.load(quests)
       gdata.instance_variable_set :@knowledge_base, reloader.load(kb)
       gdata.instance_variable_set :@pool, pool.drop(1).collect { |x| reloader.load(x) }
+      gdata.instance_variable_set :@requests, reloader.load(requests)
       Node.current_id = meta[:':curr-id']
       QuestMaker.current_quest_flag = meta[:':curr-quest-flag']
     end
@@ -162,7 +166,7 @@ end
 # An immutable structure consisting of data designed to be the root node of an alpha file.
 class AlphaStructure
 
-  def initialize(map, creatures, spawners, quests, kb, pool, file_key, meta)
+  def initialize(map, creatures, spawners, quests, kb, pool, file_key, requests, meta)
     @map = map
     @creatures = creatures
     @spawners = spawners
@@ -170,6 +174,7 @@ class AlphaStructure
     @knowledge_base = kb
     @pool = pool
     @file_key = file_key
+    @requests = requests
     @meta = meta
     # The file key is included as a unique integer to identify which alpha state is associated
     # with which delta state, to eliminate the possibility of integrating two or more delta files
@@ -178,7 +183,7 @@ class AlphaStructure
 
   def to_sxp
     pool_data = [:pool] + @pool
-    [:alpha, @file_key, @map, @creatures, @spawners, @quests, @knowledge_base, pool_data, Logger.instance.debug_level, @meta].to_sxp
+    [:alpha, @file_key, @map, @creatures, @spawners, @quests, @knowledge_base, pool_data, Logger.instance.debug_level, @requests, @meta].to_sxp
   end
 
 end

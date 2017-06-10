@@ -46,7 +46,9 @@ class Reloader
       :plants => PlantTypesValidator,
       :'no-validator' => EmptyValidator,
       :fitness => Fitness,
-      :'neo-spawner' => NeoSpawner
+      :'neo-spawner' => NeoSpawner,
+      :request => Request,
+      :'request-set' => RequestSet
     }
   end
 

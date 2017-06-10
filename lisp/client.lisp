@@ -12,6 +12,24 @@
 
 (defparameter *client-fname-n* 0)
 
+(defgeneric client-lock (tag)
+  (:documentation "This method is called when a tag is being locked in order to make a request.
+                   Most tags needn't respond to this, as the locking operation is done
+                   automatically regardless of what this method does, but some will change their
+                   internal state to represent the lock."))
+
+(defgeneric client-unlock (tag)
+  (:documentation "This method is called when a request is finished and the tag is being unlocked.
+                   The method client-unlock will be called after a corresponding client-lock call.
+                   This method will not be called if the program terminates while a request is
+                   in progress."))
+
+(defmethod client-lock ((tag t))
+  nil)
+
+(defmethod client-unlock ((tag t))
+  nil)
+
 (defun client-short-fname (n)
   "Computes the nth \"short name\" of files to use."
   (format nil "dfile~3,'0D" n))
@@ -78,7 +96,8 @@
           (donename (client-make-fname)))
       (echo 2 "Making update request for ~A...~@[~* (name: ~A)~]" sym (not (eql sym tag)) tag)
       (format *socket* "need ~(~A~) ~A ~A~%" sym worldname donename)
-      (push (list tag worldname donename) *client-pending*))))
+      (push (list tag worldname donename) *client-pending*)
+      (client-lock tag))))
 
 (defun client-request-custom (expr tag)
   "Makes a request to run the expression given, using the crawing engine's command parser. The value
@@ -90,7 +109,8 @@
           (donename (client-make-fname)))
       (echo 2 "Making custom request for '~A'... (name: ~A)" expr tag) ; TODO Escape the expr for this?
       (format *socket* "goget ~A ~A ~A~%" worldname donename expr)
-      (push (list tag worldname donename) *client-pending*))))
+      (push (list tag worldname donename) *client-pending*)
+      (client-lock tag))))
 
 (defun report-checkin ()
   "Sends a checkin request to the update procedures. Note that this is superfluous but harmless if
@@ -115,7 +135,8 @@
         finally (progn
                   (loop for rr in removing
                         do (setf *client-pending*
-                                 (remove rr *client-pending* :key #'first)))
+                                 (remove rr *client-pending* :key #'first))
+                        do (client-unlock rr))
                   (when removing
                     (check-for-updates)))))
 

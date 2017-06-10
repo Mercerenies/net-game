@@ -49,6 +49,7 @@ counties
 county
 forts
 suburbs
+university
 :: weapons
 sword
 knife

@@ -23,6 +23,8 @@
 
 (defparameter *key* nil)
 
+(defparameter *game-mode* nil)
+
 (defun make-player ()
   "Makes an instance of the player object, with no active quests and an empty visited list."
   (make-instance 'player))
@@ -55,7 +57,7 @@
         collect (subseq string start finish)
         until (null finish)))
 
-(defun run-game (&key (filename "./temp/system.txt") (callback nil))
+(defun run-game (&key (filename "./temp/system.txt") (callback nil) ((:gamemode *game-mode*) nil))
   "Runs the game in full, loading the world data from the given file. Note that the run-game function
    itself makes no effort to interact with external servers, such as the Lua interface. If such
    interaction is desired, it should be implemented as a hook on do-action or a similar method.
@@ -75,6 +77,7 @@
         (error "The player object does not exist."))
       (when callback
         (funcall callback))
+      (echo 1 "Starting game REPL with mode ~A." *game-mode*)
       (loop named game-loop
             with *read-eval* = nil
             with *do-exit* = (lambda () (return-from game-loop nil))

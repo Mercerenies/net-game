@@ -2,4 +2,4 @@
 
 (in-package #:net-game)
 
-(run-game)
+(run-game :gamemode 'master)

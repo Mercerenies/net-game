@@ -75,7 +75,9 @@
                   (full-exit 1))))
     (with-open-stream (*socket* (ng-os:connect-to-socket *port*))
       (unwind-protect
-           (run-game :filename filename :callback (lambda () (report-updates)))
+           (run-game :filename filename
+                     :callback (lambda () (report-updates))
+                     :gamemode 'client)
         (when (open-stream-p *socket*)
           (format *socket* "quit~%"))
         (client-cleanup-fnames)))))

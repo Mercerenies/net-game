@@ -68,7 +68,14 @@ echo ' Yes'
 echo -n 'Does the Wikipedia module exist?'
 if ! python3 -c 'import wikipedia' >/dev/null 2>/dev/null; then
     echo
-    echo 'error: Please install the Wikipedia module using `pip install wikipedia`.'
+    echo 'error: Please install the Wikipedia module using `pip3 install wikipedia`.'
+    exit 1
+fi
+echo ' Yes'
+echo -n 'Does the BeautifulSoup module exist?'
+if ! python3 -c 'import bs4' >/dev/null 2>/dev/null; then
+    echo
+    echo 'error: Please install the BeautifulSoup module using `pip3 install bs4`.'
     exit 1
 fi
 echo ' Yes'

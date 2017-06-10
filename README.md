@@ -31,7 +31,8 @@ Note that Python, Perl, and Ruby are expected to be in /usr/bin. The Lisp implem
 
 ###### Python
 * Python 3
-* Wikipedia module (`pip install wikipedia`)
+* Wikipedia module (`pip3 install wikipedia`)
+* BeautifulSoup 4 module (`pip3 install bs4`, should install automatically as a dependency of the Wikipedia module)
 
 ###### Perl
 * Perl 5.16 or newer

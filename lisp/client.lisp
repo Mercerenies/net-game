@@ -62,33 +62,35 @@
           (format *socket* "quit~%"))
         (client-cleanup-fnames)))))
 
-(defun client-waiting-on (sym)
-  "Returns true if the client is waiting on an update associated with the given symbol and
+(defun client-waiting-on (tag)
+  "Returns true if the client is waiting on an update associated with the given tag and
    false otherwise."
-  (assoc sym *client-pending*))
+  (assoc tag *client-pending* :test #'eql))
 
-(defun client-request (sym &optional name)
-  "Makes a request for sym, associating the request globally with the symbol name. If name is
-   not provided, it defaults to sym. Note that if a request going by the same name is still
-   pending, a new one will not be made."
-  (setf name (or name sym))
-  (unless (client-waiting-on name)
+(defun client-request (sym &optional tag)
+  "Makes a request for sym, associating the request globally with the given tag. If tag is
+   not provided, it defaults to sym. Note that if a request going by the same tag is still
+   pending, a new one will not be made. Tags are always compared by eql and are usually, but
+   not always, interned symbols."
+  (setf tag (or tag sym))
+  (unless (client-waiting-on tag)
     (let ((worldname (client-make-fname))
           (donename (client-make-fname)))
-      (echo 2 "Making update request for ~A...~@[~* (name: ~A)~]" sym (not (eq sym name)) name)
+      (echo 2 "Making update request for ~A...~@[~* (name: ~A)~]" sym (not (eql sym tag)) tag)
       (format *socket* "need ~(~A~) ~A ~A~%" sym worldname donename)
-      (push (list name worldname donename) *client-pending*))))
+      (push (list tag worldname donename) *client-pending*))))
 
-(defun client-request-custom (expr name)
+(defun client-request-custom (expr tag)
   "Makes a request to run the expression given, using the crawing engine's command parser. The value
-   of name is used to track this request locally in the system and should be a symbol. If a request
-   with the same name is pending, a new one will not be made."
-  (unless (client-waiting-on name)
+   of tag is used to track this request locally in the system and should be eql-comparable. If a
+   request with the same tag is pending, a new one will not be made. Tags are usually symbols but
+   can be any eql-comparable object."
+  (unless (client-waiting-on tag)
     (let ((worldname (client-make-fname))
           (donename (client-make-fname)))
-      (echo 2 "Making custom request for '~A'... (name: ~A)" expr name) ; Escape the expr for this?
+      (echo 2 "Making custom request for '~A'... (name: ~A)" expr tag) ; TODO Escape the expr for this?
       (format *socket* "goget ~A ~A ~A~%" worldname donename expr)
-      (push (list name worldname donename) *client-pending*))))
+      (push (list tag worldname donename) *client-pending*))))
 
 (defun report-checkin ()
   "Sends a checkin request to the update procedures. Note that this is superfluous but harmless if

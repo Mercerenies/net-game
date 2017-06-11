@@ -60,7 +60,9 @@
                                            :time 5
                                            :counter 5) ; TODO Pick time/counter intelligently
                  do (move-object inst (gethash loc *world*))
-                 do (echo 1 "Warning! Old-style spawner detected...")))
+                 do (warn 'net-game-warning
+                          :level 1
+                          :text "Warning! Old-style spawner detected...")))
   (setf *spawners* nil))
 
 (defclass neo-spawner (located hideable)

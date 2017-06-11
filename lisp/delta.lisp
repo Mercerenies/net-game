@@ -82,3 +82,5 @@
     ;; Request list
     (load-object 'request-set reqs) ; ////
     t))
+
+; ///// Find all of the //// and handle requests (remember we can use net-game-warning now if 'master is in play, not 'client)

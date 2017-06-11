@@ -66,59 +66,60 @@
   (alpha-bind (let ((*origin* filename))
                 (with-open-file (file filename)
                   (load-data :file file)))
-    (let ((*player* (loop for loc being the hash-values in *world*
-                          for player = (find-if (lambda (y) (typep y 'player))
-                                                (location-contents loc))
-                          when player return player)))
-      (do-neo-spawner-migration)
-      (unless (plusp (hash-table-count *world*))
-        (error "The world is empty."))
-      (unless *player*
-        (error "The player object does not exist."))
-      (when callback
-        (funcall callback))
-      (echo 1 "Starting game REPL with mode ~A." *game-mode*)
-      (loop named game-loop
-            with *read-eval* = nil
-            with *do-exit* = (lambda () (return-from game-loop nil))
-            with *god-mode* = t ; TODO Remove this; it's for debugging purposes only
-            with cmd = nil
-            with acmd = nil
-            do (assign-numbers (mapcar (lambda (x) (gethash x *world*))
-                                       (location-exits (get-loc *player*)))
-                               (remove-hidden (location-contents (get-loc *player*)))
-                               (inv-items *player*))
-            do (progn
-                 (format t "~%=== ~A ===~%~
-                              Stats: ~,1F HP~%~
-                              Exits: ~:[(None)~;~:*~{~A~^, ~}~]~%~
-                              Objects: ~:[(None)~;~:*~{~A~^, ~}~]~%~
-                              Inventory: ~:[(None)~;~:*~{~A~^, ~}~]~%~
-                              Carrying: ~D/~D units~%~
-                              Quests: ~:[(None)~;~:*~{~A~@[ (Done)~*~]~^, ~}~]~%~
-                              Mode: ~A~%~
-                              ~A~
-                              > "
-                         (get-name (get-loc *player*))
-                         (* 100 (hp *player*))
-                         (mapcar (lambda (x)
-                                   (get-numbered-name (gethash x *world*)))
-                                 (location-exits (get-loc *player*)))
-                         (mapcar #'get-numbered-name
-                                 (remove-if-not #'(lambda (x) (typep x 'named))
-                                                (remove-hidden (location-contents (get-loc *player*)))))
-                         (mapcar #'get-numbered-name (inv-items *player*))
-                         (inv-current-weight *player*)
-                         (inv-max-weight *player*)
-                         (mapcan (lambda (x)
-                                   (list (get-name x)
-                                         (is-quest-completed x)))
-                                 (active-quests *player*))
-                         (mode-name (first *state*))
-                         (mode-text (first *state*)))
-                 (setf cmd (read-line)))
-            if (string-equal cmd "quit")
-                do (funcall *do-exit*)
-            else
-                do (do-command (first *state*) cmd)))))
+    (handling-warnings
+      (let ((*player* (loop for loc being the hash-values in *world*
+                            for player = (find-if (lambda (y) (typep y 'player))
+                                                  (location-contents loc))
+                            when player return player)))
+        (do-neo-spawner-migration)
+        (unless (plusp (hash-table-count *world*))
+          (error "The world is empty."))
+        (unless *player*
+          (error "The player object does not exist."))
+        (echo 1 "Starting game REPL with mode ~A." *game-mode*)
+        (when callback
+          (funcall callback))
+        (loop named game-loop
+              with *read-eval* = nil
+              with *do-exit* = (lambda () (return-from game-loop nil))
+              with *god-mode* = t ; TODO Remove this; it's for debugging purposes only
+              with cmd = nil
+              with acmd = nil
+              do (assign-numbers (mapcar (lambda (x) (gethash x *world*))
+                                         (location-exits (get-loc *player*)))
+                                 (remove-hidden (location-contents (get-loc *player*)))
+                                 (inv-items *player*))
+              do (progn
+                   (format t "~%=== ~A ===~%~
+                                Stats: ~,1F HP~%~
+                                Exits: ~:[(None)~;~:*~{~A~^, ~}~]~%~
+                                Objects: ~:[(None)~;~:*~{~A~^, ~}~]~%~
+                                Inventory: ~:[(None)~;~:*~{~A~^, ~}~]~%~
+                                Carrying: ~D/~D units~%~
+                                Quests: ~:[(None)~;~:*~{~A~@[ (Done)~*~]~^, ~}~]~%~
+                                Mode: ~A~%~
+                                ~A~
+                                > "
+                           (get-name (get-loc *player*))
+                           (* 100 (hp *player*))
+                           (mapcar (lambda (x)
+                                     (get-numbered-name (gethash x *world*)))
+                                   (location-exits (get-loc *player*)))
+                           (mapcar #'get-numbered-name
+                                   (remove-if-not #'(lambda (x) (typep x 'named))
+                                                  (remove-hidden (location-contents (get-loc *player*)))))
+                           (mapcar #'get-numbered-name (inv-items *player*))
+                           (inv-current-weight *player*)
+                           (inv-max-weight *player*)
+                           (mapcan (lambda (x)
+                                     (list (get-name x)
+                                           (is-quest-completed x)))
+                                   (active-quests *player*))
+                           (mode-name (first *state*))
+                           (mode-text (first *state*)))
+                   (setf cmd (read-line)))
+              if (string-equal cmd "quit")
+                  do (funcall *do-exit*)
+              else
+                  do (do-command (first *state*) cmd))))))
 

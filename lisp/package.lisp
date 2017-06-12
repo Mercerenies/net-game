@@ -11,6 +11,7 @@
 (load "./lisp/scheme.lisp")
 
 (load "./lisp/util.lisp")
+(load "./lisp/queue.lisp")
 (load "./lisp/logging.lisp")
 
 (load "./lisp/base.lisp")

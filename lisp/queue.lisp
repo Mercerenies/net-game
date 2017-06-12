@@ -4,10 +4,12 @@
   (list nil))
 
 (defun make-queue (list)
-  (let* ((list-1 (copy-list list))
-         (end (last list-1)))
-    (setf (cdr end) list-1)
-    (make-queue-impl end)))
+  (if (null list)
+      (make-queue-impl nil)
+      (let* ((list-1 (copy-list list))
+             (end (last list-1)))
+        (setf (cdr end) list-1)
+        (make-queue-impl end))))
 
 (defun queue-push (queue arg)
   (if (queue-empty-p queue)

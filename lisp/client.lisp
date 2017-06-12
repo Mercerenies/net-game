@@ -12,24 +12,6 @@
 
 (defparameter *client-fname-n* 0)
 
-(defgeneric client-lock (tag)
-  (:documentation "This method is called when a tag is being locked in order to make a request.
-                   Most tags needn't respond to this, as the locking operation is done
-                   automatically regardless of what this method does, but some will change their
-                   internal state to represent the lock."))
-
-(defgeneric client-unlock (tag)
-  (:documentation "This method is called when a request is finished and the tag is being unlocked.
-                   The method client-unlock will be called after a corresponding client-lock call.
-                   This method will not be called if the program terminates while a request is
-                   in progress."))
-
-(defmethod client-lock ((tag t))
-  nil)
-
-(defmethod client-unlock ((tag t))
-  nil)
-
 (defun client-short-fname (n)
   "Computes the nth \"short name\" of files to use."
   (format nil "dfile~3,'0D" n))
@@ -133,6 +115,7 @@
                  (with-open-file (file delta)
                    (let ((result (load-and-integrate-delta :file file)))
                      (when result
+                       (flush-request-pool)
                        (push sym removing)))))
         finally (progn
                   (loop for rr in removing

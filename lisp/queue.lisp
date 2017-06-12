@@ -11,7 +11,7 @@
         (setf (cdr end) list-1)
         (make-queue-impl end))))
 
-(defun queue-push (queue arg)
+(defun queue-push-1 (queue arg)
   (if (queue-empty-p queue)
       (let ((temp (cons arg nil)))
         (setf (cdr temp) temp)
@@ -21,6 +21,10 @@
         (setf (cdr list) (cons arg (cdr list)))
         (setf list (cdr list))))
   arg)
+
+(defun queue-push (queue &rest args)
+  (loop for arg in args
+        do (queue-push-1 queue arg)))
 
 (defun queue-pop (queue)
   (if (queue-empty-p queue)

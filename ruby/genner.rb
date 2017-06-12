@@ -1,7 +1,7 @@
 
-# The master generator instance. A generator has a corresponding GData instance, as well as a sequence of
-# Stage instances. When run, it executes the stages in sequence and uses the corresponding GData instance
-# as the result of the generation process.
+# The master generator instance. A generator has a corresponding GData instance, as well as a
+# sequence of Stage instances. When run, it executes the stages in sequence and uses the
+# corresponding GData instance as the result of the generation process.
 class Genner
   attr_reader :data
 

@@ -62,7 +62,7 @@
                  do (move-object inst (gethash loc *world*))
                  do (warn 'net-game-warning
                           :level 1
-                          :text "Warning! Old-style spawner detected...")))
+                          :text "Old-style spawner detected...")))
   (setf *spawners* nil))
 
 (defclass neo-spawner (located hideable)

@@ -1,6 +1,7 @@
 (in-package #:net-game)
 
 ;; TODO We need some more check-type calls; they're nice and self-documenting
+;; TODO Stop passing debug through alpha, pass it through cmd argv to Lisp directly
 
 (defclass player (named located damageable carrying loaded)
   ((active-quests :accessor active-quests

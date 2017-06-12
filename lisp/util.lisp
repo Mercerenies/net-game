@@ -28,6 +28,12 @@
   "Perform in-place subtraction. (subf place n) is equivalent to (setf place (- place n))."
   `(setf ,place (- ,place ,n)))
 
+(defmacro appendf (place &rest args)
+  `(setf ,place (append ,place ,@args)))
+
+(defmacro prependf (place &rest args)
+  `(setf ,place (append ,@args ,place)))
+
 (defmacro collecting (&body body)
   "Accumulate values into a list by pushing onto the front or the back, returning the resulting
    list at the end."

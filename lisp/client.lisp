@@ -40,9 +40,9 @@
   (format nil "./temp/~A.txt" (client-short-fname n)))
 
 (defun client-make-fname ()
-  "Uses the global *client-fname-n* counter to construct a unique filename, incrementing the global value
-   afterward. Note that the name returned by this function is only guaranteed to be unique as long as
-   *client-fname-n* has not been tampered with."
+  "Uses the global *client-fname-n* counter to construct a unique filename, incrementing the global
+   value afterward. Note that the name returned by this function is only guaranteed to be unique as
+   long as *client-fname-n* has not been tampered with."
   (check-type *client-fname-n* integer)
   (let ((name (client-long-fname *client-fname-n*)))
     (incf *client-fname-n*)

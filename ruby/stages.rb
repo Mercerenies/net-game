@@ -2,6 +2,9 @@
 # TODO The "paint splotch" algorithm for spawners and trees creates an uneven distribution when
 # making delta files.
 
+# TODO We are generating some extra, unreachable nodes with empty city names somewhere in here,
+# and I don't know where. Good luck...
+
 # A stage of the generation process. The Stage class itself is intended as an abstract base class.
 class Stage
 
@@ -22,6 +25,7 @@ end
 class NodeStage < Stage
 
   def generate_node(elem, lvl)
+    # TODO Review this at some point; it might be doing some redundant work that makes the map too big
     name, child = if elem.name =~ /([^,]+), ([^,]+)/
                     [$1, $2]
                   else
@@ -46,12 +50,16 @@ class NodeStage < Stage
     node
   end
 
-  def make_default_node
+  def make_default_node(data)
     new_country = PlacePage.new({
                                   'name' => Namer.instance.sample,
                                   'info' => ['country', 'country']
                                 })
-    generate_node(new_country, Level.country)
+    if data.small_world?
+      generate_node new_country, LevelTwo.new(2)
+    else
+      generate_node new_country, Level.country
+    end
   end
 
   def run(data)
@@ -72,7 +80,7 @@ class NodeStage < Stage
       end
     end
     if nodes.length < 2
-      default = make_default_node
+      default = make_default_node(data)
       nodes << default if default
     end
     toplevel = Node.new '', Level.top
@@ -85,7 +93,7 @@ end
 # The first stage of the delta generation process is identical to the
 # standard NodeStage except that the default node is not generated.
 class DeltaNodeStage < NodeStage
-  def make_default_node
+  def make_default_node(data)
     nil
   end
 end
@@ -237,5 +245,17 @@ end
 class PlayerStage < Stage
   def run(data)
     data.map.put_somewhere Player.new
+  end
+end
+
+# \Stage 11 makes any final requests necessary for future development of the world
+class RequestStage < Stage
+  def run(data)
+    if data.small_world?
+      # TODO Currently, we make two requests to do one process each. We'd like to make one request that does two processes, but Lua can't handle that right now with custom requests.
+      2.times do
+        data.push_request Request.new("crawl type: Place base: * count: 1")
+      end
+    end
   end
 end

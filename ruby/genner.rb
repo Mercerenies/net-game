@@ -6,10 +6,10 @@ class Genner
   attr_reader :data
 
   # Initializes the generator, given a list of pages.
-  def initialize(everything)
-    @data = GData.new everything
+  def initialize(everything, small_world: false)
+    @data = GData.new everything, small_world: small_world
     stages = [NodeStage, BridgeStage, MapStage, BuildingStage, CreatureStage,
-              ItemStage, FoodStage, PersonStage, QuestStage, PlayerStage]
+              ItemStage, FoodStage, PersonStage, QuestStage, PlayerStage, RequestStage]
     @stages = stages.collect(&:new)
   end
 

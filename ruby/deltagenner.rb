@@ -1,14 +1,14 @@
 
-# A Genner for the delta generation process. A DeltaGenner behaves in much the same way as a traditional
-# generator, except that its default sequence of stages is altered. Additionally, the new functionality
-# #delta_structure is provided by DeltaGenner and not Genner.
+# A Genner for the delta generation process. A DeltaGenner behaves in much the same way as a
+# traditional generator, except that its default sequence of stages is altered. Additionally, the
+# new functionality #delta_structure is provided by DeltaGenner and not Genner.
 class DeltaGenner < Genner
   attr_reader :data
 
   def initialize(everything, alpha)
     @data = DeltaGData.new alpha, everything
     stages = [DeltaNodeStage, BridgeStage, MapStage, BuildingStage, CreatureStage,
-              ItemStage, FoodStage, PersonStage, QuestStage]
+              ItemStage, FoodStage, PersonStage, QuestStage, RequestStage]
     @stages = stages.collect(&:new)
   end
 

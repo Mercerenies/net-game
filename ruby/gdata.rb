@@ -7,7 +7,7 @@ class GData
 
   attr_reader :node, :map, :knowledge_base, :file_key, :pool, :requests
 
-  def initialize(everything)
+  def initialize(everything, small_world: false)
     @arr = everything.clone
     @node = nil
     @bridges = [] # TODO Store bridges, etc in a metadata part of the system.txt file for later.
@@ -19,6 +19,7 @@ class GData
     @pool = []
     @file_key = 1
     @requests = RequestSet.new
+    @small_world = small_world
   end
 
   def to_delta
@@ -134,6 +135,14 @@ class GData
 
   def push_to_pool(*args)
     @pool.push(*args)
+  end
+
+  def small_world?
+    @small_world
+  end
+
+  def push_request(req)
+    requests.push req
   end
 
   # JSON-ifies the remaining world data.

@@ -62,12 +62,18 @@
   "Timeout for the backend server to perform routine checks in the net-game"
   :type '(choice integer (const nil)))
 
-(defun net-game-run (&optional debug rein timeout)
+; TODO We can convert this to keyword arguments using cl-parsing-keywords
+(defun net-game-run (&optional debug rein timeout no-small-world)
   (interactive
    (list (if current-prefix-arg
              (prefix-numeric-value current-prefix-arg)
            3)))
   (setq rein (and net-game-rein-learning '("-r")))
   (setq timeout (and net-game-server-timeout `("-t" ,(number-to-string net-game-server-timeout))))
-  (let ((command `("bash" "./bash/client.sh" "-d" ,(number-to-string debug) ,@timeout ,@rein)))
+  (setq no-small-world (if no-small-world '("-S") nil))
+  (let ((command `("bash" "./bash/client.sh"
+                   "-d" ,(number-to-string debug)
+                   ,@timeout
+                   ,@rein
+                   ,@no-small-world)))
     (net-game-spawn command)))

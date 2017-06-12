@@ -45,40 +45,30 @@
 
 ;; Directly modifies the game world; call at the appropriate time
 (defun load-and-integrate-delta (&key (file *standard-input*))
-  ;; TODO load-formatted
-  (destructuring-bind (delta-sym key dmap creatures spawners quests kb pool reqs)
-      (with-scheme-notation (read file))
-    (unless (eq delta-sym 'delta)
-      (error "Flawed data - delta"))
-    (unless (= key (1+ *key*)) ; Wrong key
-      (return-from load-and-integrate-delta nil))
-    ;; Report the integration
-    (echo 1 "Integrating... (key: ~D)" key)
-    ;; Key
-    (setf *key* key)
-    ;; Map
-    (delta-map dmap)
-    ;; Lists
-    (setf *creatures*
-          (append (load-with creatures
-                             (whitelisted-load-1 #'load-object +creature-types+)
-                             'creature-set)
-                  *creatures*))
-    (setf *spawners*
-          (append (load-with spawners
-                             (whitelisted-load-1 #'load-object +spawner-types+)
-                             'spawner-set)
-                  *spawners*))
-    (mapc #'add-quest (load-with quests
-                                 (whitelisted-load-1 #'load-object +quest-types+)
-                                 'quest-set))
-    (delta-load-object 'knowledge-base kb)
-    ;; Neo Spawner Migration
+  (let ((data (with-scheme-notation (read file))))
+    (load-formatted data 'delta
+                    (key (unless (= key (1+ *key*)) ; Wrong key
+                           (return-from load-and-integrate-delta nil))
+                         (setf *key* key)
+                         (echo 1 "Integrating... (key: ~D)" key))
+                    (dmap (delta-map dmap))
+                    (creatures (prependf *creatures*
+                                         (load-with creatures
+                                                    (whitelisted-load-1 #'load-object +creature-types+)
+                                                    'creature-set)))
+                    (spawners (prependf *spawners*
+                                        (load-with spawners
+                                                   (whitelisted-load-1 #'load-object +spawner-types+)
+                                                   'spawner-set)))
+                    (quests (mapc #'add-quest
+                                  (load-with quests
+                                             (whitelisted-load-1 #'load-object +quest-types+)
+                                             'quest-set)))
+                    (kb (delta-load-object 'knowledge-base kb))
+                    (pool (pool-add-list (load-with pool
+                                                    (whitelisted-load-1 #'load-object
+                                                                        +map-object-types+)
+                                                    'pool)))
+                    (reqs (apply #'queue-push *incoming-requests* (load-object 'request-set reqs))))
     (do-neo-spawner-migration)
-    ;; Object pool
-    (pool-add-list (load-with pool
-                              (whitelisted-load-1 #'load-object +map-object-types+)
-                              'pool))
-    ;; Request list
-    (apply #'queue-push *incoming-requests* (load-object 'request-set reqs))
     t))

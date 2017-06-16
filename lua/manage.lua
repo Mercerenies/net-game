@@ -138,6 +138,8 @@ function request_custom(expr, wname, dname)
    table.insert(allqueries, result)
 end
 
+-- TODO Unify the logger APIs a bit so they're not so drastically different
+
 local status, err = pcall(setup_and_run)
 if not status then
    logger.echo(1, "Error during execution: " .. tostring(err))

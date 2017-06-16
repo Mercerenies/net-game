@@ -62,6 +62,9 @@
   "Timeout for the backend server to perform routine checks in the net-game"
   :type '(choice integer (const nil)))
 
+; TODO Can we make it so we can run this file from anywhere (within reason), not
+;      just the root directory of the project
+
 ; TODO We can convert this to keyword arguments using cl-parsing-keywords
 (defun net-game-run (&optional debug rein timeout no-small-world)
   (interactive

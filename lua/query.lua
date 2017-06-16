@@ -82,8 +82,7 @@ function Query:req()
    end
    cmd = cmd .. ' ]\''
    cmd = cmd .. ' | ./bash/stage2.sh ' .. logger.get_debug_level() .. ' >' .. fn0 .. ' ; touch ' .. fn1
-   cmd = '(' .. cmd .. ')&'
-   util.execute(cmd)
+   util.execute_bg(cmd)
    self._resultname = fn0
    self._donename = fn1
    self._process = 1

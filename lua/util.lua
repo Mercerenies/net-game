@@ -45,4 +45,14 @@ function P.execute(cmd)
    os.execute(cmd)
 end
 
+function P.execute_bg(cmd)
+   local cmd1 = "(" .. cmd .. ")&"
+   P.execute(cmd1)
+   -- ///// TODO Think about getting the pid from a background job here without race conditions
+   -- local file = io.popen("echo $!", 'r')
+   -- local pid = file:read("*line")
+   -- io.close(file)
+   -- return pid
+end
+
 return P

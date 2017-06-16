@@ -78,7 +78,7 @@
   (unless (client-waiting-on tag)
     (let ((worldname (client-make-fname))
           (donename (client-make-fname)))
-      (echo 2 "Making update request for ~A...~@[~* (name: ~A)~]" sym (not (eql sym tag)) tag)
+      (echo 2 "Making update request for ~A...~@[~* (tag: ~A)~]" sym (not (eql sym tag)) tag)
       (format *socket* "need ~(~A~) ~A ~A~%" sym worldname donename)
       (push (list tag worldname donename) *client-pending*)
       (client-lock tag))))
@@ -91,7 +91,7 @@
   (unless (client-waiting-on tag)
     (let ((worldname (client-make-fname))
           (donename (client-make-fname)))
-      (echo 2 "Making custom request for '~A'... (name: ~A)" expr tag) ; TODO Escape the expr for this?
+      (echo 2 "Making custom request for '~A'... (tag: ~A)" expr tag) ; TODO Escape the expr for this?
       (format *socket* "goget ~A ~A ~A~%" worldname donename expr)
       (push (list tag worldname donename) *client-pending*)
       (client-lock tag))))

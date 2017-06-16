@@ -138,5 +138,8 @@ function request_custom(expr, wname, dname)
    table.insert(allqueries, result)
 end
 
-pcall(setup_and_run)
+local status, err = pcall(setup_and_run)
+if not status then
+   logger.echo(1, "Error during execution: " .. tostring(err))
+end
 filenamer.cleanup()

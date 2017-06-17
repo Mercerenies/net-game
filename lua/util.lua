@@ -40,19 +40,34 @@ function P.pgid()
    return pgid_cache
 end
 
-function P.execute(cmd)
+function P.background(cmd)
+   return "(" .. cmd .. ")&"
+end
+
+local function execute_with(func, cmd)
    logger.echo(1, "Running: " .. cmd)
-   os.execute(cmd)
+   return func(cmd)
+end
+
+function P.execute(cmd)
+   execute_with(os.execute, cmd)
 end
 
 function P.execute_bg(cmd)
-   local cmd1 = "(" .. cmd .. ")&"
-   P.execute(cmd1)
+   P.execute(P.background(cmd))
    -- ///// TODO Think about getting the pid from a background job here without race conditions
    -- local file = io.popen("echo $!", 'r')
    -- local pid = file:read("*line")
    -- io.close(file)
    -- return pid
+end
+
+function P.execute_stdout(cmd)
+   return execute_with(function (c) return io.popen(c, 'r') end, cmd)
+end
+
+function P.execute_stdin(cmd)
+   return execute_with(function (c) return io.popen(c, 'w') end, cmd)
 end
 
 return P

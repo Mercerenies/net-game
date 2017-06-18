@@ -44,6 +44,9 @@ function P.background(cmd)
    return "(" .. cmd .. ")&"
 end
 
+-- TODO This execute API is now a mess. Let's factor it out into one really big one
+--      (i.e. clean up execute_with and make it public)
+
 --[[
  - execute_with{
  -  command - Required; the command to execute
@@ -80,11 +83,6 @@ end
 
 function P.execute_bg(cmd)
    P.execute(P.background(cmd))
-   -- ///// TODO Think about getting the pid from a background job here without race conditions
-   -- local file = io.popen("echo $!", 'r')
-   -- local pid = file:read("*line")
-   -- io.close(file)
-   -- return pid
 end
 
 function P.execute_stdout(cmd)

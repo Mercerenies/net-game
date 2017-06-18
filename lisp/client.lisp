@@ -2,6 +2,8 @@
 
 (in-package #:net-game)
 
+; ///// TODO Deal with sentinel files here; we can use the bidirectional socket now
+
 (defparameter *port* 9321) ; 27001
 
 (defparameter *socket* nil)

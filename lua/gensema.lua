@@ -48,9 +48,7 @@ local function run_ruby(query)
    local new_a_fn = filenamer.get_filename()
    local new_d_fn = query._worldname
    local new_e_fn = filenamer.get_filename()
-   local new_exit_fn = filenamer.get_filename()
    local prior_excess = excess
-   query._donename = new_exit_fn
    query._process = 3
    alpha = new_a_fn
    excess = new_e_fn
@@ -58,8 +56,7 @@ local function run_ruby(query)
    cmd = cmd .. ' -d ' .. logger.get_debug_level()
    cmd = cmd .. ' -D ' .. new_d_fn .. ' -0 ' .. old_a_fn .. ' -E ' .. new_e_fn
    cmd = cmd .. ' -- ' .. old_e_fn .. ' ' .. prior_excess .. ' >' .. new_a_fn
-   cmd = cmd .. ' ; touch ' .. new_exit_fn
-   util.execute_bg(cmd)
+   query._world_task = task.Task.new(cmd)
 end
 
 function P.genner_lock(query)
@@ -74,7 +71,7 @@ end
 
 function P.check_unlock()
    if active then
-      if util.exists(active._donename) then
+      if active._world_task:is_completed() then
          active._process = 4
          active = nil
          if not is_empty_queue() then

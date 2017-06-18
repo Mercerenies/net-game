@@ -55,6 +55,7 @@ function Query:foods(n)
    return self
 end
 
+-- TODO Move this from the sentinel file system to pid
 function Query:req()
    local fn0 = filenamer.get_filename()
    local fn1 = filenamer.get_filename()

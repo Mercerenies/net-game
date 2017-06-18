@@ -10,44 +10,42 @@ setmetatable(P.PQuery, {__index = query.Query})
 
 local para_cmd =
    './bash/stage1.sh -d %d -e \'legacy-crawl args: [%s %s]\' | ' ..
-   './bash/stage2.sh %d >%s ; touch %s'
+   './bash/stage2.sh %d >%s'
 
 local full_cmd =
-   './bash/stage1.sh -d %d -e %s | ./bash/stage2.sh %d >%s ; touch %s'
+   './bash/stage1.sh -d %d -e %s | ./bash/stage2.sh %d >%s'
 
 local rein = ""
 
 local function spawn_parallel(argument)
    local rname = filenamer.get_filename()
-   local sname = filenamer.get_filename()
    local lvl = logger.get_debug_level()
-   local cmd = string.format(para_cmd, lvl, rein, argument, lvl, rname, sname)
-   util.execute_bg(cmd)
-   return rname, sname
+   local cmd = string.format(para_cmd, lvl, rein, argument, lvl, rname)
+   local tsk = task.Task.new(cmd)
+   return rname, tsk
 end
 
 local function spawn_and_store(qobj, argm)
-   local rname, sname = spawn_parallel(argm)
+   local rname, tsk = spawn_parallel(argm)
    table.insert(qobj._resultnames, rname)
-   table.insert(qobj._checknames, sname)
+   table.insert(qobj._tasks, tsk)
 end
 
 local function spawn_parallel_full(expr)
    local rname = filenamer.get_filename()
-   local sname = filenamer.get_filename()
    local lvl = logger.get_debug_level()
    expr = expr:gsub([[']], [['"'"']])
    expr = "'" .. expr .. "'"
    -- logger.echo(1, "*** " .. expr .. " ***")
    local cmd = string.format(full_cmd, lvl, expr, lvl, rname, sname)
-   util.execute_bg(cmd)
-   return rname, sname
+   local tsk = task.Task.new(cmd)
+   return rname, tsk
 end
 
 local function spawn_and_store_full(qobj, expr)
-   local rname, sname = spawn_parallel_full(expr)
+   local rname, tsk = spawn_parallel_full(expr)
    table.insert(qobj._resultnames, rname)
-   table.insert(qobj._checknames, sname)
+   table.insert(qobj._tasks, tsk)
 end
 
 function P.use_reinforcement()
@@ -67,7 +65,7 @@ end
 
 function PQuery:req()
    self._resultnames = {}
-   self._checknames = {}
+   self._tasks = {}
    for i = 1, (self._people or 0) do
       spawn_and_store(self, '-p 1')
    end
@@ -103,8 +101,8 @@ end
 
 function PQuery:ter1()
    local okay = true
-   for i, v in ipairs(self._checknames) do
-      if not util.exists(v) then
+   for i, v in ipairs(self._tasks) do
+      if not v:is_completed() then
          okay = false
       end
    end

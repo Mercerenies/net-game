@@ -5,6 +5,7 @@ local gensema = require 'lua/gensema'
 local filenamer = require 'lua/filenamer'
 local query = require 'lua/query'
 local pquery = require 'lua/pquery'
+local task = require 'lua/task'
 
 local dispatch = {
    quit = function (_)

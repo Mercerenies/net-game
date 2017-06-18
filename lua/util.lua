@@ -44,13 +44,38 @@ function P.background(cmd)
    return "(" .. cmd .. ")&"
 end
 
-local function execute_with(func, cmd)
-   logger.echo(1, "Running: " .. cmd)
+--[[
+ - execute_with{
+ -  command - Required; the command to execute
+ -  func    - Required; the function to use to execute it
+ -  quiet   - Optional; whether or not to use quiet mode
+ - }
+--]]
+local function execute_with(arg)
+   local cmd = arg.command
+   local func = arg.func
+   local quiet = arg.quiet
+   if quiet then
+      logger.echo(3, "Running: " .. cmd)
+   else
+      logger.echo(1, "Running: " .. cmd)
+   end
    return func(cmd)
 end
 
 function P.execute(cmd)
-   execute_with(os.execute, cmd)
+   return execute_with {
+      func = os.execute,
+      command = cmd
+   }
+end
+
+function P.execute_quietly(cmd)
+   return execute_with {
+      func = os.execute,
+      command = cmd,
+      quiet = true
+   }
 end
 
 function P.execute_bg(cmd)
@@ -63,11 +88,17 @@ function P.execute_bg(cmd)
 end
 
 function P.execute_stdout(cmd)
-   return execute_with(function (c) return io.popen(c, 'r') end, cmd)
+   return execute_with {
+      func = function (c) return io.popen(c, 'r') end,
+      command = cmd
+   }
 end
 
 function P.execute_stdin(cmd)
-   return execute_with(function (c) return io.popen(c, 'w') end, cmd)
+   return execute_with {
+      func = function (c) return io.popen(c, 'w') end,
+      command = cmd
+   }
 end
 
 return P

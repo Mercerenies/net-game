@@ -1,8 +1,8 @@
 (load "./lisp/package.lisp")
 
-(in-package #:net-game)
+; TODO Catch errors at the top level and print them through the logging interface
 
-; ///// TODO Deal with sentinel files here; we can use the bidirectional socket now
+(in-package #:net-game)
 
 (defparameter *port* 9321) ; 27001
 
@@ -11,6 +11,8 @@
 (defparameter *client-loc* nil)
 
 (defparameter *client-pending* nil)
+
+(defparameter *client-concluding* nil)
 
 (defparameter *client-fname-n* 0)
 
@@ -78,11 +80,10 @@
    not always, interned symbols."
   (setf tag (or tag sym))
   (unless (client-waiting-on tag)
-    (let ((worldname (client-make-fname))
-          (donename (client-make-fname)))
+    (let ((worldname (client-make-fname)))
       (echo 2 "Making update request for ~A...~@[~* (tag: ~A)~]" sym (not (eql sym tag)) tag)
-      (format *socket* "need ~(~A~) ~A ~A~%" sym worldname donename)
-      (push (list tag worldname donename) *client-pending*)
+      (format *socket* "need ~(~A~) ~A~%" sym worldname)
+      (push (list tag worldname) *client-pending*)
       (client-lock tag))))
 
 (defun client-request-custom (expr tag)
@@ -91,12 +92,21 @@
    request with the same tag is pending, a new one will not be made. Tags are usually symbols but
    can be any eql-comparable object."
   (unless (client-waiting-on tag)
-    (let ((worldname (client-make-fname))
-          (donename (client-make-fname)))
+    (let ((worldname (client-make-fname)))
       (echo 2 "Making custom request for '~A'... (tag: ~A)" expr tag) ; TODO Escape the expr for this?
-      (format *socket* "goget ~A ~A ~A~%" worldname donename expr)
-      (push (list tag worldname donename) *client-pending*)
+      (format *socket* "goget ~A ~A~%" worldname expr)
+      (push (list tag worldname) *client-pending*)
       (client-lock tag))))
+
+(defun read-updates-from-socket (&key ((:socket *socket*) *socket*))
+  "Reads as much as possible from the socket connection and uses the information to prepare
+   for what to do next. Currently, the only valid information passed through this socket is
+   a (completed \"filename\"), which indicates that the cycle is complete."
+  (loop while (listen *socket*)
+        do (let ((result (read *socket*)))
+             (case (first result)
+               (completed (push (second result) *client-concluding*)) ; TODO Error handling
+               (t (error "Malformed update response ~A" result))))))
 
 (defun report-checkin ()
   "Sends a checkin request to the update procedures. Note that this is superfluous but harmless if
@@ -111,13 +121,14 @@
 
 (defun check-for-updates ()
   (loop with removing = nil
-        for (sym delta sentinel) in *client-pending*
-        when (probe-file sentinel)
+        for (sym delta) in *client-pending*
+        when (member delta *client-concluding* :test #'string=)
             do (let ((*origin* delta))
                  (with-open-file (file delta)
                    (let ((result (load-and-integrate-delta :file file)))
                      (when result
                        (flush-request-pool)
+                       (setf *client-concluding* (delete delta *client-concluding*))
                        (push sym removing)))))
         finally (progn
                   (loop for rr in removing
@@ -133,6 +144,7 @@
   (report-updates)
   (when (and *client-loc* (not (eql *client-loc* (get-loc *player*))))
     (setf *client-loc* (get-loc *player*))
+    (read-updates-from-socket)
     (check-for-updates))
   (when (not *client-loc*)
     (setf *client-loc* (get-loc *player*))))

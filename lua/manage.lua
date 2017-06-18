@@ -17,11 +17,11 @@ local dispatch = {
    end,
    need = function (x)
       y = tokenize(x)
-      request(y[1], y[2], y[3])
+      request(y[1], y[2])
    end,
    goget = function (x)
-      wname, dname, expr = string.match(x, "(%S+)%s+(%S+)%s+(.+)")
-      request_custom(expr, wname, dname)
+      wname, expr = string.match(x, "(%S+)%s+(.+)")
+      request_custom(expr, wname)
    end
 }
 
@@ -58,7 +58,7 @@ function dispatch_on(name, args)
    if type(func) == 'function' then
       func(args)
    else
-      io.stderr:write("WARNING: Unknown message '" .. tokens[1] .. "' received!\n")
+      io.stderr:write("WARNING: Unknown message '" .. name .. "' received!\n")
    end
 end
 
@@ -107,7 +107,7 @@ function checkin()
    local done = {}
    for i, v in ipairs(allqueries) do
       if v._finished then
-         util.execute("touch " .. v._finalname)
+         conn:send('(completed "' .. v._worldname .. '")') -- TODO Escape if worldname has "quotes"
          table.insert(done, i)
       end
    end
@@ -117,12 +117,11 @@ function checkin()
    end
 end
 
-function request(type_, wname, dname)
+function request(type_, wname)
    local curr = req_objs[type_]
    if type(curr) == 'function' then
       local result = curr()
       result._worldname = wname
-      result._finalname = dname
       result:req()
       table.insert(allqueries, result)
    else
@@ -130,10 +129,9 @@ function request(type_, wname, dname)
    end
 end
 
-function request_custom(expr, wname, dname)
+function request_custom(expr, wname)
    result = pquery.PQuery.new()
    result._worldname = wname
-   result._finalname = dname
    result:custom(expr)
    result:req()
    table.insert(allqueries, result)

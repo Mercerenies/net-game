@@ -26,14 +26,15 @@
       (error "Unsupported CL - pid")))
 
 (defun full-exit (status)
-  "Fully exits the program immediately, using the given status value as the exit status of the program."
+  "Fully exits the program immediately, using the given status value as the exit status of the
+   program."
   (check-type status integer)
   (or #+clisp (ext:quit status)
       (error "Unsupported CL - full-exit")))
 
 (defun connect-to-socket (port)
-  "Opens a socket on the given port. After opening the socket, the standard CL functions for streams can
-   be used to manage and close the socket stream."
+  "Opens a socket on the given port. After opening the socket, the standard CL functions for streams
+   can be used to manage and close the socket stream."
   (check-type port integer)
   (or #+clisp (socket:socket-connect port)
       (error "Unsupported CL - connect-to-socket")))

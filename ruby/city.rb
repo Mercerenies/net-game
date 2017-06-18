@@ -19,7 +19,7 @@ end
 
 class CrossCitySquareNode < StructureNode
 
-  include PredefFitness
+  include PredefFitness # TODO :city-exit is being ignored, I think...
 
   def initialize(builder)
     super builder, "#{builder.core_name} Square"

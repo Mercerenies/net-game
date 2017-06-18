@@ -70,7 +70,7 @@
   (interactive
    (list (if current-prefix-arg
              (prefix-numeric-value current-prefix-arg)
-           3)))
+           2)))
   (setq rein (and net-game-rein-learning '("-r")))
   (setq timeout (and net-game-server-timeout `("-t" ,(number-to-string net-game-server-timeout))))
   (setq no-small-world (if no-small-world '("-S") nil))

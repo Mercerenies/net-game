@@ -65,7 +65,7 @@ function dispatch_on(name, args)
    if type(func) == 'function' then
       func(args)
    else
-      io.stderr:write("WARNING: Unknown message '" .. name .. "' received!\n")
+      logger.echo(1, "Warning: Unknown message '" .. name .. "' received!\n")
    end
 end
 
@@ -83,10 +83,10 @@ function dispatch_ext(args, conn)
          end
          func(arr)
       else
-         io.stderr:write("WARNING: Unknown extended message '" .. name .. "' received!\n")
+         logger.echo(1, "Warning: Unknown extended message '" .. name .. "' received!\n")
       end
    else
-      io.stderr:write("WARNING: Invalid argument '" .. args .. "' to 'ext'!\n")
+      logger.echo(1, "Warning: Invalid argument '" .. args .. "' to 'ext'!\n")
    end
 end
 

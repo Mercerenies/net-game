@@ -54,7 +54,8 @@
          (opt (cond ((and int (zerop int)) 'cancel)
                     ((and int
                           (typep int
-                                 `(integer 1 ,(length *warps*))))(nth (1- int) *warps*))
+                                 `(integer 1 ,(length *warps*))))
+                     (nth (1- int) *warps*))
                     (match match)
                     ((string-equal arg "cancel") 'cancel)
                     (t nil))))

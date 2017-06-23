@@ -10,7 +10,7 @@
   ((expr :reader request-expr
          :initarg :expr
          :initform ""
-         :type string)))
+         :type (or string list))))
 
 (defclass request-tag ()
   ((number :reader request-tag-number

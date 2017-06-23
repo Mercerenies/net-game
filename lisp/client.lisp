@@ -87,14 +87,19 @@
       (client-lock tag))))
 
 (defun client-request-custom (expr tag)
-  "Makes a request to run the expression given, using the crawing engine's command parser. The value
-   of tag is used to track this request locally in the system and should be eql-comparable. If a
-   request with the same tag is pending, a new one will not be made. Tags are usually symbols but
-   can be any eql-comparable object."
+  "Makes a request to run the expression or expressions given, using the crawing engine's
+   command parser. The value of tag is used to track this request locally in the system and
+   should be eql-comparable. If a request with the same tag is pending, a new one will not be
+   made. Tags are usually symbols but can be any eql-comparable object."
   (unless (client-waiting-on tag)
     (let ((worldname (client-make-fname)))
-      (echo 2 "Making custom request for '~A'... (tag: ~A)" expr tag) ; TODO Escape the expr for this?
-      (format *socket* "goget ~A ~A~%" worldname expr)
+      (echo 2 "Making custom request for ~S... (tag: ~A)" expr tag)
+      (etypecase expr ; TODO Error handling
+        (string (format *socket* "goget ~A ~A~%" worldname expr))
+        (list (format *socket* "ext ~A~%goget~%~A~%~{~A~%~}"
+                      (+ 2 (length expr))
+                      worldname
+                      expr)))
       (push (list tag worldname) *client-pending*)
       (client-lock tag))))
 

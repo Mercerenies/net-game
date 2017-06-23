@@ -21,7 +21,14 @@ local dispatch = {
    end,
    goget = function (x)
       wname, expr = string.match(x, "(%S+)%s+(.+)")
-      request_custom(expr, wname)
+      request_custom({expr}, wname)
+   end
+}
+
+local ext_dispatch = {
+   goget = function (x)
+      wname = table.remove(x, 1)
+      request_custom(x, wname)
    end
 }
 
@@ -62,6 +69,27 @@ function dispatch_on(name, args)
    end
 end
 
+function dispatch_ext(args, conn)
+   local count = tonumber(args)
+   if count and count >= 1 then
+      local header = assert( conn:receive("*line") ) -- TODO Handle timeout and other errors
+      local func = ext_dispatch[header]
+      if type(func) == 'function' then
+         local arr = {}
+         -- The header is included in the count, so skip line number one
+         for i = 2, count do
+            local line = assert( conn:receive("*line") )
+            table.insert(arr, line) -- TODO Handle timeout and other errors
+         end
+         func(arr)
+      else
+         io.stderr:write("WARNING: Unknown extended message '" .. name .. "' received!\n")
+      end
+   else
+      io.stderr:write("WARNING: Invalid argument '" .. args .. "' to 'ext'!\n")
+   end
+end
+
 function setup_and_run()
 
    logger.set_debug_level(tonumber(arg[2]))
@@ -85,7 +113,11 @@ function setup_and_run()
       data, err = conn:receive '*l'
       if data then
          local name, args = name_and_args(data)
-         dispatch_on(name, args)
+         if name == "ext" then
+            dispatch_ext(args, conn)
+         else
+            dispatch_on(name, args)
+         end
       elseif err == 'timeout' then
          -- Timed out; do a routine check and then move on
          dispatch_on('ter', '')
@@ -129,10 +161,12 @@ function request(type_, wname)
    end
 end
 
-function request_custom(expr, wname)
+function request_custom(exprs, wname)
    result = pquery.PQuery.new()
    result._worldname = wname
-   result:custom(expr)
+   for i, v in ipairs(exprs) do
+      result:custom(v)
+   end
    result:req()
    table.insert(allqueries, result)
 end

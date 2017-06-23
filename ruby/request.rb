@@ -2,24 +2,33 @@
 # A Request object will be SXP-ed and passed onto the Lisp system, which will make a request
 # to the Python system on its behalf.
 class Request
-  attr_reader :expr
+  attr_reader :exprs
 
   # Constructs a raw request object. No processing is done on the expression, which should be
   # a string. That is, if this constructor is called directly, the expression should already
   # have its strings escaped, and the caller is responsible for the correctness of the text.
-  def initialize(expr)
-    @expr = expr
+  def initialize(exprs)
+    @exprs = exprs
   end
 
   # Converts the Request object to an S-expression.
   def to_sxp
     # The middle slot is always +nil+ and is reserved for a possible ID value in the future.
-    [:request, nil, expr].to_sxp
+    [:request, nil, exprs].to_sxp
+  end
+
+  # Pushes a new expression into the request object
+  def <<(expr)
+    @exprs << expr
+  end
+
+  def self.[](*exprs)
+    Request.new exprs
   end
 
   def self.from_sxp(arg)
-    ignored, expr = Reloader.assert_first :request, arg
-    Request.new expr
+    ignored, exprs = Reloader.assert_first :request, arg
+    Request.new exprs
   end
 
   # Escapes a string in preparation for encoding in an expression. All open and close square

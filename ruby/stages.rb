@@ -252,9 +252,11 @@ end
 class RequestStage < Stage
   def run(data)
     if data.small_world?
-      # TODO Currently, we make two requests to do one process each. We'd like to make one request that does two processes, but Lua can't handle that right now with custom requests.
-      2.times do
-        data.push_request Request.new("crawl type: Place base: * count: 1")
+      Request[].tap do |req|
+        2.times do
+          req << "crawl type: Place base: * count: 1"
+        end
+        data.push_request req
       end
     end
   end

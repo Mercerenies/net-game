@@ -9,10 +9,10 @@
     ;; Completed Quests Trigger
     (when (and (> (percent-started-quests) 0.5)
                (> (percent-finished-quests) 0.35))
-      (client-request 'quests 'q1))
+      (client-request 'actors 'q1))
     ;; Few Quests Remaining Trigger
     (when (< (- (length (finished-quests)) (total-quest-count)) 20)
-      (client-request 'quests 'q2))
+      (client-request 'actors 'q2))
     ;; No Active Spawner Trigger
     (when (and (member-if #'(lambda (x) (not (check-flag 'civilized x)))
                           active-halo)

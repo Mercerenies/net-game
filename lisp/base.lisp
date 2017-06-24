@@ -87,7 +87,11 @@
    (fitness :accessor location-fitness
             :initarg :fitness
             :initform nil ; This will be a plist
-            :type list)))
+            :type list)
+   (structure :accessor location-structure
+              :initarg :structure
+              :initform nil ; Will be an ID value
+              :type t)))
 
 (defun make-location (id name &key short-name)
   (check-type name string)
@@ -185,7 +189,8 @@
   `((get-origin "Origin" ,(get-origin obj))))
 
 (defmethod system-keys append ((obj location))
-  `((location-fitness "Fitness" ,(location-fitness obj))))
+  `((location-fitness "Fitness" ,(location-fitness obj))
+    (location-structure "Structure Node" ,(location-structure obj))))
 
 (defmethod system-keys append ((obj hideable))
   `((is-hidden "Hidden" ,(is-hidden obj))))

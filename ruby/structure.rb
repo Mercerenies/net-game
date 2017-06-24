@@ -13,7 +13,8 @@ class StructureNode
   attr_accessor :fitness
 
   def_delegators :@builder, :make_node, :connect, :add_names, :get_a_name, :sample_node, :sample_nodes,
-                            :core_name=, :core_name, :each_node, :select_nodes, :each_exit, :country
+                            :core_name=, :core_name, :each_node, :select_nodes, :each_exit, :country,
+                            :core_node=, :core_node
 
   # Initializes a node with a reference back to its builder instance.
   def initialize(builder, name)
@@ -34,13 +35,14 @@ class StructureNode
 
   # Constructs a #Location instance from the structure node.
   def to_loc
-    Location.new(@id,
+    Location.new(id,
                  @name,
                  country,
                  generic_name: core_name,
                  valid_creatures: @creatures,
                  valid_plants: @plants,
-                 fitness: fitness)
+                 fitness: fitness,
+                 structure_key: core_node || id)
   end
 
   # Returns whether the node is intended as an exit.
@@ -58,7 +60,7 @@ end
 # A builder which consists of #StructureNode instances. Like #StructureNode, #StructureBuilder is
 # intended to be subclassed with #construct overriden to determine how to start the building process.
 class StructureBuilder
-  attr_accessor :core_name, :country
+  attr_accessor :core_name, :country, :core_node
 
   # Initializes an empty structure.
   def initialize
@@ -67,6 +69,7 @@ class StructureBuilder
     @names = []
     @core_name = nil
     @country = nil
+    @core_node = nil
   end
 
   # Adds nodes to the structure.
@@ -96,12 +99,17 @@ class StructureBuilder
 
   # Constructs a node of the given type, passing the arguments to the initializer. When using the
   # +StructureBuilder+ interface, calling through to #make_node is preferable to directly calling
-  # the constructors. The #make_node method constructs the +StructureNode+ derivative, adds it to
-  # the structure builder's state, and then expands the node. The consequences are undefined if
-  # this method is called with a type which is not a +StructureNode+ instance or child.
+  # the constructors.
+  #
+  # The #make_node method constructs the +StructureNode+ derivative, adds it to the structure
+  # builder's state, and then expands the node. The consequences are undefined if this method
+  # is called with a type which is not +StructureNode+ itself or a child thereof. If the
+  # #core_node of the builder has not yet been set, then it will be set the first time #make_node
+  # is called, to the ID value of the resulting node.
   def make_node(type, *args)
     elem = type.new self, *args
     @nodes << elem
+    self.core_node ||= elem.id
     elem.expand
     elem
   end

@@ -91,7 +91,7 @@ class Location
   include Enumerable
   include DeltaAble
 
-  attr_reader :id, :name, :country_name, :generic_name, :water_mode, :fitness
+  attr_reader :id, :name, :country_name, :generic_name, :water_mode, :fitness, :structure_key
 
   def_delegators :@contents, :each, :push, :delete
   def_delegator :@links, :each, :each_link
@@ -106,7 +106,8 @@ class Location
                  valid_creatures: nil,
                  valid_plants: nil,
                  fitness: Fitness.null,
-                 linkage: nil)
+                 linkage: nil,
+                 structure_key: nil)
     @id = id
     @name = name
     @country_name = country_name
@@ -118,6 +119,7 @@ class Location
     @water_mode = nil
     @fitness = fitness
     @linkage = linkage
+    @structure_key = structure_key || @id
   end
 
   def to_delta
@@ -201,12 +203,13 @@ class Location
     contents = [:':contents', each.to_a]
     civilized = [:':civilized', civilized?]
     water = [:':water', water_mode]
-    fitness_key = [:':fitness', fitness]
+    fitness_keyword = [:':fitness', fitness]
+    structure_keyword = [:':structure-key', structure_key]
     meta = [:':meta', MetaData.new(:':generic-name' => generic_name,
                                    :':creatures' => valid_creatures,
                                    :':plants' => valid_plants,
                                    :':linkage' => linkage)]
-    (prefix + country + links + contents + civilized + water + fitness_key + meta).to_sxp
+    (prefix + country + links + contents + civilized + water + fitness_keyword + structure_keyword + meta).to_sxp
   end
 
   def self.from_sxp(arg)
@@ -227,6 +230,8 @@ class Location
           loc.mark_water v
         when :':fitness'
           loc.fitness = Reloader.load v
+        when :':structure-key'
+          loc.structure_key = v
         when :':meta'
           meta = Reloader.load v
           loc.generic_name = meta[:':generic-name']
@@ -276,7 +281,8 @@ class Location
 end
 
 class ReloadedLocation < Location
-  attr_writer :country_name, :generic_name, :valid_creatures, :valid_plants, :fitness, :linkage
+  attr_writer :country_name, :generic_name, :valid_creatures, :valid_plants, :fitness, :linkage,
+              :structure_key
 
   def initialize(id, name, country_name,
                  generic_name: nil,

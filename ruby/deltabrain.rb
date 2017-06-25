@@ -3,7 +3,7 @@ class DeltaKnowledgeBase < KnowledgeBase
   include Delta
 
   def initialize(old_kb)
-    @old = old_kb.each.collect { |k, dat| [k, DeltaNPCBrain.new(dat)] }.to_h
+    @old = old_kb.each.collect { |k, dat| [k, migrate_brain(dat)] }.to_h
     @new = {}
   end
 
@@ -25,7 +25,7 @@ class DeltaKnowledgeBase < KnowledgeBase
     elsif @new.include? key.id
       @new[key.id]
     else
-      @new[key.id] = NPCBrain.new key.id, key.name, key.job
+      @new[key.id] = KnowledgeBase.new_brain key
       @new[key.id]
     end
   end
@@ -47,6 +47,20 @@ class DeltaKnowledgeBase < KnowledgeBase
     arr_new = @new.values
     [:'knowledge-base', :':new', arr_new, :':mod', arr]
   end
+
+  # TODO This is a temporary solution; we want to factor this out into a method in the brain object
+  def migrate_brain(dat)
+    case dat
+    when NPCBrain
+      DeltaNPCBrain.new(dat)
+    when CityBrain
+      DeltaCityBrain.new(dat)
+    else
+      dat
+    end
+  end
+
+  private :migrate_brain
 
 end
 
@@ -77,6 +91,19 @@ class DeltaNPCBrain < NPCBrain
 
   def to_dsxp
     [:'npc-brain', id, :':quests', @new_quests]
+  end
+
+end
+
+class DeltaCityBrain < CityBrain
+  include Delta
+
+  def initialize(dat)
+    @id = dat.id
+  end
+
+  def to_dsxp
+    [:'city-brain', id]
   end
 
 end

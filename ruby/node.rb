@@ -92,6 +92,7 @@ class Node
     if @contents.empty?
       city = CrossCity.new
       city.load_named name, country
+      gdata.knowledge_base.add_empty city.structure_node if city.structure_node
       city.each_node.to_a
       #loc = Location.new(
       #  id, name, country,

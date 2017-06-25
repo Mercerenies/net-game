@@ -3,6 +3,16 @@
 # TODO With CrossCity, we have the square which has four exits and makes it look really busy; is that okay?
 
 class City < Feature
+  attr_reader :builder
+
+  def initialize
+    @builder = nil
+  end
+
+  def structure_node
+    each_node.detect { |x| x.id == builder.core_node }
+  end
+
 end
 
 class CrossCityEdgeNode < StructureNode
@@ -65,7 +75,8 @@ class CrossCity < City
   def load_named(city_name, country_name)
     city_name ||= Namer.instance.sample
     country_name ||= Namer.instance.sample
-    structure = CrossCityBuilder.new(city_name, country_name).tap(&:construct).to_loc
+    @builder = CrossCityBuilder.new(city_name, country_name).tap(&:construct)
+    structure = builder.to_loc
     @nodes = structure.nodes
     @exits = structure.exits
   end

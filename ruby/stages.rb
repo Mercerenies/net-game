@@ -234,9 +234,12 @@ end
 class QuestStage < Stage
   def run(data)
     data.knowledge_base.each do |id, val|
-      q = QuestMaker.make_fetch_quest(data.map, val)
-      data.add_quests q
-      val.add_quest q.id
+      case val
+      when NPCBrain
+        q = QuestMaker.make_fetch_quest(data.map, val)
+        data.add_quests q
+        val.add_quest q.id
+      end
     end
   end
 end

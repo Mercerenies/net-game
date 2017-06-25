@@ -48,7 +48,8 @@ class Reloader
       :fitness => Fitness,
       :'neo-spawner' => NeoSpawner,
       :request => Request,
-      :'request-set' => RequestSet
+      :'request-set' => RequestSet,
+      :'city-brain' => CityBrain
     }
   end
 
@@ -62,8 +63,8 @@ class Reloader
     Reloader.instance.load sexpr
   end
 
-  # Asserts that the first argument in +args+ matches +sym+. If it does not, SExprLoadError is raised. If it
-  # does, all of the remaining arguments are returned in a list.
+  # Asserts that the first argument in +args+ matches +sym+. If it does not, SExprLoadError is raised.
+  # If it does, all of the remaining arguments are returned in a list.
   def self.assert_first(sym, args)
     if args.first == sym
       args.drop 1
@@ -72,8 +73,8 @@ class Reloader
     end
   end
 
-  # Iterates over a list of reloadable objects, loading each one and passing it to the block. If a block is
-  # not supplied, an array is returned.
+  # Iterates over a list of reloadable objects, loading each one and passing it to the block. If a
+  # block is not supplied, an array is returned.
   def self.list_like(arr, &block)
     if block.nil?
       arr.each.collect { |x| Reloader.instance.load x }
@@ -82,8 +83,8 @@ class Reloader
     end
   end
 
-  # Iterates over a list of objects, interpreting the list as a plist of key-value pairs. Each key-value pair
-  # is passed to the block. If no block is supplied, a hash is returned.
+  # Iterates over a list of objects, interpreting the list as a plist of key-value pairs. Each
+  # key-value pair is passed to the block. If no block is supplied, a hash is returned.
   def self.hash_like(arr, &block)
     if block.nil?
       {}.tap do |hash|

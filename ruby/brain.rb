@@ -25,11 +25,11 @@ class KnowledgeBase
 
   # Accesses the brain of the given person object, constructing an empty brain if it does
   # not exist.
-  def [](person)
-    unless @data.include? person.id
-      @data[person.id] = NPCBrain.new(person.id, person.name, person.job)
+  def [](key)
+    unless @data.include? key.id
+      @data[key.id] = KnowledgeBase.new_brain key
     end
-    @data[person.id]
+    @data[key.id]
   end
 
   # Assign the brain for the given person object.
@@ -59,6 +59,15 @@ class KnowledgeBase
     end
   end
 
+  def self.new_brain(key)
+    case key
+    when NPC
+      NPCBrain.new key.id, key.name, key.job
+    when Location
+      CityBrain.new key.id
+    end
+  end
+
 end
 
 # A single brain for an NPC. The brain instance keeps track of the NPC's basic information, as well as
@@ -81,7 +90,7 @@ class NPCBrain
     @quests.each(&block)
   end
 
-  def to_sxp
+  def to_sxp # TODO Why are name and job in meta? Maybe we should move them into the main data
     meta = MetaData.new(:':id' => id, :':job' => job, :':name' => name)
     [:'npc-brain', id, :':quests', each.to_a, :':meta', meta].to_sxp
   end
@@ -122,4 +131,22 @@ end
 
 class ReloadedNPCBrain < NPCBrain
   attr_writer :id, :name, :job
+end
+
+class CityBrain
+  attr_reader :id
+
+  def initialize(id)
+    @id = id
+  end
+
+  def to_sxp
+    [:'city-brain', id].to_sxp
+  end
+
+  def self.from_sxp(arg)
+    id_, *ignore = Reloader.assert_first :'city-brain', arg
+    CityBrain.new id_
+  end
+
 end

@@ -69,6 +69,7 @@ class DeltaNPCBrain < NPCBrain
 
   def initialize(brain)
     super brain.id, brain.name, brain.job
+    @motives = brain.motives
     @old_quests = brain.each.to_a
     @new_quests = []
   end

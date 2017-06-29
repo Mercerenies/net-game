@@ -73,13 +73,14 @@ end
 # A single brain for an NPC. The brain instance keeps track of the NPC's basic information, as well as
 # any quests that that NPC initiates.
 class NPCBrain
-  attr_reader :id, :name, :job
+  attr_reader :id, :name, :job, :motives
 
   def initialize(id, name, job)
     @id = id
     @name = name
     @job = job
     @quests = []
+    @motives = Motivation.motive_for job
   end
 
   def to_delta
@@ -92,7 +93,7 @@ class NPCBrain
 
   def to_sxp # TODO Why are name and job in meta? Maybe we should move them into the main data
     meta = MetaData.new(:':id' => id, :':job' => job, :':name' => name)
-    [:'npc-brain', id, :':quests', each.to_a, :':meta', meta].to_sxp
+    [:'npc-brain', id, :':quests', each.to_a, :':motives', motives, :':meta', meta].to_sxp
   end
 
   # Adds the quest identifier given to the NPC's quest list
@@ -117,6 +118,8 @@ class NPCBrain
         case k
         when :':quests'
           v.each { |n| brain.add_quest n }
+        when :':motives'
+          brain.motives = Reloader.load v
         when :':meta'
           meta = Reloader.load v
           brain.job = meta[:':job']
@@ -130,7 +133,7 @@ class NPCBrain
 end
 
 class ReloadedNPCBrain < NPCBrain
-  attr_writer :id, :name, :job
+  attr_writer :id, :name, :job, :motives
 end
 
 class CityBrain

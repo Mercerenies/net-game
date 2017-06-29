@@ -12,7 +12,8 @@
 
 (defstruct (human-knowledge (:conc-name hmn-know-))
   id
-  quests)
+  quests
+  motives)
 
 (defstruct (city-knowledge (:conc-name cit-know-))
   id)
@@ -52,11 +53,19 @@
                                      do (merge-into (gethash (know-id loaded) *knowledge-base*)
                                                     loaded)))))
 
+(defmethod load-object ((header (eql 'motives)) data)
+  (load-formatted data 'motives
+                  (motives (return-from load-object
+                             (loop for cell = motives then (cddr cell)
+                                   while cell
+                                   collect (cons (first cell) (second cell)))))))
+
 (defmethod load-object ((header (eql 'npc-brain)) data)
   (let ((brain (make-human-knowledge :quests nil)))
     (load-formatted data 'npc-brain
                     (id (setf (know-id brain) id))
                     (:quests quests (setf (know-quests brain) quests))
+                    (:motives motives (setf (hmn-know-motives brain) (load-object 'motives motives)))
                     (:meta meta))
     brain))
 

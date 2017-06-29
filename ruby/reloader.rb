@@ -49,7 +49,8 @@ class Reloader
       :'neo-spawner' => NeoSpawner,
       :request => Request,
       :'request-set' => RequestSet,
-      :'city-brain' => CityBrain
+      :'city-brain' => CityBrain,
+      :motives => MotivePriorities
     }
   end
 

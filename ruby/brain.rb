@@ -73,14 +73,15 @@ end
 # A single brain for an NPC. The brain instance keeps track of the NPC's basic information, as well as
 # any quests that that NPC initiates.
 class NPCBrain
-  attr_reader :id, :name, :job, :motives
+  attr_reader :id, :name, :job
+  attr_accessor :motives
 
   def initialize(id, name, job)
     @id = id
     @name = name
     @job = job
     @quests = []
-    @motives = Motivation.motive_for job
+    @motives = MotivePriorities.new({})
   end
 
   def to_delta
@@ -133,7 +134,7 @@ class NPCBrain
 end
 
 class ReloadedNPCBrain < NPCBrain
-  attr_writer :id, :name, :job, :motives
+  attr_writer :id, :name, :job
 end
 
 class CityBrain

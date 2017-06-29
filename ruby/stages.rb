@@ -223,7 +223,14 @@ class PersonStage < Stage
         if elem.gender and not elem.occupations.empty?
           npc = NPC.new elem
           data.map.put_somewhere(npc) { |loc| loc.civilized? }
-          data.knowledge_base.add_empty npc
+          data.knowledge_base.add_empty(npc).tap do |kn|
+            # (1 - Motivation::Damping) here since the primary job will get counted an extra
+            # time with damping turned on in the full job list.
+            kn.motives += Motivation.motive_for(npc.job) * (1 - Motivation::Damping)
+            elem.occupations.each do |n, j|
+              kn.motives += Motivation.motive_for(j) * Motivation::Damping
+            end
+          end
         end
       end
     end

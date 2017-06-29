@@ -27,7 +27,11 @@ module Motivation
   end
 
   def self.motive_for(job)
-    jobs_table[job]
+    if jobs_table.include? job
+      jobs_table[job]
+    else
+      MotivePriorities.new
+    end
   end
 
 end
@@ -51,7 +55,7 @@ class MotivePriorities
   end
 
   def [](motive)
-    @hash[motive]
+    @hash[motive] ||= 0
   end
 
   def []=(motive, value)
@@ -59,15 +63,19 @@ class MotivePriorities
   end
 
   def /(value)
-    @hash = @hash.map { |k, x| [k, x / value] }
+    MotivePriorities.new @hash.map { |k, x| [k, x / value] }
   end
 
   def *(value)
-    @hash = @hash.map { |k, x| [k, x / value] }
+    MotivePriorities.new @hash.map { |k, x| [k, x / value] }
   end
 
   def +(value)
-    @hash.merge!(value.to_h) { |k, o, n| o + n }
+    MotivePriorities.new @hash.merge(value.to_h) { |k, o, n| o + n }
+  end
+
+  def -(value)
+    MotivePriorities.new @hash.merge(value.to_h) { |k, o, n| o - n }
   end
 
   def to_sxp

@@ -4,7 +4,7 @@ module Motivation
   @@motivations = %i{knowledge wealth glory comfort conquest protection compassion}
   @@jobs_table = nil
 
-  Damping = 0.33 # Damping factor for secondary jobs
+  Damping = 0.25 # Damping factor for secondary jobs
 
   def self.jobs_table
     if @@jobs_table.nil?

@@ -12,12 +12,16 @@
          :initform ""
          :type string)))
 
-(defmacro handling-warnings (&body body)
+(defmacro handling-signals (&body body)
   (let ((cnd (gensym)))
     `(handler-bind ((net-game-warning (lambda (,cnd)
                                         (echo (warning-level ,cnd) "Warning: ~A"
                                               (warning-text ,cnd))
-                                        (muffle-warning ,cnd))))
+                                        (muffle-warning ,cnd)))
+                    (error (lambda (,cnd)
+                             (echo 0 "Error: ~A"
+                                   ,cnd)
+                             (abort ,cnd))))
        ,@body)))
 
 (defun echo (level text &rest format)

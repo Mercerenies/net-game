@@ -67,7 +67,7 @@
   (alpha-bind (let ((*origin* filename))
                 (with-open-file (file filename)
                   (load-data :file file)))
-    (handling-warnings
+    (handling-signals
       (let ((*player* (loop for loc being the hash-values in *world*
                             for player = (find-if (lambda (y) (typep y 'player))
                                                   (location-contents loc))

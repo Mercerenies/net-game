@@ -2,4 +2,7 @@
 
 (in-package #:net-game)
 
-(run-game :gamemode 'master)
+(restart-case
+    (run-game :gamemode 'master)
+  (abort ()
+    (echo 0 "Aborting...")))

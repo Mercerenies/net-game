@@ -1,7 +1,5 @@
 (load "./lisp/package.lisp")
 
-; TODO Catch errors at the top level and print them through the logging interface
-
 (in-package #:net-game)
 
 (defparameter *port* 9321) ; 27001
@@ -154,4 +152,7 @@
   (when (not *client-loc*)
     (setf *client-loc* (get-loc *player*))))
 
-(handle-args-and-play (ng-os:argv))
+(restart-case
+    (handle-args-and-play (ng-os:argv))
+  (abort ()
+    (echo 0 "Aborting...")))

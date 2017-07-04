@@ -188,6 +188,8 @@
 (defmethod system-keys append ((obj loaded))
   `((get-origin "Origin" ,(get-origin obj))))
 
+; TODO Make the system-keys table have a maximum length for elements so they don't get too long
+
 (defmethod system-keys append ((obj location))
   `((location-fitness "Fitness" ,(location-fitness obj))
     (location-structure "Structure Node" ,(location-structure obj))))

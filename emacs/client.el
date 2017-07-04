@@ -42,7 +42,8 @@
       (net-game-mode))
     (with-current-buffer err-buffer
       (special-mode)
-      (net-game-mode))
+      (net-game-mode)
+      (setq-local buffer-read-only nil))
     (make-process :name "net-game"
                   :buffer buffer
                   :command cmd

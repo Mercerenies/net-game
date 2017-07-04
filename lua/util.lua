@@ -4,6 +4,7 @@ util = P
 setmetatable(P, {__index = _G})
 
 local pid_cache = nil
+local ppid_cache = nil
 local pgid_cache = nil
 
 function P.exists(fname)
@@ -21,7 +22,7 @@ local function load_caches()
    pid_cache = f:read("*number") -- Read the PID
    while f:read(1) ~= ')' do end -- Ignore the name
    f:read(3) -- Ignore the state
-   f:read("*number") -- Ignore the PPID
+   ppid_cache = f:read("*number") -- Read the PPID
    pgid_cache = f:read("*number") -- Read the PGID
    io.close(f)
 end
@@ -31,6 +32,13 @@ function P.pid()
       load_caches()
    end
    return pid_cache
+end
+
+function P.ppid()
+   if ppid_cache == nil then
+      load_caches()
+   end
+   return ppid_cache
 end
 
 function P.pgid()

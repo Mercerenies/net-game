@@ -17,6 +17,10 @@
         '("\\[[[:digit:]]+\\]" . font-lock-type-face)
         '("[[:digit:]]+\\(\\.[[:digit:]]+\\)?" . font-lock-constant-face)))
 
+(defvar net-game--directory
+  (let ((curr-dir (or load-file-name buffer-file-name)))
+    (locate-dominating-file curr-dir "emacs")))
+
 (define-minor-mode net-game-mode nil
   :init-value nil
   :lighter " net-game"
@@ -34,23 +38,29 @@
 (defun net-game-mode-remove-keywords ()
   (font-lock-remove-keywords nil net-game--font-lock-keywords))
 
+(defun net-game--base-directory ()
+  (or net-game-directory
+      net-game--directory))
+
 (defun net-game-spawn (cmd)
   (let ((buffer (get-buffer-create "*net-game*"))
         (err-buffer (get-buffer-create "*net-game-log*")))
     (with-current-buffer buffer
       (comint-mode)
-      (net-game-mode))
+      (net-game-mode)
+      (setq-local default-directory (net-game--base-directory)))
     (with-current-buffer err-buffer
       (special-mode)
       (net-game-mode)
+      (setq-local default-directory (net-game--base-directory))
       (setq-local buffer-read-only nil))
+    (switch-to-buffer-other-window buffer)
     (make-process :name "net-game"
                   :buffer buffer
                   :command cmd
                   :stderr err-buffer)
-  (switch-to-buffer-other-window buffer)
-  (display-buffer-below-selected err-buffer
-                                 '((window-height . 0.2)))))
+    (display-buffer-below-selected err-buffer
+                                   '((window-height . 0.2)))))
 
 (defgroup net-game nil
   "Customization options related to the net-game project")
@@ -63,9 +73,11 @@
   "Timeout for the backend server to perform routine checks in the net-game"
   :type '(choice integer (const nil)))
 
-; TODO Can we make it so we can run this file from anywhere (within reason), not
-;      just the root directory of the project
+(defcustom net-game-directory nil
+  "The base directory of the net-game project code"
+  :type '(choice directory (const nil)))
 
+; TODO Do these arguments actually do anything? Should we take them out?
 ; TODO We can convert this to keyword arguments using cl-parsing-keywords
 (defun net-game-run (&optional debug rein timeout no-small-world)
   (interactive

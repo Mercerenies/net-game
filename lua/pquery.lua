@@ -8,25 +8,44 @@ local PQuery = P.PQuery
 
 setmetatable(P.PQuery, {__index = query.Query})
 
+local cmd_opt_table = {
+   ['-c'] = 'celeb',
+   ['-p'] = 'person',
+   ['-P'] = 'place',
+   ['-w'] = 'weapon',
+   ['-m'] = 'monster',
+   ['-a'] = 'animal',
+   ['-f'] = 'food'
+}
+
 local para_cmd =
-   './bash/stage1.sh -d %d -e \'legacy-crawl args: [%s %s]\' | ' ..
+   './bash/stage1.sh -d %d -e \'legacy-crawl args: [%s %s %s]\' | ' ..
    './bash/stage2.sh %d >%s'
+
+local using_cmd =
+   '"crawl type: %s base: * count: %d rein: %s"' -- TODO Proper escaping
 
 local full_cmd =
    './bash/stage1.sh -d %d -e %s | ./bash/stage2.sh %d >%s'
 
 local rein = ""
 
-local function spawn_parallel(argument)
+local function option_to_symbol(opt)
+   return cmd_opt_table[opt]
+end
+
+local function spawn_parallel(argument, count)
    local rname = filenamer.get_filename()
    local lvl = logger.get_debug_level()
-   local cmd = string.format(para_cmd, lvl, rein, argument, lvl, rname)
+   local reinf = rein == "-r" and 'yes' or 'no'
+   local expr = string.format(using_cmd, option_to_symbol(argument), count, reinf)
+   local cmd = string.format(full_cmd, lvl, expr, lvl, rname)
    local tsk = task.Task.new(cmd)
    return rname, tsk
 end
 
-local function spawn_and_store(qobj, argm)
-   local rname, tsk = spawn_parallel(argm)
+local function spawn_and_store(qobj, argm, count)
+   local rname, tsk = spawn_parallel(argm, count)
    table.insert(qobj._resultnames, rname)
    table.insert(qobj._tasks, tsk)
 end
@@ -67,25 +86,25 @@ function PQuery:req()
    self._resultnames = {}
    self._tasks = {}
    for i = 1, (self._people or 0) do
-      spawn_and_store(self, '-p 1')
+      spawn_and_store(self, '-p', 1)
    end
    for i = 1, (self._celebs or 0) do
-      spawn_and_store(self, '-c 1')
+      spawn_and_store(self, '-c', 1)
    end
    for i = 1, (self._places or 0) do
-      spawn_and_store(self, '-P 1')
+      spawn_and_store(self, '-P', 1)
    end
    for i = 1, (self._weapons or 0) do
-      spawn_and_store(self, '-w 1')
+      spawn_and_store(self, '-w', 1)
    end
    for i = 1, (self._monsters or 0) do
-      spawn_and_store(self, '-m 1')
+      spawn_and_store(self, '-m', 1)
    end
    for i = 1, (self._animals or 0) do
-      spawn_and_store(self, '-a 1')
+      spawn_and_store(self, '-a', 1)
    end
    for i = 1, (self._foods or 0) do
-      spawn_and_store(self, '-f 1')
+      spawn_and_store(self, '-f', 1)
    end
    for i, v in ipairs(self.customs) do
       spawn_and_store_full(self, v)

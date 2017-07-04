@@ -66,6 +66,6 @@ The following built-in commands are available.
 
 #### Examples
 
-    crawl type: person base: * count: 2
-    crawl type: place depth: 2 tries: 4 base: [List of mountains in the United States]
-    crawl base: celeb type: * rein: yes
+    crawl type: Person base: * count: 2
+    crawl type: Place depth: 2 tries: 4 base: [List of mountains in the United States]
+    crawl base: Celeb type: * rein: yes

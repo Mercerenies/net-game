@@ -51,7 +51,7 @@ def _resolve_basetype(b, t):
     # Resolve the base page first
     if is_simple_symbol(b):
         b = Basis.basis[str(b).lower()]
-    elif isinstance(b, str): # TODO Write a is_string which distinguishes between str and Symbol
+    elif isinstance(b, str):
         _tmp1 = b
         b = lambda: _tmp1
     else:

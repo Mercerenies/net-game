@@ -50,5 +50,3 @@ class CommandSearch(Search):
         passed to the constructor of CommandSearch is modified in-place.
         """
         self.cmd.execute(self.parts)
-
-# TODO Search using a user-provided directive string

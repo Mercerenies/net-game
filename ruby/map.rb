@@ -269,8 +269,10 @@ class Location
 
   # Assigns the node's linkage. The argument must either be +nil+ or +:city_exit+.
   def linkage=(x)
-    # TODO Error checking; we don't want invalid values getting in here
-    @linkage = x
+    case x
+    when nil, :city_exit
+      @linkage = x
+    end
   end
 
   # Returns true if and only if the node has linkage marking it as a city exit.

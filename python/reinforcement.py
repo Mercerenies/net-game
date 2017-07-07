@@ -7,7 +7,7 @@ import links
 import random
 from logger import echo
 
-# TODO Further improvements to this? Or at least further testing
+# TODO This causes files that grow very quickly; can we prune old data for space efficiency's sake?
 
 class DBError(Exception):
     """

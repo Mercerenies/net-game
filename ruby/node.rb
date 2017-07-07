@@ -98,7 +98,7 @@ class Node
       #  id, name, country,
       #  generic_name: country || "Map",
       #  fitness: Outdoors,
-      #  linkage: :city_exit
+      #  linkage: :'city-exit'
       #)
       #Array[loc]
     else

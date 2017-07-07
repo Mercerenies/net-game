@@ -60,7 +60,7 @@ class CrossCityBuilder < StructureBuilder
   def to_loc
     super().tap do |result|
       # We want to mark each exit as being an exit node for bookkeeping and linkage purposes
-      result.exits.each { |x| x.linkage = :city_exit }
+      result.exits.each { |x| x.linkage = :'city-exit' }
     end
   end
 

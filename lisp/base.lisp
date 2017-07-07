@@ -91,7 +91,11 @@
    (structure :accessor location-structure
               :initarg :structure
               :initform nil ; Will be an ID value
-              :type t)))
+              :type t)
+   (linkage :accessor location-linkage
+            :initarg :linkage
+            :initform nil
+            :type t))) ; TODO Type for linkage?
 
 (defun make-location (id name &key short-name)
   (check-type name string)
@@ -192,7 +196,8 @@
 
 (defmethod system-keys append ((obj location))
   `((location-fitness "Fitness" ,(location-fitness obj))
-    (location-structure "Structure Node" ,(location-structure obj))))
+    (location-structure "Structure Node" ,(location-structure obj))
+    (location-linkage "Linkage" ,(location-linkage obj))))
 
 (defmethod system-keys append ((obj hideable))
   `((is-hidden "Hidden" ,(is-hidden obj))))

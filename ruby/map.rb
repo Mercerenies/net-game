@@ -205,11 +205,11 @@ class Location
     water = [:':water', water_mode]
     fitness_keyword = [:':fitness', fitness]
     structure_keyword = [:':structure-key', structure_key]
+    linkage_keyword = [:':linkage', linkage]
     meta = [:':meta', MetaData.new(:':generic-name' => generic_name,
                                    :':creatures' => valid_creatures,
-                                   :':plants' => valid_plants,
-                                   :':linkage' => linkage)]
-    (prefix + country + links + contents + civilized + water + fitness_keyword + structure_keyword + meta).to_sxp
+                                   :':plants' => valid_plants)]
+    (prefix + country + links + contents + civilized + water + fitness_keyword + structure_keyword + linkage_keyword + meta).to_sxp
   end
 
   def self.from_sxp(arg)
@@ -232,12 +232,13 @@ class Location
           loc.fitness = Reloader.load v
         when :':structure-key'
           loc.structure_key = v
+        when :':linkage'
+          loc.linkage = v
         when :':meta'
           meta = Reloader.load v
           loc.generic_name = meta[:':generic-name']
           loc.valid_creatures = Reloader.load(meta[:':creatures'])
           loc.valid_plants = Reloader.load(meta[:':plants'])
-          loc.linkage = meta[:':linkage']
         end
       end
     end
@@ -262,28 +263,28 @@ class Location
 
   # Returns the node's linkage. In most cases, the linkage is simply +nil+. If the node is
   # a city node which lies on the edge of a city and has no external connectors, the node
-  # may be marked as +:city_exit+ to indicate that it might be linked to in the future.
+  # may be marked as +:'city-exit'+ to indicate that it might be linked to in the future.
   def linkage
     @linkage
   end
 
-  # Assigns the node's linkage. The argument must either be +nil+ or +:city_exit+.
+  # Assigns the node's linkage. The argument must either be +nil+ or +:'city-exit'+.
   def linkage=(x)
     case x
-    when nil, :city_exit
+    when nil, :'city-exit'
       @linkage = x
     end
   end
 
   # Returns true if and only if the node has linkage marking it as a city exit.
   def city_exit?
-    @linkage == :city_exit
+    @linkage == :'city-exit'
   end
 
 end
 
 class ReloadedLocation < Location
-  attr_writer :country_name, :generic_name, :valid_creatures, :valid_plants, :fitness, :linkage,
+  attr_writer :country_name, :generic_name, :valid_creatures, :valid_plants, :fitness,
               :structure_key
 
   def initialize(id, name, country_name,

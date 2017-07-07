@@ -151,6 +151,7 @@
                                     ((sea) (add-flag 'sea inst))
                                     ((shore) (add-flag 'shore inst))))
                     (:structure-key struct (setf (location-structure inst) struct))
+                    (:linkage link (setf (location-linkage inst) link))
                     (:meta meta)) ; Ignored
     inst))
 

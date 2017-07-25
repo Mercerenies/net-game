@@ -39,12 +39,16 @@
         (move-object inst loc)))))
 
 (defun active-spawner-set (&key (player-object *player*) (radius +active-radius+))
-  (loop with nearby = (mapcar #'get-id
-                              (remove-if #'(lambda (x) (check-flag 'civilized x))
-                                         (halo (get-loc player-object) radius)))
-        for spawner in *spawners*
-        when (not (null (intersection nearby (spawner-area spawner))))
-            collect spawner))
+  (let ((global (loop with nearby = (mapcar #'get-id
+                                            (remove-if #'(lambda (x) (check-flag 'civilized x))
+                                                       (halo (get-loc player-object) radius)))
+                      for spawner in *spawners*
+                      when (not (null (intersection nearby (spawner-area spawner))))
+                          collect spawner))
+        (local (loop for loc in (halo (get-loc player-object) radius)
+                     append (remove-if-not (lambda (x) (typep x 'neo-spawner))
+                                           (location-contents loc)))))
+    (append global local)))
 
 ;; This function is temporary and acts as a shim while moving the old spawner interface over to the
 ;; new one

@@ -19,6 +19,7 @@
           :initform nil
           :type (or null creature))))
 
+;; TODO Change the header in Ruby to say global-spawner
 (defmethod load-object ((header (eql 'spawner)) data)
   (apply #'make-instance 'global-spawner (cdr data)))
 

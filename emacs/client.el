@@ -77,19 +77,17 @@
   "The base directory of the net-game project code"
   :type '(choice directory (const nil)))
 
-; TODO Do these arguments actually do anything? Should we take them out?
-; TODO We can convert this to keyword arguments using cl-parsing-keywords
-(defun net-game-run (&optional debug rein timeout no-small-world)
+(defun net-game-run (&optional debug)
   (interactive
    (list (if current-prefix-arg
              (prefix-numeric-value current-prefix-arg)
            2)))
-  (setq rein (and net-game-rein-learning '("-r")))
-  (setq timeout (and net-game-server-timeout `("-t" ,(number-to-string net-game-server-timeout))))
-  (setq no-small-world (if no-small-world '("-S") nil))
-  (let ((command `("bash" "./bash/client.sh"
-                   "-d" ,(number-to-string debug)
-                   ,@timeout
-                   ,@rein
-                   ,@no-small-world)))
-    (net-game-spawn command)))
+  (let ((rein (and net-game-rein-learning '("-r")))
+        (timeout (and net-game-server-timeout `("-t" ,(number-to-string net-game-server-timeout))))
+        (small-world nil)) ; TODO Small world control (defcustom, probably)
+    (let ((command `("bash" "./bash/client.sh"
+                     "-d" ,(number-to-string debug)
+                     ,@timeout
+                     ,@rein
+                     ,@small-world)))
+      (net-game-spawn command))))

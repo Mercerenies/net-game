@@ -5,11 +5,9 @@
 (defparameter *spawners* nil)
 
 (defconstant +spawner-types+
-  '(spawner))
+  '(global-spawner))
 
-;; TODO Rebrand the "old" spawner as a "global spawner" and remove the do-neo-spawner-migration shim
-
-(defclass spawner ()
+(defclass global-spawner ()
   ((creature :accessor spawner-creature
              :initform nil
              :initarg :creature)
@@ -22,11 +20,11 @@
           :type (or null creature))))
 
 (defmethod load-object ((header (eql 'spawner)) data)
-  (apply #'make-instance 'spawner (cdr data)))
+  (apply #'make-instance 'global-spawner (cdr data)))
 
 (defgeneric choose-spawn-point (spawner))
 
-(defmethod choose-spawn-point ((spawner spawner))
+(defmethod choose-spawn-point ((spawner global-spawner))
   (check-type *world* hash-table)
   (gethash (choose (spawner-area spawner)) *world*))
 
@@ -65,6 +63,7 @@
                           :text "Old-style spawner detected...")))
   (setf *spawners* nil))
 
+;; TODO It should be safe to rename this to simply "spawner" soon.
 (defclass neo-spawner (located hideable)
   ((creature :accessor neo-spawner-creature
              :initform nil

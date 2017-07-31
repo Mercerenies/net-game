@@ -27,7 +27,7 @@ function P.cleanup()
    local ps = 'ps xao pid,ppid,pgid | '
    local awk = 'awk \'($3 ~ /' .. pgid .. '/) && ($1 !~ /' .. pid .. '/) { print $1; }\' | '
    local kill = 'xargs kill -15'
-   util.execute(ps .. awk .. kill)
+   util.execute { command = ps .. awk .. kill }
    logger.echo(1, "Processes ended.")
    logger.echo(1, "Cleaning up files...")
    for i = 0, n do

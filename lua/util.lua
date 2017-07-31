@@ -52,59 +52,31 @@ function P.background(cmd)
    return "(" .. cmd .. ")&"
 end
 
--- TODO This execute API is now a mess. Let's factor it out into one really big one
---      (i.e. clean up execute_with and make it public)
-
 --[[
- - execute_with{
- -  command - Required; the command to execute
- -  func    - Required; the function to use to execute it
- -  quiet   - Optional; whether or not to use quiet mode
+ - execute{
+ -  command    - Required; the command to execute
+ -  func       - Optional; the function to use to execute it
+ -  quiet      - Optional; whether or not to use quiet mode
+ -  background - Optional; whether or not to run the process in the background
  - }
 --]]
-local function execute_with(arg)
+function P.execute(arg)
    local cmd = arg.command
    local func = arg.func
    local quiet = arg.quiet
+   local back = arg.background
    if quiet then
       logger.echo(3, "Running: " .. cmd)
    else
       logger.echo(1, "Running: " .. cmd)
    end
+   if not func then
+      func = os.execute
+   end
+   if back then
+      cmd = P.background(cmd)
+   end
    return func(cmd)
-end
-
-function P.execute(cmd)
-   return execute_with {
-      func = os.execute,
-      command = cmd
-   }
-end
-
-function P.execute_quietly(cmd)
-   return execute_with {
-      func = os.execute,
-      command = cmd,
-      quiet = true
-   }
-end
-
-function P.execute_bg(cmd)
-   P.execute(P.background(cmd))
-end
-
-function P.execute_stdout(cmd)
-   return execute_with {
-      func = function (c) return io.popen(c, 'r') end,
-      command = cmd
-   }
-end
-
-function P.execute_stdin(cmd)
-   return execute_with {
-      func = function (c) return io.popen(c, 'w') end,
-      command = cmd
-   }
 end
 
 return P

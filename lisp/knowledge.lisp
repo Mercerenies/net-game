@@ -5,8 +5,10 @@
 (defconstant +brain-types+
   '(npc-brain city-brain))
 
-; ///// TODO Abstract the knowledge base database to make counting cities more efficient?
-;            (We need to be able to count cities to get the triggers for actor requests)
+; TODO Abstract the knowledge base database to make counting cities more efficient?
+;      (We need to be able to count cities to get the triggers for actor requests)
+
+; TODO Make 'probe' able to do more detailed stuff so we can access e.g. motives
 
 ;(defgeneric know-id (knowledge))
 
@@ -31,6 +33,14 @@
   (hmn-know-quests k))
 
 (defun (setf know-quests) (q k)
+  (check-type k human-knowledge)
+  (setf (hmn-know-quests k) q))
+
+(defun know-motives (k)
+  (check-type k human-knowledge)
+  (hmn-know-motives k))
+
+(defun (setf know-motives) (q k)
   (check-type k human-knowledge)
   (setf (hmn-know-quests k) q))
 

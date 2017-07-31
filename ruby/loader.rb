@@ -83,8 +83,6 @@ class PlacePage < Page
   include HasInfoField
   attr_reader :population
 
-  # ///// Then we want to revamp the city generator to use a city planner rather than randomness.
-
   def initialize(json)
     super json['name']
     initialize_info json['info']

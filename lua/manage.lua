@@ -65,7 +65,7 @@ function dispatch_on(name, args)
    if type(func) == 'function' then
       func(args)
    else
-      logger.echo(1, "Warning: Unknown message '" .. name .. "' received!\n")
+      logger.echo(1, "Warning: Unknown message '" .. tostring(name) .. "' received!\n")
    end
 end
 
@@ -83,7 +83,7 @@ function dispatch_ext(args, conn)
          end
          func(arr)
       else
-         logger.echo(1, "Warning: Unknown extended message '" .. name .. "' received!\n")
+         logger.echo(1, "Warning: Unknown extended message '" .. tostring(name) .. "' received!\n")
       end
    else
       logger.echo(1, "Warning: Invalid argument '" .. args .. "' to 'ext'!\n")

@@ -2,17 +2,16 @@
 
 ;; TODO This file depends on client.lisp, which may not be loaded; make that dependency neater and more obvious
 
-;; TODO Based on my thoughts for the quest system now, we should probably not have the people requests depend on the number of completed quests. Change the name and the condition?
-
 (defun make-update-requests ()
   (let ((active-halo (halo (get-loc *player*) +active-radius+)))
-    ;; Completed Quests Trigger
-    (when (and (> (percent-started-quests) 0.5)
-               (> (percent-finished-quests) 0.35))
+    ;; Low Actor Ratio Trigger
+    (when (< (/ (knowledge-count *knowledge-base* 'human-knowledge)
+                (knowledge-count *knowledge-base* 'city-knowledge))
+             3/2)
+      ;; NOTE: The name q1 is for legacy purposes, from when there
+      ;; used to be two actor triggers and they were called "quest"
+      ;; triggers (hence the q).
       (client-request 'actors 'q1))
-    ;; Few Quests Remaining Trigger
-    (when (< (- (length (finished-quests)) (total-quest-count)) 20)
-      (client-request 'actors 'q2))
     ;; No Active Spawner Trigger
     (when (and (member-if #'(lambda (x) (not (check-flag 'civilized x)))
                           active-halo)

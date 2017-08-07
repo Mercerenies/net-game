@@ -10,7 +10,35 @@
 
 ; TODO Make 'probe' able to do more detailed stuff so we can access e.g. motives
 
-;(defgeneric know-id (knowledge))
+(defclass knowledge-base ()
+  ((hash-table :reader knowledge-hash-table
+               :initarg :hash
+               :initform (make-hash-table)
+               :type hash-table)
+   (type-table :reader knowledge-type-table
+               :initarg :types
+               :initform (make-hash-table)
+               :type hash-table)))
+
+(defun make-knowledge-base ()
+  (make-instance 'knowledge-base))
+
+(defgeneric knowledge-get (know key))
+
+(defmethod knowledge-get ((know knowledge-base) key)
+    (gethash key (knowledge-hash-table know)))
+
+(defgeneric (setf knowledge-get) (new-value know key))
+
+(defmethod (setf knowledge-get) (new-value (know knowledge-base) key)
+  (with-accessors ((hash knowledge-hash-table) (types knowledge-type-table)) know
+    (multiple-value-bind (old-value old-value-p) (gethash key hash)
+      (let ((old-type (class-of old-value))
+            (new-type (class-of new-value)))
+        (when old-value-p
+          (decf (gethash old-type types 0)))
+        (incf (gethash new-type types 0))
+        (setf (gethash key hash) new-value)))))
 
 (defstruct (human-knowledge (:conc-name hmn-know-))
   id
@@ -56,11 +84,11 @@
   (load-formatted data 'knowledge-base
                   (:new values (loop for dd in values
                                      for loaded = (whitelisted-load #'load-object +brain-types+ dd)
-                                     do (setf (gethash (know-id loaded) *knowledge-base*)
+                                     do (setf (knowledge-get *knowledge-base* (know-id loaded))
                                               loaded)))
                   (:mod values (loop for dd in values
                                      for loaded = (whitelisted-load #'load-object +brain-types+ dd)
-                                     do (merge-into (gethash (know-id loaded) *knowledge-base*)
+                                     do (merge-into (knowledge-get *knowledge-base* (know-id loaded))
                                                     loaded)))))
 
 (defmethod load-object ((header (eql 'motives)) data)
@@ -95,11 +123,11 @@
   nil) ; There's nothing to do here right now, but there probably will be in the future
 
 (defmethod load-object ((header (eql 'knowledge-base)) data)
-  (let ((hash (make-hash-table)))
+  (let ((hash (make-knowledge-base)))
     (load-formatted data 'knowledge-base
                     ((entry) (let ((brain (whitelisted-load #'load-object +brain-types+ entry)))
-                               (setf (gethash (know-id brain) hash) brain))))
+                               (setf (knowledge-get hash (know-id brain)) brain))))
     hash))
 
 (defun get-quest-list (id)
-  (know-quests (gethash id *knowledge-base*)))
+  (know-quests (knowledge-get *knowledge-base* id)))

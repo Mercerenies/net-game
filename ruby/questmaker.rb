@@ -14,7 +14,8 @@ module QuestMaker
 
   def self.make_quest_flag
     @@quest_flag_n += 1
-    ("qf" + @@quest_flag_n.to_s.rjust(4, '0')).intern
+    # TODO Shall we turn this into a hierarchical list flag?
+    ("qf-rb-" + @@quest_flag_n.to_s.rjust(4, '0')).intern
   end
 
   def self.make_fetch_quest(map, brain)

@@ -9,6 +9,9 @@
 (defun make-item (name)
   (make-instance 'item :name name))
 
+;; TODO Only symbol flags can be checked right now and only integer
+;; IDs as well. This is a bit of an odd interface that makes
+;; assumptions based on types which simply aren't always true.
 (defun item-match (match item)
   (typecase match
     (symbol (check-flag match item))

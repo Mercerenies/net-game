@@ -240,6 +240,9 @@ end
 # \Stage 9 puts basic fetch quests into the game for each NPC.
 class QuestStage < Stage
   def run(data)
+    # This code is not being used right now; QuestStage is left in
+    # here for possible future changes
+#=begin
     data.knowledge_base.each do |id, val|
       case val
       when NPCBrain
@@ -248,6 +251,7 @@ class QuestStage < Stage
         val.add_quest q.id
       end
     end
+#=end
   end
 end
 

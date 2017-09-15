@@ -73,6 +73,9 @@
   (:documentation "A base class for objects which were loaded from the data files. A loaded instance
                    maintains the file from which it was loaded, to help with debugging."))
 
+(deftype node-linkage ()
+  (member nil city-exit))
+
 (defclass location (identifiable named flagged loaded)
   ((exits :accessor location-exits
           :initform nil
@@ -95,7 +98,7 @@
    (linkage :accessor location-linkage
             :initarg :linkage
             :initform nil
-            :type t))) ; TODO Type for linkage?
+            :type node-linkage)))
 
 (defun make-location (id name &key short-name)
   (check-type name string)

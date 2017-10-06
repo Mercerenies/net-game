@@ -54,8 +54,11 @@
  |    been accepted. Since State 0 is reserved for un-accepted quests, this will also send the
  |    quest into state <state>.
  |  * (speak <text>) - Causes the given text to be output as though spoken in dialogue.
+ |  * (narrate <text>) - Causes the given text to be output verbatim.
  |  * (branch <prompt> &rest <text> <command>) - Display a branching dialogue choice, executing
  |    the given command based on the response given by the player.
+ |  * (narrate-branch <prompt> &rest <text> <command>) - Display a branching dialogue choice
+ |    verbatim, executing the given command based on the response given by the player.
  |  * (if-has-item <item-match> <true> <false>) - Checks whether the player has an item
  |    matching <item-match>. If he/she does, execute the <true> branch. Otherwise, execute
  |    the <false> branch.
@@ -69,6 +72,7 @@
     (complete . ,(lambda (g q) (quest-mark-complete q)))
     (accept . ,(lambda (g q state) (quest-accept q state)))
     (speak . ,(lambda (g q text) (speak-line text)))
+    (narrate . ,(lambda (g q text) (narrate-line text)))
     (branch . ,(lambda (g q prompt &rest cmds)
                        (apply #'speak-branch prompt
                               (loop for arg = cmds then (cddr arg)
@@ -76,6 +80,13 @@
                                     collect (let ((arg1 arg))
                                               (cons (first arg1)
                                                     (lambda () (funcall g (second arg1)))))))))
+    (narrate-branch . ,(lambda (g q prompt &rest cmds)
+                         (apply #'narrate-branch prompt
+                                (loop for arg = cmds then (cddr arg)
+                                      while arg
+                                      collect (let ((arg1 arg))
+                                                (cons (first arg1)
+                                                      (lambda () (funcall g (second arg1)))))))))
     (if-has-item . ,(lambda (g q match true false) (if (some (lambda (x) (item-match match x))
                                                              (inv-items *player*))
                                                        (funcall g true)

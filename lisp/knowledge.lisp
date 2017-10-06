@@ -133,5 +133,5 @@
                                (setf (knowledge-get hash (know-id brain)) brain))))
     hash))
 
-(defun get-quest-list (id)
-  (know-quests (knowledge-get *knowledge-base* id)))
+(defmacro get-quest-list (id)
+  `(know-quests (knowledge-get *knowledge-base* ,id)))

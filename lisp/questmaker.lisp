@@ -64,7 +64,7 @@
       name)))
 
 (defun quest-eval-impl (gen quest state0 cmd final)
-  (with-accessors ((states quest-state)) quest
+  (with-accessors ((states quest-states)) quest
     (flet ((goto (sym)
              (if (eql sym 'completed)
                  '(complete)
@@ -81,7 +81,7 @@
           (initiate-with
            (destructuring-bind (npc text yes no) args
              ;; Add the quest to the NPC's knowledge base
-             (appendf (get-quest-list (get-id npc)) (get-id quest))
+             (push (get-id quest) (get-quest-list (get-id npc)))
              ;; And add the information to the quest itself
              (let ((trigger `(initiate
                               (branch ,text
@@ -99,6 +99,7 @@
              (let ((trigger `((talk-to ,(get-id npc) ,prompt)
                               (if-has-item ,item-flag
                                            (begin
+                                            (remove-item ,item-flag)
                                             (speak ,yes-response)
                                             ,(goto state1))
                                            (speak ,no-response)))))
@@ -108,13 +109,14 @@
 (defun quest-evaluate (stub)
   (check-type stub quest-stub)
   (loop with gen = (make-quest-state-generator)
-        with quest = (make-instance 'quest-data :id (gensym))
+        with quest = (make-instance 'quest-data :id (gensym) :name "[Test]")
         with state = 0
         for cmds on (quest-stub-evaluation stub)
         for cmd = (car cmds)
         for final = (null (cdr cmds))
         do (setf state (quest-eval-impl gen quest state cmd final))
-        finally (return quest)))
+        finally (progn (add-quest quest)
+                       (return quest))))
 
 (defun quest-est-impl (cmd)
   (case (first cmd)
@@ -125,3 +127,28 @@
   (check-type stub quest-stub)
   (loop for cmd in (quest-stub-establishment stub)
         do (quest-est-impl cmd)))
+
+;;;; TODO DEBUG PROCEDURES ;;;;
+
+(defun sample-quest-! (npc)
+  (let ((item (make-item "Giant Pepperoni Pizza"))
+        (flag (gensym))
+        (loc (get-loc *player*)))
+    (add-flag flag item)
+    (make-quest-stub
+     :establishment `((put-object ,item ,loc))
+     :evaluation `((initiate-with ,npc "Help!" "Sure!" "Meh.")
+                   (talk-to ,npc "Give me stuff." "Not yet.")
+                   (give-object-to ,flag ,npc "Give me stuff." "Hey, you helped!" "Meh.")))))
+
+(defun sample-quest-encode-! ()
+  (let* ((person (make-person (gensym) "Steve"))
+         (q (sample-quest-! person)))
+    (move-object person (get-loc *player*))
+    (quest-establish q)
+    (setf (knowledge-get *knowledge-base* (get-id person)) (make-human-knowledge :quests nil))
+    (let ((q1 (quest-evaluate q)))
+      (format t "~S~%" q1)
+      q1)))
+
+;;;; ;;;;

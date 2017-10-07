@@ -29,6 +29,9 @@
   '(alpha beta gamma delta epsilon
     state0 state1 state2 state3 state4 state5))
 
+(defconstant +quest-evaluation-directives+
+  '(goto-location initiate-with talk-to give-object-to))
+
 (defstruct quest-stub
   (establishment nil)
   (evaluation nil))
@@ -41,6 +44,13 @@
    (queue :initarg queue
           :initform (copy-list +default-quest-state-queue+)
           :type list)))
+
+(defstruct (quest-eval-state (:conc-name quest-state-))
+  generator
+  data
+  state0
+  state1
+  final-p)
 
 ;; TODO This function doesn't currently check whether its argument
 ;; contains no duplicates.
@@ -63,6 +73,54 @@
       (push name used)
       name)))
 
+(defun quest-goto-cmd (state)
+  (if (eql (quest-state-state1 state) 'completed)
+      '(complete)
+      `(goto ,(quest-state-state1 state))))
+
+(defgeneric quest-eval-cmd (cmd args state))
+
+(defmethod quest-eval-cmd ((cmd (eql 'initiate-with)) args state)
+  (destructuring-bind (npc text yes no) args
+    ;; Add the quest to the NPC's knowledge base
+    (push (get-id (quest-state-data state))
+          (get-quest-list (get-id npc)))
+    ;; And add the information to the quest itself
+    (let ((trigger `(initiate
+                     (branch ,text
+                             ,yes (accept ,(quest-state-state1 state))
+                             ,no (begin)))))
+      (push trigger (gethash (quest-state-state0 state)
+                             (quest-states (quest-state-data state)))))))
+
+(defmethod quest-eval-cmd ((cmd (eql 'talk-to)) args state)
+  (destructuring-bind (npc prompt response) args
+    (let ((trigger `((talk-to ,(get-id npc) ,prompt)
+                     (speak ,response)
+                     ,(quest-goto-cmd state))))
+      (push trigger (gethash (quest-state-state0 state)
+                             (quest-states (quest-state-data state)))))))
+
+(defmethod quest-eval-cmd ((cmd (eql 'give-object-to)) args state)
+  (destructuring-bind (item-flag npc prompt yes-response no-response) args
+    (let ((trigger `((talk-to ,(get-id npc) ,prompt)
+                     (if-has-item ,item-flag
+                                  (begin
+                                   (remove-item ,item-flag)
+                                   (speak ,yes-response)
+                                   ,(quest-goto-cmd state))
+                                  (speak ,no-response)))))
+      (push trigger (gethash (quest-state-state0 state)
+                             (quest-states (quest-state-data state)))))))
+
+(defmethod quest-eval-cmd ((cmd (eql 'goto-location)) args state)
+  (destructuring-bind (loc response) args
+    (let ((trigger `((visit ,(get-id loc))
+                     (narrate ,response)
+                     ,(quest-goto-cmd state))))
+      (push trigger (gethash (quest-state-state0 state)
+                             (quest-states (quest-state-data state)))))))
+
 (defun quest-eval-impl (gen quest state0 cmd final)
   (with-accessors ((states quest-states)) quest
     (flet ((goto (sym)
@@ -77,39 +135,15 @@
           (error "Quest stub does not start with initiation"))
         (when (and (eql head 'initiate-with) (not (eql state0 0)))
           (error "Initiation at non-start of quest stub"))
-        (ecase head
-          (initiate-with
-           (destructuring-bind (npc text yes no) args
-             ;; Add the quest to the NPC's knowledge base
-             (push (get-id quest) (get-quest-list (get-id npc)))
-             ;; And add the information to the quest itself
-             (let ((trigger `(initiate
-                              (branch ,text
-                                      ,yes (accept ,state1)
-                                      ,no (begin)))))
-               (push trigger (gethash state0 states)))))
-          (talk-to
-           (destructuring-bind (npc prompt response) args
-             (let ((trigger `((talk-to ,(get-id npc) ,prompt)
-                              (speak ,response)
-                              ,(goto state1))))
-               (push trigger (gethash state0 states)))))
-          (give-object-to
-           (destructuring-bind (item-flag npc prompt yes-response no-response) args
-             (let ((trigger `((talk-to ,(get-id npc) ,prompt)
-                              (if-has-item ,item-flag
-                                           (begin
-                                            (remove-item ,item-flag)
-                                            (speak ,yes-response)
-                                            ,(goto state1))
-                                           (speak ,no-response)))))
-               (push trigger (gethash state0 states)))))
-          (goto-location
-           (destructuring-bind (loc response) args
-             (let ((trigger `((visit ,(get-id loc))
-                              (narrate ,response)
-                              ,(goto state1))))
-               (push trigger (gethash state0 states))))))
+        (unless (member head +quest-evaluation-directives+)
+          (error "Invalid quest stub directive ~S" head))
+        (quest-eval-cmd head
+                        args
+                        (make-quest-eval-state :generator gen
+                                               :data quest
+                                               :state0 state0
+                                               :state1 state1
+                                               :final-p final))
         state1))))
 
 (defun quest-evaluate (stub)

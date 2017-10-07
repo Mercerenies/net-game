@@ -35,7 +35,9 @@
   (hash-table-count (visited-locs player)))
 
 (defmethod move-object :after ((obj player) (new-loc location))
-  (setf (gethash (get-id new-loc) (visited-locs obj)) t))
+  (setf (gethash (get-id new-loc) (visited-locs obj)) t)
+  (when *player*
+    (do-trigger `(visit ,(get-id new-loc)))))
 
 (defmethod move-object :after ((obj player) (new-loc null))
   (format t "~%** GAME OVER **~%You have died.~%~%")

@@ -36,11 +36,15 @@
  |    it exists, overrides the normal NPC menu. This trigger should be used sparingly, for if
  |    there are multiple talk-to! triggers from different quests, the order of precedence is
  |    arbitrary.
+ |  * (visit <loc-id>) - This trigger automatically trips when the player moves onto the
+ |    location with the ID <loc-id>. If multiple such triggers would trip, they will all be
+ |    tripped, in an arbitrary order.
  |#
 (defparameter *quest-triggers*
   '((initiate . 0)
     (talk-to . 2)
-    (talk-to! . 1)))
+    (talk-to! . 1)
+    (visit . 1)))
 
 #|
  | Quest commands:
@@ -148,6 +152,7 @@
     cmd))
 
 ;; Triggers for all active quests (do not use this for 'initiate)
+;; which have the appropriate trigger
 (defun do-trigger (trigger)
   (check-type *player* player)
   (mapc (lambda (q) (do-quest-trigger q trigger))

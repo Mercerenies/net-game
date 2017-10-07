@@ -8,7 +8,7 @@
  | These quest evaluation directives evolve into a
  | quest object.
  | !! (collect-object obj)
- | !! (goto-location loc)
+ | (goto-location loc response)
  | (initiate-with npc text yes no)
  | (talk-to npc prompt response)
  | (give-object-to item-flag npc prompt yes-response no-response)
@@ -20,7 +20,7 @@
  | (put-object obj loc)
  |#
 
-;; ///// THE QUEST EVALUATE PROCEDURE IS COMPLETELY UNTESTED !!!
+;; ///// THE QUEST EVALUATE PROCEDURE DOES NOT HAVE ALL DIRECTIVES (!!)
 ;; 1. Write this function: Given directives, generate the quest and get the world ready for it
 ;; 2. Generating the directives is... another matter...
 
@@ -77,7 +77,7 @@
           (error "Quest stub does not start with initiation"))
         (when (and (eql head 'initiate-with) (not (eql state0 0)))
           (error "Initiation at non-start of quest stub"))
-        (case head
+        (ecase head
           (initiate-with
            (destructuring-bind (npc text yes no) args
              ;; Add the quest to the NPC's knowledge base
@@ -103,6 +103,12 @@
                                             (speak ,yes-response)
                                             ,(goto state1))
                                            (speak ,no-response)))))
+               (push trigger (gethash state0 states)))))
+          (goto-location
+           (destructuring-bind (loc response) args
+             (let ((trigger `((visit ,(get-id loc))
+                              (narrate ,response)
+                              ,(goto state1))))
                (push trigger (gethash state0 states))))))
         state1))))
 
@@ -138,6 +144,7 @@
     (make-quest-stub
      :establishment `((put-object ,item ,loc))
      :evaluation `((initiate-with ,npc "Help!" "Sure!" "Meh.")
+                   (goto-location ,loc "You got it!")
                    (talk-to ,npc "Give me stuff." "Not yet.")
                    (give-object-to ,flag ,npc "Give me stuff." "Hey, you helped!" "Meh.")))))
 

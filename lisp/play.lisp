@@ -88,6 +88,7 @@
               with *read-eval* = nil
               with *do-exit* = (lambda () (return-from game-loop nil))
               with *god-mode* = t ; TODO Remove this; it's for debugging purposes only
+              ;; initially (sample-quest-encode-!) ; TODO Remove this; debugging only
               with cmd = nil
               with acmd = nil
               do (assign-numbers (mapcar (lambda (x) (gethash x *world*))

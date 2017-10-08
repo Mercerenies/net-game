@@ -7,7 +7,7 @@
 #|
  | These quest evaluation directives evolve into a
  | quest object.
- | !! (collect-object obj)
+ | !! (collect-object obj response)
  | (goto-location loc response)
  | (initiate-with npc text yes no)
  | (talk-to npc prompt response)
@@ -102,11 +102,11 @@
                              (quest-states (quest-state-data state)))))))
 
 (defmethod quest-eval-cmd ((cmd (eql 'give-object-to)) args state)
-  (destructuring-bind (item-flag npc prompt yes-response no-response) args
+  (destructuring-bind (item-match npc prompt yes-response no-response) args
     (let ((trigger `((talk-to ,(get-id npc) ,prompt)
-                     (if-has-item ,item-flag
+                     (if-has-item ,item-match
                                   (begin
-                                   (remove-item ,item-flag)
+                                   (remove-item ,item-match)
                                    (speak ,yes-response)
                                    ,(quest-goto-cmd state))
                                   (speak ,no-response)))))
@@ -180,7 +180,7 @@
      :evaluation `((initiate-with ,npc "Help!" "Sure!" "Meh.")
                    (goto-location ,loc "You got it!")
                    (talk-to ,npc "Give me stuff." "Not yet.")
-                   (give-object-to ,flag ,npc "Give me stuff." "Hey, you helped!" "Meh.")))))
+                   (give-object-to (flag ,flag) ,npc "Give me stuff." "Hey, you helped!" "Meh.")))))
 
 (defun sample-quest-encode-! ()
   (let* ((person (make-person (gensym) "Steve"))

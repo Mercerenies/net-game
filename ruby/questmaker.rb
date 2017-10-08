@@ -40,7 +40,7 @@ module QuestMaker
                 }
               }]
       q[1] = [trigger(talk_to(brain, "Your #{item_raw_name.downcase}?")) {
-                if_has_item(flag) {
+                if_has_item([:flag, flag]) {
                   if_true {
                     complete
                     remove_item flag

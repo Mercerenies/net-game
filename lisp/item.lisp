@@ -9,14 +9,11 @@
 (defun make-item (name)
   (make-instance 'item :name name))
 
-;; TODO Only symbol flags can be checked right now and only integer
-;; IDs as well. This is a bit of an odd interface that makes
-;; assumptions based on types which simply aren't always true.
 (defun item-match (match item)
-  (typecase match
-    (symbol (check-flag match item))
-    (string (equalp match (get-name item)))
-    (integer (= match (get-id item)))
+  (case (first match)
+    (flag (check-flag (second match) item))
+    (name (equalp (second match) (get-name item)))
+    (id (eql (second match) (get-id item)))
     (t nil)))
 
 (defclass weapon (item)

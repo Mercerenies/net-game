@@ -43,7 +43,7 @@ module QuestMaker
                 if_has_item([:flag, flag]) {
                   if_true {
                     complete
-                    remove_item flag
+                    remove_item [:flag, flag]
                     speak "Oh, my #{item_raw_name.downcase}! Thank you so much!"
                   }
                   if_false {

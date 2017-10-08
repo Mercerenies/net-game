@@ -17,6 +17,10 @@
  | spoken to.
  |#
 
+;; TODO visit and collect triggers should be able to "auto-trip" if
+;; the player is already in the correct location or already has the
+;; correct item when the trigger becomes available.
+
 #|
  | Quest triggers:
  |    (Note that most quest triggers are lists; some special ones, such as 'initiate, are symbols)
@@ -39,13 +43,16 @@
  |  * (visit <loc-id>) - This trigger automatically trips when the player moves onto the
  |    location with the ID <loc-id>. If multiple such triggers would trip, they will all be
  |    tripped, in an arbitrary order.
- |  * (collect <item-match>) /////
+ |  * (collect <item-match>) - This trigger trips when the player picks up an object which
+ |    matches the <item-match> predicate. If multiple such triggers would trip, they will all
+ |    be tripped, in an arbitrary order.
  |#
 (defparameter *quest-triggers*
   '((initiate . 0)
     (talk-to . 2)
     (talk-to! . 1)
-    (visit . 1)))
+    (visit . 1)
+    (collect . 1)))
 
 #|
  | Quest commands:
@@ -135,22 +142,25 @@
     (setf (is-quest-completed quest) t)
     (quest-goto quest 'completed)))
 
-;; TODO Make it so triggers can be "matched" in more sophisticated ways than equality /////
-;; (here and quest-has-trigger)
-(defun do-quest-trigger (quest trigger)
+(defgeneric quest-has-trigger (quest trigger))
+
+(defmethod quest-has-trigger (quest (trigger function))
   (let* ((quest-data (get-quest-data (get-id quest)))
          (state (quest-state quest))
          (triggers (gethash state (quest-states quest-data)))
-         (cmd (cdr (assoc trigger triggers :test #'equal))))
+         (cmd (cdr (assoc-if trigger triggers))))
+    cmd))
+
+(defmethod quest-has-trigger (quest (trigger list))
+  (quest-has-trigger quest (lambda (tr) (equal tr trigger))))
+
+(defmethod quest-has-trigger (quest (trigger symbol))
+  (quest-has-trigger quest (lambda (tr) (equal tr trigger))))
+
+(defun do-quest-trigger (quest trigger)
+  (let ((cmd (quest-has-trigger quest trigger)))
     (when cmd
       (mapc (lambda (x) (run-quest-command quest x)) cmd))))
-
-(defun quest-has-trigger (quest trigger)
-  (let* ((quest-data (get-quest-data (get-id quest)))
-         (state (quest-state quest))
-         (triggers (gethash state (quest-states quest-data)))
-         (cmd (cdr (assoc trigger triggers :test #'equal))))
-    cmd))
 
 ;; Triggers for all active quests (do not use this for 'initiate)
 ;; which have the appropriate trigger

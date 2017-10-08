@@ -7,11 +7,11 @@
 #|
  | These quest evaluation directives evolve into a
  | quest object.
- | !! (collect-object obj response)
+ | (collect-object item-match response)
  | (goto-location loc response)
  | (initiate-with npc text yes no)
  | (talk-to npc prompt response)
- | (give-object-to item-flag npc prompt yes-response no-response)
+ | (give-object-to item-match npc prompt yes-response no-response)
  |#
 
 #|
@@ -30,7 +30,7 @@
     state0 state1 state2 state3 state4 state5))
 
 (defconstant +quest-evaluation-directives+
-  '(goto-location initiate-with talk-to give-object-to))
+  '(collect-object goto-location initiate-with talk-to give-object-to))
 
 (defstruct quest-stub
   (establishment nil)
@@ -121,6 +121,14 @@
       (push trigger (gethash (quest-state-state0 state)
                              (quest-states (quest-state-data state)))))))
 
+(defmethod quest-eval-cmd ((cmd (eql 'collect-object)) args state)
+  (destructuring-bind (item-match response) args
+    (let ((trigger `((collect ,item-match)
+                     (narrate ,response)
+                     ,(quest-goto-cmd state))))
+      (push trigger (gethash (quest-state-state0 state)
+                             (quest-states (quest-state-data state)))))))
+
 (defun quest-eval-impl (gen quest state0 cmd final)
   (with-accessors ((states quest-states)) quest
     (flet ((goto (sym)
@@ -179,6 +187,7 @@
      :establishment `((put-object ,item ,loc))
      :evaluation `((initiate-with ,npc "Help!" "Sure!" "Meh.")
                    (goto-location ,loc "You got it!")
+                   (collect-object (flag ,flag) "Collected :)")
                    (talk-to ,npc "Give me stuff." "Not yet.")
                    (give-object-to (flag ,flag) ,npc "Give me stuff." "Hey, you helped!" "Meh.")))))
 

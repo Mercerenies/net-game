@@ -43,12 +43,19 @@
   (format t "~%** GAME OVER **~%You have died.~%~%")
   (funcall *do-exit*))
 
+(defmethod add-item :after (obj (inv player))
+  (when *player*
+    (do-trigger (lambda (trigger)
+                  (and (eql (first trigger) 'collect)
+                       (item-match (second trigger) obj))))))
+
 (defmethod object-nature ((obj player))
     'person)
 
 (defmethod system-keys append ((obj player))
            `((nil "Percent Explored" ,(if (plusp (hash-table-count *world*))
-                                          (* 100.0 (/ (visited-count *player*) (hash-table-count *world*)))
+                                          (* 100.0 (/ (visited-count *player*)
+                                                      (hash-table-count *world*)))
                                           0.0))
              (*key* "File Key" ,*key*)))
 

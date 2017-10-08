@@ -39,6 +39,7 @@
  |  * (visit <loc-id>) - This trigger automatically trips when the player moves onto the
  |    location with the ID <loc-id>. If multiple such triggers would trip, they will all be
  |    tripped, in an arbitrary order.
+ |  * (collect <item-match>) /////
  |#
 (defparameter *quest-triggers*
   '((initiate . 0)
@@ -134,7 +135,7 @@
     (setf (is-quest-completed quest) t)
     (quest-goto quest 'completed)))
 
-;; TODO Make it so triggers can be "matched" in more sophisticated ways than equality
+;; TODO Make it so triggers can be "matched" in more sophisticated ways than equality /////
 ;; (here and quest-has-trigger)
 (defun do-quest-trigger (quest trigger)
   (let* ((quest-data (get-quest-data (get-id quest)))

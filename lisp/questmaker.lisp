@@ -32,6 +32,7 @@
   '(collect-object goto-location initiate-with talk-to give-object-to))
 
 (defstruct quest-stub
+  (name "")
   (establishment nil)
   (evaluation nil))
 
@@ -156,7 +157,7 @@
 (defun quest-evaluate (stub)
   (check-type stub quest-stub)
   (loop with gen = (make-quest-state-generator)
-        with quest = (make-instance 'quest-data :id (gensym) :name "[Test]")
+        with quest = (make-instance 'quest-data :id (gensym) :name (quest-stub-name stub))
         with state = 0
         for cmds on (quest-stub-evaluation stub)
         for cmd = (car cmds)
@@ -175,6 +176,20 @@
   (loop for cmd in (quest-stub-establishment stub)
         do (quest-est-impl cmd)))
 
+;; TODO This is obviously a stub
+;; TODO We will need a way to have dialogue appear after initiate-with (/////)
+(defun generate-quest (npc)
+  (make-quest-stub
+   :name "Generated Quest" ; TODO Make actual names for these
+   :establishment ()
+   :evaluation `((initiate-with ,npc "Want a free quest? Just talk to me again!" "Yes" "No")
+                 (talk-to ,npc "I'm done" "Good job!"))))
+
+(defun generate-and-integrate-quest (npc)
+  (let ((q (generate-quest npc)))
+    (quest-establish q)
+    (quest-evaluate q)))
+
 ;;;; TODO DEBUG PROCEDURES ;;;;
 
 (defun sample-quest-! (npc)
@@ -183,6 +198,7 @@
         (loc (get-loc *player*)))
     (add-flag flag item)
     (make-quest-stub
+     :name "[Test]"
      :establishment `((put-object ,item ,loc))
      :evaluation `((initiate-with ,npc "Help!" "Sure!" "Meh.")
                    (goto-location ,loc "You got it!")

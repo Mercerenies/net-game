@@ -61,8 +61,7 @@
     ;; which has not been completed
     (when (and (zerop (getf counts :incomplete))
                (zerop (getf counts :unaccepted)))
-      ;; Generate a quest /////
-      (format t "Generating and stuff...~%"))))
+      (generate-and-integrate-quest obj))))
 
 (defun npc-quest-counts (npc)
   (check-type *knowledge-base* knowledge-base)

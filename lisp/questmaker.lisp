@@ -1,7 +1,7 @@
 (in-package #:net-game)
 
 #|
- | Unless otherwise stated, arguments are actual objects of the appropriate type, so
+ | Unless otherwise stated, arguments are actual objects of the appropriate type.
  |#
 
 #|
@@ -20,7 +20,6 @@
  | (put-object obj loc)
  |#
 
-;; ///// THE QUEST EVALUATE PROCEDURE DOES NOT HAVE ALL DIRECTIVES (!!)
 ;; 1. Write this function: Given directives, generate the quest and get the world ready for it
 ;; 2. Generating the directives is... another matter...
 

@@ -52,6 +52,34 @@
   (check-type *player* player)
   (npc-talk obj))
 
+(defmethod entity-turn ((obj person))
+  (check-type *knowledge-base* knowledge-base)
+  (check-type *player* player)
+  (let ((brain (knowledge-get *knowledge-base* (get-id obj)))
+        (counts (npc-quest-counts obj)))
+    ;; A quest should not be generated if the questgiver has a quest
+    ;; which has not been completed
+    (when (and (zerop (getf counts :incomplete))
+               (zerop (getf counts :unaccepted)))
+      ;; Generate a quest /////
+      (format t "Generating and stuff...~%"))))
+
+(defun npc-quest-counts (npc)
+  (check-type *knowledge-base* knowledge-base)
+  (check-type *player* player)
+  (loop with brain = (knowledge-get *knowledge-base* (get-id npc))
+        with result = (list :unaccepted 0 :incomplete 0 :complete 0)
+        for qid in (know-quests brain)
+        for active = (find qid (active-quests *player*))
+        when active
+          when (is-quest-completed active)
+            do (incf (getf result :complete))
+          else
+            do (incf (getf result :incomplete))
+        else
+          do (incf (getf result :unaccepted))
+        finally (return result)))
+
 (defun npc-talk (npc)
   (let ((urgent `(talk-to! ,(get-id npc))))
     (if (has-trigger urgent)

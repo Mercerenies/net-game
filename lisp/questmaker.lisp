@@ -12,6 +12,7 @@
  | (initiate-with npc text yes no)
  | (talk-to npc prompt response)
  | (give-object-to item-match npc prompt yes-response no-response)
+ | (and-then commands ...)
  |#
 
 #|
@@ -29,7 +30,7 @@
     state0 state1 state2 state3 state4 state5))
 
 (defconstant +quest-evaluation-directives+
-  '(collect-object goto-location initiate-with talk-to give-object-to))
+  '(collect-object goto-location initiate-with talk-to give-object-to and-then))
 
 (defstruct quest-stub
   (name "")
@@ -129,6 +130,13 @@
       (push trigger (gethash (quest-state-state0 state)
                              (quest-states (quest-state-data state)))))))
 
+(defmethod quest-eval-cmd ((cmd (eql 'and-then)) args state)
+  (let ((trigger `((auto)
+                   ,@args
+                   ,(quest-goto-cmd state))))
+    (push trigger (gethash (quest-state-state0 state)
+                           (quest-states (quest-state-data state))))))
+
 (defun quest-eval-impl (gen quest state0 cmd final)
   (with-accessors ((states quest-states)) quest
     (flet ((goto (sym)
@@ -177,12 +185,12 @@
         do (quest-est-impl cmd)))
 
 ;; TODO This is obviously a stub
-;; TODO We will need a way to have dialogue appear after initiate-with (/////)
 (defun generate-quest (npc)
   (make-quest-stub
    :name "Generated Quest" ; TODO Make actual names for these
    :establishment ()
-   :evaluation `((initiate-with ,npc "Want a free quest? Just talk to me again!" "Yes" "No")
+   :evaluation `((initiate-with ,npc "Want a free quest?" "Yes" "No")
+                 (and-then (speak "Just talk to me again!"))
                  (talk-to ,npc "I'm done" "Good job!"))))
 
 (defun generate-and-integrate-quest (npc)
@@ -201,6 +209,7 @@
      :name "[Test]"
      :establishment `((put-object ,item ,loc))
      :evaluation `((initiate-with ,npc "Help!" "Sure!" "Meh.")
+                   (and-then (speak "Okay, go to this location!"))
                    (goto-location ,loc "You got it!")
                    (collect-object (flag ,flag) "Collected :)")
                    (talk-to ,npc "Give me stuff." "Not yet.")

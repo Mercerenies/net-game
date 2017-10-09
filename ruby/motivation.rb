@@ -86,7 +86,7 @@ class MotivePriorities
 
   # Multiplies each quantity in this priority listing by the specified numerical value.
   def *(value)
-    MotivePriorities.new @hash.map { |k, x| [k, x / value] }
+    MotivePriorities.new @hash.map { |k, x| [k, x * value] }
   end
 
   # Combines the two motive instances together, adding up any matching terms in each.

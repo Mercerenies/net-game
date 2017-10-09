@@ -3,6 +3,9 @@
 (defparameter *quests*
   nil)
 
+(defparameter *quest-recursion-limit*
+  5)
+
 (defconstant +quest-types+
   '(quest))
 
@@ -46,13 +49,16 @@
  |  * (collect <item-match>) - This trigger trips when the player picks up an object which
  |    matches the <item-match> predicate. If multiple such triggers would trip, they will all
  |    be tripped, in an arbitrary order.
+ |  * (auto) - This trigger trips as soon as the quest reaches its state, during the "passive"
+ |    check.
  |#
 (defparameter *quest-triggers*
   '((initiate . 0)
     (talk-to . 2)
     (talk-to! . 1)
     (visit . 1)
-    (collect . 1)))
+    (collect . 1)
+    (auto . 0)))
 
 #|
  | Quest commands:
@@ -131,11 +137,24 @@
       (error "Malformed quest command - ~S" cmd))
     (apply func recurse quest (cdr cmd))))
 
+(defun quest-passive-check (quest)
+  (unless (plusp *quest-recursion-limit*)
+    (warn 'net-game-warning
+          :level 1
+          :text (format nil "Recursion limit hit at quest ~S (~S)"
+                        (get-name quest) (get-id quest)))
+    (return-from quest-recursive-goto nil))
+  (do-quest-trigger quest
+    (lambda (trigger)
+      (equal trigger '(auto)))))
+
 ;; No-op if trying to go to State 0, since that state is reserved
 (defun quest-goto (quest state)
   (check-type state (or integer symbol) "a state identifer (symbol / integer)")
   (unless (eql state 0)
-    (setf (quest-state quest) state)))
+    (setf (quest-state quest) state)
+    (let ((*quest-recursion-limit* (1- *quest-recursion-limit*)))
+      (quest-passive-check quest))))
 
 (defun quest-mark-complete (quest)
   (unless (is-quest-completed quest)
@@ -190,8 +209,8 @@
 (defun quest-accept (quest state)
   (check-type *player* player)
   (unless (has-started-quest (get-id quest))
-    (quest-goto quest state)
-    (push quest (active-quests *player*))))
+    (push quest (active-quests *player*))
+    (quest-goto quest state)))
 
 (defun get-quest-data (qid)
   (check-type *quests* hash-table)

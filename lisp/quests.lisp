@@ -20,10 +20,6 @@
  | spoken to.
  |#
 
-;; TODO visit and collect triggers should be able to "auto-trip" if
-;; the player is already in the correct location or already has the
-;; correct item when the trigger becomes available.
-
 #|
  | Quest triggers:
  |    (Note that most quest triggers are lists; some special ones, such as 'initiate, are symbols)
@@ -137,6 +133,8 @@
       (error "Malformed quest command - ~S" cmd))
     (apply func recurse quest (cdr cmd))))
 
+;; TODO We'd like the passive check to also check for location triggers and item triggers
+;; if they are already satisfied.
 (defun quest-passive-check (quest)
   (unless (plusp *quest-recursion-limit*)
     (warn 'net-game-warning

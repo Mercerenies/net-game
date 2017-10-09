@@ -69,3 +69,16 @@
               for curr = (- random (cdr value)) then (- curr (cdr value))
               until (< curr 0.0)
               finally (return (car value))))))
+
+(defun nshuffle (vec &key (multiplier 3))
+  "Shuffles the proper sequence in-place."
+  (loop with len = (length vec)
+        for i from 1 to (* multiplier len)
+        for n = (random len)
+        for m = (random len)
+        do (rotatef (elt vec n) (elt vec m))
+        finally (return vec)))
+
+(defun shuffle (vec &key (multiplier 3))
+  "Returns a shuffled copy of the proper sequence."
+  (nshuffle (copy-seq vec) :multiplier multiplier))

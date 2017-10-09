@@ -8,6 +8,7 @@ stage2=""
 stage3=""
 stage4=""
 clisp="clisp"
+small=""
 
 prefix="net"
 
@@ -26,12 +27,13 @@ if [ $1 == "--help" ]; then
     >&2 echo " -3 Run Stage 3 (Ruby / World Generation)"
     >&2 echo " -4 Run Stage 4 (Common Lisp / Gameplay)"
     >&2 echo " -l Use the given Common Lisp implementation"
+    >&2 echo " -s Enable small world mode"
     >&2 echo " ** For detailed information about any of these flags, consult the"
     >&2 echo "    documentation for ./stageN.sh, where N is the relevant stage."
     exit
 fi
 
-while getopts 'd:1234l:e:' opt; do
+while getopts 'd:1234l:e:s' opt; do
     case "$opt" in
         d) # Debug Mode
             debug="-d $OPTARG"
@@ -55,6 +57,9 @@ while getopts 'd:1234l:e:' opt; do
         e) # Expression
             expr="$OPTARG"
             ;;
+        s) # Small World
+            small='-s'
+            ;;
     esac
 done
 
@@ -77,7 +82,7 @@ if [ -n "$stage2" ]; then
     $stage2 <"./temp/${prefix}1.txt" >"./temp/${prefix}2.txt"
 fi
 if [ -n "$stage3" ]; then
-    $stage3 "$debug" <"./temp/${prefix}2.txt" >"./temp/system.txt"
+    $stage3 "$small" "$debug" <"./temp/${prefix}2.txt" >"./temp/system.txt"
 fi
 if [ -n "$stage4" ]; then
     $stage4

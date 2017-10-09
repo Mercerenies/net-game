@@ -57,3 +57,15 @@
                            (setf ,tail ,temp)))))
          ,@body
          ,head))))
+
+(defun weighted-random (weights)
+  "Takes an alist of values with associated weights and produces
+   one of the values in the alist at random."
+  (let ((total (reduce #'+ weights :key #'cdr)))
+    (if (<= total 0.0)
+        nil
+        (loop with random = (float (random total))
+              for value in weights
+              for curr = (- random (cdr value)) then (- curr (cdr value))
+              until (< curr 0.0)
+              finally (return (car value))))))

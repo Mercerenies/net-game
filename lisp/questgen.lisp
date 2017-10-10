@@ -20,7 +20,7 @@
 
 (defun generate (npc motive)
   (loop with possible = (cdr (assoc motive +quest-association+))
-        for (a . b) across (net-game::shuffle possible) ; TODO Export the #:net-game names
+        for (a . b) across (shuffle possible)
         for test = (funcall a npc)
         when test
             return (funcall b npc test)

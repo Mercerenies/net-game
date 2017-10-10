@@ -133,18 +133,20 @@
       (error "Malformed quest command - ~S" cmd))
     (apply func recurse quest (cdr cmd))))
 
-;; TODO We'd like the passive check to also check for location triggers and item triggers
-;; if they are already satisfied.
 (defun quest-passive-check (quest)
+  (check-type *player* player)
   (unless (plusp *quest-recursion-limit*)
     (warn 'net-game-warning
           :level 1
           :text (format nil "Recursion limit hit at quest ~S (~S)"
                         (get-name quest) (get-id quest)))
     (return-from quest-recursive-goto nil))
-  (do-quest-trigger quest
-    (lambda (trigger)
-      (equal trigger '(auto)))))
+  (flet ((passive (trigger)
+           (or (equal trigger '(auto))
+               (equal trigger `(visit ,(get-id (get-loc *player*))))
+               (and (eql (first trigger) 'collect)
+                    (some (lambda (item) (item-match (second trigger) item)) (inv-items *player*))))))
+    (do-quest-trigger quest #'passive)))
 
 ;; No-op if trying to go to State 0, since that state is reserved
 (defun quest-goto (quest state)

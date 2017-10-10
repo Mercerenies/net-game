@@ -30,6 +30,7 @@
 (load "./lisp/quests.lisp")
 (load "./lisp/brain.lisp")
 (load "./lisp/knowledge.lisp")
+(load "./lisp/questgen.lisp")
 (load "./lisp/questmaker.lisp")
 
 (load "./lisp/inventory.lisp")

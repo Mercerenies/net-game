@@ -184,14 +184,21 @@
   (loop for cmd in (quest-stub-establishment stub)
         do (quest-est-impl cmd)))
 
-;; TODO This is obviously a stub
-(defun generate-quest (npc)
+;; TODO This is just for debugging
+(defun generate-filler-quest (npc)
   (make-quest-stub
    :name "Generated Quest" ; TODO Make actual names for these
    :establishment ()
    :evaluation `((initiate-with ,npc "Want a free quest?" "Yes" "No")
                  (and-then (speak "Just talk to me again!"))
                  (talk-to ,npc "I'm done" "Good job!"))))
+
+(defun generate-quest (npc)
+  (let* ((motives (know-motives (knowledge-get *knowledge-base* (get-id npc))))
+         (skewed-motives (mapcar (lambda (x) (cons (car x) (* (cdr x) (cdr x)))) motives))
+         (motive (weighted-random skewed-motives)))
+    (or (ng-quest-gen:generate npc motive)
+        (generate-filler-quest npc))))
 
 (defun generate-and-integrate-quest (npc)
   (let ((q (generate-quest npc)))

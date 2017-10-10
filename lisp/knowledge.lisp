@@ -100,7 +100,8 @@
                   (motives (return-from load-object
                              (loop for cell = motives then (cddr cell)
                                    while cell
-                                   collect (cons (first cell) (second cell)))))))
+                                   collect (cons (intern (string (first cell)) :keyword)
+                                                 (second cell)))))))
 
 (defmethod load-object ((header (eql 'npc-brain)) data)
   (let ((brain (make-human-knowledge :quests nil)))

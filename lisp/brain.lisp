@@ -37,8 +37,11 @@
 
 ;; N.B.: This function is linear in its first keyword argument (steps)
 ;; but exponential in the second (step-size).
-(defun find-somewhere-nearby (loc &key (steps 5) (step-size 2))
+(defun find-somewhere-nearby-binom (loc &key (steps 5) (step-size 2))
   (loop for i from 0 to steps
         for curr = loc then (choose near)
         for near = (halo curr step-size)
         finally (return curr)))
+
+(defun find-somewhere-nearby (loc &key (range 10))
+  (choose (halo loc range)))

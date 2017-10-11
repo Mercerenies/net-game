@@ -35,4 +35,10 @@
     (move-object obj (get-loc target))
     t))
 
-
+;; N.B.: This function is linear in its first keyword argument (steps)
+;; but exponential in the second (step-size).
+(defun find-somewhere-nearby (loc &key (steps 5) (step-size 2))
+  (loop for i from 0 to steps
+        for curr = loc then (choose near)
+        for near = (halo curr step-size)
+        finally (return curr)))

@@ -12,6 +12,8 @@
 ;; (We'll have to force the NPCs to have the right priorities for whatever we're
 ;; trying to do in order to test it)
 
+;; ///// Expand halo to be able to return an annulus, not just a ball.
+
 (defun knowledge-1-a (npc)
   nil)
 

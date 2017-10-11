@@ -6,8 +6,8 @@
            :initform 1
            :type integer)))
 
-(defun make-item (name)
-  (make-instance 'item :name name))
+(defun make-item (name &key (weight 1))
+  (make-instance 'item :name name :weight weight))
 
 (defun item-match (match item)
   (case (first match)

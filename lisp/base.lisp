@@ -149,7 +149,8 @@
             (remove obj (location-contents old-loc))))
     (setf (get-loc obj) new-loc)))
 
-(defun halo (node &optional (n 1) &key (self t))
+;; Don't use this function; use the new version below
+(defun halo-legacy (node &optional (n 1) &key (self t))
   (check-type *world* hash-table)
   (check-type node location)
   (if (not (plusp n))
@@ -159,6 +160,41 @@
             finally (if self
                         (return (remove-duplicates (cons node result)))
                         (return (remove-duplicates result))))))
+
+(defun halo (node &optional (n 1) &key (self t))
+  (check-type *world* hash-table)
+  (check-type node location)
+  (labels ((singleton (val)
+             (cons val (cons nil nil)))
+           (nmerge-skew (p q)
+             (unless (and p q)
+               (return-from nmerge-skew (or p q)))
+             (when (> (cdar p) (cdar q))
+               (return-from nmerge-skew (nmerge-skew q p)))
+             (let ((r (cons (car p) (cons nil (cadr p))))
+                   (rec (nmerge-skew (cddr p) q)))
+               (setf (cadr r) rec)
+               r))
+           (ninsert-skew (p val)
+             (nmerge-skew p (singleton val)))
+           (nremove-skew (p)
+             (if p
+                 (list (car p)
+                       (nmerge-skew (cadr p) (cddr p)))
+                 (list nil nil))))
+    (loop with visited = (make-hash-table)
+          for (curr frontier) = (list (cons node 0) nil) then (nremove-skew frontier)
+          while curr
+          when (and (not (gethash (car curr) visited))
+                    (<= (cdr curr) n))
+              do (setf (gethash (car curr) visited) (cdr curr))
+              and do (loop for exit in (location-exits (car curr))
+                           do (setf frontier (ninsert-skew frontier
+                                                           (cons (gethash exit *world*)
+                                                                 (1+ (cdr curr))))))
+          finally (return (loop for key being the hash-keys in visited
+                                when (or self (not (eql key node)))
+                                    collect key)))))
 
 (defmethod print-object ((obj named) stream)
   (print-unreadable-object (obj stream :type t :identity t)

@@ -161,7 +161,7 @@
                         (return (remove-duplicates (cons node result)))
                         (return (remove-duplicates result))))))
 
-(defun halo (node &optional (n 1) &key (self t))
+(defun halo-distances (node n)
   (check-type *world* hash-table)
   (check-type node location)
   (labels ((singleton (val)
@@ -192,9 +192,18 @@
                            do (setf frontier (ninsert-skew frontier
                                                            (cons (gethash exit *world*)
                                                                  (1+ (cdr curr))))))
-          finally (return (loop for key being the hash-keys in visited
-                                when (or self (not (eql key node)))
-                                    collect key)))))
+          finally (return (loop for key being the hash-keys in visited using (hash-value value)
+                                collect (cons key value))))))
+
+(defun halo-annulus (node lower upper)
+  (loop for (k . v) in (halo-distances node upper)
+        when (>= v lower)
+            collect k))
+
+(defun halo (node &optional (n 1) &key (self t))
+  (if self
+      (halo-annulus node 0 n)
+      (halo-annulus node 1 n)))
 
 (defmethod print-object ((obj named) stream)
   (print-unreadable-object (obj stream :type t :identity t)

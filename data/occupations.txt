@@ -125,3 +125,4 @@ rapper                 musician
 astronaut              scientist
 cosmonaut              scientist
 detective              officer
+sociologist            scientist

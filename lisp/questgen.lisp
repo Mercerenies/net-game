@@ -12,8 +12,6 @@
 ;; (We'll have to force the NPCs to have the right priorities for whatever we're
 ;; trying to do in order to test it)
 
-;; ///// Expand halo to be able to return an annulus, not just a ball.
-
 (defun ng-quest-gen::knowledge-1-a (npc)
   (flet ((fitness (x)
            (location-fitness-for x :treasure)))
@@ -37,6 +35,7 @@
                                  "Oh, excellent!" "Sorry for all the trouble."))))
 
 (defun ng-quest-gen:generate (npc motive)
+  (setq motive :knowledge) ; TODO Manual override for debugging
   (loop with possible = (cdr (assoc motive ng-quest-gen:+quest-association+))
         for (a . b) across (shuffle possible)
         for test = (funcall a npc)

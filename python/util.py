@@ -40,7 +40,7 @@ def group_into(iterable, n):
     """
     it = iter(iterable)
     while True:
-        curr = (*itertools.islice(it, n),)
-        if curr is ():
+        curr = tuple(itertools.islice(it, n))
+        if not curr:
             break
         yield curr

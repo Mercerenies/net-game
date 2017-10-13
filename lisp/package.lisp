@@ -19,6 +19,7 @@
 
 (load "./lisp/base.lisp")
 (load "./lisp/load.lisp")
+(load "./lisp/pattern.lisp")
 (load "./lisp/delta.lisp")
 (load "./lisp/numbernoun.lisp")
 (load "./lisp/parser.lisp")

@@ -34,6 +34,20 @@
                  (give-object-to (flag ,(getf test :flag)) ,npc "Your book?"
                                  "Oh, excellent!" "Sorry for all the trouble."))))
 
+(defun ng-quest-gen::knowledge-2-a (npc)
+  (flet ((get-animals (loc)
+           (loop for obj in (location-contents loc)
+                 when (typep obj 'animal)
+                     collect (anim-data obj)
+                 when (and (typep obj 'neo-spawner)
+                           (type (neo-spawner-creature obj) 'animal-data))
+                     collect (neo-spawner-creature obj))))
+    (let* ((objs (mapcan #'get-animals (halo (get-loc npc) 7))))
+      ()))) ; ////
+
+(defun ng-quest-gen::knowledge-2-b (npc)
+  )
+
 (defun ng-quest-gen:generate (npc motive)
   (setq motive :knowledge) ; TODO Manual override for debugging
   (loop with possible = (cdr (assoc motive ng-quest-gen:+quest-association+))

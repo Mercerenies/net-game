@@ -109,21 +109,6 @@
                                               (remove-if (lambda (x) (item-match match x))
                                                          (inv-items *player*) :count 1))))))
 
-#|
- | Quest Predicates:
- |  * (and <args> ...) - All of the predicates must match.
- |  * (or <args> ...) - At least one of the predicates must match.
- |  * (item <item-match>) - An item matching the predicate.
- |  * (animal-of-type <id>) - An animal whose data has the given ID.
- |#
-(defparameter *quest-predicates*
-  `((and . ,(lambda (g obj &rest preds) (every g preds)))
-    (or . ,(lambda (g obj &rest preds) (some g preds)))
-    (item . ,(lambda (g obj match) (and (typep obj 'item)
-                                        (item-match match obj))))
-    (animal-of-type . ,(lambda (g obj id) (and (typep obj 'animal)
-                                               (eql (get-id (anim-data obj)) id))))))
-
 (defgeneric run-quest-command (quest cmd))
 
 ;; These are the read-only objects that are stored in *quests*
@@ -147,13 +132,6 @@
     (unless func
       (error "Malformed quest command - ~S" cmd))
     (apply func recurse quest (cdr cmd))))
-
-(defun check-quest-predicate (pred obj)
-  (let ((func (cdr (assoc (car pred) *quest-predicates*)))
-        (recurse (lambda (pred1) (check-quest-predicate pred1 obj))))
-    (unless func
-      (error "Malformed quest predicate - ~S" pred))
-    (apply func recurse obj (cdr pred))))
 
 (defun quest-passive-check (quest)
   (check-type *player* player)

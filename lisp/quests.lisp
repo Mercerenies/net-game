@@ -42,8 +42,8 @@
  |  * (visit <loc-id>) - This trigger automatically trips when the player moves onto the
  |    location with the ID <loc-id>. If multiple such triggers would trip, they will all be
  |    tripped, in an arbitrary order.
- |  * (collect <item-match>) - This trigger trips when the player picks up an object which
- |    matches the <item-match> predicate. If multiple such triggers would trip, they will all
+ |  * (collect <match>) - This trigger trips when the player picks up an object which
+ |    matches the <match> predicate. If multiple such triggers would trip, they will all
  |    be tripped, in an arbitrary order.
  |  * (auto) - This trigger trips as soon as the quest reaches its state, during the "passive"
  |    check.
@@ -73,10 +73,10 @@
  |    the given command based on the response given by the player.
  |  * (narrate-branch <prompt> &rest <text> <command>) - Display a branching dialogue choice
  |    verbatim, executing the given command based on the response given by the player.
- |  * (if-has-item <item-match> <true> <false>) - Checks whether the player has an item
- |    matching <item-match>. If he/she does, execute the <true> branch. Otherwise, execute
+ |  * (if-has-item <match> <true> <false>) - Checks whether the player has an item
+ |    matching <match>. If he/she does, execute the <true> branch. Otherwise, execute
  |    the <false> branch.
- |  * (remove-item <item-match>) - Remove the first item matching <item-match> from the
+ |  * (remove-item <match>) - Remove the first item matching <match> from the
  |    player's inventory, or no items if none match.
  |#
 (defparameter *quest-commands*
@@ -101,12 +101,12 @@
                                       collect (let ((arg1 arg))
                                                 (cons (first arg1)
                                                       (lambda () (funcall g (second arg1)))))))))
-    (if-has-item . ,(lambda (g q match true false) (if (some (lambda (x) (item-match match x))
+    (if-has-item . ,(lambda (g q match true false) (if (some (lambda (x) (matches-p x match))
                                                              (inv-items *player*))
                                                        (funcall g true)
                                                        (funcall g false))))
     (remove-item . ,(lambda (g q match) (setf (inv-items *player*)
-                                              (remove-if (lambda (x) (item-match match x))
+                                              (remove-if (lambda (x) (matches-p x match))
                                                          (inv-items *player*) :count 1))))))
 
 (defgeneric run-quest-command (quest cmd))
@@ -145,7 +145,7 @@
            (or (equal trigger '(auto))
                (equal trigger `(visit ,(get-id (get-loc *player*))))
                (and (eql (first trigger) 'collect)
-                    (some (lambda (item) (item-match (second trigger) item)) (inv-items *player*))))))
+                    (some (lambda (item) (match item (second trigger))) (inv-items *player*))))))
     (do-quest-trigger quest #'passive)))
 
 ;; No-op if trying to go to State 0, since that state is reserved

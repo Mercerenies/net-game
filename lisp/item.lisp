@@ -9,13 +9,6 @@
 (defun make-item (name &key (weight 1))
   (make-instance 'item :name name :weight weight))
 
-(defun item-match (match item)
-  (case (first match)
-    (flag (check-flag (second match) item))
-    (name (equalp (second match) (get-name item)))
-    (id (eql (second match) (get-id item)))
-    (t nil)))
-
 (defclass weapon (item)
   ((type :accessor weapon-type
          :initarg :type

@@ -47,7 +47,7 @@
   (when *player*
     (do-trigger (lambda (trigger)
                   (and (eql (first trigger) 'collect)
-                       (item-match (second trigger) obj))))))
+                       (matches-p obj (second trigger)))))))
 
 (defmethod object-nature ((obj player))
     'person)

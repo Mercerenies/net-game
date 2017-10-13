@@ -7,11 +7,11 @@
 #|
  | These quest evaluation directives evolve into a
  | quest object.
- | (collect-object item-match response)
+ | (collect-object match response)
  | (goto-location loc response)
  | (initiate-with npc text yes no)
  | (talk-to npc prompt response)
- | (give-object-to item-match npc prompt yes-response no-response)
+ | (give-object-to match npc prompt yes-response no-response)
  | (and-then commands ...)
  |#
 
@@ -103,11 +103,11 @@
                              (quest-states (quest-state-data state)))))))
 
 (defmethod quest-eval-cmd ((cmd (eql 'give-object-to)) args state)
-  (destructuring-bind (item-match npc prompt yes-response no-response) args
+  (destructuring-bind (match npc prompt yes-response no-response) args
     (let ((trigger `((talk-to ,(get-id npc) ,prompt)
-                     (if-has-item ,item-match
+                     (if-has-item ,match
                                   (begin
-                                   (remove-item ,item-match)
+                                   (remove-item ,match)
                                    (speak ,yes-response)
                                    ,(quest-goto-cmd state))
                                   (speak ,no-response)))))
@@ -123,8 +123,8 @@
                              (quest-states (quest-state-data state)))))))
 
 (defmethod quest-eval-cmd ((cmd (eql 'collect-object)) args state)
-  (destructuring-bind (item-match response) args
-    (let ((trigger `((collect ,item-match)
+  (destructuring-bind (match response) args
+    (let ((trigger `((collect ,match)
                      (narrate ,response)
                      ,(quest-goto-cmd state))))
       (push trigger (gethash (quest-state-state0 state)

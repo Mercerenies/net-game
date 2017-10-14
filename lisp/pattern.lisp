@@ -28,5 +28,3 @@
       (error "Malformed match predicate - ~S" pred))
     (apply func recurse obj (cdr pred))))
 
-;; TODO Deprecate and remove item-match and check-quest-predicate, as they are both
-;; rendered obsolete by this functionality. /////

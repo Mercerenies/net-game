@@ -216,7 +216,9 @@
      :name "[Test]"
      :establishment `((put-object ,item ,loc))
      :evaluation `((initiate-with ,npc "Help!" "Sure!" "Meh.")
-                   (and-then (give-item (item "Mini Pepperoni Pizza" :weight 2 :flags ())))
+                   (and-then (if-cond (give-item (item "Mini Pepperoni Pizza" :weight 99999 :flags ()))
+                                      (speak "Yes")
+                                      (speak "No")))
                    (give-object-to (flag ,flag) ,npc "Give me stuff." "Hey, you helped!" "Meh.")))))
 
 (defun sample-quest-encode-! ()

@@ -66,7 +66,8 @@
 
 #|
  | Quest commands:
- |  * (begin &rest <commands>) - Execute the commands in order.
+ |  * (begin &rest <commands>) - Execute the commands in order, returning the result of the
+ |    last one, or nil if no commands were given.
  |  * (goto <state>) - Change the current quest state to <state>, which should be either a symbol
  |    or an integer. Remember that the integer 0 is a special state that is reserved for un-accepted
  |    quests and should not be used for anything else.
@@ -85,13 +86,18 @@
  |    matching <match>. If he/she does, execute the <true> branch. Otherwise, execute
  |    the <false> branch.
  |  * (remove-item <match>) - Remove the first item matching <match> from the
- |    player's inventory, or no items if none match.
+ |    player's inventory, or no items if none match. Returns whether an item was removed.
  |  * (give-item <item-alpha>) - Constructs an item using load-object on <item-alpha>
- |    and gives that item to the player.
+ |    and gives that item to the player. Returns whether the item was given.
+ |  * (if-cond <stmt> <true> <false>) - Evaluates the statement and performs one of the
+ |    two branches depending on the return value.
  |#
 (defparameter *quest-commands*
   ;; Implementation Note: q is a temporarily created object for un-accepted quests
-  `((begin . ,(lambda (g q &rest commands) (mapc g commands)))
+  `((begin . ,(lambda (g q &rest commands) (loop with result = nil
+                                                 for cmd in commands
+                                                 do (setf result (g cmd))
+                                                 finally (return result))))
     (goto . ,(lambda (g q state) (quest-goto q state)))
     (complete . ,(lambda (g q) (quest-mark-complete q)))
     (accept . ,(lambda (g q state) (quest-accept q state)))
@@ -115,13 +121,19 @@
                                                              (inv-items *player*))
                                                        (funcall g true)
                                                        (funcall g false))))
-    (remove-item . ,(lambda (g q match) (setf (inv-items *player*)
-                                              (remove-if (lambda (x) (matches-p x match))
-                                                         (inv-items *player*) :count 1))))
+    (remove-item . ,(lambda (g q match) (prog1
+                                            (find-if (lambda (x) (matches-p x match))
+                                                     (inv-items *player*))
+                                          (setf (inv-items *player*)
+                                                (remove-if (lambda (x) (matches-p x match))
+                                                           (inv-items *player*) :count 1)))))
     (give-item . ,(lambda (g q alpha) (let ((item (whitelisted-load #'load-object '(item) alpha)))
                                         (if (can-carry-item item *player*)
-                                            (add-item item *player*)
-                                            nil)))))) ; TODO Have some special behavior if this fails
+                                            (prog1 t (add-item item *player*))
+                                            nil))))
+    (if-cond . ,(lambda (g q stmt true false) (if (funcall g stmt)
+                                                  (funcall g true)
+                                                  (funcall g false))))))
 
 (defgeneric run-quest-command (quest cmd))
 

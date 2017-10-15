@@ -29,7 +29,8 @@
    :name "Generated Quest"
    :establishment `((put-object ,(getf test :book) ,(getf test :location)))
    :evaluation `((initiate-with ,npc "Hey, I'm looking for a certain book."
-                                "I'll help." "I've got to go.")
+                                :yes-prompt "I'll help."
+                                :no-prompt "I've got to go.")
                  (and-then (speak "Okay, it should be nearby."))
                  (give-object-to (flag ,(getf test :flag)) ,npc "Your book?"
                                  "Oh, excellent!" "Sorry for all the trouble."))))
@@ -42,11 +43,12 @@
                  when (and (typep obj 'neo-spawner)
                            (type (neo-spawner-creature obj) 'animal-data))
                      collect (neo-spawner-creature obj))))
-    (let* ((objs (mapcan #'get-animals (halo (get-loc npc) 7))))
-      ()))) ; ////
+    (let* ((objs (mapcan #'get-animals (halo (get-loc npc) 7)))
+           (obj (choose objs)))
+      ())))
 
 (defun ng-quest-gen::knowledge-2-b (npc)
-  )
+  ())
 
 (defun ng-quest-gen:generate (npc motive)
   (setq motive :knowledge) ; TODO Manual override for debugging

@@ -9,7 +9,7 @@
  | quest object.
  | (collect-object match response)
  | (goto-location loc response)
- | (initiate-with npc text yes no)
+ | (initiate-with npc text &key yes-prompt no-prompt)
  | (talk-to npc prompt response)
  | (give-object-to match npc prompt yes-response no-response)
  | (and-then commands ...)
@@ -82,15 +82,15 @@
 (defgeneric quest-eval-cmd (cmd args state))
 
 (defmethod quest-eval-cmd ((cmd (eql 'initiate-with)) args state)
-  (destructuring-bind (npc text yes no) args
+  (destructuring-bind (npc text &key yes-prompt no-prompt) args
     ;; Add the quest to the NPC's knowledge base
     (push (get-id (quest-state-data state))
           (get-quest-list (get-id npc)))
     ;; And add the information to the quest itself
     (let ((trigger `(initiate
                      (branch ,text
-                             ,yes (accept ,(quest-state-state1 state))
-                             ,no (begin)))))
+                             ,yes-prompt (accept ,(quest-state-state1 state))
+                             ,no-prompt (begin)))))
       (push trigger (gethash (quest-state-state0 state)
                              (quest-states (quest-state-data state)))))))
 
@@ -189,7 +189,7 @@
   (make-quest-stub
    :name "Generated Quest" ; TODO Make actual names for these
    :establishment ()
-   :evaluation `((initiate-with ,npc "Want a free quest?" "Yes" "No")
+   :evaluation `((initiate-with ,npc "Want a free quest?" :yes-prompt "Yes" :no-prompt "No")
                  (and-then (speak "Just talk to me again!"))
                  (talk-to ,npc "I'm done" "Good job!"))))
 
@@ -215,7 +215,7 @@
     (make-quest-stub
      :name "[Test]"
      :establishment `((put-object ,item ,loc))
-     :evaluation `((initiate-with ,npc "Help!" "Sure!" "Meh.")
+     :evaluation `((initiate-with ,npc "Help!" :yes-prompt "Sure!" :no-prompt "Meh.")
                    (and-then (if-cond (give-item (item "Mini Pepperoni Pizza" :weight 99999 :flags ()))
                                       (speak "Yes")
                                       (speak "No")))

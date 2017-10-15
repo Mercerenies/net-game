@@ -76,6 +76,7 @@
     (t
      (format t "You're already carrying too much.~%"))))
 
+;; TODO Give the player a warning if the object being dropped is a quest object
 (defmethod do-action ((act (eql 'drop)) (obj item) preps)
   (declare (ignore preps))
   (if (has-item obj *player*)

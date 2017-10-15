@@ -216,10 +216,7 @@
      :name "[Test]"
      :establishment `((put-object ,item ,loc))
      :evaluation `((initiate-with ,npc "Help!" "Sure!" "Meh.")
-                   (and-then (speak "Okay, go to this location!"))
-                   (goto-location ,loc "You got it!")
-                   (collect-object (flag ,flag) "Collected :)")
-                   (talk-to ,npc "Give me stuff." "Not yet.")
+                   (and-then (give-item (item "Mini Pepperoni Pizza" :weight 2 :flags ())))
                    (give-object-to (flag ,flag) ,npc "Give me stuff." "Hey, you helped!" "Meh.")))))
 
 (defun sample-quest-encode-! ()

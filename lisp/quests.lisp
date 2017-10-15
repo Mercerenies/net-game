@@ -117,7 +117,11 @@
                                                        (funcall g false))))
     (remove-item . ,(lambda (g q match) (setf (inv-items *player*)
                                               (remove-if (lambda (x) (matches-p x match))
-                                                         (inv-items *player*) :count 1))))))
+                                                         (inv-items *player*) :count 1))))
+    (give-item . ,(lambda (g q alpha) (let ((item (whitelisted-load #'load-object '(item) alpha)))
+                                        (if (can-carry-item item *player*)
+                                            (add-item item *player*)
+                                            nil)))))) ; TODO Have some special behavior if this fails
 
 (defgeneric run-quest-command (quest cmd))
 

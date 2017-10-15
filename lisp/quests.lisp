@@ -47,6 +47,12 @@
  |    be tripped, in an arbitrary order.
  |  * (auto) - This trigger trips as soon as the quest reaches its state, during the "passive"
  |    check.
+ |  * (use <match>) - This trigger trips when the player "uses" an object matching <match> with
+ |    no target. The item that matches <match> must be in the player's inventory.
+ |  * (use-on <match-source> <match-target>) - This trigger trips when the player "uses" an
+ |    object matching <match-source> on an object matching <match-target>. The item
+ |    matching <match-source> must be in the player's inventory, but the object matching
+ |    <match-target> is not subject to this restriction.
  |#
 (defparameter *quest-triggers*
   '((initiate . 0)
@@ -54,7 +60,9 @@
     (talk-to! . 1)
     (visit . 1)
     (collect . 1)
-    (auto . 0)))
+    (auto . 0)
+    (use . 1)
+    (use-on . 2)))
 
 #|
  | Quest commands:
@@ -78,6 +86,8 @@
  |    the <false> branch.
  |  * (remove-item <match>) - Remove the first item matching <match> from the
  |    player's inventory, or no items if none match.
+ |  * (give-item <item-alpha>) - Constructs an item using load-object on <item-alpha>
+ |    and gives that item to the player.
  |#
 (defparameter *quest-commands*
   ;; Implementation Note: q is a temporarily created object for un-accepted quests
@@ -183,12 +193,14 @@
 
 ;; Triggers for all active quests (do not use this for 'initiate)
 ;; which have the appropriate trigger
+;; TODO Make the return value more useful
 (defun do-trigger (trigger)
   (check-type *player* player)
   (mapc (lambda (q) (do-quest-trigger q trigger))
         (active-quests *player*)))
 
 ;; Triggers for the first active quest which has the appropriate trigger
+;; and returns whether or not a trigger was performed
 (defun do-first-trigger (trigger)
   (check-type *player* player)
   (loop for q in (active-quests *player*)

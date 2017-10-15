@@ -91,6 +91,18 @@
   (format t "An item weighing about ~A units.~%"
           (item-weight obj)))
 
+(defmethod do-action ((act (eql 'use)) (obj item) preps)
+  (let* ((target (getf preps 'on))
+         (trigger-pred (if target
+                           (lambda (trigger) (and (eql (first trigger) 'use-on)
+                                                  (matches-p obj (second trigger))
+                                                  (matches-p target (third trigger))))
+                           (lambda (trigger) (and (eql (first trigger) 'use)
+                                                  (matches-p obj (second trigger)))))))
+    (or (do-first-trigger trigger-pred)
+        (call-next-method)))) ; ///// Test me
+;; ///// Need a quest directive for giving someone a generic item (with possible failure if not enough space in inventory)
+
 (defmethod object-nature ((obj item))
     'item)
 

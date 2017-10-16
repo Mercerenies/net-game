@@ -11,49 +11,68 @@
 
 ;; TODO Quests should reward the player upon completion; currently they just sort of... finish
 
-#|
- | A quest consists of a collection (alist) of states, indexed by integers or symbols. Each state
- | consists of an alist of triggers associated with lists of commands to execute when the trigger
- | is tripped. State 0 of a quest is a special state, in that it is the state an un-accepted quest
- | is in. A quest that has not been accepted yet will only trigger "initiate" triggers and only
- | when the quest in question is in the *knowledge-base* associated with the NPC the player has
- | spoken to.
- |#
+;; A quest consists of a collection (alist) of states, indexed by
+;; integers or symbols. Each state consists of an alist of triggers
+;; associated with lists of commands to execute when the trigger is
+;; tripped. State 0 of a quest is a special state, in that it is the
+;; state an un-accepted quest is in. A quest that has not been
+;; accepted yet will only trigger "initiate" triggers and only when
+;; the quest in question is in the *knowledge-base* associated with
+;; the NPC the player has spoken to.
 
-#|
- | Quest triggers:
- |    (Note that most quest triggers are lists; some special ones, such as 'initiate, are symbols)
- |    (Note also that triggers only trip if the quest has been accepted; 'initiate is the one and only
- |     exception to this rule)
- |    (This alist associates each quest trigger with its arity)
- |  * initiate - When an un-accepted quest is in the knowledge base for an NPC and the player talks
- |    to that NPC and asks if he/she can help with anything ("requests a quest", in a sense), The
- |    initiate trigger is tripped, usually introducing the quest and allowing the player to accept
- |    it voluntarily. Note that initiate will ONLY trigger in State 0 and only if the
- |    *knowledge-base* associates the NPC with the quest in question.
- |  * (talk-to <npc-id> <prompt>) - When the player talks to the NPC with ID <npc-id>, in the
- |    NPC's menu, there will be an option with the text <prompt>. If the player chooses this
- |    option, the trigger will trip.
- |  * (talk-to! <npc-id>) - This is the more "urgent" version of the talk-to trigger. If the
- |    player talks with the NPC with ID <npc-id>, this trigger is tripped immediately and, if
- |    it exists, overrides the normal NPC menu. This trigger should be used sparingly, for if
- |    there are multiple talk-to! triggers from different quests, the order of precedence is
- |    arbitrary.
- |  * (visit <loc-id>) - This trigger automatically trips when the player moves onto the
- |    location with the ID <loc-id>. If multiple such triggers would trip, they will all be
- |    tripped, in an arbitrary order.
- |  * (collect <match>) - This trigger trips when the player picks up an object which
- |    matches the <match> predicate. If multiple such triggers would trip, they will all
- |    be tripped, in an arbitrary order.
- |  * (auto) - This trigger trips as soon as the quest reaches its state, during the "passive"
- |    check.
- |  * (use <match>) - This trigger trips when the player "uses" an object matching <match> with
- |    no target. The item that matches <match> must be in the player's inventory.
- |  * (use-on <match-source> <match-target>) - This trigger trips when the player "uses" an
- |    object matching <match-source> on an object matching <match-target>. The item
- |    matching <match-source> must be in the player's inventory, but the object matching
- |    <match-target> is not subject to this restriction.
- |#
+;; Quest triggers:
+;;
+;;    (Note that most quest triggers are lists; some special ones,
+;;    such as 'initiate, are symbols)
+;;
+;;    (Note also that triggers only trip if the quest has been
+;;     accepted; 'initiate is the one and only exception to this rule)
+;;
+;;    (This alist associates each quest trigger with its arity)
+;;
+;;  * initiate - When an un-accepted quest is in the knowledge base
+;;    for an NPC and the player talks to that NPC and asks if he/she
+;;    can help with anything ("requests a quest", in a sense), The
+;;    initiate trigger is tripped, usually introducing the quest and
+;;    allowing the player to accept it voluntarily. Note that initiate
+;;    will ONLY trigger in State 0 and only if the *knowledge-base*
+;;    associates the NPC with the quest in question.
+;;
+;;  * (talk-to <npc-id> <prompt>) - When the player talks to the NPC
+;;    with ID <npc-id>, in the NPC's menu, there will be an option
+;;    with the text <prompt>. If the player chooses this option, the
+;;    trigger will trip.
+;;
+;;  * (talk-to! <npc-id>) - This is the more "urgent" version of the
+;;    talk-to trigger. If the player talks with the NPC with ID
+;;    <npc-id>, this trigger is tripped immediately and, if it exists,
+;;    overrides the normal NPC menu. This trigger should be used
+;;    sparingly, for if there are multiple talk-to! triggers from
+;;    different quests, the order of precedence is arbitrary.
+;;
+;;  * (visit <loc-id>) - This trigger automatically trips when the
+;;    player moves onto the location with the ID <loc-id>. If multiple
+;;    such triggers would trip, they will all be tripped, in an
+;;    arbitrary order.
+;;
+;;  * (collect <match>) - This trigger trips when the player picks up
+;;    an object which matches the <match> predicate. If multiple such
+;;    triggers would trip, they will all be tripped, in an arbitrary
+;;    order.
+;;
+;;  * (auto) - This trigger trips as soon as the quest reaches its
+;;    state, during the "passive" check.
+;;
+;;  * (use <match>) - This trigger trips when the player "uses" an
+;;    object matching <match> with no target. The item that matches
+;;    <match> must be in the player's inventory.
+;;
+;;  * (use-on <match-source> <match-target>) - This trigger trips when
+;;    the player "uses" an object matching <match-source> on an object
+;;    matching <match-target>. The item matching <match-source> must
+;;    be in the player's inventory, but the object matching
+;;    <match-target> is not subject to this restriction.
+;;
 (defparameter *quest-triggers*
   '((initiate . 0)
     (talk-to . 2)
@@ -64,34 +83,55 @@
     (use . 1)
     (use-on . 2)))
 
-#|
- | Quest commands:
- |  * (begin &rest <commands>) - Execute the commands in order, returning the result of the
- |    last one, or nil if no commands were given.
- |  * (goto <state>) - Change the current quest state to <state>, which should be either a symbol
- |    or an integer. Remember that the integer 0 is a special state that is reserved for un-accepted
- |    quests and should not be used for anything else.
- |  * (complete) - Complete the current quest. This also sends the quest into the 'completed state.
- |    This is a no-op if the quest has already been completed.
- |  * (accept <state>) - Accept the current quest. This is a no-op if the quest has already
- |    been accepted. Since State 0 is reserved for un-accepted quests, this will also send the
- |    quest into state <state>.
- |  * (speak <text>) - Causes the given text to be output as though spoken in dialogue.
- |  * (narrate <text>) - Causes the given text to be output verbatim.
- |  * (branch <prompt> &rest <text> <command>) - Display a branching dialogue choice, executing
- |    the given command based on the response given by the player.
- |  * (narrate-branch <prompt> &rest <text> <command>) - Display a branching dialogue choice
- |    verbatim, executing the given command based on the response given by the player.
- |  * (if-has-item <match> <true> <false>) - Checks whether the player has an item
- |    matching <match>. If he/she does, execute the <true> branch. Otherwise, execute
- |    the <false> branch.
- |  * (remove-item <match>) - Remove the first item matching <match> from the
- |    player's inventory, or no items if none match. Returns whether an item was removed.
- |  * (give-item <item-alpha>) - Constructs an item using load-object on <item-alpha>
- |    and gives that item to the player. Returns whether the item was given.
- |  * (if-cond <stmt> <true> <false>) - Evaluates the statement and performs one of the
- |    two branches depending on the return value.
- |#
+;;
+;; Quest commands:
+;;
+;;  * (begin &rest <commands>) - Execute the commands in order,
+;;    returning the result of the last one, or nil if no commands were
+;;    given.
+;;
+;;  * (goto <state>) - Change the current quest state to <state>,
+;;    which should be either a symbol or an integer. Remember that the
+;;    integer 0 is a special state that is reserved for un-accepted
+;;    quests and should not be used for anything else.
+;;
+;;  * (complete) - Complete the current quest. This also sends the
+;;    quest into the 'completed state.  This is a no-op if the quest
+;;    has already been completed.
+;;
+;;  * (accept <state>) - Accept the current quest. This is a no-op if
+;;    the quest has already been accepted. Since State 0 is reserved
+;;    for un-accepted quests, this will also send the quest into state
+;;    <state>.
+;;
+;;  * (speak <text>) - Causes the given text to be output as though
+;;  * spoken in dialogue.
+;;
+;;  * (narrate <text>) - Causes the given text to be output verbatim.
+;;
+;;  * (branch <prompt> &rest <text> <command>) - Display a branching
+;;    dialogue choice, executing the given command based on the
+;;    response given by the player.
+;;
+;;  * (narrate-branch <prompt> &rest <text> <command>) - Display a
+;;    branching dialogue choice verbatim, executing the given command
+;;    based on the response given by the player.
+;;
+;;  * (if-has-item <match> <true> <false>) - Checks whether the player
+;;    has an item matching <match>. If he/she does, execute the <true>
+;;    branch. Otherwise, execute the <false> branch.
+;;
+;;  * (remove-item <match>) - Remove the first item matching <match>
+;;    from the player's inventory, or no items if none match. Returns
+;;    whether an item was removed.
+;;
+;;  * (give-item <item-alpha>) - Constructs an item using load-object
+;;    on <item-alpha> and gives that item to the player. Returns
+;;    whether the item was given.
+;;
+;;  * (if-cond <stmt> <true> <false>) - Evaluates the statement and
+;;    performs one of the two branches depending on the return value.
+;;
 (defparameter *quest-commands*
   ;; Implementation Note: q is a temporarily created object for un-accepted quests
   `((begin . ,(lambda (g q &rest commands) (loop with result = nil

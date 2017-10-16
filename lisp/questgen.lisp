@@ -7,7 +7,8 @@
 
 (defconstant ng-quest-gen:+quest-association+
   '((:knowledge . #((ng-quest-gen::knowledge-1-a . ng-quest-gen::knowledge-1-b)
-                    (ng-quest-gen::knowledge-2-a . ng-quest-gen::knowledge-2-b)))))
+                    (ng-quest-gen::knowledge-2-a . ng-quest-gen::knowledge-2-b)
+                    (ng-quest-gen::knowledge-3-a . ng-quest-gen::knowledge-3-b)))))
 
 ;; ///// The next thing is to make the quest stubs for each different motive
 ;; (We'll have to force the NPCs to have the right priorities for whatever we're
@@ -72,6 +73,31 @@
                    (use-item-on (flag ,flag) (animal-of-type ,(get-id animal)) ,narration)
                    (give-object-to (flag ,flag) ,npc "I have your photograph."
                                    "Perfect! Thank you!" "That's not funny.")))))
+
+(defun ng-quest-gen::knowledge-3-a (npc)
+  (flet ((eligiblep (loc)
+           (not (check-flag 'civilized loc))))
+    (let* ((locs (remove-if (complement #'eligiblep) (halo-annulus (get-loc npc) 5 8)))
+           (loc (choose locs)))
+      (when loc
+        (list :location loc)))))
+
+(defun ng-quest-gen::knowledge-3-b (npc test)
+  (let* ((loc (getf test :location))
+         (loc-name (get-name loc)))
+    (make-quest-stub
+     :name "Generated Quest"
+     :establishment ()
+     :evaluation `((initiate-with ,npc ,(format nil "I would love to know about ~A." loc-name)
+                                  :yes-prompt "I'll go check it out."
+                                  :no-prompt "I don't have time.")
+                   (and-then (speak ,(format nil
+                                             "Okay. Just go visit ~A and then come tell me about it."
+                                             loc-name)))
+                   (goto-location ,loc ,(format nil
+                                                "You take a good long look at the ~A."
+                                                loc-name))
+                   (talk-to ,npc "I saw the area." "Really? Perfect!")))))
 
 (defun ng-quest-gen:generate (npc motive)
   (setq motive :knowledge) ; TODO Manual override for debugging

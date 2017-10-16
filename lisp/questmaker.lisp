@@ -82,15 +82,17 @@
 (defgeneric quest-eval-cmd (cmd args state))
 
 (defmethod quest-eval-cmd ((cmd (eql 'initiate-with)) args state)
-  (destructuring-bind (npc text &key yes-prompt no-prompt) args
+  (destructuring-bind (npc text &key yes-prompt no-prompt prompt) args
     ;; Add the quest to the NPC's knowledge base
     (push (get-id (quest-state-data state))
           (get-quest-list (get-id npc)))
     ;; And add the information to the quest itself
-    (let ((trigger `(initiate
-                     (branch ,text
-                             ,yes-prompt (accept ,(quest-state-state1 state))
-                             ,no-prompt (begin)))))
+    (let ((trigger (if prompt
+                       `(initiate ,(funcall prompt (quest-state-state1 state)))
+                       `(initiate
+                         (branch ,text
+                                 ,yes-prompt (accept ,(quest-state-state1 state))
+                                 ,no-prompt (begin))))))
       (push trigger (gethash (quest-state-state0 state)
                              (quest-states (quest-state-data state)))))))
 
@@ -215,10 +217,16 @@
     (make-quest-stub
      :name "[Test]"
      :establishment `((put-object ,item ,loc))
-     :evaluation `((initiate-with ,npc "Help!" :yes-prompt "Sure!" :no-prompt "Meh.")
-                   (and-then (if-cond (give-item (item "Mini Pepperoni Pizza" :weight 99999 :flags ()))
-                                      (speak "Yes")
-                                      (speak "No")))
+     :evaluation `((initiate-with ,npc "Help!"
+                                  :prompt ,(lambda (state1)
+                                             `(branch "Help!"
+                                                      "Yes!" (if-cond (give-item (item "Mini Pepperoni Pizza"
+                                                                                 :weight 9
+                                                                                 :flags ()))
+                                                                      (begin (speak "Yes")
+                                                                             (accept ,state1))
+                                                                      (speak "No"))
+                                                      "No!" (speak "Sorry!"))))
                    (give-object-to (flag ,flag) ,npc "Give me stuff." "Hey, you helped!" "Meh.")))))
 
 (defun sample-quest-encode-! ()

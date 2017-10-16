@@ -101,8 +101,7 @@
                            (lambda (trigger) (and (eql (first trigger) 'use)
                                                   (matches-p obj (second trigger)))))))
     (or (do-first-trigger trigger-pred)
-        (call-next-method)))) ; ///// Test me
-;; ///// Need a quest directive for giving someone a generic item (with possible failure if not enough space in inventory)
+        (call-next-method))))
 
 (defmethod object-nature ((obj item))
     'item)

@@ -96,7 +96,7 @@
                       :verbs '("go" "examine" "use" "activate" "collect"
                                "drop" "help" "quit" "attack" "talk" "probe"
                                "nuke" "summon" "eat" "console")
-                      :preps '("with")
+                      :preps '("with" "on")
                       :arts '("the" "a" "an"))))
 
 ;; TODO Factor out translate-noun into something that can be modified from the outside.

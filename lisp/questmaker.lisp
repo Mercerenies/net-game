@@ -13,6 +13,8 @@
  | (talk-to npc prompt response)
  | (give-object-to match npc prompt yes-response no-response)
  | (and-then commands ...)
+ | (use-item match response)
+ | (use-item-on match target-match response)
  |#
 
 #|
@@ -30,7 +32,8 @@
     state0 state1 state2 state3 state4 state5))
 
 (defconstant +quest-evaluation-directives+
-  '(collect-object goto-location initiate-with talk-to give-object-to and-then))
+  '(collect-object goto-location initiate-with talk-to give-object-to and-then
+    use-item use-item-on))
 
 (defstruct quest-stub
   (name "")
@@ -81,6 +84,7 @@
 
 (defgeneric quest-eval-cmd (cmd args state))
 
+;; TODO The text argument is unused if :prompt is supplied, so it should be optional
 (defmethod quest-eval-cmd ((cmd (eql 'initiate-with)) args state)
   (destructuring-bind (npc text &key yes-prompt no-prompt prompt) args
     ;; Add the quest to the NPC's knowledge base
@@ -138,6 +142,22 @@
                    ,(quest-goto-cmd state))))
     (push trigger (gethash (quest-state-state0 state)
                            (quest-states (quest-state-data state))))))
+
+(defmethod quest-eval-cmd ((cmd (eql 'use-item)) args state)
+  (destructuring-bind (match response) args
+    (let ((trigger `((use ,match)
+                     (narrate ,response)
+                     ,(quest-goto-cmd state))))
+      (push trigger (gethash (quest-state-state0 state)
+                             (quest-states (quest-state-data state)))))))
+
+(defmethod quest-eval-cmd ((cmd (eql 'use-item-on)) args state)
+  (destructuring-bind (match target-match response) args
+    (let ((trigger `((use-on ,match ,target-match)
+                     (narrate ,response)
+                     ,(quest-goto-cmd state))))
+      (push trigger (gethash (quest-state-state0 state)
+                             (quest-states (quest-state-data state)))))))
 
 (defun quest-eval-impl (gen quest state0 cmd final)
   (with-accessors ((states quest-states)) quest

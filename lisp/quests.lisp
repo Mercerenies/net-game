@@ -96,7 +96,7 @@
   ;; Implementation Note: q is a temporarily created object for un-accepted quests
   `((begin . ,(lambda (g q &rest commands) (loop with result = nil
                                                  for cmd in commands
-                                                 do (setf result (g cmd))
+                                                 do (setf result (funcall g cmd))
                                                  finally (return result))))
     (goto . ,(lambda (g q state) (quest-goto q state)))
     (complete . ,(lambda (g q) (quest-mark-complete q)))

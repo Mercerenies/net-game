@@ -10,6 +10,9 @@
                     (ng-quest-gen::knowledge-2-a . ng-quest-gen::knowledge-2-b)
                     (ng-quest-gen::knowledge-3-a . ng-quest-gen::knowledge-3-b)))))
 
+;; TODO Immersion. Some more generic responses, something for the NPCs
+;; to say if the player talks to them during the quest, etc.
+
 ;; ///// The next thing is to make the quest stubs for each different motive
 ;; (We'll have to force the NPCs to have the right priorities for whatever we're
 ;; trying to do in order to test it)

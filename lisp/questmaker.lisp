@@ -9,7 +9,7 @@
  | quest object.
  | (collect-object match response)
  | (goto-location loc response)
- | (initiate-with npc text &key yes-prompt no-prompt)
+ | (initiate-with npc text &key yes-prompt no-prompt prompt)
  | (talk-to npc prompt response)
  | (give-object-to match npc prompt yes-response no-response)
  | (and-then commands ...)

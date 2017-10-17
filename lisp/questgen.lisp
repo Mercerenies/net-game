@@ -8,7 +8,8 @@
 (defconstant ng-quest-gen:+quest-association+
   '((:knowledge . #((ng-quest-gen::knowledge-1-a . ng-quest-gen::knowledge-1-b)
                     (ng-quest-gen::knowledge-2-a . ng-quest-gen::knowledge-2-b)
-                    (ng-quest-gen::knowledge-3-a . ng-quest-gen::knowledge-3-b)))))
+                    (ng-quest-gen::knowledge-3-a . ng-quest-gen::knowledge-3-b)
+                    (ng-quest-gen::knowledge-4-a . ng-quest-gen::knowledge-4-b)))))
 
 ;; TODO Immersion. Some more generic varied responses, something for the NPCs
 ;; to say if the player talks to them during the quest, etc.
@@ -101,6 +102,40 @@
                                                 "You take a good long look at the ~A."
                                                 loc-name))
                    (talk-to ,npc "I saw the area." "Really? Perfect!")))))
+
+(defun ng-quest-gen::knowledge-4-a (npc)
+  (flet ((fitness (x)
+           (float (/ (length (intersection (person-jobs npc) (person-jobs x)))))))
+    (let* ((objs (loop for loc in (halo (get-loc npc) 8)
+                       append (loop for obj in (location-contents loc)
+                                    when (and (typep obj 'person)
+                                              (not (eql obj npc)))
+                                        collect (cons obj (fitness obj)))))
+           (obj (weighted-random objs)))
+      (when obj
+        (list :person obj)))))
+
+;; TODO Make some quest directives more general (so, for instance,
+;; talk-to could take a pattern to match rather than just an ID).
+(defun ng-quest-gen::knowledge-4-b (npc test)
+  (let* ((target (getf test :person))
+         (target-name (get-name target))
+         (target-job (person-job-name target)))
+    (make-quest-stub
+     :name "Generated Quest"
+     :establishment ()
+     :evaluation `((initiate-with ,npc ,(format nil "I want to learn about the work of a ~A."
+                                                target-job)
+                                  :yes-prompt "How can I help?"
+                                  :no-prompt "Sorry. I'm the wrong person to ask.")
+                   (and-then (speak ,(format nil
+                                             "You'll help? Alright, just go ask ~A about their job."
+                                             target-name)))
+                   (talk-to ,target "Tell me about your job." "Well, where do I begin? ...")
+                   (and-then (narrate ,(format nil
+                                               "~A tells you all about it."
+                                               target-name)))
+                   (talk-to ,npc "I learned something." "Oh, wonderful!")))))
 
 (defun ng-quest-gen:generate (npc motive)
   (setq motive :knowledge) ; TODO Manual override for debugging

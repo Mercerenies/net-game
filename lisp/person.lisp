@@ -28,6 +28,9 @@
 (defun make-person (id name &rest keys &key &allow-other-keys)
   (apply #'make-instance 'person :id id :name name keys))
 
+(defun person-jobs (npc)
+  (remove nil (list (person-job npc) (person-old-job npc))))
+
 ;; TODO More user-friendly text here
 (defmethod do-action ((type (eql 'examine)) (obj person) preps)
   (declare (ignore preps))

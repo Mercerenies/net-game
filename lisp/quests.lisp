@@ -105,7 +105,7 @@
 ;;    <state>.
 ;;
 ;;  * (speak <text>) - Causes the given text to be output as though
-;;  * spoken in dialogue.
+;;    spoken in dialogue.
 ;;
 ;;  * (narrate <text>) - Causes the given text to be output verbatim.
 ;;

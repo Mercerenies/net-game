@@ -23,6 +23,12 @@
  | (put-object obj loc)
  |#
 
+#|
+ | These quest macros will expand into quest commands when put into
+ | an evaluation context.
+ | (advance) ;; ///// Test me (use :prompt so it doesn't have to be a lambda any more)
+ |#
+
 ;; 1. Write this function: Given directives, generate the quest and get the world ready for it
 ;; 2. Generating the directives is... another matter...
 
@@ -91,7 +97,9 @@
   (list default stmt))
 
 (defmethod quest-macro-cmd ((base quest-base-commands) (stmt list) state &key default)
-  stmt)
+  (case (car list)
+    (advance (quest-goto-cmd state))
+    (t stmt)))
 
 (defgeneric quest-eval-cmd (base cmd args state))
 

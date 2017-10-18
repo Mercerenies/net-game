@@ -18,6 +18,8 @@
 ;; (We'll have to force the NPCs to have the right priorities for whatever we're
 ;; trying to do in order to test it)
 
+;; ///// "Complications"
+
 (defun ng-quest-gen::knowledge-1-a (npc)
   (flet ((fitness (x)
            (location-fitness-for x :treasure)))

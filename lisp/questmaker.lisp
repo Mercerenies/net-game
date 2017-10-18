@@ -72,13 +72,6 @@
           :initarg :final
           :accessor quest-state-final-p)))
 
-;; (defstruct (quest-eval-state (:conc-name quest-state-))
-;;   generator
-;;   data
-;;   state0
-;;   state1
-;;   final-p)
-
 ;; TODO This function doesn't currently check whether its argument
 ;; contains no duplicates.
 (defun make-quest-state-generator (&key (queue nil queue?))

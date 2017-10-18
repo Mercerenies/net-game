@@ -249,9 +249,7 @@
                  (talk-to ,npc "I'm done" "Good job!"))))
 
 (defun generate-quest (npc)
-  (let* ((motives (know-motives (knowledge-get *knowledge-base* (get-id npc))))
-         (skewed-motives (mapcar (lambda (x) (cons (car x) (* (cdr x) (cdr x)))) motives))
-         (motive (weighted-random skewed-motives)))
+  (let ((motive (ng-quest-gen:choose-motive npc)))
     (or (ng-quest-gen:generate npc motive)
         (generate-filler-quest npc))))
 

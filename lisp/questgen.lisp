@@ -3,7 +3,7 @@
 (defpackage #:net-game-quest-gen
   (:use :common-lisp #:net-game)
   (:nicknames :ng-quest-gen)
-  (:export :generate :generate-bind :+quest-association+))
+  (:export :choose-motive :generate-bind :generate :+quest-association+))
 
 (defconstant ng-quest-gen:+quest-association+
   '((:knowledge . #((ng-quest-gen::knowledge-1-a . ng-quest-gen::knowledge-1-b)
@@ -142,16 +142,23 @@
                                                target-name)))
                    (talk-to ,npc "I learned something." "Oh, wonderful!")))))
 
-(defun ng-quest-gen:generate-bind (npc motive)
+(defun ng-quest-gen:choose-motive (npc)
+  "Given an NPC, this function randomly selects a motivation of that
+   NPC, skewed toward the motivations that the NPC favors."
+  (let* ((motives (know-motives (knowledge-get *knowledge-base* (get-id npc))))
+         (skewed-motives (mapcar (lambda (x) (cons (car x) (* (cdr x) (cdr x)))) motives)))
+    (weighted-random skewed-motives)))
+
+(defun ng-quest-gen:generate-bind (obj motive)
   (setq motive :knowledge) ; TODO Manual override for debugging
   (loop with possible = (cdr (assoc motive ng-quest-gen:+quest-association+))
         for (a . b) across (shuffle possible)
-        for test = (funcall a npc)
+        for test = (funcall a obj)
         when test
             return (values b test)
         finally (return (values nil nil))))
 
-(defun ng-quest-gen:generate (npc motive)
+(defun ng-quest-gen:generate (obj motive)
   (multiple-value-bind (b test)
-      (ng-quest-gen:generate-bind npc motive)
-    (funcall b npc test)))
+      (ng-quest-gen:generate-bind obj motive)
+    (funcall b obj test)))

@@ -106,7 +106,7 @@
 (defmethod quest-macro-cmd ((base quest-base-state) (stmt list) &key default)
   (case (car stmt)
     (advance (quest-goto-cmd base))
-    (t stmt)))
+    (t (walk-quest-command (lambda (cmd) (quest-macro-cmd base cmd :default default)) stmt))))
 
 (defgeneric quest-eval-cmd (base cmd args))
 

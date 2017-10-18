@@ -175,6 +175,37 @@
                                                   (funcall g true)
                                                   (funcall g false))))))
 
+(defparameter *quest-commands-walker*
+  `((begin . ,(lambda (g &rest commands) (loop for cmd in commands
+                                               collect (funcall g cmd) into result
+                                               finally (return (cons 'begin result)))))
+    (branch . ,(lambda (g prompt &rest cmds)
+                 (let ((cmds1 (loop for arg = cmds then (cddr arg)
+                                    while arg
+                                    collect (first arg)
+                                    collect (funcall g (second arg)))))
+                   `(branch ,prompt ,@cmds1))))
+    (narrate-branch . ,(lambda (g prompt &rest cmds)
+                         (let ((cmds1 (loop for arg = cmds then (cddr arg)
+                                         while arg
+                                         collect (first arg)
+                                         collect (funcall g (second arg)))))
+                           `(narrate-branch ,prompt ,@cmds1))))
+    (if-has-item . ,(lambda (g match true false)
+                      (let ((true1 (funcall g true))
+                            (false1 (funcall g false)))
+                        `(if-has-item ,match ,true1 ,false1))))
+    (if-cond . ,(lambda (g stmt true false)
+                  `(if-cond ,(funcall g stmt)
+                            ,(funcall g true)
+                            ,(funcall g false))))))
+
+(defun walk-quest-command (g cmd)
+  (let ((technique (cdr (assoc (car cmd) *quest-commands-walker*))))
+    (if technique
+        (apply technique g (cdr cmd))
+        cmd)))
+
 (defgeneric run-quest-command (quest cmd))
 
 ;; These are the read-only objects that are stored in *quests*

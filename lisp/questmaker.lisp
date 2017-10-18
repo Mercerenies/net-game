@@ -10,6 +10,7 @@
  | (collect-object match response)
  | (goto-location loc response)
  | (initiate-with npc &key prompt yes-prompt no-prompt action)
+ | (request-with npc initial &key prompt yes-prompt no-prompt action)
  | (talk-to npc prompt response)
  | (give-object-to match npc prompt yes-response no-response)
  | (and-then commands ...)
@@ -126,6 +127,21 @@
     (let ((trigger (if action
                        `(initiate ,(quest-macro-cmd base action))
                        `(initiate
+                         (branch ,prompt
+                                 ,yes-prompt (accept ,(quest-state-state1 base))
+                                 ,no-prompt (begin))))))
+      (push trigger (gethash (quest-state-state0 base)
+                             (quest-states (quest-state-data base)))))))
+
+;; request-with behaves identically to initiate-with except that is
+;; not a quest initiation directive.
+(defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'request-with)) args)
+  (destructuring-bind (npc initial &key prompt yes-prompt no-prompt action) args
+    ;; And add the information to the quest itself
+    (let ((trigger (if action
+                       `(talk-to ,npc ,initial ,(quest-macro-cmd base action))
+                       `(talk-to
+                         ,npc ,initial
                          (branch ,prompt
                                  ,yes-prompt (accept ,(quest-state-state1 base))
                                  ,no-prompt (begin))))))

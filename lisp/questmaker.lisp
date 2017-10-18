@@ -94,9 +94,12 @@
       name)))
 
 (defun quest-goto-cmd (state)
-  (if (eql (quest-state-state1 state) 'completed)
-      '(complete)
-      `(goto ,(quest-state-state1 state))))
+  (with-accessors ((state0 quest-state-state0) (state1 quest-state-state1))
+      state
+    (cond
+      ((eql state0 0) `(accept ,state1))
+      ((eql state1 'completed) '(complete))
+      (t `(goto ,(quest-state-state1 state))))))
 
 (defgeneric quest-macro-cmd (base stmt &key default))
 

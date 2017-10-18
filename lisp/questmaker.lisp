@@ -9,7 +9,7 @@
  | quest object.
  | (collect-object match response)
  | (goto-location loc response)
- | (initiate-with npc text &key yes-prompt no-prompt prompt)
+ | (initiate-with npc &key prompt yes-prompt no-prompt action)
  | (talk-to npc prompt response)
  | (give-object-to match npc prompt yes-response no-response)
  | (and-then commands ...)
@@ -110,17 +110,16 @@
 
 (defgeneric quest-eval-cmd (base cmd args))
 
-;; TODO The text argument is unused if :prompt is supplied, so it should be optional
 (defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'initiate-with)) args)
-  (destructuring-bind (npc text &key yes-prompt no-prompt prompt) args
+  (destructuring-bind (npc &key prompt yes-prompt no-prompt action) args
     ;; Add the quest to the NPC's knowledge base
     (push (get-id (quest-state-data base))
           (get-quest-list (get-id npc)))
     ;; And add the information to the quest itself
-    (let ((trigger (if prompt
-                       `(initiate ,(funcall prompt (quest-state-state1 base)))
+    (let ((trigger (if action
+                       `(initiate ,(funcall action (quest-state-state1 base)))
                        `(initiate
-                         (branch ,text
+                         (branch ,prompt
                                  ,yes-prompt (accept ,(quest-state-state1 base))
                                  ,no-prompt (begin))))))
       (push trigger (gethash (quest-state-state0 base)
@@ -238,7 +237,7 @@
   (make-quest-stub
    :name "Generated Quest" ; TODO Make actual names for these
    :establishment ()
-   :evaluation `((initiate-with ,npc "Want a free quest?" :yes-prompt "Yes" :no-prompt "No")
+   :evaluation `((initiate-with ,npc :prompt "Want a free quest?" :yes-prompt "Yes" :no-prompt "No")
                  (and-then (speak "Just talk to me again!"))
                  (talk-to ,npc "I'm done" "Good job!"))))
 
@@ -264,8 +263,8 @@
     (make-quest-stub
      :name "[Test]"
      :establishment `((put-object ,item ,loc))
-     :evaluation `((initiate-with ,npc "Help!"
-                                  :prompt ,(lambda (state1)
+     :evaluation `((initiate-with ,npc
+                                  :action ,(lambda (state1)
                                              `(branch "Help!"
                                                       "Yes!" (if-cond (give-item (item "Mini Pepperoni Pizza"
                                                                                  :weight 9

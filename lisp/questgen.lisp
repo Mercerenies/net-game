@@ -36,7 +36,8 @@
   (make-quest-stub
    :name "Generated Quest"
    :establishment `((put-object ,(getf test :book) ,(getf test :location)))
-   :evaluation `((initiate-with ,npc "Hey, I'm looking for a certain book."
+   :evaluation `((initiate-with ,npc
+                                :prompt "Hey, I'm looking for a certain book."
                                 :yes-prompt "I'll help."
                                 :no-prompt "I've got to go.")
                  (and-then (speak "Okay, it should be nearby."))
@@ -68,8 +69,8 @@
     (make-quest-stub
      :name "Generated Quest"
      :establishment ()
-     :evaluation `((initiate-with ,npc "(UNUSED)"
-                                  :prompt ,(lambda (state1)
+     :evaluation `((initiate-with ,npc
+                                  :action ,(lambda (state1)
                                              `(branch "Would you be able to help me get some photographs?"
                                                      "Sure!" (if-cond (give-item ,item)
                                                                       (accept ,state1)
@@ -94,7 +95,8 @@
     (make-quest-stub
      :name "Generated Quest"
      :establishment ()
-     :evaluation `((initiate-with ,npc ,(format nil "I would love to know about ~A." loc-name)
+     :evaluation `((initiate-with ,npc
+                                  :prompt ,(format nil "I would love to know about ~A." loc-name)
                                   :yes-prompt "I'll go check it out."
                                   :no-prompt "I don't have time.")
                    (and-then (speak ,(format nil
@@ -126,8 +128,9 @@
     (make-quest-stub
      :name "Generated Quest"
      :establishment ()
-     :evaluation `((initiate-with ,npc ,(format nil "I want to learn about the work of a ~A."
-                                                target-job)
+     :evaluation `((initiate-with ,npc
+                                  :prompt ,(format nil "I want to learn about the work of a ~A."
+                                                   target-job)
                                   :yes-prompt "How can I help?"
                                   :no-prompt "Sorry. I'm the wrong person to ask.")
                    (and-then (speak ,(format nil

@@ -105,93 +105,93 @@
       '(complete)
       `(goto ,(quest-state-state1 state))))
 
-(defgeneric quest-macro-cmd (base stmt state &key default))
+(defgeneric quest-macro-cmd (base stmt &key default))
 
-(defmethod quest-macro-cmd ((base quest-base-state) (stmt string) state &key (default 'speak))
+(defmethod quest-macro-cmd ((base quest-base-state) (stmt string) &key (default 'speak))
   (list default stmt))
 
-(defmethod quest-macro-cmd ((base quest-base-state) (stmt list) state &key default)
+(defmethod quest-macro-cmd ((base quest-base-state) (stmt list) &key default)
   (case (car stmt)
-    (advance (quest-goto-cmd state))
+    (advance (quest-goto-cmd base))
     (t stmt)))
 
-(defgeneric quest-eval-cmd (base cmd args state))
+(defgeneric quest-eval-cmd (base cmd args))
 
 ;; TODO The text argument is unused if :prompt is supplied, so it should be optional
-(defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'initiate-with)) args state)
+(defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'initiate-with)) args)
   (destructuring-bind (npc text &key yes-prompt no-prompt prompt) args
     ;; Add the quest to the NPC's knowledge base
-    (push (get-id (quest-state-data state))
+    (push (get-id (quest-state-data base))
           (get-quest-list (get-id npc)))
     ;; And add the information to the quest itself
     (let ((trigger (if prompt
-                       `(initiate ,(funcall prompt (quest-state-state1 state)))
+                       `(initiate ,(funcall prompt (quest-state-state1 base)))
                        `(initiate
                          (branch ,text
-                                 ,yes-prompt (accept ,(quest-state-state1 state))
+                                 ,yes-prompt (accept ,(quest-state-state1 base))
                                  ,no-prompt (begin))))))
-      (push trigger (gethash (quest-state-state0 state)
-                             (quest-states (quest-state-data state)))))))
+      (push trigger (gethash (quest-state-state0 base)
+                             (quest-states (quest-state-data base)))))))
 
-(defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'talk-to)) args state)
+(defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'talk-to)) args)
   (destructuring-bind (npc prompt response) args
     (let ((trigger `((talk-to ,(get-id npc) ,prompt)
-                     ,(quest-macro-cmd base response state)
-                     ,(quest-goto-cmd state))))
-      (push trigger (gethash (quest-state-state0 state)
-                             (quest-states (quest-state-data state)))))))
+                     ,(quest-macro-cmd base response)
+                     ,(quest-goto-cmd base))))
+      (push trigger (gethash (quest-state-state0 base)
+                             (quest-states (quest-state-data base)))))))
 
-(defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'give-object-to)) args state)
+(defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'give-object-to)) args)
   (destructuring-bind (match npc prompt yes-response no-response) args
     (let ((trigger `((talk-to ,(get-id npc) ,prompt)
                      (if-has-item ,match
                                   (begin
                                    (remove-item ,match)
-                                   ,(quest-macro-cmd base yes-response state)
-                                   ,(quest-goto-cmd state))
-                                   ,(quest-macro-cmd base no-response state)))))
-      (push trigger (gethash (quest-state-state0 state)
-                             (quest-states (quest-state-data state)))))))
+                                   ,(quest-macro-cmd base yes-response)
+                                   ,(quest-goto-cmd base))
+                                   ,(quest-macro-cmd base no-response)))))
+      (push trigger (gethash (quest-state-state0 base)
+                             (quest-states (quest-state-data base)))))))
 
-(defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'goto-location)) args state)
+(defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'goto-location)) args)
   (destructuring-bind (loc response) args
     (let ((trigger `((visit ,(get-id loc))
-                     ,(quest-macro-cmd base response state :default 'narrate)
-                     ,(quest-goto-cmd state))))
-      (push trigger (gethash (quest-state-state0 state)
-                             (quest-states (quest-state-data state)))))))
+                     ,(quest-macro-cmd base response :default 'narrate)
+                     ,(quest-goto-cmd base))))
+      (push trigger (gethash (quest-state-state0 base)
+                             (quest-states (quest-state-data base)))))))
 
-(defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'collect-object)) args state)
+(defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'collect-object)) args)
   (destructuring-bind (match response) args
     (let ((trigger `((collect ,match)
-                     ,(quest-macro-cmd base response state :default 'narrate)
-                     ,(quest-goto-cmd state))))
-      (push trigger (gethash (quest-state-state0 state)
-                             (quest-states (quest-state-data state)))))))
+                     ,(quest-macro-cmd base response :default 'narrate)
+                     ,(quest-goto-cmd base))))
+      (push trigger (gethash (quest-state-state0 base)
+                             (quest-states (quest-state-data base)))))))
 
-(defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'and-then)) args state)
+(defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'and-then)) args)
   (let ((trigger `((auto)
                    ,@(loop for arg in args
-                           collect (quest-macro-cmd base arg state))
-                   ,(quest-goto-cmd state))))
-    (push trigger (gethash (quest-state-state0 state)
-                           (quest-states (quest-state-data state))))))
+                           collect (quest-macro-cmd base arg))
+                   ,(quest-goto-cmd base))))
+    (push trigger (gethash (quest-state-state0 base)
+                           (quest-states (quest-state-data base))))))
 
-(defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'use-item)) args state)
+(defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'use-item)) args)
   (destructuring-bind (match response) args
     (let ((trigger `((use ,match)
-                     ,(quest-macro-cmd base response state :default 'narrate)
-                     ,(quest-goto-cmd state))))
-      (push trigger (gethash (quest-state-state0 state)
-                             (quest-states (quest-state-data state)))))))
+                     ,(quest-macro-cmd base response :default 'narrate)
+                     ,(quest-goto-cmd base))))
+      (push trigger (gethash (quest-state-state0 base)
+                             (quest-states (quest-state-data base)))))))
 
-(defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'use-item-on)) args state)
+(defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'use-item-on)) args)
   (destructuring-bind (match target-match response) args
     (let ((trigger `((use-on ,match ,target-match)
-                     ,(quest-macro-cmd base response state :default 'narrate)
-                     ,(quest-goto-cmd state))))
-      (push trigger (gethash (quest-state-state0 state)
-                             (quest-states (quest-state-data state)))))))
+                     ,(quest-macro-cmd base response :default 'narrate)
+                     ,(quest-goto-cmd base))))
+      (push trigger (gethash (quest-state-state0 base)
+                             (quest-states (quest-state-data base)))))))
 
 (defun quest-eval-impl (base cmd)
   (with-accessors ((states quest-states)) (quest-state-data base)
@@ -211,10 +211,7 @@
             (error "Initiation at non-start of quest stub"))
           (unless (member head +quest-evaluation-directives+)
             (error "Invalid quest stub directive ~S" head))
-          (quest-eval-cmd base
-                          head
-                          args
-                          base)
+          (quest-eval-cmd base head args)
           state1)))))
 
 (defun quest-evaluate (stub &key (base (make-instance 'quest-base-state)))

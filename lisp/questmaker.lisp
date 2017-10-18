@@ -103,9 +103,13 @@
 (defmethod quest-macro-cmd ((base quest-base-state) (stmt string) &key (default 'speak))
   (list default stmt))
 
+;; NOTE: The quest macros that are defined here use the convention
+;; that custom commands are wrapped in >angled-brackets< to make clear
+;; that they are custom commands. I recommend that other custom
+;; commands use the same convention.
 (defmethod quest-macro-cmd ((base quest-base-state) (stmt list) &key default)
   (case (car stmt)
-    (advance (quest-goto-cmd base))
+    (>advance< (quest-goto-cmd base))
     (t (walk-quest-command (lambda (cmd) (quest-macro-cmd base cmd :default default)) stmt))))
 
 (defgeneric quest-eval-cmd (base cmd args))
@@ -269,7 +273,7 @@
                                                                                    :weight 9
                                                                                    :flags ()))
                                                                   (begin (speak "Yes")
-                                                                         (advance))
+                                                                         (>advance<))
                                                                   (speak "No"))
                                                   "No!" (speak "Sorry!")))
                    (give-object-to (flag ,flag) ,npc "Give me stuff." "Hey, you helped!" "Meh.")))))

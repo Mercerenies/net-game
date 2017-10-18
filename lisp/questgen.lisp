@@ -72,7 +72,7 @@
      :evaluation `((initiate-with ,npc
                                   :action (branch "Would you be able to help me get some photographs?"
                                                   "Sure!" (if-cond (give-item ,item)
-                                                                   (advance)
+                                                                   (>advance<)
                                                                    (speak "You're carrying too much."))
                                                   "Not right now." (begin)))
                    (and-then (speak ,instructions))

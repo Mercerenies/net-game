@@ -26,7 +26,7 @@
 #|
  | These quest macros will expand into quest commands when put into
  | an evaluation context.
- | (advance) ;; ///// Test me (use :prompt so it doesn't have to be a lambda any more)
+ | (>advance<)
  |#
 
 ;; 1. Write this function: Given directives, generate the quest and get the world ready for it

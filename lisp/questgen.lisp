@@ -19,6 +19,7 @@
 ;; trying to do in order to test it)
 
 ;; ///// "Complications"
+;; (Collecting item complications, first, probably)
 
 (defun ng-quest-gen::knowledge-1-a (npc)
   (flet ((fitness (x)

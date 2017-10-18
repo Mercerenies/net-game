@@ -70,12 +70,11 @@
      :name "Generated Quest"
      :establishment ()
      :evaluation `((initiate-with ,npc
-                                  :action ,(lambda (state1)
-                                             `(branch "Would you be able to help me get some photographs?"
-                                                     "Sure!" (if-cond (give-item ,item)
-                                                                      (accept ,state1)
-                                                                      (speak "You're carrying too much."))
-                                                     "Not right now." (begin))))
+                                  :action (branch "Would you be able to help me get some photographs?"
+                                                  "Sure!" (if-cond (give-item ,item)
+                                                                   (advance)
+                                                                   (speak "You're carrying too much."))
+                                                  "Not right now." (begin)))
                    (and-then (speak ,instructions))
                    (use-item-on (flag ,flag) (animal-of-type ,(get-id animal)) ,narration)
                    (give-object-to (flag ,flag) ,npc "I have your photograph."

@@ -117,7 +117,7 @@
           (get-quest-list (get-id npc)))
     ;; And add the information to the quest itself
     (let ((trigger (if action
-                       `(initiate ,(funcall action (quest-state-state1 base)))
+                       `(initiate ,(quest-macro-cmd base action))
                        `(initiate
                          (branch ,prompt
                                  ,yes-prompt (accept ,(quest-state-state1 base))
@@ -264,15 +264,14 @@
      :name "[Test]"
      :establishment `((put-object ,item ,loc))
      :evaluation `((initiate-with ,npc
-                                  :action ,(lambda (state1)
-                                             `(branch "Help!"
-                                                      "Yes!" (if-cond (give-item (item "Mini Pepperoni Pizza"
-                                                                                 :weight 9
-                                                                                 :flags ()))
-                                                                      (begin (speak "Yes")
-                                                                             (accept ,state1))
-                                                                      (speak "No"))
-                                                      "No!" (speak "Sorry!"))))
+                                  :action (branch "Help!"
+                                                  "Yes!" (if-cond (give-item (item "Mini Pepperoni Pizza"
+                                                                                   :weight 9
+                                                                                   :flags ()))
+                                                                  (begin (speak "Yes")
+                                                                         (advance))
+                                                                  (speak "No"))
+                                                  "No!" (speak "Sorry!")))
                    (give-object-to (flag ,flag) ,npc "Give me stuff." "Hey, you helped!" "Meh.")))))
 
 (defun sample-quest-encode-! ()

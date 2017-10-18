@@ -3,7 +3,7 @@
 (defpackage #:net-game-quest-gen
   (:use :common-lisp #:net-game)
   (:nicknames :ng-quest-gen)
-  (:export :generate :+quest-association+))
+  (:export :generate :generate-bind :+quest-association+))
 
 (defconstant ng-quest-gen:+quest-association+
   '((:knowledge . #((ng-quest-gen::knowledge-1-a . ng-quest-gen::knowledge-1-b)
@@ -142,11 +142,16 @@
                                                target-name)))
                    (talk-to ,npc "I learned something." "Oh, wonderful!")))))
 
-(defun ng-quest-gen:generate (npc motive)
+(defun ng-quest-gen:generate-bind (npc motive)
   (setq motive :knowledge) ; TODO Manual override for debugging
   (loop with possible = (cdr (assoc motive ng-quest-gen:+quest-association+))
         for (a . b) across (shuffle possible)
         for test = (funcall a npc)
         when test
-            return (funcall b npc test)
-        finally (return nil)))
+            return (values b test)
+        finally (return (values nil nil))))
+
+(defun ng-quest-gen:generate (npc motive)
+  (multiple-value-bind (b test)
+      (ng-quest-gen:generate-bind npc motive)
+    (funcall b npc test)))

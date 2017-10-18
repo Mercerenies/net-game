@@ -97,7 +97,7 @@
   (list default stmt))
 
 (defmethod quest-macro-cmd ((base quest-base-commands) (stmt list) state &key default)
-  (case (car list)
+  (case (car stmt)
     (advance (quest-goto-cmd state))
     (t stmt)))
 

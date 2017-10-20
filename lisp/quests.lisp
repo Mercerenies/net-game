@@ -61,7 +61,11 @@
 ;;    order.
 ;;
 ;;  * (auto) - This trigger trips as soon as the quest reaches its
-;;    state, during the "passive" check.
+;;    state, during the "passive" check. A quest that triggers an
+;;    (auto) should NOT remain in the state that has (auto).
+;;
+;;  * (entry) - This trigger trips as soon as the quest reaches its
+;;    state and only at that time.
 ;;
 ;;  * (use <match>) - This trigger trips when the player "uses" an
 ;;    object matching <match> with no target. The item that matches
@@ -80,6 +84,7 @@
     (visit . 1)
     (collect . 1)
     (auto . 0)
+    (entry . 0)
     (use . 1)
     (use-on . 2)))
 
@@ -240,6 +245,7 @@
     (return-from quest-recursive-goto nil))
   (flet ((passive (trigger)
            (or (equal trigger '(auto))
+               (equal trigger '(entry))
                (equal trigger `(visit ,(get-id (get-loc *player*))))
                (and (eql (first trigger) 'collect)
                     (some (lambda (item) (match item (second trigger))) (inv-items *player*))))))

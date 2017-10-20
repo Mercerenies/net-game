@@ -7,17 +7,20 @@
 #|
  | These quest evaluation directives evolve into a
  | quest object.
- | (collect-object match response)
- | (goto-location loc response)
  | (initiate-with npc action)
- | (request-with npc initial &key prompt yes-prompt no-prompt action)
- | (talk-to npc prompt response) [DEPRECATED]
+ | (request-with npc initial action)
  | (give-object-to match npc prompt yes-response no-response)
  | (and-then commands ...)
- | (use-item match response)
- | (use-item-on match target-match response)
  | (any directives ...)
  | (trigger trig result ...)
+ |
+ | [DEPRECATED]
+ | (talk-to npc prompt response)
+ | (goto-location loc response)
+ | (collect-object match response)
+ | (use-item match response)
+ | (use-item-on match target-match response)
+ |
  |#
 
 #|
@@ -45,7 +48,7 @@
     use-item use-item-on any trigger))
 
 (defconstant +quest-evaluation-directives-deprecated+
-  '(talk-to))
+  '(talk-to goto-location collect-object use-item use-item-on))
 
 (defstruct quest-stub
   (name "")

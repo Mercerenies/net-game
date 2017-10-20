@@ -106,9 +106,10 @@
                    (and-then (speak ,(format nil
                                              "Okay. Just go visit ~A and then come tell me about it."
                                              loc-name)))
-                   (goto-location ,loc ,(format nil
-                                                "You take a good long look at the ~A."
-                                                loc-name))
+                   (trigger (visit ,(get-id loc))
+                            (narrate ,(format nil "You take a good long look at the ~A."
+                                              loc-name))
+                            (>advance<))
                    (trigger (talk-to ,(get-id npc) "I saw the area.")
                             (speak "Really? Perfect!")
                             (>advance<))))))

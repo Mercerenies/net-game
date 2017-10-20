@@ -9,7 +9,7 @@
  | quest object.
  | (collect-object match response)
  | (goto-location loc response)
- | (initiate-with npc &key prompt yes-prompt no-prompt action)
+ | (initiate-with npc action)
  | (request-with npc initial &key prompt yes-prompt no-prompt action)
  | (talk-to npc prompt response)
  | (give-object-to match npc prompt yes-response no-response)
@@ -128,7 +128,7 @@
 (defgeneric quest-eval-cmd (base cmd args))
 
 (defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'initiate-with)) args)
-  (destructuring-bind (npc &key prompt yes-prompt no-prompt action) args
+  (destructuring-bind (npc action) args
     ;; Add the quest to the NPC's knowledge base
     (push (get-id (quest-state-data base))
           (get-quest-list (get-id npc)))
@@ -298,14 +298,14 @@
      :name "[Test]"
      :establishment `((put-object ,item ,loc))
      :evaluation `((initiate-with ,npc
-                                  :action (branch "Help!"
-                                                  "Yes!" (if-cond (give-item (item "Mini Pepperoni Pizza"
-                                                                                   :weight 9
-                                                                                   :flags ()))
-                                                                  (begin (speak "Yes")
-                                                                         (>advance<))
-                                                                  (speak "No"))
-                                                  "No!" (speak "Sorry!")))
+                                  (branch "Help!"
+                                          "Yes!" (if-cond (give-item (item "Mini Pepperoni Pizza"
+                                                                           :weight 9
+                                                                           :flags ()))
+                                                          (begin (speak "Yes")
+                                                                 (>advance<))
+                                                          (speak "No"))
+                                          "No!" (speak "Sorry!")))
                    (give-object-to (flag ,flag) ,npc "Give me stuff." "Hey, you helped!" "Meh.")))))
 
 (defun sample-quest-encode-! ()

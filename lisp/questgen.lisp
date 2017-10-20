@@ -5,6 +5,8 @@
   (:nicknames :ng-quest-gen)
   (:export :choose-motive :generate-bind :generate :+quest-association+))
 
+;; TODO get-origin for quest-generated objects
+
 (defconstant ng-quest-gen:+quest-association+
   '((:knowledge . #((ng-quest-gen::knowledge-1-a . ng-quest-gen::knowledge-1-b)
                     (ng-quest-gen::knowledge-2-a . ng-quest-gen::knowledge-2-b)
@@ -77,7 +79,9 @@
                                                            (speak "You're carrying too much."))
                                           "Not right now." (begin)))
                    (and-then (speak ,instructions))
-                   (use-item-on (flag ,flag) (animal-of-type ,(get-id animal)) ,narration)
+                   (trigger (use-on (flag ,flag) (animal-of-type ,(get-id animal)))
+                            (narrate ,narration)
+                            (>advance<))
                    (give-object-to (flag ,flag) ,npc "I have your photograph."
                                    "Perfect! Thank you!" "That's not funny.")))))
 
@@ -105,7 +109,9 @@
                    (goto-location ,loc ,(format nil
                                                 "You take a good long look at the ~A."
                                                 loc-name))
-                   (talk-to ,npc "I saw the area." "Really? Perfect!")))))
+                   (trigger (talk-to ,(get-id npc) "I saw the area.")
+                            (speak "Really? Perfect!")
+                            (>advance<))))))
 
 (defun ng-quest-gen::knowledge-4-a (npc)
   (flet ((fitness (x)
@@ -118,6 +124,9 @@
            (obj (weighted-random objs)))
       (when obj
         (list :person obj)))))
+
+;; TODO Sanity checks (type checks) for triggers (like if talk-to is given a non-id, error!)
+;;      (Check these when compiling AND when evaluating triggers)
 
 ;; TODO Make some quest directives more general (so, for instance,
 ;; talk-to could take a pattern to match rather than just an ID).
@@ -136,11 +145,15 @@
                    (and-then (speak ,(format nil
                                              "You'll help? Alright, just go ask ~A about their job."
                                              target-name)))
-                   (talk-to ,target "Tell me about your job." "Well, where do I begin? ...")
+                   (trigger (talk-to ,(get-id target) "Tell me about your job.")
+                            (speak "Well, where do I begin? ...")
+                            (>advance<))
                    (and-then (narrate ,(format nil
                                                "~A tells you all about it."
                                                target-name)))
-                   (talk-to ,npc "I learned something." "Oh, wonderful!")))))
+                   (trigger (talk-to ,(get-id npc) "I learned something.")
+                            (speak "Oh, wonderful!")
+                            (>advance<))))))
 
 (defun ng-quest-gen:choose-motive (npc)
   "Given an NPC, this function randomly selects a motivation of that

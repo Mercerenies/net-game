@@ -11,7 +11,7 @@
  | (goto-location loc response)
  | (initiate-with npc action)
  | (request-with npc initial &key prompt yes-prompt no-prompt action)
- | (talk-to npc prompt response)
+ | (talk-to npc prompt response) [DEPRECATED]
  | (give-object-to match npc prompt yes-response no-response)
  | (and-then commands ...)
  | (use-item match response)
@@ -43,6 +43,9 @@
 (defconstant +quest-evaluation-directives+
   '(collect-object goto-location initiate-with talk-to give-object-to and-then
     use-item use-item-on any trigger))
+
+(defconstant +quest-evaluation-directives-deprecated+
+  '(talk-to))
 
 (defstruct quest-stub
   (name "")
@@ -236,6 +239,11 @@
             (error "Initiation at non-start of quest stub"))
           (unless (member head +quest-evaluation-directives+)
             (error "Invalid quest stub directive ~S" head))
+          (when (member head +quest-evaluation-directives-deprecated+)
+            (warn 'net-game-warning
+                  :level 1
+                  :text (format nil "Deprecated quest directive ~S used"
+                                head)))
           (quest-eval-cmd base head args)
           state1)))))
 

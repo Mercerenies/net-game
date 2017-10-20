@@ -212,8 +212,11 @@
         do (quest-eval-cmd base (car arg) (cdr arg))))
 
 (defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'trigger)) args)
-  (push args (gethash (quest-state-state0 base)
-                      (quest-states (quest-state-data base)))))
+  (loop for arg in (cdr args)
+        collect (quest-macro-cmd base arg) into result
+        finally (let ((args1 (cons (car args) result)))
+                  (push args1 (gethash (quest-state-state0 base)
+                                       (quest-states (quest-state-data base)))))))
 
 (defun quest-eval-impl (base cmd)
   (with-accessors ((states quest-states)) (quest-state-data base)

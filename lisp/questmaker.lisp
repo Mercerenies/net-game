@@ -16,6 +16,7 @@
  | (and-then commands ...)
  | (use-item match response)
  | (use-item-on match target-match response)
+ | (any-triggers directives ...)
  |#
 
 #|
@@ -40,7 +41,7 @@
 
 (defconstant +quest-evaluation-directives+
   '(collect-object goto-location initiate-with talk-to give-object-to and-then
-    use-item use-item-on))
+    use-item use-item-on any-triggers))
 
 (defstruct quest-stub
   (name "")
@@ -115,6 +116,14 @@
   (case (car stmt)
     (>advance< (quest-goto-cmd base))
     (t (walk-quest-command (lambda (cmd) (quest-macro-cmd base cmd :default default)) stmt))))
+
+(defun initiate-to-request (initiate initial-text)
+  (unless (eql (car initiate) 'initiate-with)
+    (error "Malformed initiate directive to be converted: ~S" initiate))
+  (destructuring-bind (header npc &rest args)
+      initiate
+    (declare (ignore header))
+    `(response-with ,npc ,initial-text ,@args)))
 
 (defgeneric quest-eval-cmd (base cmd args))
 
@@ -207,6 +216,10 @@
                      ,(quest-goto-cmd base))))
       (push trigger (gethash (quest-state-state0 base)
                              (quest-states (quest-state-data base)))))))
+
+(defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'any-triggers)) args)
+  (loop for arg in args
+        do (quest-eval-cmd base (car arg) (cdr arg))))
 
 (defun quest-eval-impl (base cmd)
   (with-accessors ((states quest-states)) (quest-state-data base)

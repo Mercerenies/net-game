@@ -162,3 +162,10 @@
   (multiple-value-bind (b test)
       (ng-quest-gen:generate-bind obj motive)
     (funcall b obj test)))
+
+;; /////
+;; 1. Make initiate-with always use :action (Done)
+;; 2. Add "primitive" directives (instead of (talk-to ...), use (triggers (talk-to ...)))
+;;    (No reason for the added complexity when a simple trigger will do)
+;; 3. Remove a lot of the higher-level directives in favor of more "primitive" ones
+;; 4. Complications

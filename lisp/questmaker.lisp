@@ -16,7 +16,8 @@
  | (and-then commands ...)
  | (use-item match response)
  | (use-item-on match target-match response)
- | (any-triggers directives ...)
+ | (any directives ...)
+ | (trigger trig result ...)
  |#
 
 #|
@@ -41,7 +42,7 @@
 
 (defconstant +quest-evaluation-directives+
   '(collect-object goto-location initiate-with talk-to give-object-to and-then
-    use-item use-item-on any-triggers))
+    use-item use-item-on any trigger))
 
 (defstruct quest-stub
   (name "")
@@ -123,7 +124,7 @@
   (destructuring-bind (header npc &rest args)
       initiate
     (declare (ignore header))
-    `(response-with ,npc ,initial-text ,@args)))
+    `(request-with ,npc ,initial-text ,@args)))
 
 (defgeneric quest-eval-cmd (base cmd args))
 
@@ -133,27 +134,16 @@
     (push (get-id (quest-state-data base))
           (get-quest-list (get-id npc)))
     ;; And add the information to the quest itself
-    (let ((trigger (if action
-                       `(initiate ,(quest-macro-cmd base action))
-                       `(initiate
-                         (branch ,prompt
-                                 ,yes-prompt (accept ,(quest-state-state1 base))
-                                 ,no-prompt (begin))))))
+    (let ((trigger `(initiate ,(quest-macro-cmd base action))))
       (push trigger (gethash (quest-state-state0 base)
                              (quest-states (quest-state-data base)))))))
 
 ;; request-with behaves identically to initiate-with except that is
 ;; not a quest initiation directive.
 (defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'request-with)) args)
-  (destructuring-bind (npc initial &key prompt yes-prompt no-prompt action) args
+  (destructuring-bind (npc initial action) args
     ;; And add the information to the quest itself
-    (let ((trigger (if action
-                       `(talk-to ,npc ,initial ,(quest-macro-cmd base action))
-                       `(talk-to
-                         ,npc ,initial
-                         (branch ,prompt
-                                 ,yes-prompt (accept ,(quest-state-state1 base))
-                                 ,no-prompt (begin))))))
+    (let ((trigger `(talk-to ,npc ,initial ,(quest-macro-cmd base action))))
       (push trigger (gethash (quest-state-state0 base)
                              (quest-states (quest-state-data base)))))))
 
@@ -217,9 +207,13 @@
       (push trigger (gethash (quest-state-state0 base)
                              (quest-states (quest-state-data base)))))))
 
-(defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'any-triggers)) args)
+(defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'any)) args)
   (loop for arg in args
         do (quest-eval-cmd base (car arg) (cdr arg))))
+
+(defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'trigger)) args)
+  (push args (gethash (quest-state-state0 base)
+                      (quest-states (quest-state-data base)))))
 
 (defun quest-eval-impl (base cmd)
   (with-accessors ((states quest-states)) (quest-state-data base)

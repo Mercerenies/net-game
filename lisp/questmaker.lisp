@@ -132,6 +132,12 @@
     (declare (ignore header))
     `(request-with ,npc ,initial-text ,@args)))
 
+(defun initiate-subqest (initiate initial-text)
+  (destructuring-bind (header npc &rest args)
+      (let ((req (initiate-to-request initiate initial-text)))
+        `(any ,req
+              (trigger (entry) ,@args)))))
+
 (defgeneric quest-eval-cmd (base cmd args))
 
 (defmethod quest-eval-cmd ((base quest-base-state) (cmd (eql 'initiate-with)) args)

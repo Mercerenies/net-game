@@ -23,6 +23,24 @@
 ;; ///// "Complications"
 ;; (Collecting item complications, first, probably)
 
+(defun ng-quest-gen::subquest-a (data)
+  (destructuring-bind (npc hold-text) data
+    (let ((motive (ng-quest-gen:choose-motive npc)))
+      (multiple-value-bind (b test)
+          (ng-quest-gen:generate-bind npc motive)
+        (list :b b :test test)))))
+
+(defun ng-quest-gen::subquest-b (data test)
+  (destructuring-bind (npc hold-test) data
+    (let ((b1 (getf test :b))
+          (test1 (getf test :test)))
+      (let ((q (funcall b1 test1)))
+        (with-accessors ((eval quest-stub-evaluation)) q
+          (setf (car eval)
+                (initiate-subquest "You needed help?" (car eval)))
+          (setf eval (cons '((auto) "Hold on. I really need to get this done.") eval)))
+        q))))
+
 (defun ng-quest-gen::knowledge-1-a (npc)
   (flet ((fitness (x)
            (location-fitness-for x :treasure)))

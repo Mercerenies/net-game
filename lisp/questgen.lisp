@@ -38,9 +38,9 @@
    :name "Generated Quest"
    :establishment `((put-object ,(getf test :book) ,(getf test :location)))
    :evaluation `((initiate-with ,npc
-                                :prompt "Hey, I'm looking for a certain book."
-                                :yes-prompt "I'll help."
-                                :no-prompt "I've got to go.")
+                                :action (branch "Hey, I'm looking for a certain book."
+                                                "I'll help." (>advance<)
+                                                "I've got to go." (begin)))
                  (and-then (speak "Okay, it should be nearby."))
                  (give-object-to (flag ,(getf test :flag)) ,npc "Your book?"
                                  "Oh, excellent!" "Sorry for all the trouble."))))
@@ -96,9 +96,9 @@
      :name "Generated Quest"
      :establishment ()
      :evaluation `((initiate-with ,npc
-                                  :prompt ,(format nil "I would love to know about ~A." loc-name)
-                                  :yes-prompt "I'll go check it out."
-                                  :no-prompt "I don't have time.")
+                                  :action (branch ,(format nil "I would love to know about ~A." loc-name)
+                                                  "I'll go check it out." (>advance<)
+                                                  "I don't have time." (begin)))
                    (and-then (speak ,(format nil
                                              "Okay. Just go visit ~A and then come tell me about it."
                                              loc-name)))
@@ -129,10 +129,10 @@
      :name "Generated Quest"
      :establishment ()
      :evaluation `((initiate-with ,npc
-                                  :prompt ,(format nil "I want to learn about the work of a ~A."
-                                                   target-job)
-                                  :yes-prompt "How can I help?"
-                                  :no-prompt "Sorry. I'm the wrong person to ask.")
+                                  :action (branch ,(format nil "I want to learn about the word of a ~A."
+                                                           target-job)
+                                                  "How can I help?" (>advance<)
+                                                  "Sorry. I'm the wrong person to ask." (begin)))
                    (and-then (speak ,(format nil
                                              "You'll help? Alright, just go ask ~A about their job."
                                              target-name)))

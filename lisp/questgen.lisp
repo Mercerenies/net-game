@@ -8,7 +8,8 @@
 ;; TODO get-origin for quest-generated objects
 
 (defconstant ng-quest-gen:+quest-association+
-  '((:knowledge . #((ng-quest-gen::knowledge-1-a . ng-quest-gen::knowledge-1-b)
+  '((:subquest .  #((ng-quest-gen::subquest-1-a  . ng-quest-gen::subquest-1-b )))
+    (:knowledge . #((ng-quest-gen::knowledge-1-a . ng-quest-gen::knowledge-1-b)
                     (ng-quest-gen::knowledge-2-a . ng-quest-gen::knowledge-2-b)
                     (ng-quest-gen::knowledge-3-a . ng-quest-gen::knowledge-3-b)
                     (ng-quest-gen::knowledge-4-a . ng-quest-gen::knowledge-4-b)))))
@@ -23,22 +24,26 @@
 ;; ///// "Complications"
 ;; (Collecting item complications, first, probably)
 
-(defun ng-quest-gen::subquest-a (data)
+;; TODO data == (npc hold-text) but hold-text is currently unused...
+(defun ng-quest-gen::subquest-1-a (data)
   (destructuring-bind (npc hold-text) data
+    (declare (ignore hold-text))
     (let ((motive (ng-quest-gen:choose-motive npc)))
       (multiple-value-bind (b test)
           (ng-quest-gen:generate-bind npc motive)
         (list :b b :test test)))))
 
-(defun ng-quest-gen::subquest-b (data test)
-  (destructuring-bind (npc hold-test) data
+(defun ng-quest-gen::subquest-1-b (data test)
+  (destructuring-bind (npc hold-text) data
+    (declare (ignore hold-text))
     (let ((b1 (getf test :b))
           (test1 (getf test :test)))
-      (let ((q (funcall b1 test1)))
+      (let ((q (funcall b1 npc test1)))
         (with-accessors ((eval quest-stub-evaluation)) q
           (setf (car eval)
-                (initiate-subquest "You needed help?" (car eval)))
-          (setf eval (cons '((auto) "Hold on. I really need to get this done.") eval)))
+                (initiate-subquest (car eval) "You needed help?"))
+          (setf eval (cons '(and-then (speak "Hold on. I'm really in the middle of something"))
+                           eval)))
         q))))
 
 (defun ng-quest-gen::knowledge-1-a (npc)
@@ -152,12 +157,15 @@
 (defun ng-quest-gen::knowledge-4-b (npc test)
   (let* ((target (getf test :person))
          (target-name (get-name target))
-         (target-job (person-job-name target)))
+         (target-job (person-job-name target))
+         (complication (if (<= (random 1.0) 0.8)
+                           (ng-quest-gen:generate (list target "(UNUSED)") :subquest)
+                           nil)))
     (make-quest-stub
      :name "Generated Quest"
-     :establishment ()
+     :establishment (and complication (quest-stub-establishment complication))
      :evaluation `((initiate-with ,npc
-                                  (branch ,(format nil "I want to learn about the word of a ~A."
+                                  (branch ,(format nil "I want to learn about the work of a ~A."
                                                    target-job)
                                           "How can I help?" (>advance<)
                                           "Sorry. I'm the wrong person to ask." (begin)))
@@ -165,10 +173,11 @@
                                              "You'll help? Alright, just go ask ~A about their job."
                                              target-name)))
                    (trigger (talk-to ,(get-id target) "Tell me about your job.")
-                            (speak "Well, where do I begin? ...")
                             (>advance<))
-                   (and-then (narrate ,(format nil
-                                               "~A tells you all about it."
+                   ,@(and complication (quest-stub-evaluation complication))
+                   (and-then (speak "Well, where do I begin? ...")
+                             (narrate ,(format nil
+                                               "~A tells you all about their job."
                                                target-name)))
                    (trigger (talk-to ,(get-id npc) "I learned something.")
                             (speak "Oh, wonderful!")
@@ -182,7 +191,8 @@
     (weighted-random skewed-motives)))
 
 (defun ng-quest-gen:generate-bind (obj motive)
-  (setq motive :knowledge) ; TODO Manual override for debugging
+  (unless (eql motive :subquest) ; Just keep painting yourself that corner there...
+    (setq motive :knowledge)) ; TODO Manual override for debugging
   (loop with possible = (cdr (assoc motive ng-quest-gen:+quest-association+))
         for (a . b) across (shuffle possible)
         for test = (funcall a obj)

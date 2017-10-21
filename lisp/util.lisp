@@ -82,3 +82,8 @@
 (defun shuffle (vec &key (multiplier 3))
   "Returns a shuffled copy of the proper sequence."
   (nshuffle (copy-seq vec) :multiplier multiplier))
+
+(defun random-range (min max &optional random-state)
+  "Returns a random number between min (inclusive) and max (exclusive)."
+  (let ((state (or random-state *random-state*)))
+    (+ min (random (- max min)))))

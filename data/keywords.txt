@@ -88,6 +88,8 @@ mythic plants
 fantasy creature
 river god
 river gods
+nymph
+nymphs
 :: animals
 rodent
 mollusc

@@ -540,7 +540,7 @@ sub deduce_monster_affinity {
             $constant = 4;
         } else {
             $constant = 0;
-            my %sections = select_sections($xml, qr/\Q$title\E|Overview|Mythology/i);
+            my %sections = select_sections($xml, qr/\Q$title\E|Overview|Mythology|Folklore/i);
             for (values %sections) {
                 $constant += @{[ /\b$keyword\b/gi ]};
             }

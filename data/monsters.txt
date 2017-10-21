@@ -25,3 +25,5 @@ merman              nymph
 ghost               spirit
 spirit              spirit
 undead creature     undead
+goblin              goblin
+bull                monster

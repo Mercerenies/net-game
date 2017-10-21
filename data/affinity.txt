@@ -68,3 +68,8 @@ royal: civil +1
 undead: civil -1, light -1
 blood: light -1
 vampire: light -2
+wisdom: civil +1
+knowledge: civil +1
+guardian: light +1
+guru: civil +1
+underground: civil -1, light -1

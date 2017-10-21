@@ -72,7 +72,7 @@
   (loop with brain = (knowledge-get *knowledge-base* (get-id npc))
         with result = (list :unaccepted 0 :incomplete 0 :complete 0)
         for qid in (know-quests brain)
-        for active = (find qid (active-quests *player*))
+        for active = (find qid (active-quests *player*) :key #'get-id)
         when active
           when (is-quest-completed active)
             do (incf (getf result :complete))

@@ -128,7 +128,7 @@
         (hunting (cond
                    ((member *player* (location-contents (get-loc obj)))
                     (format t "The ~A attacks.~%" (get-name obj))
-                    (do-attack obj *player*))
+                    (do-attack obj *player* (atk obj)))
                    ((adjacent-pursue obj *player*)
                     (entity-turn obj))
                    ((<= (random 6) (anim-speed obj))

@@ -101,6 +101,11 @@
   (get-origin (anim-data obj)))
 
 (defmethod entity-turn ((obj animal))
+  (mood-check obj)
+  (mood-action obj)
+  (mood-check obj))
+
+(defun entity-turn-legacy (obj)
   ;;(format t "The ~A (~A / ~A) at ~A is going to go now.~%"
   ;;        (get-name obj) (get-mood obj) (get-attitude obj) (get-name (get-loc obj)))
   (if (not (is-desirable-square obj (get-loc obj)))

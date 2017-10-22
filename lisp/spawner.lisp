@@ -1,5 +1,6 @@
 (in-package #:net-game)
 
+;; TODO Getting lots of duplicates in here for some odd reason...
 (defparameter *creatures* nil)
 
 (defparameter *spawners* nil)

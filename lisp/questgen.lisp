@@ -139,7 +139,10 @@
 
 (defun ng-quest-gen::knowledge-4-a (npc)
   (flet ((fitness (x)
-           (float (/ (length (intersection (person-jobs npc) (person-jobs x)))))))
+           (let ((common (intersection (person-jobs npc) (person-jobs x))))
+             (if common
+                 (float (/ (length common)))
+                 1.0))))
     (let* ((objs (loop for loc in (halo (get-loc npc) 8)
                        append (loop for obj in (location-contents loc)
                                     when (and (typep obj 'person)

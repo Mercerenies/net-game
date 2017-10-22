@@ -76,6 +76,17 @@
 (deftype node-linkage ()
   (member nil city-exit))
 
+(deftype mood ()
+  (member passive hunting stalking sneaky))
+
+(defclass moody (located)
+  ((mood :accessor get-mood
+         :initform 'passive
+         :initarg :mood)
+   (attitude :accessor get-attitude
+             :initform 'passive
+             :initarg :attitude)))
+
 (defclass location (identifiable named flagged loaded)
   ((exits :accessor location-exits
           :initform nil

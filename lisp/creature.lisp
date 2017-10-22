@@ -49,19 +49,13 @@
  | * Hunting - Moves to Hunting mood when a player is spotted.
  | * Stalking - Moves to Sneaky mood when a player moves away.
  |#
-(defclass animal (creature damageable loaded)
+(defclass animal (creature damageable loaded moody)
   ((data :accessor anim-data
          :initform nil
          :initarg :data)
    (speed :accessor anim-speed
           :initform 1
           :initarg :speed)
-   (mood :accessor anim-mood
-         :initform 'passive
-         :initarg :mood)
-   (attitude :accessor anim-attitude
-             :initform 'passive
-             :initarg :attitude)
    (atk :accessor atk
         :initform 1
         :initarg :atk)
@@ -108,29 +102,29 @@
 
 (defmethod entity-turn ((obj animal))
   ;;(format t "The ~A (~A / ~A) at ~A is going to go now.~%"
-  ;;        (get-name obj) (anim-mood obj) (anim-attitude obj) (get-name (get-loc obj)))
+  ;;        (get-name obj) (get-mood obj) (get-attitude obj) (get-name (get-loc obj)))
   (if (not (is-desirable-square obj (get-loc obj)))
       (move-object obj (choose (halo (get-loc obj) 1)))
-      (case (anim-mood obj)
+      (case (get-mood obj)
         (passive (cond
                    ((member *player* (location-contents (get-loc obj)))
-                    (case (anim-attitude obj)
+                    (case (get-attitude obj)
                       (passive nil)
-                      (hunting (setf (anim-mood obj) 'hunting)
+                      (hunting (setf (get-mood obj) 'hunting)
                                (entity-turn obj))
-                      (stalking (setf (anim-mood obj) 'sneaky))))
+                      (stalking (setf (get-mood obj) 'sneaky))))
                    ((<= (random 6) (anim-speed obj))
                     (wander obj)
-                    (when (and (eql (anim-attitude obj) 'stalking)
+                    (when (and (eql (get-attitude obj) 'stalking)
                                (member *player* (location-contents (get-loc obj))))
-                      (setf (anim-mood obj) 'sneaky)))
+                      (setf (get-mood obj) 'sneaky)))
                    (t nil)))
         (sneaky (cond
                   ((member *player* (location-contents (get-loc obj))) nil)
                   ((some (lambda (x) (member *player* (location-contents x)))
                          (halo (get-loc obj) 1))
-                   (setf (anim-mood obj) 'stalking))
-                  (t (setf (anim-mood obj) 'passive))))
+                   (setf (get-mood obj) 'stalking))
+                  (t (setf (get-mood obj) 'passive))))
         (hunting (cond
                    ((member *player* (location-contents (get-loc obj)))
                     (format t "The ~A attacks.~%" (get-name obj))
@@ -142,13 +136,13 @@
                    (t nil)))
         (stalking (cond
                     ((member *player* (location-contents (get-loc obj)))
-                     (setf (anim-mood obj) 'hunting)
+                     (setf (get-mood obj) 'hunting)
                      (entity-turn obj))
                     ((some (lambda (x) (member *player* (location-contents x)))
                            (halo (get-loc obj) 1))
                      nil)
                     ((simple-stalk obj *player*))
-                    (t (setf (anim-mood obj) 'passive)))))))
+                    (t (setf (get-mood obj) 'passive)))))))
 
 (defmethod is-desirable-square ((obj animal) (loc location))
   (cond
@@ -157,10 +151,10 @@
           (not (or (check-flag 'shore loc)
                    (check-flag 'sea loc)))) nil)
     ;; If passive mood, civilized tile, and not a passive bird, then undesirable.
-    ((and (eql (anim-mood obj) 'passive)
+    ((and (eql (get-mood obj) 'passive)
           (check-flag 'civilized loc)
           (not (and (anim-air obj)
-                    (eql (anim-attitude obj) 'passive)))) nil)
+                    (eql (get-attitude obj) 'passive)))) nil)
     ;; Otherwise, desirable.
     (t)))
 
@@ -178,7 +172,7 @@
             ((anim-air obj) 0)
             ((anim-sea obj) 1)
             (t 2))
-          (case (anim-attitude obj)
+          (case (get-attitude obj)
             ((passive sneaky stalking) 0)
             (t 1))))
 
@@ -186,8 +180,8 @@
     'creature)
 
 (defmethod system-keys append ((obj animal))
-  `((anim-mood "Current Mood" ,(anim-mood obj))
-    (anim-attitude "Attitude" ,(anim-attitude obj))
+  `((get-mood "Current Mood" ,(get-mood obj))
+    (get-attitude "Attitude" ,(get-attitude obj))
     (atk "Attack Power" ,(* 100 (atk obj)))
     (anim-air "Flying" ,(anim-air obj))
     (anim-sea "Swimming" ,(anim-sea obj))

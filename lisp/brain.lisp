@@ -35,6 +35,11 @@
     (move-object obj (get-loc target))
     t))
 
+(defgeneric respond-to-attack (target))
+
+(defmethod respond-to-attack ((target moody))
+  (setf (get-mood target) 'hunting))
+
 ;; N.B.: This function is linear in its first keyword argument (steps)
 ;; but exponential in the second (step-size).
 (defun find-somewhere-nearby-binom (loc &key (steps 5) (step-size 2))

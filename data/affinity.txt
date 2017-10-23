@@ -73,3 +73,10 @@ knowledge: civil +1
 guardian: light +1
 guru: civil +1
 underground: civil -1, light -1
+vicious: civil -2, light -1
+claws: civil -1
+lion: civil -1
+lions: civil -1
+cannibal: civil -1, light -1
+cannibals: civil -1, light -1
+curse: light -1

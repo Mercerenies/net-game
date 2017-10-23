@@ -27,3 +27,5 @@ spirit              spirit
 undead creature     undead
 goblin              goblin
 bull                monster
+dog                 creature
+dwarf               goblin

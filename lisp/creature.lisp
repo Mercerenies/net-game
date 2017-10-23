@@ -101,7 +101,7 @@
   (get-origin (anim-data obj)))
 
 (defmethod entity-turn ((obj animal)) ; ///// Test heavily
-  ;; (format t "The ~A (~A / ~A) at ~A is going to go now.~%"
+  ;;(format t "The ~A (~A / ~A) at ~A is going to go now.~%"
   ;;        (get-name obj) (get-mood obj) (get-attitude obj) (get-name (get-loc obj)))
   (mood-check obj)
   (mood-action obj)

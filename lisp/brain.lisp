@@ -24,6 +24,7 @@
   (let* ((candidates (intersection (halo (get-loc obj) 1) (halo (get-loc target) 1)))
          (path (find-if #'(lambda (x) (is-desirable-square obj x)) candidates)))
     (when path
+      (format t "Moving to ~S~%" (get-name path))
       (move-object obj path)
       t)))
 
@@ -83,7 +84,8 @@
       (wander obj)))
 
 (defmethod mood-action-impl (obj attitude (mood (eql 'stalking)))
-  (unless (member *player* (location-contents (get-loc obj)))
+  (unless (member *player* (loop for obj in (halo (get-loc obj) 1)
+                                 append (location-contents obj)))
     (simple-stalk obj *player*)))
 
 (defmethod mood-action-impl (obj attitude (mood (eql 'sneaky)))

@@ -3,6 +3,8 @@
 (defconstant +creature-types+
   '(animal))
 
+;; ///// Monster data into *creatures*
+
 (defclass animal-data (identifiable named loaded)
   ((pack :accessor anim-pack
          :initform 1

@@ -50,7 +50,8 @@ class Reloader
       :request => Request,
       :'request-set' => RequestSet,
       :'city-brain' => CityBrain,
-      :motives => MotivePriorities
+      :motives => MotivePriorities,
+      :monster => Monster
     }
   end
 

@@ -8,7 +8,7 @@ class DeltaGenner < Genner
   def initialize(everything, alpha)
     @data = DeltaGData.new alpha, everything
     stages = [DeltaNodeStage, BridgeStage, MapStage, BuildingStage, CreatureStage,
-              ItemStage, FoodStage, PersonStage, QuestStage, RequestStage]
+              PoolStage, FoodStage, PersonStage, QuestStage, RequestStage]
     @stages = stages.collect(&:new)
   end
 

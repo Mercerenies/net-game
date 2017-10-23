@@ -141,3 +141,63 @@ class ReloadedAnimal < Animal
   end
 
 end
+
+class Monster < Creature
+  extend Forwardable
+
+  attr_reader :type, :type_name
+
+  def_delegators :@page, :affinity, :chaos
+
+  def initialize(data)
+    super()
+    @page = data
+    @type_name, @type = data.info.to_a.sample if data
+  end
+
+  def name
+    util.titlecase @page.name
+  end
+
+  def to_sxp
+    [:monster, id, name, :':affinity', affinity, :':chaos', chaos,
+     :':type', type, :':type-name', type_name]
+  end
+
+  def self.from_sxp(arg)
+    id, name, *arr = Reloader.assert_first :monster, arg
+    ReloadedMonster.new.tap do |mon|
+      mon.id = id
+      mon.name = name
+      Reloader.hash_like(arr) do |k, v|
+        case k
+        when :':affinity'
+          mon.affinity = v
+        when :':chaos'
+          mon.chaos = v
+        when :':type'
+          mon.type = v
+        when :':type-name'
+          mon.type_name = v
+        end
+      end
+    end
+  end
+
+end
+
+class ReloadedMonster < Monster
+
+  attr_accessor :id, :name, :type, :type_name, :affinity, :chaos
+
+  def initialize
+    super(nil)
+    @id = nil
+    @name = ''
+    @type = nil
+    @type_name = ""
+    @affinity = nil
+    @chaos = nil
+  end
+
+end

@@ -179,12 +179,14 @@ class CreatureStage < Stage
 end
 
 # \Stage 6 generates items and puts them into the object pool
-class ItemStage < Stage
+class PoolStage < Stage
   def run(data)
     data.consume_each do |elem|
       case elem
       when WeaponPage
         data.push_to_pool Weapon.new(elem.name, elem.type) if elem.type
+      when MonsterPage
+        # ////
       end
     end
   end

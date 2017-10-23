@@ -1,5 +1,8 @@
 (in-package #:net-game)
 
+;; TODO Convert the object pool from a list to a bucket-based system
+;; sorted by type.
+
 (defparameter *object-pool*
   nil)
 

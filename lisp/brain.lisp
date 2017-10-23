@@ -1,16 +1,5 @@
 (in-package #:net-game)
 
-(deftype mood ()
-  (member passive hunting stalking sneaky))
-
-(defclass moody (located)
-  ((mood :accessor get-mood
-         :initform 'passive
-         :initarg :mood)
-   (attitude :accessor get-attitude
-             :initform 'passive
-             :initarg :attitude)))
-
 (defgeneric is-desirable-square (obj loc))
 
 (defmethod is-desirable-square ((obj located) (loc location))
@@ -50,9 +39,6 @@
 
 (defmethod respond-to-attack ((target moody))
   (setf (get-mood target) 'hunting))
-
-(defmethod do-attack :after (obj (target moody) atk)
-  (respond-to-attack target))
 
 (defgeneric mood-check-impl (obj attitude mood)
   (:method-combination progn))

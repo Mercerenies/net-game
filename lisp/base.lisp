@@ -100,6 +100,17 @@
             :initform nil
             :type node-linkage)))
 
+(deftype mood ()
+  (member passive hunting stalking sneaky))
+
+(defclass moody (located)
+  ((mood :accessor get-mood
+         :initform 'passive
+         :initarg :mood)
+   (attitude :accessor get-attitude
+             :initform 'passive
+             :initarg :attitude)))
+
 (defun make-location (id name &key short-name)
   (check-type name string)
   (check-type short-name (or string null))

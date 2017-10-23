@@ -16,3 +16,6 @@
      (do-attack *player* obj (weapon-damage (getf preps 'with)))
      (format t "You attack the ~A.~%" (get-name obj)))
     (t (call-next-method))))
+
+(defmethod do-attack :after (obj (target moody) atk)
+  (respond-to-attack target))

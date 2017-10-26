@@ -5,6 +5,7 @@ class CreatureSet
 
   def initialize
     @animals = []
+    @monsters = []
   end
 
   # Returns whether it was able to successfully load data from the page
@@ -12,6 +13,17 @@ class CreatureSet
     case x
     when AnimalPage
       push Animal.new(x)
+    when MonsterPage
+      push Monster.new(x)
+    end
+  end
+
+  def self.standard_spawn_cycle?(x)
+    case x
+    when AnimalPage
+      true
+    else
+      false
     end
   end
 
@@ -19,17 +31,32 @@ class CreatureSet
     case x
     when Animal
       @animals << x
-      true
+      return x
+    when Monster
+      @monsters << x
+      return x
     end
-    false
+    nil
   end
 
   def each(&block)
-    each_animal &block
+    if block.nil?
+      Enumerator.new do |y|
+        each_animal { |e| y << e }
+        each_monster { |e| y << e }
+      end
+    else
+      each_animal &block
+      each_monster &block
+    end
   end
 
   def each_animal(&block)
     @animals.each &block
+  end
+
+  def each_monster(&block)
+    @monsters.each &block
   end
 
   def to_sxp
@@ -44,7 +71,7 @@ class CreatureSet
   end
 
   def empty?
-    @animals.empty?
+    @animals.empty? and @monsters.empty?
   end
 
 end
@@ -156,12 +183,12 @@ class Monster < Creature
   end
 
   def name
-    util.titlecase @page.name
+    Util.titlecase @page.name
   end
 
   def to_sxp
     [:monster, id, name, :':affinity', affinity, :':chaos', chaos,
-     :':type', type, :':type-name', type_name]
+     :':type', type, :':type-name', type_name].to_sxp
   end
 
   def self.from_sxp(arg)
@@ -182,6 +209,24 @@ class Monster < Creature
         end
       end
     end
+  end
+
+end
+
+class MonsterInstance
+  attr_reader :id
+
+  def initialize(id)
+    @id = id
+  end
+
+  def to_sxp
+    [:'monster-instance', id].to_sxp
+  end
+
+  def self.from_sxp(arg)
+    id, *ignore = Reloader.assert_first :'monster-instance', arg
+    MonsterInstance.new id
   end
 
 end

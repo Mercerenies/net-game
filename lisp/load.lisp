@@ -4,7 +4,7 @@
   "???")
 
 (defconstant +map-object-types+
-  '(player warp-point item weapon plant npc neo-spawner))
+  '(player warp-point item weapon plant npc neo-spawner monster-instance))
 
 (defmacro load-formatted (var sym &rest clauses)
   "load-formatted is the general macro for loading S-expression data (alpha or delta) from the

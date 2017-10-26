@@ -1,7 +1,7 @@
 (in-package #:net-game)
 
 (defconstant +creature-types+
-  '(animal))
+  '(animal monster))
 
 ;; ///// Monster data into *creatures*
 
@@ -31,6 +31,27 @@
 (defmethod load-object ((header (eql 'animal)) data)
   (destructuring-bind (anim-sym id name . rest) data
     (apply #'make-animal-data id name rest)))
+
+(defclass monster-data (identifiable named loaded)
+  ((affinity :accessor mon-affinity
+             :initform 'neutral
+             :initarg :affinity)
+   (chaos :accessor mon-chaos
+          :initform 'neutral
+          :initarg :chaos)
+   (type :accessor mon-type
+         :initform nil
+         :initarg :type)
+   (type-name :accessor mon-type-name
+              :initform nil
+              :initarg :type-name)))
+
+(defun make-monster-data (id name &rest keys &key &allow-other-keys)
+  (apply #'make-instance 'monster-data :id id :name name keys))
+
+(defmethod load-object ((header (eql 'monster)) data)
+   (destructuring-bind (mon-sym id name . rest) data
+     (apply #'make-monster-data id name rest)))
 
 (defgeneric make-creature (data))
 
@@ -98,6 +119,23 @@
                  :sea (anim-sea data)
                  :air (anim-air data)))
 
+(defclass monster (creature damageable loaded moody)
+  ((data :accessor mon-id
+         :initform nil
+         :initarg :id)))
+
+(defun mon-data (mon)
+  (check-type *creatures* list)
+  (find-by-id (mon-id mon) *creatures*))
+
+(defun make-monster (data) ; The data must be in *creatures*
+  (make-instance 'monster
+                 :id (get-id data)))
+
+(defmethod load-object ((header (eql 'monster-instance)) data)
+  (let ((inst (make-instance 'monster)))
+    (load-formatted data 'monster-instance
+                    (id (setf (mon-id inst) id)))))
 
 (defmethod get-origin ((obj animal))
   (get-origin (anim-data obj)))

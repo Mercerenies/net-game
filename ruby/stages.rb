@@ -145,7 +145,9 @@ class CreatureStage < Stage
     halo_size = 3
     nav = data.map.navigator
     # Identify and set up valid creatures
-    data.consume_each { |elem| data.load_creature elem }
+    data.consume_each { |elem|
+      data.load_creature elem if CreatureSet.standard_spawn_cycle? elem
+    }
     all_creatures = data.each_creature.to_a
     creatures = all_creatures.shuffle.cycle
     return unless data.has_creature?
@@ -186,7 +188,8 @@ class PoolStage < Stage
       when WeaponPage
         data.push_to_pool Weapon.new(elem.name, elem.type) if elem.type
       when MonsterPage
-        # ////
+        monster = data.load_creature elem
+        data.push_to_pool MonsterInstance.new(monster.id) if monster
       end
     end
   end

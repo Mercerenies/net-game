@@ -135,7 +135,7 @@
           (minusp (food-health obj))
           (abs (food-health obj)))
   (addf (hp *player*) (/ (food-health obj) 100))
-  (when (> (hp *player*) 1.00)
+  (when (> (hp *player*) 1.00) ; TODO Factor this out to somewhere closer to the player class itself
     (setf (hp *player*) 1.00))
   (move-object obj nil)
   (remove-item obj *player*))

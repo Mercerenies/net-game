@@ -30,4 +30,7 @@
       (client-request 'foliage))
     ;; Not Enough Weapons Trigger
     (when (< (pool-count (lambda (x) (typep x 'weapon))) 10)
-      (client-request 'equipment))))
+      (client-request 'equipment))
+    ;; Not Enough Monsters Trigger
+    (when (< (pool-count (lambda (x) (typep x 'monster))) 5)
+      (client-request 'mythical))))

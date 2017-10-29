@@ -80,7 +80,9 @@
           (adjacent-pursue obj *player*))
       (progn
         (format t "The ~A attacks.~%" (get-name obj))
-        (do-attack obj *player* (atk obj)))
+        (if (typep obj 'attacking)
+            (do-attack obj *player* (atk obj))
+            (format t "But it doesn't know how...~%")))
       (wander obj)))
 
 (defmethod mood-action-impl (obj attitude (mood (eql 'stalking)))

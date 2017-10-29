@@ -6,6 +6,12 @@
        :initarg :hp))
   (:documentation "A base class for objects that have a concept of health."))
 
+(defclass attacking ()
+  ((atk :accessor atk
+        :initform 1
+        :initarg :atk))
+  (:documentation "A base class for objects that have offensive power."))
+
 (defun check-for-death (obj)
   "Checks whether or not the object, which should be a damageable instance, is in fact dead, removing
    it from the world if it is."
@@ -244,6 +250,9 @@
 
 (defmethod system-keys append ((obj damageable))
   `((hp "Health" ,(* 100 (hp obj)))))
+
+(defmethod system-keys append ((obj attacking))
+  `((atk "Attack Power" ,(* 100 (atk obj)))))
 
 (defmethod system-keys append ((obj flagged))
   `((get-flags "Flags" ,(get-flags obj))))

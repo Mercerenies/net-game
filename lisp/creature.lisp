@@ -72,16 +72,13 @@
  | * Hunting - Moves to Hunting mood when a player is spotted.
  | * Stalking - Moves to Sneaky mood when a player moves away.
  |#
-(defclass animal (creature damageable loaded moody)
+(defclass animal (creature damageable loaded moody attacking)
   ((data :accessor anim-data
          :initform nil
          :initarg :data)
    (speed :accessor anim-speed
           :initform 1
           :initarg :speed)
-   (atk :accessor atk
-        :initform 1
-        :initarg :atk)
    (air :accessor anim-air
         :initform nil
         :initarg :air)
@@ -135,7 +132,8 @@
 (defmethod load-object ((header (eql 'monster-instance)) data)
   (let ((inst (make-instance 'monster)))
     (load-formatted data 'monster-instance
-                    (id (setf (mon-id inst) id)))))
+                    (id (setf (mon-id inst) id)))
+    inst))
 
 (defmethod get-origin ((obj animal))
   (get-origin (anim-data obj)))
@@ -229,7 +227,6 @@
 (defmethod system-keys append ((obj animal))
   `((get-mood "Current Mood" ,(get-mood obj))
     (get-attitude "Attitude" ,(get-attitude obj))
-    (atk "Attack Power" ,(* 100 (atk obj)))
     (anim-air "Flying" ,(anim-air obj))
     (anim-sea "Swimming" ,(anim-sea obj))
     (anim-pack "Pack Mentality" ,(anim-pack (anim-data obj)))

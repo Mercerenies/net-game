@@ -37,7 +37,8 @@ local req_objs = {
    map       = function () return pquery.PQuery.new():places(3) end,
    wildlife  = function () return pquery.PQuery.new():animals(2) end,
    foliage   = function () return pquery.PQuery.new():foods(2) end,
-   equipment = function () return pquery.PQuery.new():weapons(2) end
+   equipment = function () return pquery.PQuery.new():weapons(2) end,
+   mythical  = function () return pquery.PQuery.new():monsters(2) end
 }
 
 local allqueries = {}

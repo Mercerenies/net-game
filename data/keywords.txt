@@ -114,6 +114,7 @@ rabbit
 gruidae
 insects
 rolling animal
+salamanders
 :: foods
 berries
 fruit

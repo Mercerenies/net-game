@@ -14,6 +14,24 @@
                     (ng-quest-gen::knowledge-3-a . ng-quest-gen::knowledge-3-b)
                     (ng-quest-gen::knowledge-4-a . ng-quest-gen::knowledge-4-b)))))
 
+;; == CODEX ==
+;;
+;; subquest-1-*
+;;   Perform subquest
+;;
+;; knowledge-1-*
+;;   Fetch book
+;;
+;; knowledge-2-*
+;;   Document animal (take photograph)
+;;
+;; knowledge-3-*
+;;   Explore region (specific point)
+;;
+;; knowledge-4-*
+;;   Interview NPC
+;;
+
 ;; TODO Immersion. Some more generic varied responses, something for the NPCs
 ;; to say if the player talks to them during the quest, etc.
 
@@ -111,6 +129,7 @@
 (defun ng-quest-gen::knowledge-3-a (npc)
   (flet ((eligiblep (loc)
            (not (check-flag 'civilized loc))))
+    ;; Lovely triple negative here ;)
     (let* ((locs (remove-if (complement #'eligiblep) (halo-annulus (get-loc npc) 5 8)))
            (loc (choose locs)))
       (when loc

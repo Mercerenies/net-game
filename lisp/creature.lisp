@@ -103,7 +103,7 @@
 
 (defun handle-animal-drops (anim)
   (setf (anim-drops anim)
-        (loop for i from 1 to (anim-size (anim-data anim))
+        (loop for i from 1 to (anim-size (anim-data anim)) ; TODO Should not be a 1-1 relationship here; need to drop less meat
               collect (make-food (anim-meat-type (anim-data anim))))))
 
 (defun make-animal (data)

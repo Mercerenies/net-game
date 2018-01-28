@@ -92,11 +92,20 @@ end
 class Animal < Creature
   extend Forwardable
 
+  attr_reader :meat_type
+
   def_delegators :@page, :pack, :speed, :threat, :size
 
   def initialize(data)
     super()
     @page = data
+    @meat_type = Food.generate(
+      name: "#{name} Meat",
+      full_name: "#{name} Meat",
+      source_type: :animal,
+      raw_nutrition: 1.0,
+      raw_poison: 0.0
+    )
   end
 
   def name
@@ -113,7 +122,7 @@ class Animal < Creature
 
   def to_sxp
     [:animal, id, name, :':pack', pack, :':speed', speed, :':threat', threat,
-     :':size', size, :':air', air?, :':sea', sea?].to_sxp
+     :':size', size, :':air', air?, :':sea', sea?, :':meat-type', meat_type].to_sxp
   end
 
   def self.from_sxp(arg)
@@ -135,6 +144,8 @@ class Animal < Creature
           anim.air = v
         when :':sea'
           anim.sea = v
+        when :':meat-type'
+          anim.meat_type = v
         end
       end
     end
@@ -145,7 +156,7 @@ end
 class ReloadedAnimal < Animal
   extend Forwardable
 
-  attr_accessor :id, :name, :pack, :speed, :threat, :size, :air, :sea
+  attr_accessor :id, :name, :pack, :speed, :threat, :size, :air, :sea, :meat_type
 
   def initialize
     super(nil)

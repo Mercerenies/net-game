@@ -1,14 +1,32 @@
 
 class Food
-  attr_reader :name, :full_name, :plant_type
+  attr_reader :name, :full_name, :plant_type # TODO Update plant_type to source_type
 
   def initialize(data)
-    @name = Util.titlecase data.name
-    @name = @name.gsub(/ (?:tree|plant|bush|flower)$/i, '');
-    @full_name = data.full_name
-    @plant_type = data.plant
-    @raw_nutrition = data.nutrition
-    @raw_poison = data.poison
+    if data
+      @name = Util.titlecase data.name
+      @name = @name.gsub(/ (?:tree|plant|bush|flower)$/i, '');
+      @full_name = data.full_name
+      @plant_type = data.plant
+      @raw_nutrition = data.nutrition
+      @raw_poison = data.poison
+    else
+      @name = ""
+      @full_name = ""
+      @plant_type = nil
+      @raw_nutrition = 0.0
+      @raw_poison = 0.0
+    end
+  end
+
+  def self.generate(name:, full_name:, source_type:, raw_nutrition:, raw_poison:)
+    self.new(nil).instance_eval do
+      @name = name
+      @full_name = full_name
+      @plant_type = source_type
+      @raw_nutrition = raw_nutrition
+      @raw_poison = raw_poison
+    end
   end
 
   def base_nutritional_value

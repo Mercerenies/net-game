@@ -54,6 +54,9 @@
 (defmethod food-source-type ((obj food))
   (food-source-type (food-data obj)))
 
+(defmethod food-poison-chance ((obj food))
+  (food-poison-chance (food-data obj)))
+
 (defun make-plant (name &rest keys &key &allow-other-keys)
   (apply #'make-instance 'plant :name name keys))
 

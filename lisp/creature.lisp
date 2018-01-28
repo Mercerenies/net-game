@@ -23,7 +23,10 @@
         :initarg :sea)
    (size :accessor anim-size
          :initform 1
-         :initarg :size)))
+         :initarg :size)
+   (meat-type :accessor anim-meat-type
+              :initform nil
+              :initarg :meat-type)))
 
 (defun make-animal-data (id name &rest keys &key &allow-other-keys)
   (apply #'make-instance 'animal-data :id id :name name keys))

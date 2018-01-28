@@ -242,4 +242,5 @@
     (anim-pack "Pack Mentality" ,(anim-pack (anim-data obj)))
     (anim-speed "Speed" ,(anim-speed (anim-data obj)))
     (anim-size "Size" ,(anim-size (anim-data obj)))
-    (anim-threat "Threat" ,(anim-threat (anim-data obj)))))
+    (anim-threat "Threat" ,(anim-threat (anim-data obj)))
+    (anim-meat-type "Meat" ,(get-name (anim-meat-type (anim-data obj))))))

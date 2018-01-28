@@ -54,7 +54,7 @@
 (defconstant +god-apple+
   (make-food-data "Golden Apple"
                   :full-name "Divine Fruit"
-                  :plant-type 'tree
+                  :source-type 'tree
                   :nutritional-value 999.0
                   :poison-chance 0.0))
 

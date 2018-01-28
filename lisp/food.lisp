@@ -5,10 +5,10 @@
               :initform ""
               :initarg :full-name
               :type string)
-   (plant-type :accessor food-plant-type
-               :initform nil
-               :initarg :plant-type
-               :type symbol)
+   (source-type :accessor food-source-type
+                :initform nil
+                :initarg :source-type
+                :type symbol)
    (nutrition :accessor food-nutrition
               :initform 1.0
               :initarg :nutritional-value
@@ -51,8 +51,8 @@
 (defmethod food-full-name ((obj food))
   (food-full-name (food-data obj)))
 
-(defmethod food-plant-type ((obj food))
-  (food-plant-type (food-data obj)))
+(defmethod food-source-type ((obj food))
+  (food-source-type (food-data obj)))
 
 (defun make-plant (name &rest keys &key &allow-other-keys)
   (apply #'make-instance 'plant :name name keys))

@@ -24,7 +24,7 @@ class Food
   def to_sxp
     meta = MetaData.new(:':raw-nutrition' => @raw_nutrition,
                         :':raw-poison' => @raw_poison)
-    [:food, name, :':full-name', full_name, :':plant-type', plant_type,
+    [:food, name, :':full-name', full_name, :':source-type', plant_type,
      :':nutritional-value', base_nutritional_value, :':poison-chance', base_poison_chance,
      :':meta', meta].to_sxp
   end
@@ -36,7 +36,7 @@ class Food
         case k
         when :':full-name'
           rfd.full_name = v
-        when :':plant-type'
+        when :':source-type'
           rfd.plant_type = v
         when :':nutritional-value', :':poison-chance'
           # Ignore

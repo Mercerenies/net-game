@@ -94,37 +94,49 @@
         :initarg :air)
    (sea :accessor anim-sea
         :initform nil
-        :initarg :sea)))
+        :initarg :sea)
+   (drops :accessor anim-drops
+          :initform nil)))
+
+(defmethod entity-spoils append ((obj animal))
+  (anim-drops obj))
+
+(defun handle-animal-drops (anim)
+  (setf (anim-drops anim)
+        (loop for i from 1 to (anim-size (anim-data anim))
+              collect (make-food (anim-meat-type (anim-data anim))))))
 
 (defun make-animal (data)
-  (make-instance 'animal
-                 :data data
-                 :name (get-name data)
-                 :speed (anim-speed data)
-                 :mood 'passive
-                 :attitude (case (anim-threat data)
-                             (1 'passive)
-                             (2 (choose '(passive passive passive hunting)))
-                             (3 (choose '(passive hunting stalking stalking)))
-                             (4 (choose '(hunting hunting stalking stalking)))
-                             (5 (choose '(hunting hunting hunting stalking)))
-                             (t 'passive))
-                 :hp (case (anim-size data)
-                       (1 (random-range 0.20 0.40))
-                       (2 (random-range 0.25 0.59))
-                       (3 (random-range 0.45 0.91))
-                       (4 (random-range 0.51 1.10))
-                       (5 (random-range 1.00 1.88))
-                       (t 0.10))
-                 :atk (case (anim-size data)
-                        (1 (random-range 0.04 0.05))
-                        (2 (random-range 0.10 0.15))
-                        (3 (random-range 0.10 0.24))
-                        (4 (random-range 0.15 0.34))
-                        (5 (random-range 0.30 0.59))
-                        (t 0.01))
-                 :sea (anim-sea data)
-                 :air (anim-air data)))
+  (let ((anim (make-instance 'animal
+                             :data data
+                             :name (get-name data)
+                             :speed (anim-speed data)
+                             :mood 'passive
+                             :attitude (case (anim-threat data)
+                                         (1 'passive)
+                                         (2 (choose '(passive passive passive hunting)))
+                                         (3 (choose '(passive hunting stalking stalking)))
+                                         (4 (choose '(hunting hunting stalking stalking)))
+                                         (5 (choose '(hunting hunting hunting stalking)))
+                                         (t 'passive))
+                             :hp (case (anim-size data)
+                                   (1 (random-range 0.20 0.40))
+                                   (2 (random-range 0.25 0.59))
+                                   (3 (random-range 0.45 0.91))
+                                   (4 (random-range 0.51 1.10))
+                                   (5 (random-range 1.00 1.88))
+                                   (t 0.10))
+                             :atk (case (anim-size data)
+                                    (1 (random-range 0.04 0.05))
+                                    (2 (random-range 0.10 0.15))
+                                    (3 (random-range 0.10 0.24))
+                                    (4 (random-range 0.15 0.34))
+                                    (5 (random-range 0.30 0.59))
+                                    (t 0.01))
+                             :sea (anim-sea data)
+                             :air (anim-air data))))
+    (prog1 anim
+      (handle-animal-drops anim))))
 
 (defclass monster (creature damageable loaded moody)
   ((data :accessor mon-id

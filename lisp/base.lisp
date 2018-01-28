@@ -12,6 +12,16 @@
         :initarg :atk))
   (:documentation "A base class for objects that have offensive power."))
 
+(defgeneric entity-spoils (obj)
+  (:method-combination append))
+
+(defmethod entity-spoils append ((obj damageable))
+  nil)
+
+(defmethod move-object :before ((obj damageable) (new-loc null))
+  (loop for reward in (entity-spoils obj)
+        do (move-object reward (get-loc obj))))
+
 (defun check-for-death (obj)
   "Checks whether or not the object, which should be a damageable instance, is in fact dead, removing
    it from the world if it is."

@@ -99,7 +99,7 @@ class Animal < Creature
   def initialize(data)
     super()
     @page = data
-    @meat_type = Food.generate(
+    @meat_type = Food.generate( # TODO Set nutrition and poison amounts intelligently
       name: "#{name} Meat",
       full_name: "#{name} Meat",
       source_type: :animal,

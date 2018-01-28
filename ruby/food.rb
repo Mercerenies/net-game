@@ -20,12 +20,14 @@ class Food
   end
 
   def self.generate(name:, full_name:, source_type:, raw_nutrition:, raw_poison:)
-    self.new(nil).instance_eval do
-      @name = name
-      @full_name = full_name
-      @plant_type = source_type
-      @raw_nutrition = raw_nutrition
-      @raw_poison = raw_poison
+    self.new(nil).tap do |inst|
+      inst.instance_eval do
+        @name = name
+        @full_name = full_name
+        @plant_type = source_type
+        @raw_nutrition = raw_nutrition
+        @raw_poison = raw_poison
+      end
     end
   end
 

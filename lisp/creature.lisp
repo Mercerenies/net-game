@@ -28,12 +28,19 @@
               :initform nil
               :initarg :meat-type)))
 
-(defun make-animal-data (id name &rest keys &key &allow-other-keys)
-  (apply #'make-instance 'animal-data :id id :name name keys))
-
 (defmethod load-object ((header (eql 'animal)) data)
-  (destructuring-bind (anim-sym id name . rest) data
-    (apply #'make-animal-data id name rest)))
+  (let ((inst (make-instance 'animal-data)))
+    (load-formatted data 'animal
+                    (id (setf (get-id inst) id))
+                    (name (setf (get-name inst) name))
+                    (:pack pack (setf (anim-pack inst) pack))
+                    (:speed speed (setf (anim-speed inst) speed))
+                    (:threat threat (setf (anim-threat inst) threat))
+                    (:size size (setf (anim-size inst) size))
+                    (:air air (setf (anim-air inst) air))
+                    (:sea sea (setf (anim-sea inst) sea))
+                    (:meat-type meat (setf (anim-meat-type inst) (apply #'make-food-data (cdr meat)))))
+    inst))
 
 (defclass monster-data (identifiable named loaded)
   ((affinity :accessor mon-affinity

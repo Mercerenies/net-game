@@ -1,8 +1,10 @@
 
-use perl::filters;
-use perl::sentence;
-use perl::navigation;
-use perl::numbers;
+use lib 'perl';
+
+use filters;
+use sentence;
+use navigation;
+use numbers;
 
 use feature 'unicode_strings';
 use Data::Dumper;

@@ -1,7 +1,9 @@
 
+use lib 'perl';
+
 use Data::Dumper;
-use perl::navigation;
-use perl::logging;
+use navigation;
+use logging;
 
 =head2 unparen($value)
 

@@ -76,6 +76,7 @@ if [ -n "$stage4" ]; then
 fi
 
 if [ -n "$stage1" ]; then
+    echo $stage1 -e "$expr" >"./temp/${prefix}1.txt"
     $stage1 -e "$expr" >"./temp/${prefix}1.txt"
 fi
 if [ -n "$stage2" ]; then

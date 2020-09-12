@@ -1,9 +1,11 @@
 #!/usr/bin/perl
 
-use perl::logging;
-use perl::script;
-use perl::read;
-use perl::navigation;
+use lib 'perl';
+
+use logging;
+use script;
+use read;
+use navigation;
 
 use 5.016;
 use strict;

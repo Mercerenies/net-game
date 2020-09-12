@@ -6,8 +6,10 @@ use strict;
 use warnings;
 use feature 'unicode_strings';
 
-use perl::datafile;
-use perl::set;
+use lib 'perl';
+
+use datafile;
+use set;
 
 my(%occu, @mwords, @fwords, %placenames, %weapons, %animals, @foodprefixes, @foodblacklist, @foodsuffixes,
    %foodtrees, @foodnegatives, @foodnutrition, @foodpoison, @foodsections, %monsters, %monstertypes);
